@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>LiveStrike OTP Email</title>
+    <style>
+        :root {
+            --primary-light: #FAC01F;
+            --primary-dark: #F83900;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        .head {
+            background: #ff8f0045;
+            text-align: center;
+            padding: 20px;
+            font-size: 22px;
+            letter-spacing: 2px;
+        }
+
+        .image-header {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .image-header img {
+            max-width: 100px;
+            height: auto;
+        }
+
+        .logo-name {
+            font-size: 30px;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .txt-strike {
+            font-weight: 600;
+            background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .para {
+            font-size: 22px;
+            font-weight: 600;
+            color: green;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .content {
+            padding: 20px;
+            font-size: 16px;
+            background: #f9f9f9;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .otp-txt {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .otp-container {
+            font-size: 28px;
+            letter-spacing: 10px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 13px;
+            padding: 20px;
+            color: #555;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: #ccc;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 480px) {
+            .otp-container {
+                font-size: 24px;
+                letter-spacing: 6px;
+            }
+
+            .content, .footer, .head {
+                padding: 15px;
+            }
+
+            .logo-name {
+                font-size: 24px;
+            }
+
+            .para {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='head'>Welcome to LiveStrike</div>
+        <div class='image-header'>
+            <img src='https://i.ibb.co/hFzq9nZh/logo.png' alt='Livestrike'>
+            <div class='logo-name'>
+                <span class='txt-live'><b>Live</b></span><span class='txt-strike'>Strike</span>
+            </div>
+        </div>
+        <div class='para'>Prove your Signer Identity</div>
+        <div class='content'>
+            Hello 周育君,<br><br>
+            You are required to enter the following code to verify your account on <b>LiveStrike</b> – the real-time score tracking system. The code is valid for <b>10 minutes</b>. Please enter the code in the appropriate field to continue.
+            <div class='otp-txt'>Your verification code:</div>
+            <div class='otp-container'>591972</div>
+        </div>
+        <hr>
+        <div class='footer'>
+            <p>If this wasn't you, please ignore this email or contact our customer service:</p>
+            <p><a href='#'>support@livestrikesupport.com</a></p>
+            <br>
+            <p>© 2025 LiveStrike. All rights reserved.</p>
+            <p>Maharashtra, Nashik City, India</p>
+            <br>
+            <p><a href='#'>About LiveStrike</a> | <a href='#'>Contact Us</a></p>
+        </div>
+    </div>
+</body>
+</html>
