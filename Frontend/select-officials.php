@@ -882,7 +882,7 @@
                     }
                 });
             } else {
-                container.innerHTML = '<p>No previously used staff found.</p>';
+                container.innerHTML = '<p>No previously used umpire found.</p>';
             }
         }
         let add_commentator = (el) => {
