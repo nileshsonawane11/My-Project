@@ -10,6 +10,8 @@ $method = $_POST['using'] ?? '';
 $team = $_POST['team'] ?? '';
 
 
+
+
         $sql = "SELECT t_sport FROM teams WHERE t_id = '$team'";
         $query = mysqli_query($conn,$sql);
         $row = mysqli_fetch_assoc($query);
