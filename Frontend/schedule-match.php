@@ -393,6 +393,13 @@
         .officials-frame.active{
             bottom: 0;
         }
+        .error{
+            display: none;
+            color:red; 
+            width:100%;
+            font-size:14px;
+            margin: 5px;
+        }
 
         @media (min-width:601px) {
              .container{
@@ -581,22 +588,31 @@
                             <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Date</label></div>
                             <div class="input-fields event-time"><input type="time" id="timeInput" placeholder="Select Time" required><label for="timeInput" id="time">Time</label></div>
                         </div>
+                        <div id="error-empty" class="error"></div>
+                        <div id="error-datetime" class="error"></div>
                     </div>
                     
                     <div class="info">
+                        <?php
+                            $sportsTypes = [
+                                "CRICKET" => "Team Sport",
+                                "VOLLEYBALL" => "Team Sport",
+                                "KABADDI" => "Team Sport",
+                                "KHO-KHO" => "Team Sport",
+                                "FOOTBALL" => "Team Sport",
+                                "TENNIS" => "Individual Sport",
+                                "TABLE-TENNIS" => "Individual Sport",
+                                "CHESS" => "Mind Sport",
+                                "WEIGHT-LIFTING" => "Individual Sport",
+                                "BASKETBALL" => "Team Sport"
+                            ];
+                        ?>
+                    <div class="info">
                         <h4>Sports Type</h4>
-                        <select name="" id="s-type">
-                            <option value="Default" disabled selected>(Default)</option>
-                            <option value="Test Match">Test Match</option>
-                            <option value="">One Day International (ODI)</option>
-                            <option value="">T20 Match</option>
-                            <option value="">T10 Match</option>
-                            <option value="">Practice Match</option>
-                            <option value="">First-Class Cricket</option>
-                            <option value="">List A Cricket</option>
-                            <option value="">Club Cricket</option>
-                            <option value="">Tape Ball Cricket</option>
-                            <option value="">Box Cricket / Indoor Cricket</option>
+                        <select name="" id="s-type" disabled>
+                            <?php
+                                echo "<option value='{$sportsTypes[$game]}' disabled selected>{$sportsTypes[$game]}</option>";
+                            ?>
                         </select>
                     </div>
 
@@ -604,7 +620,7 @@
                         <h4>Match Officials</h4>
                         <div class="officials">
                             <div class="person">
-                                <div class="logo" onclick="select_person(this)">
+                                <div class="logo umpire" onclick="select_person(this)">
                                     <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12.5 12.5003C15.9071 12.5003 18.6667 9.74074 18.6667 6.33366C18.6667 2.92658 15.9071 0.166992 12.5 0.166992C9.09294 0.166992 6.33335 2.92658 6.33335 6.33366C6.33335 9.74074 9.09294 12.5003 12.5 12.5003ZM12.5 15.5837C8.38377 15.5837 0.166687 17.6495 0.166687 21.7503V24.8337H24.8334V21.7503C24.8334 17.6495 16.6163 15.5837 12.5 15.5837Z" fill="black"/>
                                     </svg>
@@ -612,7 +628,7 @@
                                 <label for="">Umpires</label>
                             </div>
                             <div class="person">
-                                <div class="logo" onclick="select_person(this)">
+                                <div class="logo scorer" onclick="select_person(this)">
                                     <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12.5 12.5003C15.9071 12.5003 18.6667 9.74074 18.6667 6.33366C18.6667 2.92658 15.9071 0.166992 12.5 0.166992C9.09294 0.166992 6.33335 2.92658 6.33335 6.33366C6.33335 9.74074 9.09294 12.5003 12.5 12.5003ZM12.5 15.5837C8.38377 15.5837 0.166687 17.6495 0.166687 21.7503V24.8337H24.8334V21.7503C24.8334 17.6495 16.6163 15.5837 12.5 15.5837Z" fill="black"/>
                                     </svg>
@@ -620,7 +636,7 @@
                                 <label for="">Scorers</label>
                             </div>
                             <div class="person">
-                                <div class="logo" onclick="select_person(this)">
+                                <div class="logo commentator" onclick="select_person(this)">
                                     <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12.5 12.5003C15.9071 12.5003 18.6667 9.74074 18.6667 6.33366C18.6667 2.92658 15.9071 0.166992 12.5 0.166992C9.09294 0.166992 6.33335 2.92658 6.33335 6.33366C6.33335 9.74074 9.09294 12.5003 12.5 12.5003ZM12.5 15.5837C8.38377 15.5837 0.166687 17.6495 0.166687 21.7503V24.8337H24.8334V21.7503C24.8334 17.6495 16.6163 15.5837 12.5 15.5837Z" fill="black"/>
                                     </svg>
@@ -643,6 +659,10 @@
         const team1 = '<?php echo $team1; ?>';
         const team2 = '<?php echo $team2; ?>';
         const game = '<?php echo $game; ?>';
+        const admin = '<?php echo $_SESSION["email"]; ?>';
+        let Umpires = [];
+        let Scorers = [];
+        let Commentators = [];
         let next_page = document.querySelector('.officials-frame');
         let goBack = ()=>{
             parent.postMessage("closeIframe", "*");
@@ -684,11 +704,35 @@
             formdata.append('timeInput',timeInput);
             formdata.append('dateInput',dateInput);
             formdata.append('s_type',s_type);
+            formdata.append('Umpires[]', Umpires);
+            formdata.append('Scorers[]', Scorers);
+            formdata.append('Commentators[]', Commentators);
 
             formdata.forEach((value, key) => {
             console.log(key + ': ' + value);
             });
-            next_page.classList.add('active');
+
+            fetch('../Backend/schedule_match.php', {
+                method: 'POST',
+                body: formdata
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+                if(data.status == 409){
+                    let el = document.getElementById(`error-${data.field}`);
+                    el.innerHTML = data.message;
+                    el.style.display = 'block';
+                }else{
+                    alert('Match Scheduled Successfully');
+                    window.location.href = '../dashboard.php?update="live"&sport="CRICKET"';
+                }
+            })
+            .catch(error => console.log(error));
             
         }
 
@@ -696,11 +740,26 @@
             if (event.data === "closeIframe") {
                 next_page.classList.remove('active');  
 
-                // setTimeout(()=>{
-                //     window.location.replace(`./schedule-match.php?team1=${team1}&team2=${team2}&sport=${game}`);
-                // },550)
             }
 
+            if (event.data.type === "emailList" && (event.data.Umpires)) {
+                let arr = event.data.Umpires;
+                Umpires = arr;
+                document.querySelector('.logo.umpire').style.border = '2px solid orange'
+            }
+
+            if (event.data.type === "emailList" && (event.data.Scorers)) {
+                let arr = event.data.Scorers;
+                Scorers = arr;
+                document.querySelector('.logo.scorer').style.border = '2px solid orange'
+
+            }
+
+            if (event.data.type === "emailList" && (event.data.Commentator)) {
+                let arr = event.data.Commentator;
+                Commentators = arr;
+                document.querySelector('.logo.commentator').style.border = '2px solid orange'
+            }
         });
 
         let select_person = (el) => {

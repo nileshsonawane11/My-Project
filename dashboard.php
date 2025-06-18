@@ -17,6 +17,29 @@
         }
     }
 
+    function updateMatchStatus($conn){
+        $currentDate = date('Y-m-d');
+        $currentTime = date('H:i');
+
+        // Set Live
+        mysqli_query($conn, "UPDATE matches 
+            SET status = 'Live'
+            WHERE match_date = '$currentDate'
+            AND start_time <= '$currentTime'
+            AND status = 'Upcoming'");
+
+        // Set Completed (3 hours after start)
+        mysqli_query($conn, "UPDATE matches 
+            SET status = 'Completed'
+            WHERE match_date = '$currentDate'
+            AND ADDTIME(start_time, '03:00:00') <= '$currentTime'
+            AND status = 'Live'");
+    }
+
+    // Call this function whenever a match-related page loads
+    updateMatchStatus($conn);
+
+
     $username = $_SESSION['name'];
     $update = $_GET['update'];
     $sport = $_GET['sport'];
@@ -595,6 +618,7 @@
             }
             .main-body{
                 height: 100vh;
+                width: 100%;
             }
 
             .game-list {

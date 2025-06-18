@@ -387,8 +387,18 @@
             justify-content: center;
             align-items: flex-start;
         }
+        .person_container h4{
+            color: #0059da;
+        }
         .saved_staff{
             width: 100%;
+        }
+        .error{
+            display: none;
+            color:red; 
+            width:100%;
+            font-size:14px;
+            margin: 5px;
         }
 
         @media (min-width:601px) {
@@ -423,7 +433,7 @@
             }
             .staff-container{
                 width: 100%;
-                display: grid;
+                display: flex;
                 justify-items: center;
                 align-items: center;
                 gap: 30px;
@@ -529,12 +539,12 @@
                                         </div>
                                         <div class="container3">
                                             <div class="info">
-                                                <div class="person_container"><h4>1st Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpire_email1" class="data" required><label for="Umpire_email1">Email</label></div></div>
-                                                <div class="person_container"><h4>2nd Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpire_email2" class="data" required><label for="Umpire_email2">Email (Optional)</label></div></div>
-                                                <div class="person_container"><h4>3rd Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpire_email3" class="data" required><label for="Umpire_email3">Email (Optional)</label></div></div>
-                                                <div class="person_container"><h4>4th Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpire_email4" class="data" required><label for="Umpire_email4">Email (Optional)</label></div></div>
+                                                <div class="person_container"><h4>1st Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpires_email1" class="data" required><label for="Umpire_email1">Email</label></div><div id="error-Umpires_email1" class="error"></div></div>
+                                                <div class="person_container"><h4>2nd Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpires_email2" class="data" required><label for="Umpire_email2">Email (Optional)</label></div><div id="error-Umpires_email2" class="error"></div></div>
+                                                <div class="person_container"><h4>3rd Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpires_email3" class="data" required><label for="Umpire_email3">Email (Optional)</label></div><div id="error-Umpires_email3" class="error"></div></div>
+                                                <div class="person_container"><h4>4th Umpire</h4><div class="input-fields"><input type="text" name="" id="Umpires_email4" class="data" required><label for="Umpire_email4">Email (Optional)</label></div><div id="error-Umpires_email4" class="error"></div></div>
                                             </div>
-                                            <h3 class="saved_staff" style="display: none;">Select From Saved Staff</h3>
+                                            <h3 class="saved_staff" style="display: none;">Select From Saved Umpires</h3>
                                             <div class="info history-staff">
                                                 <h3>Select From Saved Umpire</h3>
                                                 <div class="staff-container">
@@ -612,9 +622,10 @@
                                         </div>
                                         <div class="container3">
                                             <div class="info">
-                                                <div class="person_container"><h4>1st Scorer</h4><div class="input-fields"><input type="text" name="" id="Scorer_email1" class="data" required><label for="Scorer_email1">Email</label></div></div>
-                                                <div class="person_container"><h4>2nd Scorer</h4><div class="input-fields"><input type="text" name="" id="Scorer_email2" class="data" required><label for="Scorer_email2">Email (Optional)</label></div></div>
+                                                <div class="person_container"><h4>1st Scorer</h4><div class="input-fields"><input type="text" name="" id="Scorers_email1" class="data" required><label for="Scorer_email1">Email</label></div><div id="error-Scorers_email1" class="error"></div></div>
+                                                <div class="person_container"><h4>2nd Scorer</h4><div class="input-fields"><input type="text" name="" id="Scorers_email2" class="data" required><label for="Scorer_email2">Email (Optional)</label></div><div id="error-Scorers_email2" class="error"></div></div>
                                             </div>
+                                            <h3 class="saved_staff" style="display: none;">Select From Saved Scorers</h3>
                                             <div class="info history-staff">
                                                 <h3>Select From Saved Scorer</h3>
                                                 <div class="staff-container">
@@ -692,9 +703,10 @@
                                         </div>
                                         <div class="container3">
                                             <div class="info">
-                                                <div class="person_container"><h4>1st Commentator</h4><div class="input-fields"><input type="text" name="" id="Commentator_email1" class="data" required><label for="Commentator_email1">Email</label></div></div>
-                                                <div class="person_container"><h4>2nd Commentator</h4><div class="input-fields"><input type="text" name="" id="Commentator_email2" class="data" required><label for="Commentator_email2">Email (Optional)</label></div></div>
+                                                <div class="person_container"><h4>1st Commentator</h4><div class="input-fields"><input type="text" name="" id="Commentator_email1" class="data" required><label for="Commentator_email1">Email</label></div><div id="error-Commentator_email1" class="error"></div></div>
+                                                <div class="person_container"><h4>2nd Commentator</h4><div class="input-fields"><input type="text" name="" id="Commentator_email2" class="data" required><label for="Commentator_email2">Email (Optional)</label></div><div id="error-Commentator_email2" class="error"></div></div>
                                             </div>
+                                            <h3 class="saved_staff" style="display: none;">Select From Saved Commentators</h3>
                                             <div class="info history-staff">
                                                 <h3>Select From Saved Commentator</h3>
                                                 <div class="staff-container">
@@ -770,20 +782,32 @@
         </div>
     </div>
     <script>
-        const game = '<?php echo $game; ?>';
+        const person = '<?php echo $person; ?>';
+        let size = (person == 'Umpires') ? 4 : 2;
         const email_input = document.querySelectorAll('.data');
+        let umpires = [];
 
         let goBack = ()=>{
             window.parent.postMessage("closeIframe", "*");
         }
 
+        let for_value ='';
+        if(person == 'Umpires'){
+            for_value ='add_umpire';
+        }
+        else if(person == 'Scorers'){
+            for_value ='add_scorer';
+        }
+        else if(person == 'Commentator'){
+            for_value ='add_commentator';  
+        }
         email_input.forEach(el => el.addEventListener('input',(el)=>{
             if(el.target.value.length >= 3){
                 console.log('email is valid');
                 let data = {
                     update: el.target.value,
                     sport: '',
-                    for : 'add_umpire'
+                    for : for_value
                 }
 
                 displayContent(data);
@@ -806,49 +830,59 @@
                     .catch(error => console.error(error))
                 }
             }else{
-                displaySavedumpire();
+                displaySaved(person);
             }
         }));
 
         //save staff
-        function saveumpireToLocal(user) {
-            let existingStaff = JSON.parse(localStorage.getItem('savedumpire')) || [];
+        function savepersonToLocal(user) {
+            let existingStaff = JSON.parse(localStorage.getItem(`saved${person}`)) || [];
 
             const exists = existingStaff.some(staff => staff.email === user.email);
 
             if (!exists) {
                 existingStaff.push(user);
-                localStorage.setItem('savedumpire', JSON.stringify(existingStaff));
+                localStorage.setItem(`saved${person}`, JSON.stringify(existingStaff));
                 console.log('Umpire saved:', user);
             } else {
                 console.log('Umpire already exists');
             }
 
-            // let user_data = {
-            //     email : user.email,
-            //     team_id : team_id
-            // }
-            // fetch('../Backend/add_staff-to-team.php',{
-            //     method: 'POST',
-            //     body: JSON.stringify(user_data),
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(response => response.json())
-            // .then((data)=>{
-            //     console.log(data);
-            // })
-            // .catch(error => console.error(error));
+            console.log('Size:', size);
 
-            // window.history.back();
+            console.log(`${person}_email`)
+            for (let i = 1; i <= size; i++) {
+                let input = document.getElementById(`${person}_email${i}`);
+                if (input.value === user.email) {
+                    alert("Umpire already exists!");
+                    return;
+                }
+            }
+            
+
+            // Add email to the first available empty input
+            let assigned = false;
+            for (let i = 1; i <= size; i++) {
+                let input = document.getElementById(`${person}_email${i}`);
+                if (input.value === "" || input.value.length <= 9) {
+                    input.value = user.email;
+                    console.log("Umpire added successfully!");
+                    assigned = true;
+                    break;
+                }
+            }
+            if (!assigned) {
+                let input = document.getElementById(`${person}_email${size}`);
+                input.value = user.email;
+            }
+            
         }
 
 
         // Display previously saved staff
-        displaySavedumpire();
-        function displaySavedumpire() {
-            let staffList = JSON.parse(localStorage.getItem('savedumpire')) || [];
+        
+        function displaySaved(person){
+            let staffList = JSON.parse(localStorage.getItem(`saved${person}`)) || [];
             let container = document.querySelector('.info.history-staff');
             container.innerHTML = '';
             console.log(staffList)
@@ -858,7 +892,7 @@
                     let data = {
                     update: staff.email,
                     sport: 'saved',
-                    for : 'add_umpire'
+                    for : for_value
                     }
 
                     displayContent(data);
@@ -885,19 +919,58 @@
                 container.innerHTML = '<p>No previously used umpire found.</p>';
             }
         }
-        let add_commentator = (el) => {
-            
-        };
-        let add_umpire = (el) => {
+        displaySaved(person);
+        
+        let add_person = (el) => {
             let parent = el.closest('.team');
             let email = parent.querySelector('.staff-name').getAttribute('data-staff_email');
 
             let data = {
                 email : email 
             };
-            saveumpireToLocal(data);
+            savepersonToLocal(data);
         };
-        let add_scorer = (el) => {};
+        
+        let lists = {};
+        lists[`${person}`] = [];
+        let save = (e) => {
+            console.log('clicked')
+            e.preventDefault();
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+            for(let i = 1 ; i <= size; i++){
+                let input = document.getElementById(`${person}_email${i}`);
+                if(input.value == ''){
+
+                }else if(input.checkValidity()){
+                    let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+                    if(emailRegex.test(input.value)){
+                        lists[`${person}`].push(input.value)
+                    }else{
+                        console.log(`error-${person}_email1`)
+                        let el = document.getElementById(`error-${person}_email${i}`);
+                        el.innerHTML = `Invalid Email`;
+                        el.style.display = 'block';
+                    }
+                }
+            }
+            if(lists[`${person}`].length == 0){
+                console.log(`error-${person}_email1`)
+                let el = document.getElementById(`error-${person}_email1`);
+                el.innerHTML = `At Least 1 ${person} Required`;
+                el.style.display = 'block';
+                console.log(`At Least 1 ${person} Required`)
+                return;
+            }
+            
+            lists[`${person}`] = Array.from(new Set(lists[`${person}`]))
+            //console.log(lists[`${person}`])
+            lists['type'] = "emailList";
+            window.parent.postMessage(lists, "*");
+            window.parent.postMessage("closeIframe", "*");
+        }
     </script>
 </body>
 </html>

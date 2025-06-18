@@ -115,6 +115,12 @@
             width: 100%;
             border: solid 1px black;
             border-radius: 50%;
+            overflow: hidden;
+        }
+        .image img{
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
         }
         .select-img{
             position: absolute;
@@ -409,7 +415,7 @@
                     <div class="logo-img">
                         <div class="img-container">
                             <div class="image">
-                                <img src="" alt="">
+                                <img  id="previewImage" src="https://img.freepik.com/free-vector/championship-trophy-vector-logo-design_47987-24739.jpg?semt=ais_hybrid&w=740" alt="">
                             </div>
                             <div class="select-img" onclick="uploadfile()">
                                 <svg width="28" height="22" viewBox="0 0 31 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -491,6 +497,12 @@
         let uploadfile = () => {
             document.getElementById("fileInput").click();
         }
+
+        document.getElementById("fileInput").addEventListener("change", function(event) {
+            const file = URL.createObjectURL(event.target.files[0]);
+            document.getElementById("previewImage").src = file;
+        });
+
 
         //radio for Prize
         const options = document.querySelectorAll('.option');
