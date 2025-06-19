@@ -250,10 +250,12 @@ if($for == "registration"){
 
             if ($mail->send()) {
                 echo json_encode(["status" => "success", "message" => "Email sent successfully","for" => "$for"]);
+                exit();
             }
         } catch (Exception $e) {
             $otp_error = 'Email failed: ' . $mail->ErrorInfo;
             echo json_encode(["status" => "error", "message" => "$otp_error"]);
+            exit();
         }
     }
 }elseif($for == 'forgot'){
@@ -467,10 +469,12 @@ if($for == "registration"){
 
                     if ($mail->send()) {
                         echo json_encode(["status" => "success", "message" => "Email sent successfully","for" => "$for"]);
+                        exit();
                     }
                 } catch (Exception $e) {
                     $otp_error = 'Email failed: ' . $mail->ErrorInfo;
                     echo json_encode(["status" => "error", "message" => "$otp_error"]);
+                    exit();
                 }
             }else{
                 echo json_encode(["status" => "error", "message" => "Email not registered","for" => "$for"]);

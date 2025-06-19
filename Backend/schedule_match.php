@@ -71,15 +71,16 @@ if (!empty($game_date) && !empty($game_time)) {
             $checkResult = mysqli_query($conn, $checkSql);
 
             if (mysqli_num_rows($checkResult) > 0) {
-                echo "Match already exists!";
+                echo json_encode(['status' => 409,'field' => 'datetime','message' => 'Match already exists!']);
+                exit();
             } else {
-
-                $sql = "INSERT INTO matches (match_id, sport_id, match_date, status, venue, team_1, team_2, start_time, umpires, scorers, commentators) 
-                        VALUES ('$id', '$game', '$game_date', 'Upcoming', '$game_location', '$team1', '$team2', '$game_time', '$UmpiresJSON', '$ScorersJSON', '$CommentatorsJSON')";
+                $pass = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'), 0, 6);
+                $sql = "INSERT INTO matches (match_id, sport_id, match_date, status, venue, team_1, team_2, start_time, umpires, scorers, commentators, password) 
+                        VALUES ('$id', '$game', '$game_date', 'Upcoming', '$game_location', '$team1', '$team2', '$game_time', '$UmpiresJSON', '$ScorersJSON', '$CommentatorsJSON', '$pass')";
 
                 $query = mysqli_query($conn, $sql);
                 if ($query){
-                    echo json_encode(['status' => 200,'field' => 'success','message' => 'Match Scheduled Successfully']);
+                    echo json_encode(['status' => 200,'field' => 'success','message' => 'Match Scheduled Successfully','pass'=>$pass]);
                     exit();
                 }
             }

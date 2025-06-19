@@ -10,6 +10,7 @@
         exit();
     }
 
+    $game = $_GET['game'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -283,6 +284,17 @@
             height: 45px;
             background: white;
         }
+        .ast{
+            color: red;
+            font-size: 14px;
+        }
+        .error{
+            display: none;
+            color:red; 
+            width:100%;
+            font-size:14px;
+            margin: 5px;
+        }
 
         @media (min-width:601px) {
              .container{
@@ -428,33 +440,39 @@
                 </div>
                 <div class="info">
                     
-                    <div class="input-fields"><input type="text" name="" id="tname" class="data" required><label for="tname">Tournament name</label></div>
-                    <div class="input-fields"><input type="text" name="" id="city" class="data" required><label for="city">City</label></div>
-                    <div class="input-fields"><input type="text" name="" id="ground" class="data" required><label for="ground">Ground</label></div>
-                    <div class="input-fields"><input type="text" name="" id="oranizer-name" class="data" required><label for="oranizer-name">Organizer Name</label></div>
-                    <div class="input-fields"><input type="number" pattern="[0-9]{10}" maxlength="10" name="" id="oranizer-no" class="data" required><label for="oranizer-no">Organizer Number</label></div>
-                    <div class="input-fields"><input type="email" name="" id="email" class="data" required><label for="email">Organizer Email</label></div>
+                    <div class="input-fields"><input type="text" name="" id="tname" class="data" required><label for="tname">Tournament name <sup class="ast">*</sup></label></div>
+                    <div class="input-fields"><input type="text" name="" id="city" class="data" required><label for="city">City <sup class="ast">*</sup></label></div>
+                    <div class="input-fields"><input type="text" name="" id="ground" class="data" required><label for="ground">Ground <sup class="ast">*</sup></label></div>
+                    <div class="input-fields"><input type="text" name="" id="organizer-name" class="data" required><label for="oranizer-name">Organizer Name <sup class="ast">*</sup></label></div>
+                    <div class="input-fields"><input type="number" pattern="[0-9]{10}" maxlength="10" name="" id="organizer-no" class="data" required><label for="oranizer-no">Organizer Number <sup class="ast">*</sup></label></div>
+                    <div class="input-fields"><input type="email" name="" id="email" class="data" required><label for="email">Organizer Email <sup class="ast">*</sup></label></div>
                     <div class="schedule">
-                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Date</label></div>
-                        <div class="input-fields event-time"><input type="time" id="timeInput" placeholder="Select Time" required><label for="timeInput" id="time">Time</label></div>
+                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Date <sup class="ast">*</sup></label></div>
+                        <div class="input-fields event-time"><input type="time" id="timeInput" placeholder="Select Time" required><label for="timeInput" id="time">Time <sup class="ast">*</sup></label></div>
                     </div>
-                        <div class="input-fields"><input type="number" name="" id="jno" class="data" required><label for="jno">Jersey No.(optional)</label></div>                
+                    <div id="error-datetime" class="error"></div>
+                    <div id="error-empty" class="error"></div>
                 </div>
-
+                        <?php
+                            $sportsTypes = [
+                                "CRICKET" => "Team Sport",
+                                "VOLLEYBALL" => "Team Sport",
+                                "KABADDI" => "Team Sport",
+                                "KHO-KHO" => "Team Sport",
+                                "FOOTBALL" => "Team Sport",
+                                "TENNIS" => "Individual Sport",
+                                "TABLE-TENNIS" => "Individual Sport",
+                                "CHESS" => "Mind Sport",
+                                "WEIGHT-LIFTING" => "Individual Sport",
+                                "BASKETBALL" => "Team Sport"
+                            ];
+                        ?>
                 <div class="info">
                     <h4>Sports Type</h4>
-                    <select name="" id="s-type">
-                        <option value="Default" disabled selected>(Default)</option>
-                        <option value="">Test Match</option>
-                        <option value="">One Day International (ODI)</option>
-                        <option value="">T20 Match</option>
-                        <option value="">T10 Match</option>
-                        <option value="">Practice Match</option>
-                        <option value="">First-Class Cricket</option>
-                        <option value="">List A Cricket</option>
-                        <option value="">Club Cricket</option>
-                        <option value="">Tape Ball Cricket</option>
-                        <option value="">Box Cricket / Indoor Cricket</option>
+                    <select name="" id="s-type" disabled>
+                        <?php
+                            echo "<option value='{$sportsTypes[$game]}' disabled selected>{$sportsTypes[$game]}</option>";
+                        ?>
                     </select>
                 </div>
 
@@ -473,17 +491,17 @@
                         <div class="option1" data-value="league">LEAGUE</div>
                         <div class="option1" data-value="knockout">KNOCKOUT</div>
                     </div>
-                    <input type="hidden" id="selectedformat" name="prize_type">
+                    <input type="hidden" id="selectedformat" name="format_type">
                 </div>
                 <div class="info info-input">
                     <h4>Any Additional Details?</h4>
                     <div class="prize-container">
                         <div class="input-fields"><textarea name="" id="notes" placeholder="Add more details about rules, prize, etc." required></textarea></div>
                     </div>
-                    <input type="hidden" id="selectedformat" name="prize_type">
                 </div>
+                <div id="error-exist" class="error"></div>
                 <div class="add-btn">
-                    <button onclick="add_tournament(event)" type="submit" id="add-event">Add Player</button>
+                    <button onclick="add_tournament(event)" type="submit" id="add-event">Next (Add TEAMS)</button>
                 </div>
             </div>
 
@@ -550,7 +568,57 @@
 
         //Add Tournament Button
         let add_tournament = (event)=>{
-            window.location.href = './match-making.php';
+            let tname = document.getElementById('tname').value;
+            let city = document.getElementById('city').value;
+            let ground = document.getElementById('ground').value;
+            let organizer_no = document.getElementById('organizer-no').value;
+            let organizer_name = document.getElementById('organizer-name').value;
+            let email = document.getElementById('email').value;
+            let dateInput = document.getElementById('dateInput').value;
+            let timeInput = document.getElementById('timeInput').value;
+            let s_type = document.getElementById('s-type').value;            
+            let details = document.getElementById('notes').value;
+            let logo = document.getElementById("fileInput").files[0];
+
+            let formData = new FormData();
+            formData.append('tournament_name',tname)
+            formData.append('city',city)
+            formData.append('ground',ground)
+            formData.append('organizer_name',organizer_name)
+            formData.append('organizer_number',organizer_no)
+            formData.append('organizer_email',email)
+            formData.append('tournament_date',dateInput)
+            formData.append('tournament_time',timeInput)
+            formData.append('sports_type',s_type)
+            formData.append('winning_prize',hiddenInput.value)
+            formData.append('tournament_format',formatInput.value)
+            formData.append('additional_details',details)
+            formData.append('logo',logo)
+
+            formData.forEach((value, key) => console.log(key+ ':'+ value));
+
+            fetch('../Backend/add_tournament.php',{
+                body : formData,
+                method : 'POST'
+            })
+            .then(response => response.json())
+            .then((data) => {
+                console.log(data)
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+
+                if(data.status != 200){
+                    let el = document.getElementById(`error-${data.field}`);
+                    el.innerHTML = data.message;
+                    el.style.display = 'block';
+                }else{
+
+                }
+            })
+            .catch(error => console.log(error));
+            // window.location.href = './match-making.php';
         }
     </script>
 </body>

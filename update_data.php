@@ -11,6 +11,23 @@ $sport = mysqli_real_escape_string($conn, $data['sport']);
 $for = $data['for'];
 
 if($for == "dashboard"){
+
+    function formatMatchTime($matchDate, $startTime) {
+        $currentDate = date('Y-m-d');
+        $yesterday   = date('Y-m-d', strtotime('-1 day'));
+        $tomorrow    = date('Y-m-d', strtotime('+1 day'));
+
+        if ($matchDate === $currentDate) {
+            return "Today, " . date('h:i A', strtotime($startTime));
+        } elseif ($matchDate === $yesterday) {
+            return "Yesterday, " . date('h:i A', strtotime($startTime));
+        } elseif ($matchDate === $tomorrow) {
+            return "Tomorrow, " . date('h:i A', strtotime($startTime));
+        } else {
+            return date('d-m-Y', strtotime($matchDate)) . ", " . date('h:i A', strtotime($startTime));
+        }
+    }
+
     if ($data['update'] != "All") {
         $sql = "SELECT * FROM `matches` LEFT join `sports` ON sports.sport_id = matches.sport_id WHERE sports.sport_name = '$sport' AND matches.status = '$status'";
         $result = mysqli_query($conn, $sql);
@@ -26,20 +43,33 @@ if($for == "dashboard"){
                 $team2 = mysqli_fetch_assoc($query3);
 
                 echo "<div class='game-info'>";
+                echo "<div class='match-data'>";
 
-                echo "<div class='info'><p>Match 0 | League name</p></div>";
+                    echo "<div class='info'><p>Match 0 | League name</p></div>";
 
-                echo "<div class='info team-score'>";
-                echo "<div class='team'><img src='' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
-                echo "<div class='score'>{$row['score_team_1']}</div>";
+                    echo "<div class='info team-score'>";
+                    echo "<div class='team'><img src='' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
+                    echo "<div class='score'>{$row['score_team_1']}</div>";
+                    echo "</div>";
+
+                    echo "<div class='info team-score'>";
+                    echo "<div class='team'><img src='' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
+                    echo "<div class='score'>{$row['score_team_2']}</div>";
+                    echo "</div>";
+
+                    echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
                 echo "</div>";
 
-                echo "<div class='info team-score'>";
-                echo "<div class='team'><img src='' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
-                echo "<div class='score'>{$row['score_team_2']}</div>";
-                echo "</div>";
+                    echo "<div class='strt-btn'>";
+                    
+                    $scorers = json_decode($row['scorers']); // decode JSON array
+                    $scorer_emails = explode(",", $scorers[0]);
+                    $session_email = $_SESSION['email'];
 
-                echo "<div class='info'><p>{$row['start_time']}</p></div>";
+                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                        echo "<div class='info'><button class='start-btn'>Start</button></div>";
+                    }
+                    echo "</div>";
                 echo "</div>";
             }
         }
@@ -58,20 +88,33 @@ if($for == "dashboard"){
                 $team2 = mysqli_fetch_assoc($query3);
 
                 echo "<div class='game-info'>";
+                echo "<div class='match-data'>";
 
-                echo "<div class='info'><p>Match 0 | League name</p></div>";
+                    echo "<div class='info'><p>Match 0 | League name</p></div>";
 
-                echo "<div class='info team-score'>";
-                echo "<div class='team'><img src='' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
-                echo "<div class='score'>{$row['score_team_1']}</div>";
+                    echo "<div class='info team-score'>";
+                    echo "<div class='team'><img src='' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
+                    echo "<div class='score'>{$row['score_team_1']}</div>";
+                    echo "</div>";
+
+                    echo "<div class='info team-score'>";
+                    echo "<div class='team'><img src='' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
+                    echo "<div class='score'>{$row['score_team_2']}</div>";
+                    echo "</div>";
+
+                    echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
                 echo "</div>";
 
-                echo "<div class='info team-score'>";
-                echo "<div class='team'><img src='' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
-                echo "<div class='score'>{$row['score_team_2']}</div>";
-                echo "</div>";
+                    echo "<div class='strt-btn'>";
+                    
+                    $scorers = json_decode($row['scorers']); // decode JSON array
+                    $scorer_emails = explode(",", $scorers[0]);
+                    $session_email = $_SESSION['email'];
 
-                echo "<div class='info'><p>{$row['start_time']}</p></div>";
+                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                        echo "<div class='info'><button class='start-btn'>Start</button></div>";
+                    }
+                    echo "</div>";
                 echo "</div>";
             }
         }

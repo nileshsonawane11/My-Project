@@ -694,6 +694,7 @@
             let timeInput = document.getElementById('timeInput').value;
             let dateInput = document.getElementById('dateInput').value;
             let s_type = document.getElementById('s-type').value;
+            let password = '';
 
             let formdata = new FormData();
             formdata.append('team1',team1);
@@ -727,9 +728,43 @@
                     let el = document.getElementById(`error-${data.field}`);
                     el.innerHTML = data.message;
                     el.style.display = 'block';
-                }else{
-                    alert('Match Scheduled Successfully');
-                    window.location.href = '../dashboard.php?update="live"&sport="CRICKET"';
+                }else if(data.status == 200){
+                    //alert('Match Scheduled Successfully');
+                    password = data.pass;
+
+                    Scorers.forEach((scorer) => {
+                        fetch('../mail.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                for_value: 'Scorer',
+                                game: game,
+                                venue: city,
+                                time: timeInput,
+                                password : password,
+                                date: dateInput,
+                                recipient_email: scorer
+                            })
+                        });
+                    });
+
+                    Umpires.forEach((umpire) => {
+                        fetch('../mail.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                for_value: 'Umpire',
+                                game: game,
+                                venue: city,
+                                time: timeInput,
+                                date: dateInput,
+                                recipient_email: umpire
+                            })
+                        });
+                    });
+
+                    // Immediately navigate to next page — no waiting
+                    location.replace('../dashboard.php?update="live"&sport="CRICKET"');
                 }
             })
             .catch(error => console.log(error));

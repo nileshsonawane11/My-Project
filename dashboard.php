@@ -28,12 +28,6 @@
             AND start_time <= '$currentTime'
             AND status = 'Upcoming'");
 
-        // Set Completed (3 hours after start)
-        mysqli_query($conn, "UPDATE matches 
-            SET status = 'Completed'
-            WHERE match_date = '$currentDate'
-            AND ADDTIME(start_time, '03:00:00') <= '$currentTime'
-            AND status = 'Live'");
     }
 
     // Call this function whenever a match-related page loads
@@ -286,10 +280,37 @@
             width: 350px;
             background: linear-gradient(35deg, #ebebeb26, #88888859);
             border-radius: 35px;
-            box-shadow: inset 0px 3px 0px 0.5px #000;
+            box-shadow: inset 0px 2px 0px 0.5px #000;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .start-btn{
+            width: 70px;
+            height: 30px;
+            border-radius: 15px;
+            border: none;
+            color: white;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            box-shadow: 0px 2px 5px rgb(136 136 136 / 75%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .start-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0px 4px 8px rgb(136 136 136 / 60%);
+        }
+
+        .start-btn:focus {
+            outline: none;
+            box-shadow: 0px 2px 5px rgb(136 136 136 / 0%);
+        }
+        .match-data{
+            display: flex;
+            gap: 8px;
             flex-direction: column;
             align-items: flex-start;
-            justify-content: center;
         }
         .info-container{
             max-height: max-content;
