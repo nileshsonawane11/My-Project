@@ -175,6 +175,17 @@
         .no-data{
             color: #0000005e;
         }
+        .selected-team {
+            border: 2px solid rgb(252, 80, 0);
+            border-radius: 20px;
+        }
+        .add-btn{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
 
         @media(max-width: 1000px){
             .game-list {
@@ -255,6 +266,19 @@
                 justify-content: center;
                 justify-items: center;
                 align-items: start;
+            }
+            .add-btn button{
+                background:var(--background);
+                color: #fff;
+                font-size: 12px;
+                border: 1px solid transparent;
+                border-radius: 48px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                height: 40px;
+                width: 96px;
             }
         }
 
@@ -355,6 +379,19 @@
                 grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
                 gap: 20px;
             }
+            .add-btn button{
+                background:var(--background);
+                color: #fff;
+                font-size: 12px;
+                border: 1px solid transparent;
+                border-radius: 48px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                height: 40px;
+                width: 96px;
+            }
         }
     </style>
 </head>
@@ -365,7 +402,15 @@
                 <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z" fill="black"/>
                 </svg>
             </div>
-            <div></div>
+            <div>
+                <?php
+                if(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'add-tournament.php') !== false){
+                    echo "<div class='add-btn'>
+                        <button onclick='save(event)' type='submit' id='save'>save</button>
+                    </div>";
+                }
+                ?>
+            </div>
         </div>
         <div class="container2">
             <div class="txt">
@@ -446,7 +491,14 @@
             }?>
     </div>
     <script>
+        let urlParams = new URLSearchParams(window.location.search);
+        const tournament = urlParams.get('tournament');
        if (document.referrer.includes('select-teams.php')){
+            let urlParams = new URLSearchParams(window.location.search);
+            let sport = urlParams.get('sport');
+            document.querySelector('.game-container').style.display = 'none';
+            loadgames(sport)
+       }else if(document.referrer.includes('add-tournament.php')){
             let urlParams = new URLSearchParams(window.location.search);
             let sport = urlParams.get('sport');
             document.querySelector('.game-container').style.display = 'none';
@@ -510,6 +562,8 @@
         let goBack = ()=>{
             window.history.back();
         }
+        
+        let selectedTeams = [];
 
         let get_team_info = (el)=>{
             const teamID = el.getAttribute('data-team_id');
@@ -526,6 +580,18 @@
                     // Redirect to modified URL
                     window.location.href = url.toString();
                 }
+            }else if (document.referrer.includes('add-tournament.php')) {
+                // Multi-selection logic for add-tournament
+                if (!selectedTeams.includes(teamID)) {
+                    selectedTeams.push(teamID);
+                    el.classList.add('selected-team');
+                } else {
+                    selectedTeams = selectedTeams.filter(id => id !== teamID);
+                    el.classList.remove('selected-team');
+                }
+
+                console.log(selectedTeams);
+
             }else{
                 window.location.href = `team-info.php?t=${teamID}`;
             }
@@ -535,6 +601,10 @@
             window.location.href = "./create-team.php?for=team";
         })
 
+        let save = () =>{
+            window.location.href = `./match-making.php?t=${tournament}&teams=${selectedTeams}`;
+
+        }
     </script>
 </body>
 </html>

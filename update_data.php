@@ -13,6 +13,10 @@ $for = $data['for'];
 if($for == "dashboard"){
 
     function formatMatchTime($matchDate, $startTime) {
+        if (empty($matchDate) || empty($startTime)) {
+            return "Not Scheduled";
+        }
+
         $currentDate = date('Y-m-d');
         $yesterday   = date('Y-m-d', strtotime('-1 day'));
         $tomorrow    = date('Y-m-d', strtotime('+1 day'));
@@ -45,15 +49,15 @@ if($for == "dashboard"){
                 echo "<div class='game-info'>";
                 echo "<div class='match-data'>";
 
-                    echo "<div class='info'><p>Match 0 | League name</p></div>";
+                    echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
+                    echo "<div class='team'><img src='./assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
                     echo "<div class='score'>{$row['score_team_1']}</div>";
                     echo "</div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
+                    echo "<div class='team'><img src='./assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
                     echo "<div class='score'>{$row['score_team_2']}</div>";
                     echo "</div>";
 
@@ -62,7 +66,7 @@ if($for == "dashboard"){
 
                     echo "<div class='strt-btn'>";
                     
-                    $scorers = json_decode($row['scorers']); // decode JSON array
+                    $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
                     $scorer_emails = explode(",", $scorers[0]);
                     $session_email = $_SESSION['email'];
 
@@ -90,15 +94,15 @@ if($for == "dashboard"){
                 echo "<div class='game-info'>";
                 echo "<div class='match-data'>";
 
-                    echo "<div class='info'><p>Match 0 | League name</p></div>";
+                    echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
+                    echo "<div class='team'><img src='./assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
                     echo "<div class='score'>{$row['score_team_1']}</div>";
                     echo "</div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
+                    echo "<div class='team'><img src='./assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
                     echo "<div class='score'>{$row['score_team_2']}</div>";
                     echo "</div>";
 
@@ -107,7 +111,7 @@ if($for == "dashboard"){
 
                     echo "<div class='strt-btn'>";
                     
-                    $scorers = json_decode($row['scorers']); // decode JSON array
+                    $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
                     $scorer_emails = explode(",", $scorers[0]);
                     $session_email = $_SESSION['email'];
 

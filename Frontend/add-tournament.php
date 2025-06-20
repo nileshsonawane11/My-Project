@@ -26,6 +26,7 @@
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
             user-select : none;
+            scrollbar-width: none;
         }
         :root {
             --primary-light: #FAC01F;
@@ -295,6 +296,32 @@
             font-size:14px;
             margin: 5px;
         }
+        .match-frame{
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: bottom 0.8s ease;
+            z-index: 999;
+        }
+        .match-frame.active{
+            bottom: 0;
+        }
+        .team-selector{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            height: 50px;
+            background: #0000001c;
+        }
+        .team-selector svg,
+        .team-selector label{
+            cursor: pointer;
+        }
 
         @media (min-width:601px) {
              .container{
@@ -508,6 +535,8 @@
         </div>
     </div>
     <script>
+        const gameName = '<?php echo $game; ?>';
+        let t_id = '';
         let goBack = ()=>{
             window.history.back();
         }
@@ -515,6 +544,20 @@
         let uploadfile = () => {
             document.getElementById("fileInput").click();
         }
+
+        let select_teams = () => {
+
+        }
+
+        document.addEventListener('message',(event)=>{
+            if (event.data === "closeIframe") {
+                next_page.classList.remove('active');  
+
+                setTimeout(()=>{
+                    window.location.replace(`./add-tournament.php?game=${gameName}`);
+                },550)
+            }
+        })
 
         document.getElementById("fileInput").addEventListener("change", function(event) {
             const file = URL.createObjectURL(event.target.files[0]);
@@ -594,6 +637,7 @@
             formData.append('tournament_format',formatInput.value)
             formData.append('additional_details',details)
             formData.append('logo',logo)
+            formData.append('game',gameName)
 
             formData.forEach((value, key) => console.log(key+ ':'+ value));
 
@@ -614,7 +658,8 @@
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }else{
-
+                    t_id = data.id;
+                    window.location.href = `./manage-teams.php?sport=${gameName}&tournament=${t_id}`;
                 }
             })
             .catch(error => console.log(error));

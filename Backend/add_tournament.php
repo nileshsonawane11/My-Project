@@ -17,6 +17,20 @@ $winning_prize = $_POST['winning_prize'] ?? '';
 $tournament_format = $_POST['tournament_format'] ?? '';
 $additional_details = $_POST['additional_details'] ?? '';
 $logo = $_FILES['logo'] ?? null;
+$game = $_POST['game'] ?? '';
+$sports = [
+    'CRICKET'         => 1,
+    'VOLLEYBALL'      => 2,
+    'KABADDI'         => 3,
+    'KHO-KHO'         => 4,
+    'FOOTBALL'        => 5,
+    'TENNIS'          => 6,
+    'TABLE-TENNIS'    => 7,
+    'CHESS'           => 8,
+    'WEIGHT-LIFTING'  => 9,
+    'BASKETBALL'      => 10
+];
+$game = $sports[$game];
 
 if(empty($tournament_name) || empty($city) || empty($ground) || empty($organizer_name) || empty($organizer_number) || empty($organizer_email) || empty($tournament_date) || empty($tournament_time)){
     echo json_encode(['status' => 409, 'message' => 'All (*) marked fields are required', 'field' => 'empty']);
@@ -47,7 +61,7 @@ if (!empty($tournament_date) && !empty($tournament_time)) {
                 $logo_name = $id.'-'.$logo['name'];
             }
 
-            $query = mysqli_query($conn, "INSERT INTO `tournaments`(`tournament_id`, `tournament_name`, `city`, `ground`, `organizer_name`, `organizer_number`, `organizer_email`, `tournament_date`, `tournament_time`, `sports_type`, `winning_prize`, `tournament_format`, `additional_details`, `logo`,`created_by`) VALUES ('$id','$tournament_name','$city','$ground','$organizer_name','$organizer_number','$organizer_email','$tournament_date','$tournament_time','$sports_type','$winning_prize','$tournament_format','$additional_details','$logo_name','$user_id')");
+            $query = mysqli_query($conn, "INSERT INTO `tournaments`(`tournament_id`,`sport_id`, `tournament_name`, `city`, `ground`, `organizer_name`, `organizer_number`, `organizer_email`, `tournament_date`, `tournament_time`, `sports_type`, `winning_prize`, `tournament_format`, `additional_details`, `logo`,`created_by`) VALUES ('$id','$game','$tournament_name','$city','$ground','$organizer_name','$organizer_number','$organizer_email','$tournament_date','$tournament_time','$sports_type','$winning_prize','$tournament_format','$additional_details','$logo_name','$user_id')");
 
             if($query){
                 $tmp_name = $logo['tmp_name'];

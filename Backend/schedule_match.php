@@ -67,7 +67,11 @@ if (!empty($game_date) && !empty($game_time)) {
             $ScorersJSON = json_encode($Scorers);
             $CommentatorsJSON = json_encode($Commentators);
 
-            $checkSql = "SELECT * FROM matches WHERE sport_id = '$game' AND team_1 = '$team1' AND team_2 = '$team2' AND match_date = '$game_date' AND start_time = '$game_time'";
+            $checkSql = "SELECT * FROM matches WHERE sport_id = '$game' AND (
+                    (team_1 = '$team1' AND team_2 = '$team2') 
+                    OR 
+                    (team_1 = '$team2' AND team_2 = '$team1')
+                    ) AND match_date = '$game_date' AND start_time = '$game_time'";
             $checkResult = mysqli_query($conn, $checkSql);
 
             if (mysqli_num_rows($checkResult) > 0) {

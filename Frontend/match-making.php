@@ -1,5 +1,6 @@
 <?php
     session_start();
+    include '../config.php';
 
     if(!isset($_SESSION['user'])){
         header('location: ./front-page.php');
@@ -10,6 +11,9 @@
         exit();
     }
 
+    $tournament = $_GET['t'] ?? '';
+    $teams = explode(',',$_GET['teams']) ?? '';
+    $team_ids = $teams;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,6 +29,7 @@
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
             user-select : none;
+            scrollbar-width: none;
         }
         :root {
             --primary-light: #FAC01F;
@@ -103,6 +108,12 @@
             width: 75px;
             background: #D9D9D9;
             border-radius: 50%;
+            overflow: hidden;
+        }
+        .logo img{
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
         }
         .tname{
             font-size: 17px;
@@ -176,6 +187,13 @@
         .plus:hover .plus-icon {
             transform: rotate(180deg);
         }
+        .add-btn{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
 
 
         @media (min-width:1001px){
@@ -214,6 +232,19 @@
                 height: 45px;
                 background: white;
             }
+            .add-btn button{
+                background:var(--background);
+                color: #fff;
+                font-size: 12px;
+                border: 1px solid transparent;
+                border-radius: 48px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                height: 40px;
+                width: 96px;
+            }
             
         }
 
@@ -245,6 +276,19 @@
                 height: 45px;
                 background: white;
             }
+            .add-btn button{
+                background:var(--background);
+                color: #fff;
+                font-size: 12px;
+                border: 1px solid transparent;
+                border-radius: 48px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                height: 40px;
+                width: 96px;
+            }
             
         }
     </style>
@@ -256,7 +300,11 @@
                 <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z" fill="black"/>
                 </svg>
             </div>
-            <div></div>
+            <div>
+                <div class='add-btn'>
+                    <button onclick='save(event)' type='submit' id='save'>save</button>
+                </div>
+            </div>
         </div>
         <div class="container2">
             <div class="txt">
@@ -266,43 +314,155 @@
             <div class="match-list">
                 <div class="matches">
 
-                    <div class="match-container">
-                        <h4 class="match-head">Match 1</h4>
-                        <div class="team-container">
-                            <div class="teams left-side">
-                                <div class="logo"></div>
-                                <div class="tname">Team name</div>
-                            </div>
-                            <label for="" class="vs">VS</label>
-                            <div class="teams right-side">
-                                <div class="logo"></div>
-                                <div class="tname">Team name</div>
-                            </div>
-                        </div>
-                        <div class="team-no">
-                            <div class="t-num">(Team 1)</div>
-                            <div class="t-num">(Team 2)</div>
-                        </div>
-                    </div>
+                    <?php
+                    $query = mysqli_query($conn,"SELECT * FROM `tournaments` WHERE `tournament_id` = '$tournament'");
+                    $row = mysqli_fetch_assoc($query);
+                    //$teams = ['Team A', 'Team B', 'Team C', 'Team D', 'Team E', 'Team F','Team G','Team H','Team I','Team J','Team K']; // Example team names
+                    $format = $row['tournament_format']; // 'league' or 'knockout'
 
-                    <div class="match-container">
-                        <h4 class="match-head">Match 1</h4>
-                        <div class="team-container">
-                            <div class="teams left-side">
-                                <div class="logo"></div>
-                                <div class="tname">Team name</div>
-                            </div>
-                            <label for="" class="vs">VS</label>
-                            <div class="teams right-side">
-                                <div class="logo"></div>
-                                <div class="tname">Team name</div>
-                            </div>
-                        </div>
-                        <div class="team-no">
-                            <div class="t-num">(Team 1)</div>
-                            <div class="t-num">(Team 2)</div>
-                        </div>
-                    </div>
+                    $matchNo = 1;
+
+                    if ($format == 'league') {
+                        echo "<h2>League Matches</h2>";
+                        for ($i = 0; $i < count($teams) - 1; $i++) {
+                            for ($j = $i + 1; $j < count($teams); $j++) {
+                                $team1 = $teams[$i];
+                                $team2 = $teams[$j];
+
+                                $team1_no = $i + 1;
+                                $team2_no = $j + 1;
+
+                                $team1_query = mysqli_query($conn,"SELECT * FROM `teams` WHERE `t_id` = '$team1'");
+                                $team1_row = mysqli_fetch_assoc($team1_query);
+
+                                $team2_query = mysqli_query($conn,"SELECT * FROM `teams` WHERE `t_id` = '$team2'");
+                                $team2_row = mysqli_fetch_assoc($team2_query);
+
+                                $matches[] = [
+                                    'match_no'  => "Match " . $matchNo,
+                                    'team1'     => $team1,
+                                    'team2'     => $team2
+                                ];
+
+                                echo '
+                                <div class="match-container">
+                                    <h4 class="match-head">Match ' . $matchNo++ . '</h4>
+                                    <div class="team-container">
+                                        <div class="teams left-side">
+                                            ' . (!empty($team1_row['t_logo']) ? 
+                                                '<div class="logo"><img src="../assets/images/teams/' . $team1_row['t_logo'] . '" alt=""></div>' 
+                                                : '<div class="logo"></div>'
+                                            ) . '
+                                            <div class="tname">' . $team1_row['t_name'] . '</div>
+                                        </div>
+                                        <label for="" class="vs">VS</label>
+                                        <div class="teams right-side">
+                                            ' . (!empty($team2_row['t_logo']) ? 
+                                                '<div class="logo"><img src="../assets/images/teams/' . $team2_row['t_logo'] . '" alt=""></div>' 
+                                                : '<div class="logo"></div>'
+                                            ) . '
+                                            <div class="tname">' . $team2_row['t_name'] . '</div>
+                                        </div>
+                                    </div>
+                                    <div class="team-no">
+                                        <div class="t-num">(Team ' . $team1_no . ')</div>
+                                        <div class="t-num">(Team ' . $team2_no . ')</div>
+                                    </div>
+                                </div>
+                                ';
+                            }
+                        }
+                    } else if ($format == 'knockout') {
+                        echo "<h2>Knockout Matches</h2>";
+                        $roundNo = 1;
+                        $matchCounter = 1;
+                        $semiCounter = 1;
+
+                        shuffle($teams);
+
+                        while (count($teams) > 1) {
+                            
+
+                            if (count($teams) % 2 != 0) {
+                                $teams[] = "BYE";
+                            }
+
+                            if (count($teams) == 2) {
+                                echo "<h3>🏆 Final</h3>";
+                            } elseif (count($teams) == 4) {
+                                echo "<h3>⚔️ Semifinals</h3>";
+                            } else {
+                                echo "<h3>Round $roundNo</h3>";
+                            }
+
+                            $nextRoundTeams = [];
+
+                            for ($i = 0; $i < count($teams); $i += 2) {
+                                $team1 = $teams[$i];
+                                $team2 = $teams[$i + 1];
+
+                                $team1_no = $i + 1;
+                                $team2_no = $i + 2;
+
+                                if (count($teams) == 4) {
+                                    $matchTitle = "Semifinal " . ($semiCounter++);
+                                } elseif (count($teams) == 2) {
+                                    $matchTitle = "Final";
+                                } else {
+                                    $matchTitle = "Match " . ($matchCounter++);
+                                }
+
+                                $team1_query = mysqli_query($conn,"SELECT * FROM `teams` WHERE `t_id` = '$team1'");
+                                $team1_row = mysqli_fetch_assoc($team1_query);
+
+                                $team2_query = mysqli_query($conn,"SELECT * FROM `teams` WHERE `t_id` = '$team2'");
+                                $team2_row = mysqli_fetch_assoc($team2_query);
+
+                                if(isset($team2_row)){
+                                    $matches[] = [
+                                        'round'     => $roundNo,
+                                        'match_no'  => $matchTitle,
+                                        'team1'     => $team1,
+                                        'team2'     => $team2
+                                    ];
+                                }
+
+                                echo '
+                                <div class="match-container">
+                                    <h4 class="match-head">' . $matchTitle . '</h4>
+                                    <div class="team-container">
+                                        <div class="teams left-side">
+                                            ' . (!empty($team1_row['t_logo']) ? 
+                                                '<div class="logo"><img src="../assets/images/teams/' . $team1_row['t_logo'] . '" alt=""></div>' 
+                                                : '<div class="logo"></div>'
+                                            ) . '                                        
+                                            <div class="tname">' . (isset($team1_row['t_name']) ? $team1_row['t_name'] : $team1) . '</div>
+                                        </div>
+                                        <label for="" class="vs">VS</label>
+                                        <div class="teams right-side">
+                                            ' . (!empty($team2_row['t_logo']) ? 
+                                                '<div class="logo"><img src="../assets/images/teams/' . $team2_row['t_logo'] . '" alt=""></div>' 
+                                                : '<div class="logo"></div>'
+                                            ) . '
+                                            <div class="tname">' . (isset($team2_row['t_name']) ? $team2_row['t_name'] : $team2) . '</div>
+                                        </div>
+                                    </div>
+                                    <div class="team-no">
+                                        <div class="t-num">(Team ' . $team1_no . ')</div>
+                                        <div class="t-num">(Team ' . $team2_no . ')</div>
+                                    </div>
+                                </div>
+                                ';
+
+                                $nextRoundTeams[] = "Winner of " . $matchTitle;
+                            }
+
+                            $teams = $nextRoundTeams;
+                            $roundNo++;
+                        }
+                    }
+                ?>
+
 
                 </div>
                 <div class="pls">
@@ -318,6 +478,9 @@
         </div>
     </div>
     <script>
+        let tournament = <?php echo json_encode($tournament); ?>;
+        let matches = <?php echo json_encode($matches); ?>;
+        let teams = '<?php echo json_encode($team_ids) ?>';
         let goBack = ()=>{
             window.history.back();
         }
@@ -352,6 +515,47 @@
         let shuffle = ()=>{
             window.location.reload();
         }
+
+        let save = () => {
+            console.log('clicked')
+            let formdata = new FormData();
+            formdata.append('matches',JSON.stringify(matches));
+            formdata.append('tournament',tournament);
+            formdata.append('teams', teams);
+
+
+            fetch('../Backend/add-tournament-teams.php',{
+                body : formdata,
+                method : 'POST'
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                console.log(data)
+            })
+            .catch(error => console.log(error));
+
+            fetch('../Backend/make_match.php',{
+                method : 'POST',
+                body : formdata
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                console.log(data);
+
+                data.forEach(item => {
+                    if (item.status === 200) {
+                        window.location.href = '../dashboard.php?update=Live&sport=CRICKET';
+                    } else {
+                        console.warn(item.match + ' — ' + item.message);
+                    }
+                });
+
+            })
+            .catch(error=>console.log(error));
+        }
+
+        
+        console.log(matches);
     </script>
 </body>
 </html>
