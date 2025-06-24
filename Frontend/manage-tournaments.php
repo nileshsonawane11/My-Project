@@ -537,7 +537,7 @@
             let data = {
                 update : '',
                 sport: sport,
-                for : 'manage_teams'
+                for : 'manage_tournaments'
             }
 
             displayContent(data);
@@ -560,6 +560,7 @@
             
         }
 
+        //go to previous page
         let goBack = ()=>{
             window.history.back();
         }
@@ -567,7 +568,7 @@
         let selectedTeams = [];
 
         let get_team_info = (el)=>{
-            const teamID = el.getAttribute('data-team_id');
+            const tournamentID = el.getAttribute('data-team_id');
             if (document.referrer.includes('select-teams.php')) {
                 let urlParams = new URLSearchParams(window.location.search);
                 let teamParam = urlParams.get('for-team');
@@ -576,30 +577,30 @@
                 if(previousUrl){
                     // Add parameters to the previous URL
                     let url = new URL(previousUrl);
-                    url.searchParams.set(teamParam,teamID);
+                    url.searchParams.set(teamParam,tournamentID);
 
                     // Redirect to modified URL
                     window.location.href = url.toString();
                 }
             }else if (document.referrer.includes('add-tournament.php')) {
                 // Multi-selection logic for add-tournament
-                if (!selectedTeams.includes(teamID)) {
-                    selectedTeams.push(teamID);
+                if (!selectedTeams.includes(tournamentID)) {
+                    selectedTeams.push(tournamentID);
                     el.classList.add('selected-team');
                 } else {
-                    selectedTeams = selectedTeams.filter(id => id !== teamID);
+                    selectedTeams = selectedTeams.filter(id => id !== tournamentID);
                     el.classList.remove('selected-team');
                 }
 
                 console.log(selectedTeams);
 
             }else{
-                window.location.href = `team-info.php?t=${teamID}`;
+                // window.location.href = `team-info.php?t=${tournamentID}`;
             }
         }
 
         document.querySelector('.plus').addEventListener('click',()=>{
-            window.location.href = "./create-team.php?for=team";
+            window.location.href = "./create-team.php?for=tournament";
         })
 
         let save = () =>{

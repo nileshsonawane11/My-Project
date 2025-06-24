@@ -41,19 +41,19 @@ if (mysqli_fetch_assoc($query)) {
     exit();
 }
 
-$logo_file = ''; // default empty
-
-if (isset($logo['name']) && $logo['name'] != '') {
-    $image_name = $team_name . '-' . basename($logo['name']);
-    $logo_path = '../assets/images/teams/' . $image_name;
-    move_uploaded_file($logo['tmp_name'], $logo_path);
-    $logo_file = $image_name;
-}
+$logo_file = ''; // default empt
 
 // Generate unique team ID safely
 $input = uniqid(microtime(true) . bin2hex(random_bytes(5)) . $adminID . $date, true);
 $t_id = hash('sha256', $input);
 $coordinaterNo = $country_code.$coordinaterNo;
+
+if (isset($logo['name']) && $logo['name'] != '') {
+    $image_name = $t_id . '-' . basename($logo['name']);
+    $logo_path = '../assets/images/teams/' . $image_name;
+    move_uploaded_file($logo['tmp_name'], $logo_path);
+    $logo_file = $image_name;
+}
 
 $sql1 = "INSERT INTO teams (t_id, t_name, t_city, t_coordinatorNo, t_coordinatorName, t_logo, t_admin_id, t_sport)
          VALUES ('$t_id', '$team_name', '$city', '$coordinaterNo', '$coordinaterName', '$logo_file', '$adminID', '$game')";

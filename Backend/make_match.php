@@ -4,6 +4,7 @@ include '../config.php';
 $responses = [];
 $matches = json_decode($_POST['matches'], true);
 $tournament = $_POST['tournament'];
+$admin_id = $_SESSION['user'];
 $date = date('Y-m-d h:i:s');
 
 $get_tour = mysqli_query($conn,"SELECT * FROM tournaments WHERE tournament_id = '$tournament'");
@@ -33,7 +34,7 @@ foreach($matches as $match){
         if (mysqli_num_rows($checkResult) > 0) {
                  $responses[] = ['status' => 409,'field' => 'datetime','message' => 'Match already exists!'];
         } else {
-            $query = "INSERT INTO matches(match_id, sport_id, match_name, status, venue, team_1, team_2) values('$id','$sport','$match_name','Upcoming','$venue','$team1','$team2')";
+            $query = "INSERT INTO matches(match_id, sport_id, match_name, status, venue, team_1, team_2, created_by) values('$id','$sport','$match_name','Upcoming','$venue','$team1','$team2','$admin_id')";
             $result = mysqli_query($conn, $query);
             if($result){
                 $responses[] = ['status' => 200,'field' => 'datetime','message' => 'Match added successfully'];

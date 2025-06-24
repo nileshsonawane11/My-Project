@@ -17,6 +17,7 @@ $ground = $_POST['ground'];
 $Umpires = array_filter($_POST['Umpires'] ?? []);
 $Scorers = array_filter($_POST['Scorers'] ?? []);
 $Commentators = array_filter($_POST['Commentators'] ?? []);
+$admin_id = $_SESSION['user'];
 $date = Date('d-m-Y / h:i:s A');
 
 $sportList = [
@@ -79,8 +80,8 @@ if (!empty($game_date) && !empty($game_time)) {
                 exit();
             } else {
                 $pass = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'), 0, 6);
-                $sql = "INSERT INTO matches (match_id, sport_id, match_date, status, venue, team_1, team_2, start_time, umpires, scorers, commentators, password) 
-                        VALUES ('$id', '$game', '$game_date', 'Upcoming', '$game_location', '$team1', '$team2', '$game_time', '$UmpiresJSON', '$ScorersJSON', '$CommentatorsJSON', '$pass')";
+                $sql = "INSERT INTO matches (match_id, sport_id, match_date, status, venue, team_1, team_2, start_time, umpires, scorers, commentators, password, created_by) 
+                        VALUES ('$id', '$game', '$game_date', 'Upcoming', '$game_location', '$team1', '$team2', '$game_time', '$UmpiresJSON', '$ScorersJSON', '$CommentatorsJSON', '$pass','$admin_id')";
 
                 $query = mysqli_query($conn, $sql);
                 if ($query){

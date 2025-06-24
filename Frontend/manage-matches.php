@@ -90,85 +90,6 @@
             justify-content: center;
             align-items: center;
         }
-        .team-container{
-            width: 100%;
-            height: max-content;
-            padding-bottom: 110px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            margin-top: 50px;
-            position: absolute;
-        }
-        .team{
-            width: 90%;
-            display: flex;
-            flex-direction: row;
-            align-content: center;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 10px;
-            color: black;
-            border: solid black 1px;
-            padding: 10px;
-            border-radius: 20px;
-            text-wrap: auto;
-            background: #ffa50003;
-            cursor: pointer;
-            overflow: hidden;
-        }
-        .logo{
-            height: 75px;
-            width: 75px;
-            background: #e8e8e8;
-            margin: 10px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        .logo img{
-            height: 100%;
-            width: 100%;
-            object-fit:cover;
-        }
-        .other-info{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            line-height: 20px;
-            margin-left : 10px;
-            cursor: pointer;
-        }
-        .team-info{
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            height: 100%;
-            cursor: pointer;
-            overflow: hidden;
-        }
-        .team-info h4{
-            overflow-wrap: break-word;
-            width: 100%;
-        }
-        .team-info label.data{
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            flex-direction: row;
-            gap: 5px;
-        }
-        .team-info label svg{
-            flex-shrink: 0;
-            flex-grow: 0;
-        }
-        label.data .dt{
-            word-wrap: break-word;
-            word-break: break-word;
-            white-space: normal;
-            max-width: 200px; /* or whatever fits your layout */
-            display: block;
-        }
         .game.selected {
             background: #ff630042;
             border-radius: 10px;
@@ -180,12 +101,93 @@
             border: 2px solid rgb(252, 80, 0);
             border-radius: 20px;
         }
-        .add-btn{
+         .game-info{
+            height: 140px;
+            padding: 20px;
+            display: flex;
+            font-size: 12px;
+            gap: 8px;
+            width: 350px;
+            background: linear-gradient(35deg, #ebebeb26, #88888859);
+            border-radius: 35px;
+            box-shadow: inset 0px 2px 0px 0.5px #000;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .start-btn{
+            width: 70px;
+            height: 30px;
+            border-radius: 15px;
+            border: none;
+            color: white;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            box-shadow: 0px 2px 5px rgb(136 136 136 / 75%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .start-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0px 4px 8px rgb(136 136 136 / 60%);
+        }
+
+        .start-btn:focus {
+            outline: none;
+            box-shadow: 0px 2px 5px rgb(136 136 136 / 0%);
+        }
+        .match-data{
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .team-container{
+            max-height: max-content;
+            min-height: 100px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            margin: 50px 0;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            justify-items: center;
+        }
+        .team-container .game-name{
+            font-size: 25px;
+            font-weight: 600;
+            margin-bottom: 10;
             width: 100%;
+        }
+        .info{
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+        }
+        .team-score{
+            font-size: 17px;
+            font-weight: 600;
+        }
+        .team{
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
+            flex-direction: row;
+            gap: 8px;
+        }
+        .team img{
+            height: 35px;
+            width: 35px;
+            background: #cbcbc6;
+            border-radius: 50%;
+            display: flex;
+            overflow: hidden;
+            object-fit: cover;
+            align-items: center;
+            justify-content: center;
         }
 
         @media(max-width: 1000px){
@@ -212,7 +214,6 @@
             .container2{
                 gap: 70px;
                 width: 100%;
-                overflow:hidden;
             }
             .game-container {
                 height: 65px;
@@ -268,19 +269,7 @@
                 justify-items: center;
                 align-items: start;
             }
-            .add-btn button{
-                background:var(--background);
-                color: #fff;
-                font-size: 12px;
-                border: 1px solid transparent;
-                border-radius: 48px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                height: 40px;
-                width: 96px;
-            }
+           
         }
 
         @media(max-width:601px){
@@ -297,16 +286,13 @@
                 align-items: flex-start;
                 justify-content: flex-start;
                 flex-direction: column;
-                flex-wrap: wrap;
                 gap: 30px;
                 scrollbar-width: none;
             }
             .container2{
                 width: 100%;
                 gap: 50px;
-                height: 60%;
                 justify-content: space-between;
-                overflow: hidden;
             }
             .game-list {
                 display: flex;
@@ -369,30 +355,7 @@
                 box-shadow:0px 4px 0px rgb(131 131 131 / 50%);
                 background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
             }
-            .team{
-                height: 95px;
-                width: 360px;
-            }
-            .team-list{
-                display: grid;
-                align-items: start;
-                justify-items: center;
-                grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-                gap: 20px;
-            }
-            .add-btn button{
-                background:var(--background);
-                color: #fff;
-                font-size: 12px;
-                border: 1px solid transparent;
-                border-radius: 48px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                height: 40px;
-                width: 96px;
-            }
+            
         }
     </style>
 </head>
@@ -537,7 +500,7 @@
             let data = {
                 update : '',
                 sport: sport,
-                for : 'manage_teams'
+                for : 'manage_matches'
             }
 
             displayContent(data);
@@ -560,6 +523,7 @@
             
         }
 
+        //go to previous page
         let goBack = ()=>{
             window.history.back();
         }
@@ -567,7 +531,7 @@
         let selectedTeams = [];
 
         let get_team_info = (el)=>{
-            const teamID = el.getAttribute('data-team_id');
+            const tournamentID = el.getAttribute('data-team_id');
             if (document.referrer.includes('select-teams.php')) {
                 let urlParams = new URLSearchParams(window.location.search);
                 let teamParam = urlParams.get('for-team');
@@ -576,30 +540,30 @@
                 if(previousUrl){
                     // Add parameters to the previous URL
                     let url = new URL(previousUrl);
-                    url.searchParams.set(teamParam,teamID);
+                    url.searchParams.set(teamParam,tournamentID);
 
                     // Redirect to modified URL
                     window.location.href = url.toString();
                 }
             }else if (document.referrer.includes('add-tournament.php')) {
                 // Multi-selection logic for add-tournament
-                if (!selectedTeams.includes(teamID)) {
-                    selectedTeams.push(teamID);
+                if (!selectedTeams.includes(tournamentID)) {
+                    selectedTeams.push(tournamentID);
                     el.classList.add('selected-team');
                 } else {
-                    selectedTeams = selectedTeams.filter(id => id !== teamID);
+                    selectedTeams = selectedTeams.filter(id => id !== tournamentID);
                     el.classList.remove('selected-team');
                 }
 
                 console.log(selectedTeams);
 
             }else{
-                window.location.href = `team-info.php?t=${teamID}`;
+                // window.location.href = `team-info.php?t=${tournamentID}`;
             }
         }
 
         document.querySelector('.plus').addEventListener('click',()=>{
-            window.location.href = "./create-team.php?for=team";
+            window.location.href = "./create-team.php?for=schedule_match";
         })
 
         let save = () =>{

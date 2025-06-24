@@ -556,10 +556,33 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
           }
+          #topBtn {
+                position: fixed;
+                bottom: 35px;
+                right: 35px;
+                padding: 16px 16px;
+                font-size: 16px;
+                background-color: #fff;
+                color: white;
+                border: none;
+                border-radius: 20px;
+                box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+                cursor: pointer;
+                display: none;
+                z-index: 999;
+                transform: scale(0.9);
+                transition : all ease-in-out 0.2s;
+            }
+
+            #topBtn:hover {
+                background-color: #efefef;
+                transform: scale(1);
+            }
     </style>
 </head>
 <body>
     <div class="body">
+        <button onclick="scrollToTop()" id="topBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAArCAYAAADhXXHAAAAAAXNSR0IArs4c6QAAAWFJREFUWEft1z9KxEAYhvHfdooiWKnYaWkjlmLjRRTsBAtvIiKIB9AzWCmIrTfwH1ipVxDFHUgkLNmYTWaKhUmZzHx5ePJ+H5OBKboGU8Qqw6b6WtlsNktusFQpyGaz2WAgxZxdwA3msIuPWKpjwwbQO2wWgC/YjgUcE3YUtBQaDTgW7CJuC6NX2MESLnCMKMAxYAPoPTYQQPfwhBXM4iQWcF/YOtCfwmQJG+IQBbgP7DjQAPdamJ2pTILewF1hm0DHwYb758PJcNg1w11gw54HbOFyaHEf4dNXr2esomq2fH6GIzwWOf9qO4e7wM7jDddFM33XvKwJNiw/HdY4wDo+U8K2qf0fbKixjPc2xco1Xcy2qV/XYG32Na7JsGNGVzbb2wDaNNjE78mZzZlN9FvTdDaYOKfVDakyG8634Wyw1otuZHMq2JiMf7UybBKtCRssCW+OQRKtOQaptGazCc3+Aqt3QSyEFKHQAAAAAElFTkSuQmCC" alt=""></button>
         <div id="loader">
             <div class="spinner"></div>
         </div>
@@ -832,6 +855,20 @@
             document.body.appendChild(iframe);
         }
 
+        // Show button after scrolling 200px
+        window.onscroll = function() {
+            let topBtn = document.getElementById("topBtn");
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                topBtn.style.display = "block";
+            } else {
+                topBtn.style.display = "none";
+            }
+        };
+
+        // Scroll to top smoothly
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>

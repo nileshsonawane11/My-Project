@@ -200,8 +200,8 @@
             gap: 5px;
         }
         .logo{
-            min-height: 75px;
-            min-width: 75px;
+            height: 75px;
+            width: 75px;
             background: #e8e8e8;
             margin: 10px;
             border-radius: 50%;
@@ -209,6 +209,12 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            overflow: hidden;
+        }
+        .logo img{
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
         }
         .part.or{
             text-align: center;

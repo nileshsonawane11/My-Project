@@ -80,13 +80,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 5px;
+            padding: 5px 5px;
+            position: relative;
         }
         .nav-content{
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             width: 100%;
             padding-left: 10px;
             padding-right: 30px;
@@ -103,7 +106,11 @@
             justify-content: center;
             z-index: 9999;
         }
-      
+        .logo-img{
+            overflow: hidden;
+            object-fit: contain;
+            height: 30px;
+        }
         .spinner {
             width: 40px;
             height: 40px;
@@ -158,6 +165,19 @@
             gap: 10px;
             margin: 20px 0;
         }
+        .menu-items p{
+            text-align: right;
+            font-size: 18px;
+        }
+        .menu-items .username{
+            text-align: right;
+            font-size: 15px;
+        }
+        .menu-items .user-photo{
+            height: 50px;
+            width: 50px;
+            border-radius : 50%;
+        }
         .menu-items div{
             max-width: fit-content;
             display: flex;
@@ -190,8 +210,8 @@
                 height: 30px;
                 padding: 5px;
                 width: 100%;
-                border: 1px solid #333;
-                border-radius: 5px;
+                border: 1px solid #999999;
+                border-radius: 25px;
                 font-size: 15px;
                 font-weight: 500;
                 padding-right: 52px;
@@ -208,7 +228,10 @@
             position: relative;
         }
         .btn-outline-success:focus{
-            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            background: #f0f0f0;
+        }
+        .btn-outline-success:hover{
+            background: #f0f0f0;
         }
         .plus-icon{
             display: flex;
@@ -244,8 +267,8 @@
             z-index: 1;
         }
         .updates .update-container{
-            height: 35px;
-            width: 100px;
+            height: 30px;
+            width: 80px;
             display: flex;
             border: solid 1px black;
             border-radius: 10px;
@@ -327,7 +350,7 @@
         .info-container .game-name{
             font-size: 25px;
             font-weight: 600;
-            margin-bottom: 10
+            margin-bottom: 10;
             width: 100%;
         }
         .info{
@@ -376,7 +399,112 @@
             flex-direction: column;
             gap: 10px;
         }
-       
+        .trade-mark{
+            position: absolute;
+            top: 7px;
+            font-size: 7px;
+            right: -8px;
+        }
+        #startMatchDialog{
+            z-index: 9999;
+            position: fixed;
+            transform: translateX(-50%) translateY(-50%);
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            border: none;
+            height: max-content;
+            background: rgb(255 255 255);
+            flex-direction: column;
+            transition: all 0.5s ease-in-out;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+        }
+        #startMatchDialog::backdrop {
+            position: fixed;
+            inset: 0px;
+            background: rgba(0, 0, 0, 0.25);
+        }
+        
+        #content-wrapper{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px
+        }
+        #matchPasswordForm{
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .form-data{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+        }
+        .form-data label{
+            font-size: 14px;
+            line-height: 35px;
+            font-weight : 500;
+        }
+        .btns{
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+        #matchPassword{
+            padding: 7px;
+            height: 20px;
+            outline: none;
+            border: none;
+            border-radius: 7px 7px 0px 0px;
+            border-bottom: solid 1px black;
+            background: #80808030;
+            color: black;
+        }
+        .btns > *{
+            width: 100px;
+            height: 35px;
+            border-radius: 23px; /* slightly less than wrapper to show border */
+            border: solid 1px #ff9200;
+            color :#ff9200;
+            background : transparent;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+        .btns > *:last-child{
+            background : linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            color : white;
+        }
+
+        .btns > *:last-child:hover {
+            background : linear-gradient(90deg, #fac01fdb, #f83900cc);
+        }
+        .btns > *:first-child:hover {
+            background : linear-gradient(90deg,rgba(250, 192, 31, 0.1),rgba(248, 58, 0, 0.1));
+        }
+        .error{
+            display: none;
+            color:red; 
+            width:100%;
+            font-size:13px;
+            margin: 5px;
+        }
+        .update{
+            color:red; 
+            width:100%;
+            word-spacing: 2px;
+            letter-spacing: 1px;
+        }
+
         @media(max-width: 1000px){
             .game-list {
                 justify-content: flex-start;
@@ -397,7 +525,7 @@
         }
         @media(min-width: 601px){
             .logo-img img{
-                height: 45px;
+                height: 100%;
             }
             .txt-strike{
                 font-weight: 200;
@@ -409,7 +537,7 @@
                 font-size: 25px;
                 color: black;
                 text-align: left;
-                width: 130px;
+                width: max-content;
                 font-weight: 400;
                 overflow: hidden;
                 white-space: nowrap;
@@ -420,8 +548,8 @@
             }
             .btn-outline-success{
                 position: absolute;
-                border-radius: 0px 5px 5px 0px;
-                border: solid 1px black;
+                border-radius: 0px 25px 25px 0px;
+                border: solid 1px #999999;
                 font-size: 25px;
                 width: 44px;
                 display: flex;
@@ -430,15 +558,15 @@
                 height: 30px;
                 align-items: center;
                 justify-content: center;
-                background: white;
+                background: #f8f8f8;
                 cursor: pointer;
             }
             .form-control{
                 height: 30px;
                 padding: 5px;
                 width: 300px;
-                border: 1px solid #333;
-                border-radius: 5px;
+                border: 1px solid #999999;
+                border-radius: 25px;
                 font-size: 15px;
                 font-weight: 500;
                 padding-right: 52px;
@@ -449,7 +577,7 @@
             }
             .list{
                 display: flex;
-                gap: 30px;
+                gap: 15px;
                 flex-direction: row;
                 justify-content: center;
                 align-items: center;
@@ -473,7 +601,7 @@
             }
             .game-container {
                 height: 65px;
-                margin-top: 79.2px;
+                margin-top: 60px;
                 background: white;
                 overflow: hidden;
                 border-bottom: solid black 1px;
@@ -497,11 +625,11 @@
                 cursor: pointer;
             }
             .game p{
-                font-size: 12px;
+                font-size: 11px;
                 text-wrap: auto;
             }
             svg{
-                height: 25px;
+                height: 20px;
             }
             .add-container{
                 z-index: 999999;
@@ -551,8 +679,15 @@
         }
 
         @media(max-width: 601px){
+            .nav-content{
+                padding-right: 20px;
+                padding-left: 0;
+            }
             .logo-img img{
-                height: 40px;
+                height: 100%;
+            }
+            .logo-img{
+                height: 25px;
             }
             .txt-strike{
                 font-weight: 200;
@@ -561,10 +696,10 @@
                 -webkit-text-fill-color: transparent;
             }
             .logo-name {
-                font-size: 25px;
+                font-size: 20px;
                 color: black;
                 text-align: left;
-                width: 130px;
+                width: max-content;
                 overflow: hidden;
                 white-space: nowrap;
                 margin-bottom: 0rem;
@@ -572,8 +707,8 @@
             }
             .btn-outline-success{
                 position: absolute;
-                border-radius: 0px 5px 5px 0px;
-                border: solid 1px black;
+                border-radius: 0px 25px 25px 0px;
+                border: solid 1px #999999;
                 font-size: 20px;
                 width: 44px;
                 display: flex;
@@ -582,15 +717,15 @@
                 height: 30px;
                 align-items: center;
                 justify-content: center;
-                background: white;
+                background: #f8f8f8;
             }
             .form-control{
                 height: 30px;
                 padding: 5px;
                 width: 100%;
-                border: 1px solid #333;
-                border-radius: 5px;
-                font-size: 15px;
+                border: 1px solid #999999;
+                border-radius: 25px;
+                font-size: 12px;
                 font-weight: 500;
                 padding-right: 52px;
                 color: #333;
@@ -600,10 +735,13 @@
             }
             .list{
                 display: flex;
-                gap: 20px;
+                gap: 10px;
                 flex-direction: row;
                 justify-content: center;
                 align-items: center;
+            }
+            .updates .update-container{
+                margin: 0px 5px;
             }
             .pls{
                 width: 100%;
@@ -628,8 +766,8 @@
                 background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
             }
             .game-container {
-                height: 70px;
-                margin-top: 79.2px;
+                height: 60px;
+                margin-top: 60px;
                 background: white;
                 overflow: hidden;
                 border-bottom: solid black 1px;
@@ -647,7 +785,7 @@
                 flex-direction: row;
                 justify-content: flex-start;
                 align-items: center;
-                height: 70px;
+                height: 100%;
                 overflow-x: auto;
                 overflow-y: hidden;
                 scrollbar-width: none;
@@ -665,24 +803,24 @@
                 align-items: center;
                 justify-content: center;
                 min-width: 80px;
-                padding: 6px 10px;
+                padding: 6px 0px;
                 gap: 7px;
                 white-space: nowrap;
                 cursor: pointer;
             }
             .game p{
-                font-size: 12px;
+                font-size: 11px;
                 text-wrap: auto;
             }
             svg{
-                height: 25px;
+                height: 20px;
             }
             .game-info{
                 height: 100px;
                 width: 300px;
                 background:linear-gradient(35deg, rgba( #D9D9D9,0.1),rgba( #888888,0.1));
                 border-radius:25px;
-                box-shadow: inset 0px 3px 0px 0.5px #000;
+                box-shadow: inset 0px 2px 0px 0.5px #000;
             }
             .add-container{
                 z-index: 999999;
@@ -729,14 +867,50 @@
             <div class="spinner"></div>
         </div>
 
+        <dialog id="startMatchDialog">
+            <div id="content-wrapper">
+                <div class="top-container">
+                    <p id="title">Enter Password to Start Match</p>
+                </div>
+
+                <div class="body-container">
+                <form id="matchPasswordForm">
+                    <div class="form-data">
+                        <label for="matchPassword">Password:</label>
+                        <input type="text" name="" id="match_id" hidden>
+                        <input type="text" id="matchPassword" name="matchPassword" required>
+                        <div id="error-matchpassword" class="error"></div>
+                    </div>
+
+                    <div class='btns'>
+                        <button id='submit-btn' type="button" onclick="closeDialog()">Cancel</button>
+                        <button id='cancel-btn' type="submit">Start Match</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </dialog>
+
+
         <div class="sidebar">
             <div id="close-sidebar">&times;</div>
             <div class="menu-list">
                 <div class="menu-part">
-                    <div class="menu-items"><div><p>Profile</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13 0.5C14.6415 0.499992 16.267 0.823308 17.7835 1.45149C19.3001 2.07967 20.6781 3.00041 21.8388 4.16114C22.9996 5.32187 23.9203 6.69986 24.5485 8.21643C25.1767 9.733 25.5 11.3585 25.5 13C25.5 19.9036 19.9036 25.5 13 25.5C6.09647 25.5 0.5 19.9036 0.5 13C0.5 6.09647 6.09647 0.5 13 0.5ZM14.25 14.25H11.75C8.65537 14.25 5.99855 16.1243 4.85264 18.7997C6.66576 21.3421 9.63928 23 13 23C16.3607 23 19.3342 21.3421 21.1474 18.7995C20.0015 16.1243 17.3447 14.25 14.25 14.25ZM13 4.25C10.9289 4.25 9.24998 5.92895 9.24998 8C9.24998 10.0711 10.9289 11.75 13 11.75C15.071 11.75 16.75 10.0711 16.75 8C16.75 5.92895 15.0711 4.25 13 4.25Z" fill="black"/>
-                        </svg></div>
-                    </div>
+                    <div class="menu-items"><div><p class="username"><?php echo $_SESSION['name']." (".$_SESSION['role'].") "; ?></p>
+                        <?php
+                            $query = mysqli_query($conn,"SELECT * FROM `users` WHERE user_id = '$_SESSION[user]'");
+                            $row = mysqli_fetch_assoc($query);
+                            $user_img = $row['user_photo'];
+
+                            if (!empty($user_img)) {
+                                echo '<img class="user-photo" src="./assets/images/users/' . $user_img . '" alt="">';
+                            } else {
+                                echo '<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13 0.5C14.6415 0.499992 16.267 0.823308 17.7835 1.45149C19.3001 2.07967 20.6781 3.00041 21.8388 4.16114C22.9996 5.32187 23.9203 6.69986 24.5485 8.21643C25.1767 9.733 25.5 11.3585 25.5 13C25.5 19.9036 19.9036 25.5 13 25.5C6.09647 25.5 0.5 19.9036 0.5 13C0.5 6.09647 6.09647 0.5 13 0.5ZM14.25 14.25H11.75C8.65537 14.25 5.99855 16.1243 4.85264 18.7997C6.66576 21.3421 9.63928 23 13 23C16.3607 23 19.3342 21.3421 21.1474 18.7995C20.0015 16.1243 17.3447 14.25 14.25 14.25ZM13 4.25C10.9289 4.25 9.24998 5.92895 9.24998 8C9.24998 10.0711 10.9289 11.75 13 11.75C15.071 11.75 16.75 10.0711 16.75 8C16.75 5.92895 15.0711 4.25 13 4.25Z" fill="black"></path>
+                                    </svg>';
+                            }
+                        ?></div>
+                    </div><hr>
 
                     <div class="menu-items"><div><p>Setting</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M15.76 4.0375C16.3267 4.2125 16.8683 4.4375 17.385 4.7125L19.6763 3.3375C19.9152 3.1942 20.1951 3.13482 20.4716 3.16879C20.7481 3.20276 21.0054 3.32814 21.2025 3.525L22.475 4.7975C22.6719 4.99463 22.7972 5.25187 22.8312 5.52838C22.8652 5.8049 22.8058 6.08484 22.6625 6.32375L21.2875 8.615C21.5625 9.13167 21.7875 9.67333 21.9625 10.24L24.5537 10.8888C24.8241 10.9565 25.064 11.1126 25.2354 11.3322C25.4069 11.5519 25.5 11.8226 25.5 12.1012V13.8988C25.5 14.1774 25.4069 14.4481 25.2354 14.6678C25.064 14.8874 24.8241 15.0435 24.5537 15.1112L21.9625 15.76C21.7875 16.3267 21.5625 16.8683 21.2875 17.385L22.6625 19.6763C22.8058 19.9152 22.8652 20.1951 22.8312 20.4716C22.7972 20.7481 22.6719 21.0054 22.475 21.2025L21.2025 22.475C21.0054 22.6719 20.7481 22.7972 20.4716 22.8312C20.1951 22.8652 19.9152 22.8058 19.6763 22.6625L17.385 21.2875C16.8683 21.5625 16.3267 21.7875 15.76 21.9625L15.1112 24.5537C15.0435 24.8241 14.8874 25.064 14.6678 25.2354C14.4481 25.4069 14.1774 25.5 13.8988 25.5H12.1012C11.8226 25.5 11.5519 25.4069 11.3322 25.2354C11.1126 25.064 10.9565 24.8241 10.8888 24.5537L10.24 21.9625C9.67837 21.7889 9.13431 21.5629 8.615 21.2875L6.32375 22.6625C6.08484 22.8058 5.8049 22.8652 5.52838 22.8312C5.25187 22.7972 4.99463 22.6719 4.7975 22.475L3.525 21.2025C3.32814 21.0054 3.20276 20.7481 3.16879 20.4716C3.13482 20.1951 3.1942 19.9152 3.3375 19.6763L4.7125 17.385C4.43705 16.8657 4.21106 16.3216 4.0375 15.76L1.44625 15.1112C1.17615 15.0436 0.936373 14.8877 0.764953 14.6683C0.593534 14.4488 0.500286 14.1784 0.5 13.9V12.1025C0.500007 11.8238 0.593128 11.5532 0.764569 11.3335C0.936011 11.1138 1.17594 10.9577 1.44625 10.89L4.0375 10.2413C4.2125 9.67458 4.4375 9.13292 4.7125 8.61625L3.3375 6.325C3.1942 6.08609 3.13482 5.80615 3.16879 5.52963C3.20276 5.25312 3.32814 4.99588 3.525 4.79875L4.7975 3.525C4.99463 3.32814 5.25187 3.20276 5.52838 3.16879C5.8049 3.13482 6.08484 3.1942 6.32375 3.3375L8.615 4.7125C9.13167 4.4375 9.67333 4.2125 10.24 4.0375L10.8888 1.44625C10.9564 1.17615 11.1123 0.936373 11.3317 0.764953C11.5512 0.593534 11.8216 0.500286 12.1 0.5H13.8975C14.1762 0.500007 14.4468 0.593128 14.6665 0.764569C14.8862 0.936011 15.0423 1.17594 15.11 1.44625L15.76 4.0375ZM13 18C14.3261 18 15.5979 17.4732 16.5355 16.5355C17.4732 15.5979 18 14.3261 18 13C18 11.6739 17.4732 10.4021 16.5355 9.46447C15.5979 8.52678 14.3261 8 13 8C11.6739 8 10.4021 8.52678 9.46447 9.46447C8.52678 10.4021 8 11.6739 8 13C8 14.3261 8.52678 15.5979 9.46447 16.5355C10.4021 17.4732 11.6739 18 13 18Z" fill="black"/>
@@ -746,9 +920,9 @@
                     <?php
                     if($_SESSION['role'] == 'Admin'){
 
-                    echo '<div class="menu-items"><div><p>My Matches</p><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt="" style="width:26px; filter: grayscale(1) invert(1) brightness(0.0) contrast(29);"></div></div>';
+                    echo '<div class="menu-items"><div onclick="window.location.href=`./Frontend/manage-matches.php`"><p>My Matches</p><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt="" style="width:26px; filter: grayscale(1) invert(1) brightness(0.0) contrast(29);"></div></div>';
 
-                    echo '<div class="menu-items"><div><p>My Tournaments</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">';
+                    echo '<div class="menu-items"><div onclick="window.location.href=`./Frontend/manage-tournaments.php`"><p>My Tournaments</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">';
                       echo  '<path d="M20.5 0.5V4.25H25.5C25.4658 7.26719 24.9918 9.39498 24.0779 10.6334L23.9375 10.8125C23.2027 11.6942 21.9485 12.3209 20.1749 12.6927C19.3552 15.3769 17.0705 17.4221 14.2527 17.8958C14.2506 17.9305 14.2497 17.9652 14.25 18C14.25 20.7614 16.4885 23 19.25 23V25.5H6.74996V23C9.51143 23 11.75 20.7614 11.75 18L11.7473 17.8958C8.92947 17.4221 6.64484 15.3769 5.82553 12.6924C4.05143 12.3209 2.79723 11.6942 2.06246 10.8125C1.05668 9.60551 0.535859 7.41801 0.5 4.25H5.49998V0.5H20.5ZM18 2.99996H8V10.5C8 13.1778 10.1049 15.3638 12.7504 15.4938L13 15.5C15.7614 15.5 18 13.2614 18 10.5V2.99996ZM13 4.25L14.2644 7.25996L17.375 7.59688L15.0431 9.78436L15.7037 13L13 11.3462L10.2962 13L10.9569 9.77996L8.62496 7.59248L11.7356 7.25562L13 4.25ZM5.49998 6.74996H3.17246L3.19965 6.92996C3.3599 7.95605 3.60588 8.68408 3.90131 9.1049L3.98305 9.21201C4.21367 9.48881 4.64721 9.74949 5.28951 9.96846L5.49998 10.035V6.74996ZM22.8275 6.74996H20.5V10.035L20.7105 9.96846C21.3528 9.74949 21.7863 9.48881 22.0169 9.21201L22.0987 9.1049C22.3941 8.68408 22.6401 7.95605 22.8004 6.92996L22.8275 6.74996Z" fill="black"/>';
                        echo '</svg></div>';
                     echo '</div>';
@@ -865,8 +1039,8 @@
                 <div class="nav-content">
                     <div class="items">
                         <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
-                        <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p><p class="user-name">WelCome,<?php echo $_SESSION['name']."(".$_SESSION['role'].")"; ?></p></div>
-                    </div>
+                        <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
+                    <sup class="trade-mark">TM</sup></div>
 
                     <div class="items list">
 
@@ -884,7 +1058,7 @@
                     </form>
 
 
-                        <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
+                        <a href="" class="menu-bar"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" focusable="false" aria-hidden="true" style="pointer-events: none; display: inherit; width: 100%; height: 100%;"><path d="M21 6H3V5h18v1zm0 5H3v1h18v-1zm0 6H3v1h18v-1z"></path></svg></a>
                     
                     </div>
 
@@ -1003,7 +1177,63 @@
             
         }
 
+        // Open dialog for password
+        function openDialog(button) {
+            const dialog = document.getElementById("startMatchDialog");
+            dialog.showModal();
 
+            const match_to_start = button.closest('.game-info').getAttribute('data-match_id');
+            console.log("Match : " + match_to_start);
+
+            document.getElementById("match_id").value = match_to_start;
+        }
+
+        // Close dialog of password
+        function closeDialog() {
+            const dialog = document.getElementById("startMatchDialog");
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                el.innerHTML = '';
+                el.style.display = 'none';
+            });
+            document.getElementById("matchPasswordForm").reset();
+            dialog.close();
+        }
+
+        
+        // Variefy match password
+        document.getElementById("matchPasswordForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            password = document.getElementById("matchPassword").value;
+            match_id = document.getElementById("match_id").value;
+
+            let formdata = new FormData();
+            formdata.append('password', password.trim());
+            formdata.append('match_id', match_id);
+
+            fetch('./Backend/ckeck-match-password.php',{
+                method : 'POST',
+                body : formdata
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                console.log(data);
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+                if(data.status != 200){
+                    let err = document.getElementById(`error-${data.field}`);
+                    err.innerHTML = data.message;
+                    err.style.display = 'block';
+                }else{
+                    window.location.href = `./Frontend/${SportName}/match_toss.php?match_id=${match_id}`;
+                    document.getElementById("matchPasswordForm").reset();
+                    closeDialog();
+                }
+            })
+            .catch();
+        });
+        
         //Default Status & Sport
         let update = document.querySelector('.live').textContent.trim();
         console.log(update);

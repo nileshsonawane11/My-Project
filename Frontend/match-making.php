@@ -481,10 +481,13 @@
         let tournament = <?php echo json_encode($tournament); ?>;
         let matches = <?php echo json_encode($matches); ?>;
         let teams = '<?php echo json_encode($team_ids) ?>';
+
+        //got ot previous page
         let goBack = ()=>{
             window.history.back();
         }
 
+        //make animation-transition
         window.onload = () => {
             document.querySelectorAll('.right-side').forEach(el => {
                 el.classList.add('show');
@@ -511,19 +514,19 @@
             });
         };
 
-        //Shuffle match
+        //Shuffle matches
         let shuffle = ()=>{
             window.location.reload();
         }
 
+        //save matches
         let save = () => {
-            console.log('clicked')
             let formdata = new FormData();
             formdata.append('matches',JSON.stringify(matches));
             formdata.append('tournament',tournament);
             formdata.append('teams', teams);
 
-
+            //add teams in tournament
             fetch('../Backend/add-tournament-teams.php',{
                 body : formdata,
                 method : 'POST'
@@ -534,6 +537,7 @@
             })
             .catch(error => console.log(error));
 
+            //add matche between teams
             fetch('../Backend/make_match.php',{
                 method : 'POST',
                 body : formdata
