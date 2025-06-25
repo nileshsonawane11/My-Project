@@ -2,11 +2,11 @@
     session_start();
 
     if(!isset($_SESSION['user'])){
-        header('location: ./front-page.php');
+        header('location: ../../front-page.php');
         exit();
     }
     if($_SESSION['role'] == "User"){
-        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+        header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
         exit();
     }
 
@@ -118,13 +118,12 @@
         .options{
             height: 147px;
             width: 111px;
-            border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-around;
             background: #EEEEEE;
-            box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
             cursor: pointer;
         }
         .teams.active,
@@ -174,6 +173,19 @@
         }
         .types .options{
             margin-left:10%;
+        }
+        .player-frame{
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: bottom 0.8s ease;
+            z-index: 999;
+        }
+        .player-frame.active{
+            bottom: 0;
         }
 
         @media (min-width:601px) {
@@ -343,31 +355,31 @@
                         </div>
                     </div>
                     <div class="add-btn">
-                        <button onclick="start_match(event)" type="submit" id="start-match">Start Scoring</button>
+                        <button onclick="start_scoring(event)" type="submit" id="start-scoring">Start Scoring</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <iframe src="./select-player-from-team.php" frameborder="0" class="player-frame"></iframe>
     <script>
         const teams = document.querySelectorAll('.teams');
         const options = document.querySelectorAll('.options');
+        let next_page = document.querySelector('.player-frame');
+        const match = <?php echo $match ?>;
         let selecteddecision = '';
         let selectedteam = '';
 
         let goBack = ()=>{
-            window.history.back();
+            window.location.href = '../../dashboard.php?update="live"&sport="CRICKET"';
         }
 
         options.forEach(option => {
             option.addEventListener('click', () => {
-                if(option.classList.contains('active')) {
-                option.classList.remove('active');
+                if(selecteddecision) {
                 selecteddecision = '';
                 console.log("Selection Option", selecteddecision);
                 } else {
-                options.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
                 selecteddecision = option.getAttribute('data-value');
                 console.log("Selected Option:", selecteddecision);
                 }
@@ -376,54 +388,73 @@
 
         teams.forEach(option => {
             option.addEventListener('click', () => {
-                if(option.classList.contains('active')) {
-                option.classList.remove('active');
+                if(selectedteam) {
                 selectedteam = '';
                 console.log("Selection Team", selectedteam);
                 } else {
-                teams.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
                 selectedteam = option.getAttribute('data-value');
                 console.log("Selected Team:", selectedteam);
                 }
             });
         });
 
-        let start_match = (e) => {
-            e.preventDefault();
-            let formdata = new FormData();
-            formdata.append('match_id', <?php echo $match; ?>);
-            formdata.append('selectedteam', selectedteam);
-            formdata.append('selecteddecision', selecteddecision);
-
-            document.querySelectorAll('[id^="error-"]').forEach((el) => {
-                el.innerHTML = '';
-                el.style.display = 'none';
-            });
-
-            fetch('../../Backend/make_toss.php',{
-                method : 'POST',
-                body : formdata
-            })
-            .then(rsponse => rsponse.json())
-            .then((data) => {
-                console.log(data);
-                if(data.status != 200){
-                    let el = document.getElementById(`error-${data.field}`);
-                    el.innerHTML = data.message;
-                    el.style.display = 'block';
-                }
-            })
-            .catch(error => console.log(error));
-
-        }
-
         //select player
         let select_player = (el) => {
             let player_type = el.querySelector('.tname').textContent;
             console.log(player_type);
-            window.location.href = `./select-player-from-team.php?${player_type}=`;
+            next_page.classList.add('active'); 
+            next_page.src = `./select-player-from-team.php?for=${player_type}`;
         }
+
+        let striker = '';
+        let non_striker = '';
+        let bowler = '';
+
+        //get dat from iframe
+         window.addEventListener("message", (event) => {
+            if (event.data === "closeIframe") {
+                next_page.classList.remove('active');  
+
+                // setTimeout(()=>{
+                //     window.location.replace(`./select-players.php?match_id=${match}`);
+                // },550)
+            }
+
+            if(event.data.type == 'player'){
+                let batsman = document.querySelector('.team');
+                let bowlers = document.querySelector('.types');
+                if(event.data.person == 'Striker'){
+                    striker = event.data.data;
+                    batsman.children[0].classList.add('active')
+                    console.log(striker);
+                }else if(event.data.person == 'Non-Striker'){
+                    non_striker = event.data.data;
+                    batsman.children[1].classList.add('active')
+                    console.log(non_striker);
+                }else if(event.data.person == 'Bowler'){
+                    bowler = event.data.data;
+                    bowlers.children[0].classList.add('active')
+                    console.log(bowler);
+                }
+            }
+
+        });
+
+        //start scoring
+        let start_scoring = () => {
+            console.log(striker, non_striker, bowler);
+            if(striker && non_striker && bowler){
+                let data = {
+                    match_id: match,
+                    striker: striker,
+                    non_striker: non_striker,
+                    bowler: bowler
+                }
+
+                window.location.href = `./score_panel.php?data=${JSON.stringify(data)}`;
+            }
+        }
+
     </script>
 </body>
 </html>
