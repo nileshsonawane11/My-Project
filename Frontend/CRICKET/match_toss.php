@@ -17,7 +17,7 @@
     $row = mysqli_fetch_assoc($query1);
 
     if(!empty($row['toss_winner'])){
-        header("Location: ./select-players.php?match_id='$match'");
+        header("Location: ./select-players.php?match_id=$match");
         exit();
     }
 
@@ -419,7 +419,7 @@
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }else{
-                    window.location.href = './select-players.php?match_id="<?php echo $match; ?>"';
+                    window.location.href = './select-players.php?match_id=<?php echo $match; ?>';
                 }
             })
             .catch(error => console.log(error));

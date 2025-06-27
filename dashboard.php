@@ -334,6 +334,7 @@
             gap: 8px;
             flex-direction: column;
             align-items: flex-start;
+            width: 100%;
         }
         .info-container{
             max-height: max-content;
@@ -776,7 +777,6 @@
                 z-index: 2;
             }
             .main-body{
-                height: 100vh;
                 width: 100%;
             }
 
@@ -856,6 +856,9 @@
                 border-radius: 17px;
                 background: #F2F2F2;
                 box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            }
+            .info-container{
+                margin-bottom: 80px;
             }
         }
     </style>
@@ -1143,6 +1146,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
     <script>
+
         //display content as per user's selection(Status & Sport)
         function loadgames(update, sport) {
             let params = new URLSearchParams(window.location.search);
@@ -1170,7 +1174,17 @@
                 .then(response => response.text())
                 .then(data => {
                     let info_container = document.querySelector('.info-container');
-                    info_container.innerHTML = data;
+
+                    let tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = data;
+
+                    requestAnimationFrame(() => {
+                        if (info_container && info_container.innerHTML !== tempDiv.innerHTML) {
+                            info_container.innerHTML = data;
+                            console.log('updated');
+                        }
+                    });
+                    
                 })
                 .catch(error => console.error(error))
             }
@@ -1240,7 +1254,10 @@
         const defaultCategory = document.querySelector('.cricket');
         let SportName = defaultCategory.querySelector('p').textContent.trim();
         console.log(SportName);
-        loadgames(update,SportName)
+        loadgames(update,SportName);
+        setInterval(() => {
+            loadgames(update,SportName);
+        }, 1000);
 
         //update Status
         const updates = document.querySelectorAll('.update-container');
@@ -1346,6 +1363,7 @@
             opacity.style.display = 'none';
             plus_sign.style.display = 'block';
         }
+
     </script>
 </body>
 </html>

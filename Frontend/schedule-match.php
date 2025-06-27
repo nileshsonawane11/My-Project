@@ -588,6 +588,21 @@
                             <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Date</label></div>
                             <div class="input-fields event-time"><input type="time" id="timeInput" placeholder="Select Time" required><label for="timeInput" id="time">Time</label></div>
                         </div>
+                        
+                         <div class="info">
+                            <h4>Overs</h4>
+                            <select name="" id="over">
+                                <option value='Null' disabled selected>Select Overs</option>
+                                <?php
+                                    for ($i = 1; $i <= 20; $i++) {
+                                        echo "<option value='$i'>$i</option>";
+                                    }
+                                ?>
+                                <option value='50'>50</option>
+                                <option value='-'>Unlimited</option>
+                            </select>
+                        </div>
+
                         <div id="error-empty" class="error"></div>
                         <div id="error-datetime" class="error"></div>
                     </div>
@@ -694,6 +709,7 @@
             let timeInput = document.getElementById('timeInput').value;
             let dateInput = document.getElementById('dateInput').value;
             let s_type = document.getElementById('s-type').value;
+            let over = document.getElementById('over').value;
             let password = '';
 
             let formdata = new FormData();
@@ -705,6 +721,7 @@
             formdata.append('timeInput',timeInput);
             formdata.append('dateInput',dateInput);
             formdata.append('s_type',s_type);
+            formdata.append('over',over);
             formdata.append('Umpires[]', Umpires);
             formdata.append('Scorers[]', Scorers);
             formdata.append('Commentators[]', Commentators);

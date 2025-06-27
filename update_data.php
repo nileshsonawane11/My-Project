@@ -54,13 +54,27 @@ if($for == "dashboard"){
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='./assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
-                    echo "<div class='score'>{$row['score_team_1']}</div>";
+                        echo "<div class='team'>";
+                            if (!empty($team1['t_logo'])) {
+                                echo "<img src='./assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror=\"this.style.opacity='0'\">";
+                            }else{
+                                echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
+                            }
+                            echo $team1['t_name'];
+                        echo "</div>";                    
+                        echo "<div class='score'>{$row['score_team_1']}</div>";
                     echo "</div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='./assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
-                    echo "<div class='score'>{$row['score_team_2']}</div>";
+                        echo "<div class='team'>";
+                            if (!empty($team2['t_logo'])) {
+                                echo "<img src='./assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror=\"this.style.opacity='0'\">";
+                            }else{
+                                echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
+                            }
+                            echo $team2['t_name'];
+                        echo "</div>";                     
+                        echo "<div class='score'>{$row['score_team_2']}</div>";
                     echo "</div>";
 
                     if(empty($row['toss_winner'])){
@@ -112,13 +126,27 @@ if($for == "dashboard"){
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='./assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
-                    echo "<div class='score'>{$row['score_team_1']}</div>";
+                        echo "<div class='team'>";
+                            if (!empty($team1['t_logo'])) {
+                                echo "<img src='./assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror=\"this.style.opacity='0'\">";
+                            }else{
+                                echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
+                            }
+                            echo $team1['t_name'];
+                        echo "</div>";                    
+                        echo "<div class='score'>{$row['score_team_1']}</div>";
                     echo "</div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='./assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
-                    echo "<div class='score'>{$row['score_team_2']}</div>";
+                        echo "<div class='team'>";
+                            if (!empty($team2['t_logo'])) {
+                                echo "<img src='./assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror=\"this.style.opacity='0'\">";
+                            }else{
+                                echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
+                            }
+                            echo $team2['t_name'];
+                        echo "</div>";                    
+                        echo "<div class='score'>{$row['score_team_2']}</div>";
                     echo "</div>";
 
                     if(empty($row['toss_winner'])){
@@ -147,7 +175,10 @@ if($for == "dashboard"){
                         echo "<div class='info'><button class='start-btn' onclick='openDialog(this)'>Start</button></div>";
                     }
                     echo "</div>";
+
                 echo "</div>";
+
+                
             }
         }
     }
@@ -252,13 +283,27 @@ if($for == "manage_matches"){
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='../assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror='this.style.opacity=`0`'>{$team1['t_name']}</div>";
-                    echo "<div class='score'>{$row['score_team_1']}</div>";
+                        echo "<div class='team'>";
+                            if (!empty($team1['t_logo'])) {
+                                echo "<img src='../assets/images/teams/{$team1['t_logo']}' alt='{$team1['t_name']}' onerror=\"this.style.opacity='0'\">";
+                            }else{
+                                echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
+                            }
+                            echo $team1['t_name'];
+                        echo "</div>";                     
+                        echo "<div class='score'>{$row['score_team_1']}</div>";
                     echo "</div>";
 
                     echo "<div class='info team-score'>";
-                    echo "<div class='team'><img src='../assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror='this.style.opacity=`0`'>{$team2['t_name']}</div>";
-                    echo "<div class='score'>{$row['score_team_2']}</div>";
+                        echo "<div class='team'>";
+                            if (!empty($team2['t_logo'])) {
+                                echo "<img src='../assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror=\"this.style.opacity='0'\">";
+                            }else{
+                                echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
+                            }
+                            echo $team2['t_name'];
+                        echo "</div>";                     
+                        echo "<div class='score'>{$row['score_team_2']}</div>";
                     echo "</div>";
 
                     echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
@@ -291,11 +336,18 @@ if($for == "add_staff"){
             $data .= "<h3>Select From Search</h3>";
         }
         while($row = mysqli_fetch_assoc($query)){
+
+            if($row['user_photo']){
+                $src = "../assets/images/users/".$row['user_photo'];
+            }else{
+                $src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+            }
+            
             $data.= <<<HTML
                 <div class="staff-container">
                     
                     <div class="team" onclick="">
-                        <div class="logo"></div>
+                        <div class="logo"><img src="{$src}" alt=""></div>
                         <div class="team-info">
                             <h4 class="staff-name" data-staff_email="{$row['email']}">{$row['lname']} {$row['fname']}</h4>
                             <div class="other-info">
@@ -333,7 +385,7 @@ if($for == "add_staff"){
 }
 
 if($for == "add_player"){
-    $sql = "SELECT * FROM users u WHERE u.user_id NOT IN (SELECT user_id FROM players) AND u.email LIKE '%$status%' AND u.place IS NOT NULL";
+    $sql = "SELECT * FROM users u WHERE u.user_id AND u.email LIKE '%$status%' AND u.place IS NOT NULL";
     $query = mysqli_query($conn, $sql);
 
     if(mysqli_num_rows($query) > 0){
@@ -343,11 +395,18 @@ if($for == "add_player"){
             $data .= "<h3>Select From Search</h3>";
         }
         while($row = mysqli_fetch_assoc($query)){
+
+            if($row['user_photo']){
+                $src = "../assets/images/users/".$row['user_photo'];
+            }else{
+                $src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+            }
+
             $data.= <<<HTML
                 <div class="staff-container">
                     
                     <div class="team" onclick="" data-user_id="{$row['user_id']}">
-                        <div class="logo"></div>
+                        <div class="logo"><img src="{$src}" alt=""></div>
                         <div class="team-info">
                             <h4 class="player-name" data-staff_email="{$row['email']}">{$row['lname']} {$row['fname']}</h4>
                             <div class="other-info">
@@ -397,7 +456,7 @@ if($for == "add_umpire"){
         while($row = mysqli_fetch_assoc($query)){
             $logoHtml = !empty($row['user_photo']) 
             ? '<img src="../assets/images/users/'.$row['user_photo'].'" alt="">' 
-            : null;
+            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
 
             $data.= <<<HTML
                 <div class="staff-container">
@@ -454,7 +513,7 @@ if($for == "add_scorer"){
         while($row = mysqli_fetch_assoc($query)){
             $logoHtml = !empty($row['user_photo']) 
             ? '<img src="../assets/images/users/'.$row['user_photo'].'" alt="">' 
-            : null;
+            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
 
             $data.= <<<HTML
                 <div class="staff-container">
@@ -511,7 +570,7 @@ if($for == "add_commentator"){
         while($row = mysqli_fetch_assoc($query)){
             $logoHtml = !empty($row['user_photo']) 
             ? '<img src="../assets/images/users/'.$row['user_photo'].'" alt="">' 
-            : null;
+            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
 
             $data.= <<<HTML
                 <div class="staff-container">

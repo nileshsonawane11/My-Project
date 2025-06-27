@@ -141,6 +141,7 @@
             gap: 8px;
             flex-direction: column;
             align-items: flex-start;
+            width: 100%;
         }
         .team-container{
             max-height: max-content;
@@ -472,7 +473,11 @@
             const defaultCategory = document.querySelector('.cricket');
             let SportName = defaultCategory.querySelector('p').textContent.trim();
             console.log(SportName);
+
             loadgames(SportName)
+            setInterval(() => {
+                loadgames(SportName)
+            }, 1000);
        }
 
         //update sport
@@ -483,7 +488,10 @@
                 SportName = category.querySelector('p').textContent.trim();
                 console.log(SportName);
 
-                loadgames(SportName)
+                setInterval(() => {
+                    loadgames(SportName)
+                }, 1000);
+                
 
                 document.querySelector('.game.selected').classList.remove('selected');
                 category.classList.add('selected');
@@ -516,7 +524,14 @@
                 .then(response => response.text())
                 .then(data => {
                     let info_container = document.querySelector('.team-container');
-                    info_container.innerHTML = data;
+
+                    let tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = data;
+
+                    if (info_container.innerHTML !== tempDiv.innerHTML) {
+                        info_container.innerHTML = data;
+                        console.log('updated');
+                    }
                 })
                 .catch(error => console.error(error))
             }

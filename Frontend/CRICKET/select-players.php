@@ -11,8 +11,38 @@
     }
 
     include '../../config.php';
+    $batting_team = '';
+    $bowling_team = '';
     $match = $_GET['match_id'] ?? '';
+    $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `matches` WHERE `match_id` = '$match'"));
+    $score_logs = json_decode($row['score_log'], true);
 
+    // Detect current active innings
+    $current_innings = null;
+    foreach ($score_logs['innings'] as $innings_name => $innings_data) {
+        if ($innings_data['completed'] == false) {
+            $current_innings = $innings_name;
+            break;
+        }
+    }
+
+     // Check openers
+    $openers       = $score_logs['innings'][$current_innings]['openers'];
+    if (!empty($openers['striker_id']['id']) || !empty($openers['non_striker_id']['id'])) {
+        header("Location: ./score_panel.php?match_id=".$match);
+        exit();
+    }
+
+    if ($current_innings) {
+        $batting_team = $score_logs['innings'][$current_innings]['batting_team'];
+        $bowling_team = $score_logs['innings'][$current_innings]['bowling_team'];
+    }
+
+        $team1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT `t_name` FROM `teams` WHERE `t_id` = '$batting_team'"));
+        $decision_bat_team = $team1['t_name'];
+
+        $team2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT `t_name` FROM `teams` WHERE `t_id` = '$bowling_team'"));
+        $decision_bowl_team = $team2['t_name'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -299,9 +329,9 @@
                 </div>
                 <div class="container3">
                     <div class="info">
-                        <label for="">Batting  - (team name)</label>
+                        <label for="">Batting  - (<?php echo $decision_bat_team; ?>)</label>
                         <div class="sector team">
-                            <div class="teams" data-value="" onclick="select_player(this)">
+                            <div class="teams" data-value="<?php echo $batting_team; ?>" onclick="select_player(this)">
                                 <div class="logo">
                                     <svg width="76" height="75" viewBox="0 0 76 75" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <ellipse cx="37.7642" cy="37.5" rx="37.6819" ry="37.5" fill="url(#pattern0_759_342)"/>
@@ -315,7 +345,7 @@
                                 </div>
                                 <div class="tname">Striker</div>
                             </div>
-                            <div class="teams" data-value="" onclick="select_player(this)">
+                            <div class="teams" data-value="<?php echo $batting_team; ?>" onclick="select_player(this)">
                                 <div class="logo">
                                     <svg width="76" height="75" viewBox="0 0 76 75" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <ellipse cx="37.7642" cy="37.5" rx="37.6819" ry="37.5" fill="url(#pattern0_759_347)"/>
@@ -334,9 +364,9 @@
                     </div>
 
                     <div class="info">
-                        <label for="">Bowling  - (team name)</label>
+                        <label for="">Bowling  - (<?php echo $decision_bowl_team; ?>)</label>
                         <div class="sector types">
-                            <div class="options" data-value="" onclick="select_player(this)">
+                            <div class="options" data-value="<?php echo $bowling_team; ?>" onclick="select_player(this)">
                                 <div class="logo">
                                     <svg width="76" height="75" viewBox="0 0 76 75" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <ellipse cx="37.7642" cy="37.5" rx="37.6819" ry="37.5" fill="url(#pattern0_759_353)"/>
@@ -366,9 +396,12 @@
         const teams = document.querySelectorAll('.teams');
         const options = document.querySelectorAll('.options');
         let next_page = document.querySelector('.player-frame');
-        const match = <?php echo $match ?>;
-        let selecteddecision = '';
+        const match = '<?php echo $match ?>';
+        const current_innings = '<?php echo $current_innings; ?>'
         let selectedteam = '';
+        let striker = '';
+        let non_striker = '';
+        let bowler = '';
 
         let goBack = ()=>{
             window.location.href = '../../dashboard.php?update="live"&sport="CRICKET"';
@@ -376,25 +409,15 @@
 
         options.forEach(option => {
             option.addEventListener('click', () => {
-                if(selecteddecision) {
-                selecteddecision = '';
-                console.log("Selection Option", selecteddecision);
-                } else {
-                selecteddecision = option.getAttribute('data-value');
-                console.log("Selected Option:", selecteddecision);
-                }
+                selectedteam = option.getAttribute('data-value');
+                console.log("Selected Team:", selectedteam);
             });
         });
 
         teams.forEach(option => {
             option.addEventListener('click', () => {
-                if(selectedteam) {
-                selectedteam = '';
-                console.log("Selection Team", selectedteam);
-                } else {
                 selectedteam = option.getAttribute('data-value');
                 console.log("Selected Team:", selectedteam);
-                }
             });
         });
 
@@ -403,12 +426,9 @@
             let player_type = el.querySelector('.tname').textContent;
             console.log(player_type);
             next_page.classList.add('active'); 
-            next_page.src = `./select-player-from-team.php?for=${player_type}`;
+            selectedteam = el.getAttribute('data-value');
+            next_page.src = `./select-player-from-team.php?for=${player_type}&team=${selectedteam}&striker=${striker}&non-striker=${non_striker}`;
         }
-
-        let striker = '';
-        let non_striker = '';
-        let bowler = '';
 
         //get dat from iframe
          window.addEventListener("message", (event) => {
@@ -425,15 +445,18 @@
                 let bowlers = document.querySelector('.types');
                 if(event.data.person == 'Striker'){
                     striker = event.data.data;
-                    batsman.children[0].classList.add('active')
+                    batsman.children[0].classList.add('active');
+                    batsman.children[0].querySelector('.logo').innerHTML = `<img src='${event.data.img}' alt=''>`;
                     console.log(striker);
                 }else if(event.data.person == 'Non-Striker'){
                     non_striker = event.data.data;
-                    batsman.children[1].classList.add('active')
+                    batsman.children[1].classList.add('active');
+                    batsman.children[1].querySelector('.logo').innerHTML = `<img src='${event.data.img}' alt=''>`;
                     console.log(non_striker);
                 }else if(event.data.person == 'Bowler'){
                     bowler = event.data.data;
-                    bowlers.children[0].classList.add('active')
+                    bowlers.children[0].classList.add('active');
+                    bowlers.children[0].querySelector('.logo').innerHTML = `<img src='${event.data.img}' alt=''>`;
                     console.log(bowler);
                 }
             }
@@ -442,16 +465,30 @@
 
         //start scoring
         let start_scoring = () => {
-            console.log(striker, non_striker, bowler);
+            // console.log(striker, non_striker, bowler);
             if(striker && non_striker && bowler){
                 let data = {
                     match_id: match,
+                    current_innings : current_innings,
                     striker: striker,
                     non_striker: non_striker,
                     bowler: bowler
                 }
 
-                window.location.href = `./score_panel.php?data=${JSON.stringify(data)}`;
+                fetch('../../Backend/Insert_openers.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status == 200){
+                        window.location.href = `./score_panel.php?data=${JSON.stringify(data)}`;
+                    }
+                })
+                .catch(error => console.log(error));
             }
         }
 

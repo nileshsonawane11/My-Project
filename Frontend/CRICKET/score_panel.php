@@ -11,8 +11,27 @@
         exit();
     }
 
+    $match_id = '';
     $for = $_GET['for'] ?? '';
+    $data = json_decode($_GET['data'] ?? '');
+    if(empty($data)){
+        $match_id = $_GET['match_id'];
+    }else{
+        $match_id = $data['match_id'];
+    }
 
+    $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
+    $score_log = json_decode($row['score_log'], true);
+    
+    //detect current inning
+    $current_innings = null;
+    foreach ($score_log['innings'] as $innings_name => $innings_data) {
+        if ($innings_data['completed'] == false) {
+            $current_innings = $innings_name;
+            break;
+        }
+    }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -326,6 +345,7 @@
             justify-content: center;
             z-index: 2;
             align-items: center;
+            scrollbar-width: none;
         }
         .parent-circle{
             width: 380px;
@@ -447,6 +467,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            scrollbar-width: none;
         }
         #selectshot::backdrop,
         #undo::backdrop{
@@ -463,7 +484,6 @@
             gap: 20px;
             margin: 20px 0;
             justify-items: center;
-            margin-bottom: 65px;
             height: max-content;
         }
         .text{
@@ -530,6 +550,9 @@
             font-size: 20px;
             letter-spacing: 2px;
         }
+        .decision{
+            text-transform: capitalize;
+        }
 
         @media (min-width:601px) {
             .container{
@@ -547,7 +570,7 @@
                 overflow: hidden;
             }
             .container2{
-                gap: 30px;
+                gap: 53px;
                 width: 100%;
             }
         }
@@ -748,12 +771,34 @@
         
             <div class="container2">
                 <div class="txt">
-                    <h4>(toss winning team)</h4>
+                    <h4>
+                        <?php
+                            $t_id = $score_log['innings'][$current_innings]['batting_team'];
+                            $t_name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id'"));
+                            echo $t_name['t_name'];
+                        ?>
+                        (toss winning team)
+                    </h4>
                 </div>
                 
                 <div class="score-container">
-                    <div class="score">0/0 <p class="overs">(0.0/20)</p></div>
-                    <div class="decision">(toss winning team) won the toss and elected to bat/ball</div>
+                    <div class="score">
+                        <?php 
+                            echo $score_log['innings'][$current_innings]['total_runs'].'/'.$score_log['innings'][$current_innings]['wickets']; 
+                        ?> 
+                        <p class="overs">(<?php echo $score_log['innings'][$current_innings]['overs_completed']; ?>/
+                        <?php echo $score_log['overs']; ?>)</p>
+                    </div>
+                    <div class="decision">
+                        <?php 
+                            $toss_winner_id = $row['toss_winner'];
+                            $toss_winner_name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$toss_winner_id'"));
+                            echo $toss_winner_name['t_name'];      
+                        ?> won the toss and elected to 
+                        <?php 
+                            echo $row['toss_decision']; 
+                        ?>
+                    </div>
                 </div>
                 
                 <div class="data-info">
@@ -764,9 +809,21 @@
                                 <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="white"/>
                                 </svg>
+                                <?php
+                                    
+                                    $striker = $score_log['innings'][$current_innings]['openers']['striker_id']['id'];
+                                    $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$striker'"));
+
+                                    echo $name['fname'];
+                                ?>
                                 (striker)
                             </div>
-                            <p class="batsman-score">0(0)</p>
+                            <p class="batsman-score">
+                                <?php
+                                    echo $score_log['innings'][$current_innings]['openers']['striker_id']['runs'].' ('.
+                                        $score_log['innings'][$current_innings]['openers']['striker_id']['balls_faced'].')';
+                                ?>
+                            </p>
 
                         </div>
 
@@ -776,9 +833,21 @@
                                 <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
                                 </svg>
+                                <?php
+                                    
+                                    $non_striker = $score_log['innings'][$current_innings]['openers']['non_striker_id']['id'];
+                                    $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$non_striker'"));
+
+                                    echo $name['fname'];
+                                ?>
                                 (non-striker)
                             </div>
-                            <p class="batsman-score">0(0)</p>
+                            <p class="batsman-score">
+                                <?php
+                                    echo $score_log['innings'][$current_innings]['openers']['non_striker_id']['runs'].' ('.
+                                        $score_log['innings'][$current_innings]['openers']['non_striker_id']['balls_faced'].')';
+                                ?>
+                            </p>
 
                         </div>
 
@@ -789,6 +858,13 @@
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1.67013 14.2598L2.21013 14.7898L1.59013 15.3998C1.84106 15.7909 2.12189 16.162 2.43013 16.5098L16.5101 2.4198C16.1612 2.12041 15.7938 1.8432 15.4101 1.5898L14.7901 2.1998L14.2601 1.6698L14.7401 1.1898C12.8463 0.171369 10.6746 -0.20948 8.54727 0.103742C6.41991 0.416965 4.45017 1.40757 2.93024 2.92863C1.41031 4.44968 0.421157 6.42015 0.109505 8.54774C-0.202146 10.6753 0.180306 12.8467 1.20013 14.7398L1.67013 14.2598ZM12.8601 3.0698L13.3901 3.5998L12.0001 4.9998L11.4701 4.4698L12.8601 3.0698ZM10.0701 5.8698L10.5901 6.3998L9.20013 7.7998L8.67013 7.2698L10.0701 5.8698ZM7.27013 8.6698L7.80013 9.1998L6.40013 10.5898L5.87013 10.0598L7.27013 8.6698ZM4.47013 11.4598L5.00013 11.9998L3.60013 13.3998L3.07013 12.8698L4.47013 11.4598ZM4.59013 18.4098L5.21013 17.7998L5.74013 18.3298L5.26013 18.8098C7.15396 19.8282 9.32563 20.2091 11.453 19.8959C13.5804 19.5826 15.5501 18.592 17.07 17.071C18.59 15.5499 19.5791 13.5794 19.8908 11.4519C20.2024 9.32426 19.82 7.15287 18.8001 5.2598L18.3301 5.7398L17.7901 5.2098L18.4101 4.5998C18.1592 4.20867 17.8784 3.83756 17.5701 3.4898L3.49013 17.5798C3.83909 17.8792 4.20648 18.1564 4.59013 18.4098ZM16.4001 6.6098L16.9301 7.1398L15.5301 8.5398L15.0001 7.9998L16.4001 6.6098ZM13.6001 9.4098L14.1301 9.9398L12.7301 11.3298L12.2001 10.7998L13.6001 9.4098ZM10.8001 12.1998L11.3301 12.7298L9.94013 14.1298L9.40013 13.5998L10.8001 12.1998ZM8.00013 14.9998L8.53013 15.5298L7.13013 16.9298L6.60013 16.3998L8.00013 14.9998Z" fill="black"/>
                                     </svg>
+                                    <?php
+                                    
+                                        $bowler = $score_log['innings'][$current_innings]['current_bowler']['id'];
+                                        $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$bowler'"));
+
+                                        echo $name['fname'];
+                                    ?>
                                     (bowler)
                                 </div>
                                 <div class="bowls">0.0-0-0-0</div>
@@ -863,13 +939,19 @@
                     </div>
                 </div>
             </div>
-        
+        <?php
+            $back_decision = false;
+            $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE match_id = 'c5c0be7f1e247c6dbf23701d7fb01058f21b20d9e60d83e281ba111ac5d6b337'"));
+        ?>
     </div>
 
 
     
     
     <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let data = urlParams.get('data') || '';
+        console.log(data);
         let opacity = document.querySelector('.opacity-container');
         let dropdown = document.querySelector('.dropdown');
         let shotdialog = document.querySelector('#shotdialog');
@@ -994,12 +1076,12 @@
         });
 
 // Disable F5 and Ctrl+R keyboard shortcuts
-window.addEventListener("keydown", function (e) {
-  if (e.key === "F5" || (e.ctrlKey && e.key.toLowerCase() === "r")) {
-    e.preventDefault();
-    alert("Reload is disabled for the scorer!");
-  }
-});
+        window.addEventListener("keydown", function (e) {
+            if (e.key === "F5" || (e.ctrlKey && e.key.toLowerCase() === "r")) {
+                e.preventDefault();
+                alert("Reload is disabled for the scorer!");
+            }
+        });
 
 
         //close opacity container

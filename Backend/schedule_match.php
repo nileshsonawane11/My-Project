@@ -13,6 +13,7 @@ $game_date = $_POST['dateInput'];
 $game_time = $_POST['timeInput'];
 $game_location = $_POST['city'];
 $game_type = $_POST['s_type'];
+$game_over = $_POST['over'];
 $ground = $_POST['ground'];
 $Umpires = array_filter($_POST['Umpires'] ?? []);
 $Scorers = array_filter($_POST['Scorers'] ?? []);
@@ -35,7 +36,7 @@ $sportList = [
 
 $game = $sportList[$game] ?? null;
 
-if(empty($game_location) || empty($ground) || empty($game_time) || empty($game_date)){
+if(empty($game_location) || empty($ground) || empty($game_time) || empty($game_date) || empty($game_over)){
     echo json_encode(['status' => 409,'field' => 'empty','message' => 'All (*) Marked Fields Are Required']);
     exit();
 }
@@ -80,8 +81,8 @@ if (!empty($game_date) && !empty($game_time)) {
                 exit();
             } else {
                 $pass = substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'), 0, 6);
-                $sql = "INSERT INTO matches (match_id, sport_id, match_date, status, venue, team_1, team_2, start_time, umpires, scorers, commentators, password, created_by) 
-                        VALUES ('$id', '$game', '$game_date', 'Upcoming', '$game_location', '$team1', '$team2', '$game_time', '$UmpiresJSON', '$ScorersJSON', '$CommentatorsJSON', '$pass','$admin_id')";
+                $sql = "INSERT INTO matches (match_id, sport_id, match_date, status, venue, team_1, team_2, start_time, umpires, scorers, commentators, password, created_by, overs) 
+                        VALUES ('$id', '$game', '$game_date', 'Upcoming', '$game_location', '$team1', '$team2', '$game_time', '$UmpiresJSON', '$ScorersJSON', '$CommentatorsJSON', '$pass','$admin_id', '$game_over')";
 
                 $query = mysqli_query($conn, $sql);
                 if ($query){
