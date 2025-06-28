@@ -581,6 +581,18 @@
     </style>
 </head>
 <body>
+    <script>
+        function showAlt(img) {
+            const altText = img.alt;
+            const container = img.parentElement;
+        
+            img.style.display = "none";
+        
+            const span = document.createElement("span");
+            span.textContent = altText;
+            container.appendChild(span);
+        }
+    </script>
     <div class="body">
         <button onclick="scrollToTop()" id="topBtn"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAArCAYAAADhXXHAAAAAAXNSR0IArs4c6QAAAWFJREFUWEft1z9KxEAYhvHfdooiWKnYaWkjlmLjRRTsBAtvIiKIB9AzWCmIrTfwH1ipVxDFHUgkLNmYTWaKhUmZzHx5ePJ+H5OBKboGU8Qqw6b6WtlsNktusFQpyGaz2WAgxZxdwA3msIuPWKpjwwbQO2wWgC/YjgUcE3YUtBQaDTgW7CJuC6NX2MESLnCMKMAxYAPoPTYQQPfwhBXM4iQWcF/YOtCfwmQJG+IQBbgP7DjQAPdamJ2pTILewF1hm0DHwYb758PJcNg1w11gw54HbOFyaHEf4dNXr2esomq2fH6GIzwWOf9qO4e7wM7jDddFM33XvKwJNiw/HdY4wDo+U8K2qf0fbKixjPc2xco1Xcy2qV/XYG32Na7JsGNGVzbb2wDaNNjE78mZzZlN9FvTdDaYOKfVDakyG8634Wyw1otuZHMq2JiMf7UybBKtCRssCW+OQRKtOQaptGazCc3+Aqt3QSyEFKHQAAAAAElFTkSuQmCC" alt=""></button>
         <div id="loader">
@@ -761,21 +773,21 @@
                         </div>
                         <div class="teammates">
                             <div class="img-border">
-                                <div class="mem-img"><img src="" alt="Member 3"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
+                                <div class="mem-img"><img src="https://i.ibb.co/p6MqTrx4/Ketki.jpg" alt="Member 3"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
                             </div>
-                            <p class="mem-name"></p>          
+                            <p class="mem-name">Sonawane Ketki</p>          
                         </div>
                         <div class="teammates">
                             <div class="img-border">
-                                <div class="mem-img"><img src="" alt="Member 4"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
+                                <div class="mem-img"><img src="https://i.ibb.co/zWGGS3kS/prabhavati.jpg" alt="Member 4"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
                             </div>
-                            <p class="mem-name"></p>   
+                            <p class="mem-name">Jadhav Prabhavati</p>   
                         </div>
                         <div class="teammates">
                             <div class="img-border">
                                 <div class="mem-img"><img src="" alt="Member 5"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
                             </div>
-                            <p class="mem-name"></p>  
+                            <p class="mem-name">Chavan Pranav</p>  
                         </div>
                     
                 </div>

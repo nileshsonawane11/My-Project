@@ -289,6 +289,10 @@
                 },550)
             }
 
+            if(event.data === "gotohome"){
+                window.location.href = '../dashboard.php?update=live&sport=CRICKET';
+            }
+
         });
     </script>
 </body>

@@ -65,10 +65,32 @@ $score_log = [
       "batting_team" => $bowl,
       "bowling_team" => $bat,
       "openers" => [
-        "striker_id" => null,
-        "non_striker_id" => null
+        "striker_id" => [
+          "id"=> null,
+          "balls_faced"=> 0,
+          "style"=> null,
+          "runs"=> 0,
+          "fours"=> 0,
+          "sixes"=> 0,
+          "out_status"=> "not out"
+        ],
+        "non_striker_id" => [
+          "id"=> null,
+          "balls_faced"=> 0,
+          "style"=> null,
+          "runs"=> 0,
+          "fours"=> 0,
+          "sixes"=> 0,
+          "out_status"=> "not out"
+        ]
       ],
-      "current_bowler" => null,
+      "current_bowler" => [
+        "id"=> null,
+        "style"=> null,
+        "overs_bowled"=> "0.0",
+        "runs_conceded"=> 0,
+        "wickets"=> 0
+      ],
       "balls" => [],
       "batmans" => [],
       "bowlers" => [],

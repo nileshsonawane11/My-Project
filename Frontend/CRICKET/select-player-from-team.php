@@ -260,9 +260,9 @@
             text-align: left;
             display: grid;
             align-items: center;
-            grid-template-columns: repeat(2, 124px);
+            grid-template-columns: repeat(2, 126px);
             justify-content: space-evenly;
-            gap: 20px;
+            gap: 10px;
             margin: 20px 0;
             justify-items: center;
             margin-bottom: 65px;
@@ -280,7 +280,7 @@
             flex-direction: column;
             justify-content: space-evenly;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             gap: 10px;
             box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
             background: #80808029;

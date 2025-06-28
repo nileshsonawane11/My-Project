@@ -467,7 +467,7 @@
         let start_scoring = () => {
             // console.log(striker, non_striker, bowler);
             if(striker && non_striker && bowler){
-                let data = {
+                let match_data = {
                     match_id: match,
                     current_innings : current_innings,
                     striker: striker,
@@ -480,12 +480,12 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(match_data)
                 })
                 .then(response => response.json())
                 .then(data => {
                     if(data.status == 200){
-                        window.location.href = `./score_panel.php?data=${JSON.stringify(data)}`;
+                        window.location.href = `./score_panel.php?data=${JSON.stringify(match_data)}`;
                     }
                 })
                 .catch(error => console.log(error));

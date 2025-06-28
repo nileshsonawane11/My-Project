@@ -48,17 +48,17 @@ if (!empty($game_date) && !empty($game_time)) {
 
         // Validate
         if ($inputDateTime > $currentDateTime) {
-            if(empty($Commentators)){
-                $Commentators[] = $_SESSION['email'];
-            }
+            // if(empty($Commentators)){
+            //     $Commentators[] = $_SESSION['email'];
+            // }
 
-            if(empty($Scorers)){
-                $Scorers[] = $_SESSION['email'];
-            }
+            // if(empty($Scorers)){
+            //     $Scorers[] = $_SESSION['email'];
+            // }
 
-            if(empty($Umpires)){
-                $Umpires[] = $_SESSION['email'];
-            }
+            // if(empty($Umpires)){
+            //     $Umpires[] = $_SESSION['email'];
+            // }
 
             // echo json_encode(['status' => 200,'field' => 'datetime','message' => 'Date and Time are valid (in the future)']);
 

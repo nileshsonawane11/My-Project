@@ -584,6 +584,7 @@
                         <h4>Match Details</h4>
                         <div class="input-fields"><input type="text" name="" id="city" class="data" required><label for="city">City</label></div>
                         <div class="input-fields"><input type="text" name="" id="ground" class="data" required><label for="ground">Ground</label></div>
+                        <input type="hidden" id="sessionEmail" value="<?php echo $_SESSION['email']; ?>">
                         <div class="schedule">
                             <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Date</label></div>
                             <div class="input-fields event-time"><input type="time" id="timeInput" placeholder="Select Time" required><label for="timeInput" id="time">Time</label></div>
@@ -675,6 +676,7 @@
         const team2 = '<?php echo $team2; ?>';
         const game = '<?php echo $game; ?>';
         const admin = '<?php echo $_SESSION["email"]; ?>';
+        let userEmail = document.getElementById('sessionEmail').value;
         let Umpires = [];
         let Scorers = [];
         let Commentators = [];
@@ -712,24 +714,37 @@
             let over = document.getElementById('over').value;
             let password = '';
 
+            if (Commentators.length === 0) {
+                Commentators.push(userEmail);
+            }
+
+            if (Scorers.length === 0) {
+                Scorers.push(userEmail);
+            }
+
+            if (Umpires.length === 0) {
+                Umpires.push(userEmail);
+            }
+
             let formdata = new FormData();
-            formdata.append('team1',team1);
-            formdata.append('team2',team2);
-            formdata.append('game',game);
-            formdata.append('city',city);
-            formdata.append('ground',ground);
-            formdata.append('timeInput',timeInput);
-            formdata.append('dateInput',dateInput);
-            formdata.append('s_type',s_type);
-            formdata.append('over',over);
+            formdata.append('team1', team1);
+            formdata.append('team2', team2);
+            formdata.append('game', game);
+            formdata.append('city', city);
+            formdata.append('ground', ground);
+            formdata.append('timeInput', timeInput);
+            formdata.append('dateInput', dateInput);
+            formdata.append('s_type', s_type);
+            formdata.append('over', over);
             formdata.append('Umpires[]', Umpires);
             formdata.append('Scorers[]', Scorers);
             formdata.append('Commentators[]', Commentators);
 
             formdata.forEach((value, key) => {
-            console.log(key + ': ' + value);
+                console.log(key + ': ' + value);
             });
 
+            // First schedule the match via fetch()
             fetch('../Backend/schedule_match.php', {
                 method: 'POST',
                 body: formdata
@@ -737,56 +752,54 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
+
                 document.querySelectorAll('[id^="error-"]').forEach((el) => {
                     el.innerHTML = '';
                     el.style.display = 'none';
                 });
-                if(data.status == 409){
+
+                if (data.status == 409) {
                     let el = document.getElementById(`error-${data.field}`);
                     el.innerHTML = data.message;
                     el.style.display = 'block';
-                }else if(data.status == 200){
-                    //alert('Match Scheduled Successfully');
+                } else if (data.status == 200) {
                     password = data.pass;
 
+                    // Send mails via sendBeacon (fire-and-forget)
                     Scorers.forEach((scorer) => {
-                        fetch('../mail.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                for_value: 'Scorer',
-                                game: game,
-                                venue: city,
-                                time: timeInput,
-                                password : password,
-                                date: dateInput,
-                                recipient_email: scorer
-                            })
-                        });
+                        let scorerData = {
+                            for_value: 'Scorer',
+                            game: game,
+                            venue: city,
+                            time: timeInput,
+                            password: password,
+                            date: dateInput,
+                            recipient_email: scorer
+                        };
+                        const scorerBlob = new Blob([JSON.stringify(scorerData)], { type: 'application/json' });
+                        navigator.sendBeacon('../mail.php', scorerBlob);
                     });
 
                     Umpires.forEach((umpire) => {
-                        fetch('../mail.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                for_value: 'Umpire',
-                                game: game,
-                                venue: city,
-                                time: timeInput,
-                                date: dateInput,
-                                recipient_email: umpire
-                            })
-                        });
+                        let umpireData = {
+                            for_value: 'Umpire',
+                            game: game,
+                            venue: city,
+                            time: timeInput,
+                            date: dateInput,
+                            recipient_email: umpire
+                        };
+                        const umpireBlob = new Blob([JSON.stringify(umpireData)], { type: 'application/json' });
+                        navigator.sendBeacon('../mail.php', umpireBlob);
                     });
 
-                    // Immediately navigate to next page — no waiting
-                    location.replace('../dashboard.php?update="live"&sport="CRICKET"');
+                    // Immediately navigate to dashboard
+                    window.parent.postMessage('gotohome', '*');
                 }
             })
             .catch(error => console.log(error));
-            
-        }
+        };
+
 
         window.addEventListener("message", (event) => {
             if (event.data === "closeIframe") {

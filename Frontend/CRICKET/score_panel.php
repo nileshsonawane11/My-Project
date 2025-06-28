@@ -12,12 +12,14 @@
     }
 
     $match_id = '';
+    $back_decision = false;
     $for = $_GET['for'] ?? '';
-    $data = json_decode($_GET['data'] ?? '');
+    $data = json_decode($_GET['data'] ?? '',true);
     if(empty($data)){
         $match_id = $_GET['match_id'];
     }else{
         $match_id = $data['match_id'];
+        $back_decision = true;
     }
 
     $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
@@ -83,7 +85,7 @@
             justify-content: space-between;
             align-items: center;
             flex-direction: row;
-            padding: 40px 0 0 40px;
+            padding: 40px 40px 0 40px;
         }
         .return svg{
             cursor: pointer;
@@ -765,7 +767,14 @@
                 <path d="M25.2502 12.75H3.81271L13.0002 21.9375L11.8452 23.25L0.470215 11.875L11.8452 0.5L13.0002 1.8125L3.81271 11H25.2502V12.75Z" fill="white"/>
                 </svg>
             </div>
-            <div></div>
+            <div id='commentaryIcon'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on">
+                <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+            </div>
         </div>
 
         
@@ -939,10 +948,6 @@
                     </div>
                 </div>
             </div>
-        <?php
-            $back_decision = false;
-            $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE match_id = 'c5c0be7f1e247c6dbf23701d7fb01058f21b20d9e60d83e281ba111ac5d6b337'"));
-        ?>
     </div>
 
 
@@ -950,6 +955,7 @@
     
     <script>
         const urlParams = new URLSearchParams(window.location.search);
+        const back_decision = '<?php echo $back_decision; ?>';
         let data = urlParams.get('data') || '';
         console.log(data);
         let opacity = document.querySelector('.opacity-container');
@@ -964,6 +970,7 @@
         let lb = document.querySelector('.lb');
         let NB = document.querySelector('.nb');
         let wide_ball = document.querySelector('.wide');
+        let comm = document.getElementById('comm');
         let DeepFineLeg = `
         <div class="style-container" onclick="get_shot(this)">FLICK</div>
         <div class="style-container" onclick="get_shot(this)">PULL</div>
@@ -1055,9 +1062,21 @@
         <div class="style-container" onclick="get_shot(this)">5</div>
         <div class="style-container" onclick="get_shot(this)">+</div>`;
 
+        let run_per_ball = null;
+        let Shot_side = null;
+        let Shot_type = null;
+        let extras = null;
+        let ball_type = null;
+        let out_type = null;
+        let freehit = false;
+
         //go to prevoius page
         let goBack = () => {
-            window.history.back();
+            if(back_decision){
+                window.location.href = '../../dashboard.php?update=Live&sport=CRICKET';
+            }else{
+                window.history.back();
+            }
         }
 
         //open menubar
@@ -1075,13 +1094,31 @@
             e.returnValue = '';
         });
 
-// Disable F5 and Ctrl+R keyboard shortcuts
+        // Disable F5 and Ctrl+R keyboard shortcuts
         window.addEventListener("keydown", function (e) {
             if (e.key === "F5" || (e.ctrlKey && e.key.toLowerCase() === "r")) {
                 e.preventDefault();
                 alert("Reload is disabled for the scorer!");
             }
         });
+        let commentaryEnabled = true;
+
+        //allow and deny voice commentry
+        document.getElementById('commentaryIcon').addEventListener('click', function() {
+            commentaryEnabled = commentaryEnabled ? false : true;
+
+            if (commentaryEnabled) {
+                console.log("Commentary enabled",commentaryEnabled);
+                //  change icon color to active
+                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+            } else {
+                console.log("Commentary disabled",commentaryEnabled);
+                stopCommentary();
+                //  change icon color to muted
+                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><line x1="4" y1="4" x2="20" y2="20"stroke="#9f9d8b"stroke-width="6"stroke-linecap="round" /><line x1="4" y1="4" x2="20" y2="20"stroke="white"stroke-width="2"stroke-linecap="round" /><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+            }
+        });
+
 
 
         //close opacity container
@@ -1101,6 +1138,7 @@
                 let match = value.match(/\b\d+\b/);  // finds first standalone number
                 if (match) {
                     console.log(match[0]);  // logs the number part
+                    run_per_ball = match[0];
                     setTimeout(() => {
                         shotdialog.style.display = 'flex';
                         opacity.style.display = 'block';
@@ -1117,11 +1155,12 @@
         slice.forEach((el) => {
             el.addEventListener('click', () => {
                 value = el.querySelector('.side').innerText;
-                
-                value = value.replace(/\s+/g, "");console.log(value);
+                Shot_side = value;
+                value = value.replace(/\s+/g, "");console.log(Shot_side);
                 setTimeout(() => {
                     shotdialog.style.display = 'none';
                     opacity.style.display = 'none';
+                    document.querySelector('.text').innerHTML = '<p class="out-text">Shot Type</p>'
                     if (value === "DeepFineLeg") {
                         data_container.innerHTML = DeepFineLeg;
                     }else if(value === "DeepSquareLeg"){
@@ -1200,9 +1239,27 @@
         let selectedShot = '';
 
         let shotContainers = document.querySelectorAll('.style-container');
-        
+        let balltype = '';
         // Get all style-containers
         let get_shot = (el) => {
+                balltype = document.querySelector('#selectshot .text').innerText;
+
+                let type = (selectedShot) => {
+                    let run = selectedShot.match(/\d+/);  
+                    if (run) {
+                        run = parseInt(run[0]);
+                        console.log('Run:', run);
+                        if(ball_type == 'No Ball'){
+                            extras = 1;
+                            run_per_ball = run;
+                        }else if(ball_type == 'Wide Ball'){
+                            extras = run+1;
+                        }else{
+                            extras = run;
+                        }
+                        
+                    }
+                }
                 // Remove active class from all
                 shotContainers.forEach(c => c.classList.remove('active'));
 
@@ -1211,11 +1268,55 @@
 
                 // Get the text (like shot name)
                 selectedShot = el.textContent.trim();
-                console.log( selectedShot);
+                
+                if(balltype.includes('WD')){
+
+                    console.log('Wide BAll')
+                    ball_type = 'Wide Ball';
+                    type(selectedShot);
+                    
+
+                }else if(balltype.includes('NB')){
+
+                    console.log('No BAll')
+                    ball_type = 'No Ball';
+                    type(selectedShot);
+                    
+                    //freehit = true;
+
+                }else if(balltype.includes('Leg Bye')){
+
+                    console.log('Leg Bye')
+                    ball_type = 'Leg Bye';
+                    type(selectedShot);
+                    
+
+                }else if(balltype.includes('Bye')){
+
+                    console.log('Bye')
+                    ball_type = 'Bye';
+                    type(selectedShot);
+                    
+
+                }else if(balltype.includes('Shot')){
+
+                    console.log(selectedShot);
+                    Shot_type = selectedShot;
+                    ball_type = 'Legal Delivery';
+
+                }else if(balltype.includes('out')){
+
+                    console.log('Out : ',selectedShot);
+                    out_type = selectedShot;
+                    ball_type = 'Wicket';
+
+                }
 
                 setTimeout(() => {
                     shot.close();
                 }, 300);
+
+                display_content();
             };
 
             //open dialog for undo
@@ -1230,7 +1331,211 @@
                 undo_container.close();
                 undo_container.classList.remove('shake');
             });
+
+            const commentaries = {
+                noRun: [
+                    "{striker} plays it safe, no run.",
+                    "Dot ball — {striker} stays put.",
+                    "{striker} taps it straight to the fielder.",
+                    "No run taken by {striker}."
+                ],
+                four: [
+                    "That's a cracking boundary from {striker}!",
+                    "Lovely shot by {striker}, four runs!",
+                    "{striker} times it beautifully to the fence.",
+                    "Another delightful FOUR by {striker}!"
+                ],
+                six: [
+                    "It's a massive hit for SIX by {striker}!",
+                    "{striker} sends that one out of here!",
+                    "Over the ropes for a huge six from {striker}!",
+                    "Powerful shot — gone for six! {striker} is on fire!"
+                ],
+                miscRuns: [
+                    "{striker} takes {runs} run{plural}.",
+                    "Good running between the wickets — {striker} picks up {runs}.",
+                    "{runs} run{plural} added by {striker}."
+                ],
+                out: [
+                    "OUT! {outType} sends {striker} back to the pavilion.",
+                    "Wicket! {striker} departs via {outType}.",
+                    "The umpire's finger is up — {striker} is gone, {outType}.",
+                    "That's the end for {striker}, {outType}."
+                ],
+                bye: [
+                    "{runs} bye{plural} taken. {striker} stays at the striker's end.",
+                    "The ball beats everyone, {runs} bye{plural}.",
+                    "Keeper lets it through — {runs} bye{plural} added."
+                ],
+                legBye: [
+                    "{runs} leg bye{plural} sneaked. {striker} looks for another.",
+                    "Off the pads of {striker}, {runs} leg bye{plural}.",
+                    "Leg byes taken — {runs} run{plural} added."
+                ],
+                noBall: [
+                    "No ball! Overstepped there. Free Hit coming up for {striker}.",
+                    "Oh dear, that's a no ball to {striker}.",
+                    "Bowler overstepped — no ball to {striker}."
+                ],
+                noBallFreeHit: [
+                    "Another no ball on the Free Hit! {striker} gets another chance.",
+                    "No ball again! Free Hit continues for {striker}.",
+                    "That’s poor — no ball on a Free Hit. {striker} will be loving this."
+                ],
+                wide: [
+                    "Wide ball, extra run given. {striker} leaves it alone.",
+                    "Too wide for {striker}.",
+                    "That’s a wide down the leg side, {striker} watches it go."
+                ],
+                illegalWicketOnFreeHit: [
+                    "That's a wicket on a Free Hit — only dismissable this way! {striker} is gone.",
+                    "{striker} is out on a Free Hit via {outType}, rare moment.",
+                    "He’s out on a Free Hit! Only possible through {outType}. {striker} walks off."
+                ]
+            };
+
+            function getRandomCommentary(category, data = {}) {
+                let phrases = commentaries[category];
+                let randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+
+                // Replace placeholders
+                return randomPhrase
+                .replace('{striker}', data.striker)
+                    .replace('{runs}', data.runs)
+                    .replace('{plural}', data.runs > 1 ? 's' : '')
+                    .replace('{outType}', data.outType);
+            }
+
+            function generateCommentary(run, outType, ballType, freeHit ,extra, striker) {
+                let commentary = '';
+
+                if (outType !== null) {
+                    if (freeHit && ['Run Out', 'Obstr. the Field', 'Hit Wicket'].includes(outType)) {
+                        commentary = getRandomCommentary('illegalWicketOnFreeHit', { outType,striker });
+                    } else if (freeHit) {
+                        commentary = "It's a Free Hit — no wicket possible on this ball!";
+                    } else {
+                        commentary = getRandomCommentary('out', { outType,striker });
+                    }
+                }
+                else if (balltype.includes('Leg Bye')) {
+                    commentary = getRandomCommentary('legBye', { runs: extra,striker });
+                }
+                else if (balltype.includes('Bye')) {
+                    commentary = getRandomCommentary('bye', { runs: extra,striker });
+                }
+                else if (balltype.includes('NB')) {
+                    commentary = freeHit ? getRandomCommentary('noBallFreeHit',{striker}) : getRandomCommentary('noBall',{striker});
+                }
+                else if (balltype.includes('WD')) {
+                    commentary = getRandomCommentary('wide',{striker});
+                }
+                else if (run == 0) {
+                    commentary = getRandomCommentary('noRun',{striker});
+                }
+                else if (run == 4) {
+                    commentary = getRandomCommentary('four',{striker});
+                }
+                else if (run == 6) {
+                    commentary = getRandomCommentary('six',{striker});
+                }
+                else {
+                    commentary = getRandomCommentary('miscRuns', { runs: run,striker });
+                }
+
+                speakCommentary(commentary)
+                console.log(commentary);
+                return commentary;
+            }
+
+            let voices = [];
+
+            // Load voices when available
+            function loadVoices() {
+                voices = window.speechSynthesis.getVoices();
+            }
+
+            // Fire voice loading event
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+
+            function speakCommentary(text) {
+                // Cancel any currently queued speech
+                if(commentaryEnabled){
+                    // window.speechSynthesis.cancel(); // optional if overlapping voices happen
+
+                    let utter = new SpeechSynthesisUtterance(text);
+
+                    if (!voices.length) {
+                        voices = window.speechSynthesis.getVoices();
+                    }
+
+                    // Ensure voices are loaded
+                    if (voices.length > 0) {
+                        utter.voice = voices.find(v => v.lang.includes("en")) || voices[1];
+                    }
+
+                    // Tune commentary feel
+                    utter.pitch = 0.95;
+                    utter.rate = 1.2;
+                    utter.volume = 1;
+
+                    // Speak it
+                    setTimeout(() => {
+                        window.speechSynthesis.speak(utter);
+                    }, 100);
+                    
+                }
+            }
+
+            function stopCommentary() {
+                window.speechSynthesis.cancel();
+            }
         
+            //update score
+            let display_content = () => {
+                let commentary = generateCommentary(run_per_ball, out_type, ball_type, freehit, extras, document.querySelector('.batsman-type').innerText);
+                let scoreText = document.querySelector('.score').childNodes[0].nodeValue.trim().split('/');
+
+                if(ball_type == 'No Ball'){
+                    freehit = true;
+                }else if(ball_type == 'Wide Ball'){
+                    freehit = true;
+                }else if(freehit && ball_type == 'No Ball'){
+
+                    freehit = true;
+
+                }else if(freehit && ball_type == 'Leg Bye'){
+                    freehit = false;
+                }else if(freehit && ball_type == 'Bye'){
+                    freehit = false;
+                }else if(freehit){
+                    ball_type = 'Free Hit';
+                    freehit = false;
+                }
+                free = ball_type;
+                let data = {
+                    'Run' : run_per_ball,
+                    'Shot Type' : Shot_type,
+                    'Shot Side' : Shot_side,
+                    'Out': out_type,
+                    'Extra' : extras,
+                    'Ball Type': ball_type,
+                    'Bowler': document.querySelector('.bowler-name').innerText,
+                    'Striker': document.querySelector('.batsman-type').innerText,
+                    'totalScore': scoreText[0],
+                    'wickets': scoreText[1],
+                    'commentary': commentary
+                }
+
+                console.log(data);
+
+                run_per_ball =null;
+                Shot_type = null;
+                Shot_side = null;
+                out_type = null;
+                extras = null;
+                ball_type = null;
+            }
     </script>
 </body>
 </html>
