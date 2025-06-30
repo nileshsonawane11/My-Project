@@ -12,6 +12,8 @@
     }
 
     $match_id = '';
+    $bat_team = '';
+    $bowl_team = '';
     $back_decision = false;
     $for = $_GET['for'] ?? '';
     $data = json_decode($_GET['data'] ?? '',true);
@@ -30,9 +32,14 @@
     foreach ($score_log['innings'] as $innings_name => $innings_data) {
         if ($innings_data['completed'] == false) {
             $current_innings = $innings_name;
+            $bat_team = $score_log['innings'][$current_innings]['batting_team'];
+            $bowl_team = $score_log['innings'][$current_innings]['bowling_team'];
             break;
         }
     }
+
+    $isfreehit_allow = $score_log['freehit'];
+    $iswide_allow = $score_log['wide'];
     
 ?>
 <!DOCTYPE html>
@@ -555,6 +562,42 @@
         .decision{
             text-transform: capitalize;
         }
+        .player-frame{
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: bottom 0.8s ease;
+            z-index: 999;
+        }
+        .player-frame.active{
+            bottom: 0;
+        }
+        .type-container{
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            gap: 3px;
+            font-size: 10px;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .style-container2{
+            height: 30px;
+            width: max-content;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+            background: #80808029;
+            text-align: center;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .style-container2.active{
+            border : 2px solid #FF6200;
+        }
 
         @media (min-width:601px) {
             .container{
@@ -813,17 +856,17 @@
                 <div class="data-info">
                     <div class="batsman">
                         <div class="batmans">
-
-                            <div class="batsman-type">
-                                <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="white"/>
-                                </svg>
                                 <?php
                                     
                                     $striker = $score_log['innings'][$current_innings]['openers']['striker_id']['id'];
                                     $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$striker'"));
-
-                                    echo $name['fname'];
+                                ?>
+                            <div class="batsman-type" data-striker='<?php echo $striker; ?>'>
+                                <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="white"/>
+                                </svg>
+                                <?php
+                                    echo $name['fname'] ?? '';
                                 ?>
                                 (striker)
                             </div>
@@ -837,17 +880,17 @@
                         </div>
 
                         <div class="batmans">
-
-                            <div class="batsman-type">
-                                <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
-                                </svg>
                                 <?php
                                     
                                     $non_striker = $score_log['innings'][$current_innings]['openers']['non_striker_id']['id'];
                                     $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$non_striker'"));
-
-                                    echo $name['fname'];
+                                ?>
+                            <div class="batsman-type" data-non-striker='<?php echo $non_striker; ?>'>
+                                <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
+                                </svg>
+                                <?php
+                                    echo $name['fname'] ?? '';
                                 ?>
                                 (non-striker)
                             </div>
@@ -863,16 +906,17 @@
                     </div>
                     <div class="numpad">
                         <div class="bowler-container">
-                                <div class="bowler-name">
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1.67013 14.2598L2.21013 14.7898L1.59013 15.3998C1.84106 15.7909 2.12189 16.162 2.43013 16.5098L16.5101 2.4198C16.1612 2.12041 15.7938 1.8432 15.4101 1.5898L14.7901 2.1998L14.2601 1.6698L14.7401 1.1898C12.8463 0.171369 10.6746 -0.20948 8.54727 0.103742C6.41991 0.416965 4.45017 1.40757 2.93024 2.92863C1.41031 4.44968 0.421157 6.42015 0.109505 8.54774C-0.202146 10.6753 0.180306 12.8467 1.20013 14.7398L1.67013 14.2598ZM12.8601 3.0698L13.3901 3.5998L12.0001 4.9998L11.4701 4.4698L12.8601 3.0698ZM10.0701 5.8698L10.5901 6.3998L9.20013 7.7998L8.67013 7.2698L10.0701 5.8698ZM7.27013 8.6698L7.80013 9.1998L6.40013 10.5898L5.87013 10.0598L7.27013 8.6698ZM4.47013 11.4598L5.00013 11.9998L3.60013 13.3998L3.07013 12.8698L4.47013 11.4598ZM4.59013 18.4098L5.21013 17.7998L5.74013 18.3298L5.26013 18.8098C7.15396 19.8282 9.32563 20.2091 11.453 19.8959C13.5804 19.5826 15.5501 18.592 17.07 17.071C18.59 15.5499 19.5791 13.5794 19.8908 11.4519C20.2024 9.32426 19.82 7.15287 18.8001 5.2598L18.3301 5.7398L17.7901 5.2098L18.4101 4.5998C18.1592 4.20867 17.8784 3.83756 17.5701 3.4898L3.49013 17.5798C3.83909 17.8792 4.20648 18.1564 4.59013 18.4098ZM16.4001 6.6098L16.9301 7.1398L15.5301 8.5398L15.0001 7.9998L16.4001 6.6098ZM13.6001 9.4098L14.1301 9.9398L12.7301 11.3298L12.2001 10.7998L13.6001 9.4098ZM10.8001 12.1998L11.3301 12.7298L9.94013 14.1298L9.40013 13.5998L10.8001 12.1998ZM8.00013 14.9998L8.53013 15.5298L7.13013 16.9298L6.60013 16.3998L8.00013 14.9998Z" fill="black"/>
-                                    </svg>
                                     <?php
                                     
                                         $bowler = $score_log['innings'][$current_innings]['current_bowler']['id'];
                                         $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$bowler'"));
-
-                                        echo $name['fname'];
+                                    ?>
+                                <div class="bowler-name" data-bowler="<?php echo $bowler; ?>"> 
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.67013 14.2598L2.21013 14.7898L1.59013 15.3998C1.84106 15.7909 2.12189 16.162 2.43013 16.5098L16.5101 2.4198C16.1612 2.12041 15.7938 1.8432 15.4101 1.5898L14.7901 2.1998L14.2601 1.6698L14.7401 1.1898C12.8463 0.171369 10.6746 -0.20948 8.54727 0.103742C6.41991 0.416965 4.45017 1.40757 2.93024 2.92863C1.41031 4.44968 0.421157 6.42015 0.109505 8.54774C-0.202146 10.6753 0.180306 12.8467 1.20013 14.7398L1.67013 14.2598ZM12.8601 3.0698L13.3901 3.5998L12.0001 4.9998L11.4701 4.4698L12.8601 3.0698ZM10.0701 5.8698L10.5901 6.3998L9.20013 7.7998L8.67013 7.2698L10.0701 5.8698ZM7.27013 8.6698L7.80013 9.1998L6.40013 10.5898L5.87013 10.0598L7.27013 8.6698ZM4.47013 11.4598L5.00013 11.9998L3.60013 13.3998L3.07013 12.8698L4.47013 11.4598ZM4.59013 18.4098L5.21013 17.7998L5.74013 18.3298L5.26013 18.8098C7.15396 19.8282 9.32563 20.2091 11.453 19.8959C13.5804 19.5826 15.5501 18.592 17.07 17.071C18.59 15.5499 19.5791 13.5794 19.8908 11.4519C20.2024 9.32426 19.82 7.15287 18.8001 5.2598L18.3301 5.7398L17.7901 5.2098L18.4101 4.5998C18.1592 4.20867 17.8784 3.83756 17.5701 3.4898L3.49013 17.5798C3.83909 17.8792 4.20648 18.1564 4.59013 18.4098ZM16.4001 6.6098L16.9301 7.1398L15.5301 8.5398L15.0001 7.9998L16.4001 6.6098ZM13.6001 9.4098L14.1301 9.9398L12.7301 11.3298L12.2001 10.7998L13.6001 9.4098ZM10.8001 12.1998L11.3301 12.7298L9.94013 14.1298L9.40013 13.5998L10.8001 12.1998ZM8.00013 14.9998L8.53013 15.5298L7.13013 16.9298L6.60013 16.3998L8.00013 14.9998Z" fill="black"/>
+                                    </svg>
+                                    <?php
+                                        echo $name['fname'] ?? '';
                                     ?>
                                     (bowler)
                                 </div>
@@ -951,13 +995,14 @@
     </div>
 
 
-    
+    <iframe src="./select-player-from-team.php" frameborder="0" class="player-frame"></iframe>
     
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const back_decision = '<?php echo $back_decision; ?>';
         let data = urlParams.get('data') || '';
         console.log(data);
+        const match = urlParams.get('match_id') || '';
         let opacity = document.querySelector('.opacity-container');
         let dropdown = document.querySelector('.dropdown');
         let shotdialog = document.querySelector('#shotdialog');
@@ -971,6 +1016,9 @@
         let NB = document.querySelector('.nb');
         let wide_ball = document.querySelector('.wide');
         let comm = document.getElementById('comm');
+        let players_page = document.querySelector('.player-frame');
+        let bat_team = '<?php echo $bat_team; ?>';
+        let bowl_team = '<?php echo $bowl_team; ?>';
         let DeepFineLeg = `
         <div class="style-container" onclick="get_shot(this)">FLICK</div>
         <div class="style-container" onclick="get_shot(this)">PULL</div>
@@ -1044,7 +1092,8 @@
         <div class="style-container" onclick="get_shot(this)">Caught</div>
         <div class="style-container" onclick="get_shot(this)">Caught Behind</div>
         <div class="style-container" onclick="get_shot(this)">Caught & Bowled</div>
-        <div class="style-container" onclick="get_shot(this)">Run Out</div>
+        <div class="style-container" onclick="get_shot(this)">Run Out (Striker)</div>
+        <div class="style-container" onclick="get_shot(this)">Run Out (Non-Striker)</div>
         <div class="style-container" onclick="get_shot(this)">LBW</div>
         <div class="style-container" onclick="get_shot(this)">Stumped</div>
         <div class="style-container" onclick="get_shot(this)">Retired Out</div>
@@ -1052,7 +1101,8 @@
         <div class="style-container" onclick="get_shot(this)">Hit Wicket</div>
         <div class="style-container" onclick="get_shot(this)">Retired Out</div>
         <div class="style-container" onclick="get_shot(this)">Hit the Ball Twice</div>
-        <div class="style-container" onclick="get_shot(this)">Obstr. the Field</div>
+        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Striker)</div>
+        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Non-Striker)</div>
         <div class="style-container" onclick="get_shot(this)">Retired</div>`;
         let byes = `
         <div class="style-container" onclick="get_shot(this)">1</div>
@@ -1062,6 +1112,7 @@
         <div class="style-container" onclick="get_shot(this)">5</div>
         <div class="style-container" onclick="get_shot(this)">+</div>`;
 
+        let dismissedPlayerid = null;
         let run_per_ball = null;
         let Shot_side = null;
         let Shot_type = null;
@@ -1069,6 +1120,11 @@
         let ball_type = null;
         let out_type = null;
         let freehit = false;
+        let allowfreehit = '<?php echo $isfreehit_allow ?>';
+        let allowwide = '<?php echo $iswide_allow ?>';
+
+        let new_player = '';
+        let wicket_by = '';
 
         //go to prevoius page
         let goBack = () => {
@@ -1079,8 +1135,87 @@
             }
         }
 
+        function verifyPlayers() {
+            let strikerEl = document.querySelectorAll('.batsman-type')[0];
+            let nonStrikerEl = document.querySelectorAll('.batsman-type')[1];
+            const bowlerEl = document.querySelector('.bowler-name');
+
+            let striker = strikerEl.getAttribute('data-striker') || '';
+            let non_striker = nonStrikerEl.getAttribute('data-non-striker') || '';
+            const bowler = bowlerEl.getAttribute('data-bowler') || '';
+
+             // If striker missing
+            if (!striker || strikerEl.innerText.trim() === '') {
+                navigator.vibrate([100,50,100,50,100]);
+                strikerEl.closest('.batmans').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Striker&team=${bat_team}&striker=&non-striker=${non_striker}`;
+                return false;
+            }
+
+            // If non-striker missing
+            if (!non_striker || nonStrikerEl.innerText.trim() === '') {
+                navigator.vibrate([100,50,100,50,100]);
+                nonStrikerEl.closest('.batmans').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Non-Striker&team=${bat_team}&striker=${striker}&non-striker=`;
+                return false;
+            }
+
+            // If bowler missing
+            if (!bowler || bowlerEl.innerText.trim() === '') {
+                navigator.vibrate([100,50,100,50,100]);
+                bowlerEl.closest('.batmans').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Bowler&team=${bowl_team}`;
+                return false;
+            }
+
+            // if both exist
+            return true;
+        }
+
+            window.addEventListener('load', () => {
+                verifyPlayers();
+            });
+
+
+
+        window.addEventListener("message", (event) => {
+            if (event.data === "closeIframe") {
+                players_page.classList.remove('active');  
+
+               goBack();
+
+            }
+
+             if(event.data.type == 'player'){
+                if(event.data.person == 'Striker'){
+                    new_player = event.data.data;
+                    // console.log(striker);
+                }else if(event.data.person == 'Non-Striker'){
+                    new_player = event.data.data;
+                    // console.log(non_striker);
+                }else if(event.data.person == 'Bowler'){
+                    new_player = event.data.data;
+                    // console.log(bowler);
+                }else if(event.data.person == 'Fielder'){
+                    wicket_by = event.data.data;
+                }
+
+                let info = {
+                    person : event.data.person,
+                    ...(event.data.person == 'Fielder'?{wicket_by : wicket_by} : {data : new_player})
+                }
+
+                console.log(info);
+                event.data.person == 'Fielder'? get_score_on_wicket() : null;
+            }
+        });
+
         //open menubar
         let open_dropdown = () => {
+            if (!verifyPlayers()) return;
             dropdown.classList.toggle('active');
             setTimeout(() => {
                 opacity.style.display = 'block';
@@ -1089,10 +1224,12 @@
         }
 
         //prevent from refesh page
-        window.addEventListener("beforeunload", function (e) {
+        function preventReload(e) {
             e.preventDefault();
             e.returnValue = '';
-        });
+        }
+
+        window.addEventListener("beforeunload", preventReload);
 
         // Disable F5 and Ctrl+R keyboard shortcuts
         window.addEventListener("keydown", function (e) {
@@ -1101,6 +1238,10 @@
                 alert("Reload is disabled for the scorer!");
             }
         });
+
+        //block wide if not allowed
+        wide_ball.disabled = !allowwide;
+
         let commentaryEnabled = true;
 
         //allow and deny voice commentry
@@ -1127,13 +1268,14 @@
                 opacity.style.display = 'none';
             }
             dropdown.classList.remove('active');
-        })
+        });
 
         //open side containre for shots
         let num = document.querySelectorAll('.num');
 
         num.forEach((el) => {
             el.addEventListener('click', () => {
+                if (!verifyPlayers()) return;
                 let value = el.innerText.trim();
                 let match = value.match(/\b\d+\b/);  // finds first standalone number
                 if (match) {
@@ -1187,6 +1329,7 @@
 
         //open dialog for out
         out.addEventListener('click', () => {
+            if (!verifyPlayers()) return;
             document.querySelector('.text').innerHTML = '<p class="out-text">Select out type</p>'
             data_container.innerHTML = out_data;
             shot.showModal();
@@ -1194,12 +1337,14 @@
 
         //open dialog box for leg bye & bye
         bye.addEventListener('click', () => {
+            if (!verifyPlayers()) return;
             document.querySelector('.text').innerHTML = '<p class="out-text">Bye Runs</p>'
             data_container.innerHTML = byes;
             shot.showModal();
         });
 
         lb.addEventListener('click', () => {
+            if (!verifyPlayers()) return;
             document.querySelector('.text').innerHTML = '<p class="out-text">Leg Bye Runs</p>'
             data_container.innerHTML = byes;
             shot.showModal();
@@ -1207,21 +1352,31 @@
 
         //open dialog for No_ball
         NB.addEventListener('click', () => {
+            if (!verifyPlayers()) return;
             let data = '';
             document.querySelector('.text').innerHTML = '<p class="out-text">No ball</p><p>(NB=1)</p>'
             for(let i = 0;i < 8; i++){
                 if(i == 7){
-                    data = data + `<div class="style-container" onclick="get_shot(this)">+</div>`;
+                    data = data + `<div class="style-container" onclick="get_noball(this)">+</div>`;
                 }else{
-                    data = data + `<div class="style-container" onclick="get_shot(this)">NB + ${i}</div>`;
+                    data = data + `<div class="style-container" onclick="get_noball(this)">NB + ${i}</div>`;
                 }
             }
+            data = data + `<div class='style-container noballtypes' style="display:none">
+                                <div class="type-container">
+                                    <div class="style-container2" onclick="get_noball_type(this)">Hit</div>
+                                    <div class="style-container2" onclick="get_noball_type(this)">Bye</div>
+                                    <div class="style-container2" onclick="get_noball_type(this)">Leg Bye</div>
+                                    <div class="style-container2" onclick="get_noball_type(this)">Wicket</div>
+                                </div>
+                            </div>`;
             data_container.innerHTML = data;
             shot.showModal();
         });
 
         //open dialog for Wide_ball
         wide_ball.addEventListener('click', () => {
+            if (!verifyPlayers()) return;
             let data = '';
             document.querySelector('.text').innerHTML = '<p class="out-text">wide ball</p><p>(WD=1)</p>'
             for(let i = 0;i < 8; i++){
@@ -1235,31 +1390,190 @@
             shot.showModal();
         });
 
+        //
+        let get_score_on_wicket = (el) => {
+            let data = '';
+            document.querySelector('.text').innerHTML = '<p class="out-text">Runs</p>'
+            for(let i = 0;i < 8; i++){
+                if(i == 7){
+                    data = data + `<div class="style-container" onclick="get_score(this)">+</div>`;
+                }else{
+                    data = data + `<div class="style-container" onclick="get_score(this)">${i}</div>`;
+                }
+            }
+            data_container.innerHTML = data;
+            shot.showModal();
+        }
+
         //shot selection
         let selectedShot = '';
 
         let shotContainers = document.querySelectorAll('.style-container');
+        let noballtype = document.querySelectorAll('.style-container2');
         let balltype = '';
+        let no_balltype = '';
+        let no_ball = '';
+
+        //get score
+        let get_score = (el) => {
+            balltype = document.querySelector('#selectshot .text').innerText;
+
+            // Remove 'active' class from all shot containers
+            document.querySelectorAll('.style-container').forEach(c => c.classList.remove('active'));
+
+            // Add 'active' class to the clicked container
+            el.classList.add('active');
+
+            // Set selected shot text
+            run_per_ball = el.textContent.trim();
+
+            if (run_per_ball === '+') {
+                let customRun = prompt("Enter number of runs:");
+                run_per_ball = customRun || 0;
+            }
+
+            console.log('Runs:', run_per_ball);
+            console.log('out type :',selectedShot)
+            if(freehit && ["Bowled","Caught","Caught Behind","Caught & Bowled","LBW","Stumped","Hit Wicket"].includes(selectedShot)){
+                display_content();
+            }else{
+                if(["Caught","Caught Behind","Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Run out (Mankaded)"].includes(selectedShot)){
+                    setTimeout(() => {
+                            shotdialog.style.display = 'flex';
+                            opacity.style.display = 'block';
+                        }, 300);
+                }else{
+                    
+                            
+                    display_content();
+                }
+            }
+            
+            setTimeout(() => {
+                shot.close();
+            }, 300);
+        }
+
+        //get no ball
+        let get_noball = (el) => {
+            balltype = document.querySelector('#selectshot .text').innerText;
+
+            // Remove 'active' class from all shot containers
+            document.querySelectorAll('.style-container').forEach(c => c.classList.remove('active'));
+
+            // Add 'active' class to the clicked container
+            el.classList.add('active');
+
+            // Set selected shot text
+            selectedShot = el.textContent.trim();
+
+            console.log('Selected shot:', selectedShot);
+
+            if(selectedShot != null){
+                document.querySelector('.noballtypes').style.display = 'block';
+            }
+            
+
+            if(selectedShot != '' && no_balltype != ''){
+                    setTimeout(() => {
+                        shot.close();
+                    }, 300);
+                    
+                    display_content();
+                }
+
+        }
+
+         let get_noball_type = (el) => {
+                balltype = document.querySelector('#selectshot .text').innerText;
+
+                // Remove 'active' class from all shot containers
+                document.querySelectorAll('.style-container2').forEach(c => c.classList.remove('active'));
+
+                // Add 'active' class to the clicked container
+                el.classList.add('active');
+
+                // Set selected shot text
+                no_balltype = el.textContent.trim();
+
+                console.log('Selected shot:', no_balltype);
+                ball_type = 'No Ball';
+                type(selectedShot);
+
+                if(selectedShot != '' && no_balltype != ''){
+                    
+
+                    if(no_balltype == 'Wicket'){
+                        let data = '';
+                        document.querySelector('.text').innerHTML = '<p class="out-text">Select out type</p>'
+                            
+                        data = data + `<div class="style-container" onclick="get_shot_noball(this)">Run Out (Striker)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Run Out (Non-Striker)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Run out (Mankaded)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Striker)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Non-Striker)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Hit the Ball Twice</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Retired</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Retired Out</div>`;
+                                                      
+                        data_container.innerHTML = data;
+                        shot.showModal();
+                    }else{
+                        setTimeout(() => {
+                            shot.close();
+                        }, 300);
+                        display_content();
+                    }
+                    
+                }
+
+                
+        }
+
+        let get_shot_noball = (el) => {
+            balltype = document.querySelector('#selectshot .text').innerText;
+
+                // Remove active class from all
+                shotContainers.forEach(c => c.classList.remove('active'));
+
+                // Add active class to clicked container
+                el.classList.add('active');
+
+                // Get the text (like shot name)
+                selectedShot = el.textContent.trim();
+                out_type = selectedShot;
+                get_score_on_wicket();
+                console.log('Ball Type : ',ball_type)
+        }
+
+        let type = (selectedShot) => {
+            let run = selectedShot.match(/\d+/);  
+            if (run) {
+                run = parseInt(run[0]);
+                console.log('Run:', run);
+                if(ball_type == 'No Ball'){
+                    if (no_balltype === 'Hit') {
+                        extras = 1;
+                        run_per_ball = run;
+                    } else if (no_balltype === 'Bye' || no_balltype === 'Leg Bye') {
+                        extras = run + 1;
+                    }else if(no_balltype === 'Wicket'){
+                        out_type = "Run out";
+                        extras = 1;
+                        run_per_ball = run;
+                    }
+                }else if(ball_type == 'Wide Ball'){
+                    extras = run+1;
+                }else{
+                    extras = run;
+                }      
+            }
+        }
+
         // Get all style-containers
         let get_shot = (el) => {
                 balltype = document.querySelector('#selectshot .text').innerText;
 
-                let type = (selectedShot) => {
-                    let run = selectedShot.match(/\d+/);  
-                    if (run) {
-                        run = parseInt(run[0]);
-                        console.log('Run:', run);
-                        if(ball_type == 'No Ball'){
-                            extras = 1;
-                            run_per_ball = run;
-                        }else if(ball_type == 'Wide Ball'){
-                            extras = run+1;
-                        }else{
-                            extras = run;
-                        }
-                        
-                    }
-                }
                 // Remove active class from all
                 shotContainers.forEach(c => c.classList.remove('active'));
 
@@ -1269,40 +1583,91 @@
                 // Get the text (like shot name)
                 selectedShot = el.textContent.trim();
                 
-                if(balltype.includes('WD')){
+                if(balltype.includes('WD') && allowwide){
 
                     console.log('Wide BAll')
                     ball_type = 'Wide Ball';
+
+                    if (selectedShot === '+') {
+                        let customRun = prompt("Enter number of extra runs:");
+                        selectedShot = customRun || '0';
+                    }
+
                     type(selectedShot);
+
+                    setTimeout(() => {
+                        shot.close();
+                    }, 300);
+
+                    display_content();
                     
 
-                }else if(balltype.includes('NB')){
-
-                    console.log('No BAll')
+                }else if (balltype.includes('NB')) {
+                    console.log('No Ball');
                     ball_type = 'No Ball';
+
+                    if (selectedShot === '+') {
+                        let customRun = prompt("Enter number of extra runs:");
+                        selectedShot = customRun || '0';
+                    }
+
                     type(selectedShot);
-                    
-                    //freehit = true;
 
-                }else if(balltype.includes('Leg Bye')){
+                    setTimeout(() => {
+                        shot.close();
+                    }, 300);
 
-                    console.log('Leg Bye')
+                    display_content();
+                }
+                else if (balltype.includes('Leg Bye')) {
+                    console.log('Leg Bye');
                     ball_type = 'Leg Bye';
+
+                    if (selectedShot === '+') {
+                        let customRun = prompt("Enter number of runs:");
+                        selectedShot = customRun || '0';
+                    }
+
                     type(selectedShot);
-                    
 
-                }else if(balltype.includes('Bye')){
+                    setTimeout(() => {
+                        shot.close();
+                    }, 300);
 
-                    console.log('Bye')
+                    display_content();
+                }
+                else if (balltype.includes('Bye')) {
+                    console.log('Bye');
                     ball_type = 'Bye';
-                    type(selectedShot);
-                    
 
+                    if (selectedShot === '+') {
+                        let customRun = prompt("Enter number of runs:");
+                        selectedShot = customRun || '0';
+                    }
+                    type(selectedShot);
+
+                    setTimeout(() => {
+                        shot.close();
+                    }, 300);
+
+                    display_content();
+
+                    
                 }else if(balltype.includes('Shot')){
 
                     console.log(selectedShot);
                     Shot_type = selectedShot;
-                    ball_type = 'Legal Delivery';
+
+                    if(!ball_type?.startsWith('No Ball')){
+                        ball_type = 'Legal Delivery';
+                    }
+                    
+
+                    setTimeout(() => {
+                        shot.close();
+                    }, 300);
+
+                    display_content();
 
                 }else if(balltype.includes('out')){
 
@@ -1310,17 +1675,41 @@
                     out_type = selectedShot;
                     ball_type = 'Wicket';
 
+                    
+
+                    if([ "Run Out (Striker)","Run Out (Non-Striker)","Run out (Mankaded)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Retired","Retired Out"].includes(selectedShot)){
+                        
+                        get_score_on_wicket();
+                       
+                    }else if(["Caught","Caught Behind"].includes(selectedShot)){
+                        
+                        if(freehit){
+                            setTimeout(() => {
+                                shot.close();
+                            }, 300);
+                            display_content();
+                        }else{
+                            players_page.classList.add('active');
+                            players_page.src = `./select-player-from-team.php?for=Fielder&team=${bowl_team}`;
+                            setTimeout(() => {
+                                shot.close();
+                            }, 100);
+                        }
+                        
+                    }else{
+
+                        setTimeout(() => {
+                            shot.close();
+                        }, 300);
+                        display_content();
+                    }
                 }
 
-                setTimeout(() => {
-                    shot.close();
-                }, 300);
-
-                display_content();
             };
 
             //open dialog for undo
             undo.addEventListener('click',()=>{
+                if (!verifyPlayers()) return;
                 undo_container.showModal();
                 undo_container.classList.add('shake');
                 navigator.vibrate(100);
@@ -1391,6 +1780,14 @@
                     "That's a wicket on a Free Hit — only dismissable this way! {striker} is gone.",
                     "{striker} is out on a Free Hit via {outType}, rare moment.",
                     "He’s out on a Free Hit! Only possible through {outType}. {striker} walks off."
+                ],
+                wicketOnNoBall: [
+                    "{striker} has been dismissed on a no ball — {outType} is still allowed!",
+                    "Unbelievable scenes! A no ball, but {striker} is out via {outType}.",
+                    "{outType} dismissal for {striker} on a no ball. That’s within the laws!",
+                    "Even with the no ball call, {striker} walks back to the pavilion — {outType} it is.",
+                    "A rare moment! No ball signalled, but {striker} is out through {outType}.",
+                    "Drama in the middle! {striker} falls to a {outType}, despite the no ball."
                 ]
             };
 
@@ -1400,22 +1797,70 @@
 
                 // Replace placeholders
                 return randomPhrase
-                .replace('{striker}', data.striker)
+                    .replace('{striker}', data.striker)
                     .replace('{runs}', data.runs)
                     .replace('{plural}', data.runs > 1 ? 's' : '')
-                    .replace('{outType}', data.outType);
+                    .replace('{outType}', data.outType ? data.outType.replace(/\s*\(.*?\)/, '') : null);
             }
 
-            function generateCommentary(run, outType, ballType, freeHit ,extra, striker) {
+            function handleWicket() {
+                
+                // Run Out or Obstruction — Non-Striker out or Mankaded
+                if (
+                    out_type.includes("Non-Striker") ||
+                    out_type == "Run out (Mankaded)"
+                ) {
+                    console.log(`nonStriker is out — ${out_type}`); 
+                }else // Run Out or Obstruction — Striker out
+                if (out_type.includes("Striker")) {
+                    console.log(`striker is out — ${out_type}`);
+                }
+                // All other types — always Striker out
+                else if(ball_type === 'No Ball' && out_type.startsWith("Run out")){
+                    console.log('runs :',run_per_ball)
+                    
+                        
+                }else {
+                    console.log(`striker is out — ${out_type}`);
+                }
+            }
+
+            function generateCommentary(run, outType, ballType, freeHit ,extra, striker,non_striker) {
                 let commentary = '';
 
                 if (outType !== null) {
-                    if (freeHit && ['Run Out', 'Obstr. the Field', 'Hit Wicket'].includes(outType)) {
-                        commentary = getRandomCommentary('illegalWicketOnFreeHit', { outType,striker });
+
+                    let dismissedPlayer = (["(Non-Striker)", "(Mankaded)"].some(sub => outType.includes(sub))) ? non_striker : striker;
+                    
+                    let batsmen = document.querySelectorAll('.batsman-type');
+                    dismissedPlayerid = (
+                    ["(Non-Striker)", "(Mankaded)"].some(sub => outType.includes(sub))
+                    )
+                    ? batsmen[1]?.getAttribute('data-non-striker')
+                    : batsmen[0]?.getAttribute('data-striker');
+                    console.log(dismissedPlayerid)
+                    console.log('No ball test : ',ball_type)
+                    
+                    if (ball_type === 'No Ball') {
+
+                        handleWicket();
+                        commentary = getRandomCommentary('wicketOnNoBall', { outType, striker: dismissedPlayer });
+
+                    } else if (freeHit && (
+                        outType.startsWith("Run") || 
+                        outType.startsWith("Obstructing") || 
+                        outType === "Hit the Ball Twice" || 
+                        outType.startsWith("Retired"))
+                    ) {
+                        handleWicket();
+                        commentary = getRandomCommentary('illegalWicketOnFreeHit', { outType, striker: dismissedPlayer });
+
                     } else if (freeHit) {
-                        commentary = "It's a Free Hit — no wicket possible on this ball!";
+                        commentary = "Not out — it's a free hit!";
+
                     } else {
-                        commentary = getRandomCommentary('out', { outType,striker });
+                        handleWicket();
+                        commentary = getRandomCommentary('out', { outType, striker: dismissedPlayer });
                     }
                 }
                 else if (balltype.includes('Leg Bye')) {
@@ -1482,7 +1927,7 @@
                     // Speak it
                     setTimeout(() => {
                         window.speechSynthesis.speak(utter);
-                    }, 100);
+                    }, 000);
                     
                 }
             }
@@ -1490,44 +1935,55 @@
             function stopCommentary() {
                 window.speechSynthesis.cancel();
             }
-        
+            let ball_data = '';
             //update score
             let display_content = () => {
-                let commentary = generateCommentary(run_per_ball, out_type, ball_type, freehit, extras, document.querySelector('.batsman-type').innerText);
+                let commentary = generateCommentary(run_per_ball, out_type, ball_type, freehit, extras, document.querySelectorAll('.batsman-type')[0].innerText,document.querySelectorAll('.batsman-type')[1].innerText);
                 let scoreText = document.querySelector('.score').childNodes[0].nodeValue.trim().split('/');
 
-                if(ball_type == 'No Ball'){
+                if (ball_type.startsWith('No Ball') && allowfreehit) {
                     freehit = true;
-                }else if(ball_type == 'Wide Ball'){
+                } else if (freehit && ball_type.startsWith('No Ball')) {
+                    console.log('Wicket free hit');
                     freehit = true;
-                }else if(freehit && ball_type == 'No Ball'){
-
+                } else if (ball_type == 'Wide Ball' && freehit) {
                     freehit = true;
-
-                }else if(freehit && ball_type == 'Leg Bye'){
+                } else if (freehit && (ball_type == 'Leg Bye' || ball_type == 'Bye')) {
                     freehit = false;
-                }else if(freehit && ball_type == 'Bye'){
-                    freehit = false;
-                }else if(freehit){
+                } else if (freehit) {
                     ball_type = 'Free Hit';
                     freehit = false;
                 }
                 free = ball_type;
-                let data = {
+
+                
+                let strikerName = document.querySelector('.batsman-type').getAttribute('data-striker');
+                ball_data = {
                     'Run' : run_per_ball,
                     'Shot Type' : Shot_type,
                     'Shot Side' : Shot_side,
-                    'Out': out_type,
+                    'Wicket Type': out_type,
                     'Extra' : extras,
-                    'Ball Type': ball_type,
+                    ...(ball_type == 'No Ball' ? {'Ball Type': `${ball_type}-${no_balltype}`}:{'Ball Type': ball_type}),
+                    ...(freehit? { 'Freehit': freehit } : {}),
                     'Bowler': document.querySelector('.bowler-name').innerText,
-                    'Striker': document.querySelector('.batsman-type').innerText,
-                    'totalScore': scoreText[0],
-                    'wickets': scoreText[1],
-                    'commentary': commentary
+                    'Wicket By ': wicket_by,
+                    ...(ball_type == 'Wicket' || no_balltype == 'Wicket' ? { 'Out Player': dismissedPlayerid ,'New Player':new_player} : { 'Striker': strikerName }),
+                    'TotalScore': scoreText[0],
+                    'Wickets': scoreText[1],
+                    'Commentary': commentary
                 }
 
-                console.log(data);
+                update_score();
+                
+            }
+
+            let update_score = () => {
+                console.log(ball_data);
+
+                //Bypass reload
+                // window.removeEventListener("beforeunload", preventReload);
+                // location.reload();
 
                 run_per_ball =null;
                 Shot_type = null;
@@ -1535,6 +1991,9 @@
                 out_type = null;
                 extras = null;
                 ball_type = null;
+                dismissedPlayer = '';
+                no_balltype = '';
+                wicket_by = '';
             }
     </script>
 </body>

@@ -29,6 +29,7 @@
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
             user-select : none;
+            scrollbar-width: none;
         }
         :root {
             --primary-light: #FAC01F;
@@ -192,13 +193,13 @@
                 background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
                 color: #fff;
                 font-size: 12px;
-                padding: 10px 45px;
+                padding: 10px 10px;
                 border: 1px solid transparent;
                 border-radius: 20px;
                 font-weight: 600;
                 letter-spacing: 0.5px;
                 text-transform: uppercase;
-                width: 150px;
+                width: max-content;
                 height: 40px;
                 display: flex;
                 align-items: center;
@@ -429,7 +430,7 @@
             </div>
 
             <div class="btn-container">
-                <div class="btn">Players</div>
+                <div class="btn">Select <?php echo $for; ?></div>
             </div>
         
             <div class="data-info">
@@ -551,6 +552,7 @@
     
     <script>
         let selectedplayer = '';
+        let selectedStyle = '';
         const selected_player = document.querySelectorAll('.mem');
         const urlParams = new URLSearchParams(window.location.search);
         const person = urlParams.get('for');
@@ -573,7 +575,6 @@
             option.querySelector('.done').style.display = 'none';
             option.classList.remove('active');
             selectedplayer = '';
-            console.log("Selection Cleared");
         } else {
             selected_player.forEach(opt => {
             opt.classList.remove('active');
@@ -582,7 +583,6 @@
             option.classList.add('active');
             option.querySelector('.done').style.display = 'block';
             selectedplayer = option.getAttribute('data-value');
-            console.log("Selected Player:", selectedplayer);
         }
         };
 
@@ -612,8 +612,6 @@
         }
         });
 
-        let selectedStyle = '';
-
         // Get all style containers
         let styleContainers = document.querySelectorAll('.style-container');
 
@@ -627,7 +625,6 @@
 
                 // Get the text (like 'Left Hand' or 'Right Hand')
                 selectedStyle = container.textContent.trim();
-                console.log("Selected Style:", selectedStyle);
             });
         });
 
@@ -637,7 +634,13 @@
             el.addEventListener('click', (el) => {
                 player = document.querySelector('.mem.active').getAttribute('data-value');
                 img = document.querySelector('.mem.active').getAttribute('src');
-                document.querySelector('#selectstyle').showModal();
+                console.log(player);
+                if(person == 'Fielder'){
+                    selectedStyle = 'Cover';
+                    submit();
+                }else{
+                    document.querySelector('#selectstyle').showModal();
+                }
             });
         });
 
@@ -652,13 +655,14 @@
                     dialog.classList.remove('shake');
                 }, { once: true });
             }else{
+                
                 let player_data={
                     type : 'player',
                     person : person,
                     data : `${player},${selectedStyle}`,
                     img : img
                 }
-                console.log("Selected Player:", player_data);
+                console.log(selectedStyle);
                 window.parent.postMessage(player_data, "*");
                 goBack();
             }

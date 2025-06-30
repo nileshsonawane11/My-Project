@@ -785,7 +785,7 @@
                         </div>
                         <div class="teammates">
                             <div class="img-border">
-                                <div class="mem-img"><img src="" alt="Member 5"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
+                                <div class="mem-img"><img src="https://i.ibb.co/RkQKLTTd/pranav.jpg" alt="Member 5"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
                             </div>
                             <p class="mem-name">Chavan Pranav</p>  
                         </div>

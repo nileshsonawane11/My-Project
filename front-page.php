@@ -901,7 +901,7 @@
                 };
 
                 if (role == '' || email == '' || fname == '' || lname == '') {
-                    var role_error = document.getElementById('error-user');
+                    var role_error = document.getElementById('error-email');
                     role_error.style.display = 'block';
                     role_error.innerText = 'Please fill all the required fields';
                 } else {
