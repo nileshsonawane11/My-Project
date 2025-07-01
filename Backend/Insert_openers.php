@@ -21,11 +21,11 @@ include '../config.php';
     $score_log = json_decode($row['score_log'], true);
 
     // Add 1 run and 1 ball to striker
-    $score_log['innings'][$current_innings]['openers']['striker_id']['id'] = $striker[0];
-    $score_log['innings'][$current_innings]['openers']['non_striker_id']['id'] = $non_striker[0];
+    $score_log['innings'][$current_innings]['openers']['current_striker']['id'] = $striker[0];
+    $score_log['innings'][$current_innings]['openers']['current_non_striker']['id'] = $non_striker[0];
 
-    $score_log['innings'][$current_innings]['openers']['striker_id']['style'] = $striker[1];
-    $score_log['innings'][$current_innings]['openers']['non_striker_id']['style'] = $non_striker[1];
+    $score_log['innings'][$current_innings]['openers']['current_striker']['style'] = $striker[1];
+    $score_log['innings'][$current_innings]['openers']['current_non_striker']['style'] = $non_striker[1];
 
     $score_log['innings'][$current_innings]['current_bowler']['id'] = $bowler[0];
     $score_log['innings'][$current_innings]['current_bowler']['style'] = $bowler[1];

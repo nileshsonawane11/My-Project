@@ -864,7 +864,7 @@
                         <div class="batmans">
                                 <?php
                                     
-                                    $striker = $score_log['innings'][$current_innings]['openers']['striker_id']['id'];
+                                    $striker = $score_log['innings'][$current_innings]['openers']['current_striker']['id'];
                                     $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$striker'"));
                                 ?>
                             <div class="batsman-type" data-striker='<?php echo $striker; ?>'>
@@ -878,8 +878,8 @@
                             </div>
                             <p class="batsman-score">
                                 <?php
-                                    echo ($score_log['innings'][$current_innings]['openers']['striker_id']['runs'] ?? 0).' ('.
-                                        ($score_log['innings'][$current_innings]['openers']['striker_id']['balls_faced'] ?? 0).')';
+                                    echo ($score_log['innings'][$current_innings]['openers']['current_striker']['runs'] ?? 0).' ('.
+                                        ($score_log['innings'][$current_innings]['openers']['current_striker']['balls_faced'] ?? 0).')';
                                 ?>
                             </p>
 
@@ -888,7 +888,7 @@
                         <div class="batmans">
                                 <?php
                                     
-                                    $non_striker = $score_log['innings'][$current_innings]['openers']['non_striker_id']['id'];
+                                    $non_striker = $score_log['innings'][$current_innings]['openers']['current_non_striker']['id'];
                                     $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$non_striker'"));
                                 ?>
                             <div class="batsman-type" data-non-striker='<?php echo $non_striker; ?>'>
@@ -902,8 +902,8 @@
                             </div>
                             <p class="batsman-score">
                                 <?php
-                                    echo ($score_log['innings'][$current_innings]['openers']['non_striker_id']['runs'] ?? 0).' ('.
-                                        ($score_log['innings'][$current_innings]['openers']['non_striker_id']['balls_faced'] ?? 0).')';
+                                    echo ($score_log['innings'][$current_innings]['openers']['current_non_striker']['runs'] ?? 0).' ('.
+                                        ($score_log['innings'][$current_innings]['openers']['current_non_striker']['balls_faced'] ?? 0).')';
                                 ?>
                             </p>
 
@@ -1006,6 +1006,7 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const back_decision = '<?php echo $back_decision; ?>';
+        const current_inning = '<?php echo $current_innings; ?>'
         let data = urlParams.get('data') || '';
         console.log(data);
         const match = urlParams.get('match_id') || '';
@@ -1211,11 +1212,13 @@
 
                 let info = {
                     person : event.data.person,
-                    ...(event.data.person == 'Fielder'?{wicket_by : wicket_by} : {data : new_player})
+                    ...(event.data.person == 'Fielder'?{wicket_by : wicket_by} : {data : new_player}),
+                    match_id : match,
+                    Inning : current_inning
                 }
 
-                console.log(info);
-                event.data.person == 'Fielder'? get_score_on_wicket() : null;
+                add_player(info);
+                event.data.person == 'Fielder'? display_content():null;
             }
         });
 
@@ -1440,10 +1443,10 @@
 
             console.log('Runs:', run_per_ball);
             console.log('out type :',selectedShot)
-            if(freehit && ["Bowled","Caught","Caught Behind","Caught & Bowled","LBW","Stumped","Hit Wicket"].includes(selectedShot)){
+            if(freehit && ["Bowled","Caught","Caught Behind","Caught & Bowled","LBW","Stumped","Hit Wicket","Run out (Mankaded)"].includes(selectedShot)){
                 display_content();
             }else{
-                if(["Caught","Caught Behind","Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Run out (Mankaded)"].includes(selectedShot)){
+                if(["Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)"].includes(selectedShot)){
                     setTimeout(() => {
                             shotdialog.style.display = 'flex';
                             opacity.style.display = 'block';
@@ -1504,6 +1507,11 @@
 
                 console.log('Selected shot:', no_balltype);
                 ball_type = 'No Ball';
+                if (selectedShot === '+') {
+                    let customRun = prompt("Enter number of extra runs:");
+                    selectedShot = customRun || '0';
+                }
+
                 type(selectedShot);
 
                 if(selectedShot != '' && no_balltype != ''){
@@ -1548,8 +1556,22 @@
                 // Get the text (like shot name)
                 selectedShot = el.textContent.trim();
                 out_type = selectedShot;
-                get_score_on_wicket();
-                console.log('Ball Type : ',ball_type)
+                //get_score_on_wicket();
+                console.log('No Ball Out Type : ',out_type)
+                setTimeout(() => {
+                    shot.close();
+                }, 300);
+
+                if(["Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)"].includes(out_type)){
+                    setTimeout(() => {
+                        shotdialog.style.display = 'flex';
+                        opacity.style.display = 'block';
+                    }, 300);
+                }else{
+                    display_content();
+                }
+                
+                
         }
 
         let type = (selectedShot) => {
@@ -1683,7 +1705,7 @@
 
                     
 
-                    if([ "Run Out (Striker)","Run Out (Non-Striker)","Run out (Mankaded)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Retired","Retired Out"].includes(selectedShot)){
+                    if([ "Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Retired","Retired Out"].includes(selectedShot)){
                         
                         get_score_on_wicket();
                        
@@ -2000,6 +2022,28 @@
                 dismissedPlayer = '';
                 no_balltype = '';
                 wicket_by = '';
+            }
+
+            let add_player = (info) => {
+                fetch('../../Backend/change_player.php', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(info)
+                })
+                .then(response => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if(data.status == 200){
+                        //Bypass reload
+                        window.removeEventListener("beforeunload", preventReload);
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
             }
     </script>
 </body>

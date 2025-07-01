@@ -34,7 +34,7 @@
 
      // Check openers
     $openers       = $score_logs['innings'][$current_innings]['openers'];
-    if (!empty($openers['striker_id']['id']) && !empty($openers['non_striker_id']['id'])) {
+    if (!empty($openers['current_striker']['id']) && !empty($openers['current_non_striker']['id'])) {
         header("Location: ./score_panel.php?match_id=".$match);
         exit();
     }
