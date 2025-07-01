@@ -28,6 +28,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Scoring</title>
     <style>
         *{
@@ -172,6 +173,41 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        #flexSwitchCheckChecked.form-check-input{
+            height: 25px;
+            width: 50px;
+        }
+        #flexSwitchCheckChecked.form-check-input:checked {
+            background-color: #ff7100;
+            border-color: #fd9f0d;
+        }
+        .form-check-input:focus {
+            border-color:rgb(255, 111, 0);
+            outline: 0;
+            box-shadow: 0 0 0 .25rem rgba(253, 65, 13, 0.22);
+        }
+        .form-check-input{
+            border: 1px solid rgb(255 89 0);
+            transition: background-position .5s ease-in-out;
+        }
+        .form-switch{
+            position: absolute;
+            right: 3px;
+            top: 15px;
+        }
+        .rules{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 30px;
+        }
+        .rule{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
         }
 
         @media (min-width:601px) {
@@ -345,7 +381,26 @@
                                     <div class="tname">BOWL</div>
                                 </div>
                             </div>
-                            <div class="error" id="error-decision"></div><div class="error" id="error-empty"></div> 
+                            <div class="error" id="error-decision"></div>
+                            <div class="error" id="error-empty"></div> 
+                        </div>
+                    </div>
+
+                    <div class="info">
+                        <label for="">Non-Mandatory Cricket Rules</label>
+                        <div class="sector rules">
+                            <div class="rule">
+                                <h6>Free Hit on No Ball</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input isfreehit" type="checkbox" id="flexSwitchCheckChecked" checked>
+                                </div>
+                            </div>
+                            <div class="rule">
+                                <h6>Wide Ball</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input iswide" type="checkbox" id="flexSwitchCheckChecked" checked>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="add-btn">
@@ -397,10 +452,15 @@
 
         let start_match = (e) => {
             e.preventDefault();
+            const iswide = document.querySelector('.iswide').checked;
+            const isfreehit = document.querySelector('.isfreehit').checked;
+
             let formdata = new FormData();
             formdata.append('match_id', '<?php echo $match; ?>');
             formdata.append('selectedteam', selectedteam);
             formdata.append('selecteddecision', selecteddecision);
+            formdata.append('iswide', iswide);
+            formdata.append('isfreehit', isfreehit);
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';

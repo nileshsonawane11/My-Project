@@ -26,6 +26,12 @@
 
     $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
     $score_log = json_decode($row['score_log'], true);
+
+    $istoss = $row['toss_winner'];
+    if(empty($istoss)){
+        header('location: ./match_toss.php?match_id='.$match_id);
+        exit();
+    }
     
     //detect current inning
     $current_innings = null;
@@ -872,8 +878,8 @@
                             </div>
                             <p class="batsman-score">
                                 <?php
-                                    echo $score_log['innings'][$current_innings]['openers']['striker_id']['runs'].' ('.
-                                        $score_log['innings'][$current_innings]['openers']['striker_id']['balls_faced'].')';
+                                    echo ($score_log['innings'][$current_innings]['openers']['striker_id']['runs'] ?? 0).' ('.
+                                        ($score_log['innings'][$current_innings]['openers']['striker_id']['balls_faced'] ?? 0).')';
                                 ?>
                             </p>
 
@@ -896,8 +902,8 @@
                             </div>
                             <p class="batsman-score">
                                 <?php
-                                    echo $score_log['innings'][$current_innings]['openers']['non_striker_id']['runs'].' ('.
-                                        $score_log['innings'][$current_innings]['openers']['non_striker_id']['balls_faced'].')';
+                                    echo ($score_log['innings'][$current_innings]['openers']['non_striker_id']['runs'] ?? 0).' ('.
+                                        ($score_log['innings'][$current_innings]['openers']['non_striker_id']['balls_faced'] ?? 0).')';
                                 ?>
                             </p>
 
@@ -1165,7 +1171,7 @@
             // If bowler missing
             if (!bowler || bowlerEl.innerText.trim() === '') {
                 navigator.vibrate([100,50,100,50,100]);
-                bowlerEl.closest('.batmans').style.borderColor = 'red';
+                bowlerEl.closest('.bowler-container').style.borderColor = 'red';
                 players_page.classList.add('active');
                 players_page.src = `./select-player-from-team.php?for=Bowler&team=${bowl_team}`;
                 return false;

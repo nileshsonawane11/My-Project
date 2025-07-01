@@ -761,7 +761,7 @@
                     <div class="team">
                         <div class="teammates">
                             <div class="img-border">
-                                <div class="mem-img"><img src="https://i.ibb.co/5WYMftRQ/myimg.jpg" alt="Member 1"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
+                                <div class="mem-img"><img src="https://i.ibb.co/rGZDkQsV/IMG-20250701-192708.jpg" alt="Member 1"  onerror="showAlt(this)" onload="this.parentElement.classList.add('loaded')"></div>
                             </div>
                             <p class="mem-name">Sonawane Nilesh</p>
                         </div>

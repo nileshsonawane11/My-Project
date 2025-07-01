@@ -17,6 +17,12 @@
     $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `matches` WHERE `match_id` = '$match'"));
     $score_logs = json_decode($row['score_log'], true);
 
+    $istoss = $row['toss_winner'];
+    if(empty($istoss)){
+        header('location: ./match_toss.php?match_id='.$match);
+        exit();
+    }
+
     // Detect current active innings
     $current_innings = null;
     foreach ($score_logs['innings'] as $innings_name => $innings_data) {
@@ -28,7 +34,7 @@
 
      // Check openers
     $openers       = $score_logs['innings'][$current_innings]['openers'];
-    if (!empty($openers['striker_id']['id']) || !empty($openers['non_striker_id']['id'])) {
+    if (!empty($openers['striker_id']['id']) && !empty($openers['non_striker_id']['id'])) {
         header("Location: ./score_panel.php?match_id=".$match);
         exit();
     }

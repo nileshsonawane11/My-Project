@@ -4,6 +4,9 @@ include '../config.php';
 
 $selectedteam = $_POST['selectedteam'];
 $selecteddecision = $_POST['selecteddecision'];
+$isfreehit = $_POST['isfreehit'];
+$iswide = $_POST['iswide'];
+
 $match_id = $_POST['match_id'];
 $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE `match_id` = '$match_id'"));
 
@@ -22,8 +25,8 @@ $score_log = [
   "team1" => $row['team_1'],
   "team2" => $row['team_2'],
   "overs" => $row['overs'],
-  "freehit" => true,
-  "wide" => true,
+  "freehit" => $isfreehit,
+  "wide" => $iswide,
   "innings" => [
     "1st" => [
       "batting_team" => $bat,
