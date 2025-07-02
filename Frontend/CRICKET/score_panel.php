@@ -1995,11 +1995,13 @@
                     ...(ball_type == 'No Ball' ? {'Ball Type': `${ball_type}-${no_balltype}`}:{'Ball Type': ball_type}),
                     ...(freehit? { 'Freehit': freehit } : {}),
                     'Bowler': document.querySelector('.bowler-name').innerText,
-                    'Wicket By ': wicket_by,
+                    'Wicket By': wicket_by,
                     ...(ball_type == 'Wicket' || no_balltype == 'Wicket' ? { 'Out Player': dismissedPlayerid ,'New Player':new_player} : { 'Striker': strikerName }),
                     'TotalScore': scoreText[0],
                     'Wickets': scoreText[1],
-                    'Commentary': commentary
+                    'Inning' : current_inning,
+                    'Commentary': commentary,
+                    'Match id': match
                 }
 
                 update_score();
@@ -2008,6 +2010,19 @@
 
             let update_score = () => {
                 console.log(ball_data);
+
+                fetch('../../Backend/update-cricket-logs.php',{
+                    method : 'post',
+                    header : {
+                        'Content-Type' : 'application/json'
+                    },
+                    body : JSON.stringify(ball_data)
+                })
+                .then(res => res.json())
+                .then((data)=>{
+                    console.log(data);
+                })
+                .catch(error => console.log(error));
 
                 //Bypass reload
                 // window.removeEventListener("beforeunload", preventReload);
@@ -2037,8 +2052,11 @@
                     console.log(data);
                     if(data.status == 200){
                         //Bypass reload
-                        window.removeEventListener("beforeunload", preventReload);
-                        location.reload();
+                        setTimeout(() => {
+                            window.removeEventListener("beforeunload", preventReload);
+                            location.reload(); 
+                        }, 300);
+                        
                     }
                 })
                 .catch(error => {
