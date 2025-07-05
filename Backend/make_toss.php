@@ -27,6 +27,7 @@ $score_log = [
   "overs" => $row['overs'],
   "freehit" => $isfreehit,
   "wide" => $iswide,
+  "super_over" => false,
   "innings" => [
     "1st" => [
       "batting_team" => $bat,
@@ -102,7 +103,7 @@ $score_log = [
       "total_runs" => 0,
       "wickets" => 0,
       "overs_completed" => "0.0",
-      "completed" => false
+      "completed" => false,
     ]
   ]
 ];

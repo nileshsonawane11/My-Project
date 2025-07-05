@@ -14,7 +14,9 @@
     $match_id = '';
     $bat_team = '';
     $bowl_team = '';
+    $inning_type = 'innings';
     $back_decision = false;
+    $freehit = null;
     $for = $_GET['for'] ?? '';
     $data = json_decode($_GET['data'] ?? '',true);
     if(empty($data)){
@@ -32,20 +34,30 @@
         header('location: ./match_toss.php?match_id='.$match_id);
         exit();
     }
+
+    if($score_log['super_over'] == true){
+        $inning_type = 'super_over_innings';
+    }
     
     //detect current inning
     $current_innings = null;
-    foreach ($score_log['innings'] as $innings_name => $innings_data) {
+    foreach ($score_log[$inning_type] as $innings_name => $innings_data) {
         if ($innings_data['completed'] == false) {
             $current_innings = $innings_name;
-            $bat_team = $score_log['innings'][$current_innings]['batting_team'];
-            $bowl_team = $score_log['innings'][$current_innings]['bowling_team'];
+            $bat_team = $score_log[$inning_type][$current_innings]['batting_team'];
+            $bowl_team = $score_log[$inning_type][$current_innings]['bowling_team'];
             break;
         }
     }
 
     $isfreehit_allow = $score_log['freehit'];
     $iswide_allow = $score_log['wide'];
+
+    $lastBall = end($score_log[$inning_type][$current_innings]['balls']) ?? null;
+
+    if ($lastBall) {
+        $freehit = $lastBall['Freehit'] ?? false;
+    }
     
 ?>
 <!DOCTYPE html>
@@ -465,7 +477,8 @@
             background: #149428;
         }
         #selectshot,
-        #undo{
+        #undo,
+        #super_over{
             position: fixed;
             transform: translateX(-50%) translateY(-50%);
             top: 50%;
@@ -477,6 +490,7 @@
             transition: all 0.5s ease-in-out;
             align-items: flex-start;
             padding: 20px;
+            z-index: 99;
             border-radius: 10px;
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
             flex-direction: column;
@@ -485,7 +499,8 @@
             scrollbar-width: none;
         }
         #selectshot::backdrop,
-        #undo::backdrop{
+        #undo::backdrop,
+        #super_over::backdrop{
             position: fixed;
             inset: 0px;
             background: rgba(0, 0, 0, 0.15);
@@ -545,7 +560,8 @@
             color: #A5A5A5;
             letter-spacing: 1px;
         }
-        .undo-btn{
+        .undo-btn,
+        .super-over-btn{
             height: 30px;
             width: 130px;
             color: white;
@@ -700,6 +716,14 @@
             </div>
         </dialog>
 
+        <dialog id="super_over" open>
+            <div class="undo-container">
+                
+                <div class="undo-seyup"><p class="undo-warn">Match Tied! Do you want to start a Super Over?</p></div>
+                <div class="undo-seyup"><button class="super-over-btn">Start Super Over</button></div>
+                <div class="undo-seyup"><p class="undo-cancel">Cancel</p></div>
+            </div>
+        </dialog>
 
         <div class="dropdown">
             <span class="line"></span>
@@ -831,7 +855,7 @@
                 <div class="txt">
                     <h4>
                         <?php
-                            $t_id = $score_log['innings'][$current_innings]['batting_team'];
+                            $t_id = $score_log[$inning_type][$current_innings]['batting_team'];
                             $t_name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id'"));
                             echo $t_name['t_name'];
                         ?>
@@ -842,9 +866,9 @@
                 <div class="score-container">
                     <div class="score">
                         <?php 
-                            echo $score_log['innings'][$current_innings]['total_runs'].'/'.$score_log['innings'][$current_innings]['wickets']; 
+                            echo $score_log[$inning_type][$current_innings]['total_runs'].'/'.$score_log['innings'][$current_innings]['wickets']; 
                         ?> 
-                        <p class="overs">(<?php echo $score_log['innings'][$current_innings]['overs_completed']; ?>/
+                        <p class="overs">(<?php echo $score_log[$inning_type][$current_innings]['overs_completed']; ?>/
                         <?php echo $score_log['overs']; ?>)</p>
                     </div>
                     <div class="decision">
@@ -864,7 +888,7 @@
                         <div class="batmans">
                                 <?php
                                     
-                                    $striker = $score_log['innings'][$current_innings]['openers']['current_striker']['id'];
+                                    $striker = $score_log[$inning_type][$current_innings]['openers']['current_striker']['id'];
                                     $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$striker'"));
                                 ?>
                             <div class="batsman-type" data-striker='<?php echo $striker; ?>'>
@@ -878,8 +902,8 @@
                             </div>
                             <p class="batsman-score">
                                 <?php
-                                    echo ($score_log['innings'][$current_innings]['openers']['current_striker']['runs'] ?? 0).' ('.
-                                        ($score_log['innings'][$current_innings]['openers']['current_striker']['balls_faced'] ?? 0).')';
+                                    echo ($score_log[$inning_type][$current_innings]['openers']['current_striker']['runs'] ?? 0).' ('.
+                                        ($score_log[$inning_type][$current_innings]['openers']['current_striker']['balls_faced'] ?? 0).')';
                                 ?>
                             </p>
 
@@ -888,7 +912,7 @@
                         <div class="batmans">
                                 <?php
                                     
-                                    $non_striker = $score_log['innings'][$current_innings]['openers']['current_non_striker']['id'];
+                                    $non_striker = $score_log[$inning_type][$current_innings]['openers']['current_non_striker']['id'];
                                     $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$non_striker'"));
                                 ?>
                             <div class="batsman-type" data-non-striker='<?php echo $non_striker; ?>'>
@@ -902,8 +926,8 @@
                             </div>
                             <p class="batsman-score">
                                 <?php
-                                    echo ($score_log['innings'][$current_innings]['openers']['current_non_striker']['runs'] ?? 0).' ('.
-                                        ($score_log['innings'][$current_innings]['openers']['current_non_striker']['balls_faced'] ?? 0).')';
+                                    echo ($score_log[$inning_type][$current_innings]['openers']['current_non_striker']['runs'] ?? 0).' ('.
+                                        ($score_log[$inning_type][$current_innings]['openers']['current_non_striker']['balls_faced'] ?? 0).')';
                                 ?>
                             </p>
 
@@ -914,7 +938,7 @@
                         <div class="bowler-container">
                                     <?php
                                     
-                                        $bowler = $score_log['innings'][$current_innings]['current_bowler']['id'];
+                                        $bowler = $score_log[$inning_type][$current_innings]['current_bowler']['id'];
                                         $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$bowler'"));
                                     ?>
                                 <div class="bowler-name" data-bowler="<?php echo $bowler; ?>"> 
@@ -1009,7 +1033,7 @@
         const current_inning = '<?php echo $current_innings; ?>'
         let data = urlParams.get('data') || '';
         console.log(data);
-        const match = urlParams.get('match_id') || '';
+        const match = '<?php echo $match_id; ?>';
         let opacity = document.querySelector('.opacity-container');
         let dropdown = document.querySelector('.dropdown');
         let shotdialog = document.querySelector('#shotdialog');
@@ -1017,6 +1041,7 @@
         let data_container = document.querySelector('.data');
         let undo = document.querySelector('.undo');
         let undo_container = document.querySelector('#undo');
+        let super_over = document.querySelector('#super_over');
         let out = document.querySelector('.out');
         let bye = document.querySelector('.bye');
         let lb = document.querySelector('.lb');
@@ -1103,14 +1128,13 @@
         <div class="style-container" onclick="get_shot(this)">Run Out (Non-Striker)</div>
         <div class="style-container" onclick="get_shot(this)">LBW</div>
         <div class="style-container" onclick="get_shot(this)">Stumped</div>
-        <div class="style-container" onclick="get_shot(this)">Retired Out</div>
+        <div class="style-container" onclick="get_shot(this)">Retired Out(Striker)</div>
         <div class="style-container" onclick="get_shot(this)">Run out (Mankaded)</div>
         <div class="style-container" onclick="get_shot(this)">Hit Wicket</div>
-        <div class="style-container" onclick="get_shot(this)">Retired Out</div>
+        <div class="style-container" onclick="get_shot(this)">Retired Out(Non-Striker)</div>
         <div class="style-container" onclick="get_shot(this)">Hit the Ball Twice</div>
         <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Striker)</div>
-        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Non-Striker)</div>
-        <div class="style-container" onclick="get_shot(this)">Retired</div>`;
+        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Non-Striker)</div>`;
         let byes = `
         <div class="style-container" onclick="get_shot(this)">1</div>
         <div class="style-container" onclick="get_shot(this)">2</div>
@@ -1126,12 +1150,13 @@
         let extras = null;
         let ball_type = null;
         let out_type = null;
-        let freehit = false;
+        let freehit = '<?php echo $freehit; ?>';
         let allowfreehit = '<?php echo $isfreehit_allow ?>';
         let allowwide = '<?php echo $iswide_allow ?>';
 
         let new_player = '';
         let wicket_by = '';
+        let issuperOver = false;
 
         //go to prevoius page
         let goBack = () => {
@@ -1186,13 +1211,14 @@
                 verifyPlayers();
             });
 
-
+        document.querySelector('.super-over-btn').addEventListener('click', (e)=>{
+            issuperOver = true;
+            display_content();
+        })
 
         window.addEventListener("message", (event) => {
             if (event.data === "closeIframe") {
                 players_page.classList.remove('active');  
-
-               goBack();
 
             }
 
@@ -1214,7 +1240,8 @@
                     person : event.data.person,
                     ...(event.data.person == 'Fielder'?{wicket_by : wicket_by} : {data : new_player}),
                     match_id : match,
-                    Inning : current_inning
+                    Inning : current_inning,
+                    'Inning Type' : '<?php echo $inning_type; ?>',
                 }
 
                 add_player(info);
@@ -1527,8 +1554,8 @@
                                         <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Striker)</div>
                                         <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Non-Striker)</div>
                                         <div class="style-container" onclick="get_shot_noball(this)">Hit the Ball Twice</div>
-                                        <div class="style-container" onclick="get_shot_noball(this)">Retired</div>
-                                        <div class="style-container" onclick="get_shot_noball(this)">Retired Out</div>`;
+                                        <div class="style-container" onclick="get_shot_noball(this)">Retired Out(Striker)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Retired Out(Non-Striker)</div>`;
                                                       
                         data_container.innerHTML = data;
                         shot.showModal();
@@ -1686,7 +1713,7 @@
                     console.log(selectedShot);
                     Shot_type = selectedShot;
 
-                    if(!ball_type?.startsWith('No Ball')){
+                    if(ball_type == null){
                         ball_type = 'Legal Delivery';
                     }
                     
@@ -1705,7 +1732,7 @@
 
                     
 
-                    if([ "Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Retired","Retired Out"].includes(selectedShot)){
+                    if([ "Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Retired Out(Non-Striker)","Retired Out(Striker)"].includes(selectedShot)){
                         
                         get_score_on_wicket();
                        
@@ -1744,10 +1771,14 @@
             });
 
             //close dialog of undo
-            document.querySelector('.undo-cancel').addEventListener('click',()=>{
-                undo_container.close();
-                undo_container.classList.remove('shake');
+            document.querySelectorAll('.undo-cancel').forEach(button => {
+                button.addEventListener('click', () => {
+                    undo_container.close();
+                    undo_container.classList.remove('shake');
+                    super_over.close();
+                });
             });
+
 
             const commentaries = {
                 noRun: [
@@ -1855,19 +1886,47 @@
 
             function generateCommentary(run, outType, ballType, freeHit ,extra, striker,non_striker) {
                 let commentary = '';
+                let dismissedPlayer = '';
 
                 if (outType !== null) {
 
-                    let dismissedPlayer = (["(Non-Striker)", "(Mankaded)"].some(sub => outType.includes(sub))) ? non_striker : striker;
-                    
                     let batsmen = document.querySelectorAll('.batsman-type');
-                    dismissedPlayerid = (
-                    ["(Non-Striker)", "(Mankaded)"].some(sub => outType.includes(sub))
-                    )
-                    ? batsmen[1]?.getAttribute('data-non-striker')
-                    : batsmen[0]?.getAttribute('data-striker');
-                    console.log(dismissedPlayerid)
-                    console.log('No ball test : ',ball_type)
+
+                // Function to swap strikers
+                function swapStrikers() {
+                    let tempStriker = striker;
+                    striker = non_striker;
+                    non_striker = tempStriker;
+
+                }
+
+                // If run completed before dismissal — swap on odd run
+                if (run % 2 == 1 && !ball_type.startsWith("Wide")) {
+                    swapStrikers();
+                }
+
+                let dismissedPlayer, dismissedPlayerId;
+
+                // Now decide dismissal based on type
+                if (['Run', 'Obstructing'].some(type => outType.includes(type)) &&
+                !outType.includes('Mankaded')) {
+                    
+                    // For Run Outs & Obstructing dismissals
+                    dismissedPlayer = (outType.includes("(Non-Striker)")) ? striker : non_striker;
+                    dismissedPlayerId = (outType.includes("(Non-Striker)"))
+                        ? batsmen[0]?.getAttribute('data-striker')
+                        : batsmen[1]?.getAttribute('data-non-striker');
+
+                } else {
+                    // For other wicket types
+                    dismissedPlayer = (["(Non-Striker)", "Mankaded"].some(sub => outType.includes(sub)))
+                        ? non_striker
+                        : striker;
+
+                    dismissedPlayerId = (["(Non-Striker)", "Mankaded"].some(sub => outType.includes(sub)))
+                        ? batsmen[1]?.getAttribute('data-non-striker')
+                        : batsmen[0]?.getAttribute('data-striker');
+                }
                     
                     if (ball_type === 'No Ball') {
 
@@ -1969,9 +2028,9 @@
                 let commentary = generateCommentary(run_per_ball, out_type, ball_type, freehit, extras, document.querySelectorAll('.batsman-type')[0].innerText,document.querySelectorAll('.batsman-type')[1].innerText);
                 let scoreText = document.querySelector('.score').childNodes[0].nodeValue.trim().split('/');
 
-                if (ball_type.startsWith('No Ball') && allowfreehit) {
+                if (ball_type && ball_type.startsWith('No Ball') && allowfreehit) {
                     freehit = true;
-                } else if (freehit && ball_type.startsWith('No Ball')) {
+                } else if (freehit && ball_type &&  ball_type.startsWith('No Ball')) {
                     console.log('Wicket free hit');
                     freehit = true;
                 } else if (ball_type == 'Wide Ball' && freehit) {
@@ -1992,6 +2051,7 @@
                     'Shot Side' : Shot_side,
                     'Wicket Type': out_type,
                     'Extra' : extras,
+                    'Inning Type' : '<?php echo $inning_type; ?>',
                     ...(ball_type == 'No Ball' ? {'Ball Type': `${ball_type}-${no_balltype}`}:{'Ball Type': ball_type}),
                     ...(freehit? { 'Freehit': freehit } : {}),
                     'Bowler': document.querySelector('.bowler-name').innerText,
@@ -2001,7 +2061,8 @@
                     'Wickets': scoreText[1],
                     'Inning' : current_inning,
                     'Commentary': commentary,
-                    'Match id': match
+                    'Match id': match,
+                    'super over' : issuperOver
                 }
 
                 update_score();
@@ -2021,12 +2082,20 @@
                 .then(res => res.json())
                 .then((data)=>{
                     console.log(data);
+                    if(data.status == 200){
+                        if(data.is_super_over && data.is_super_over == true){
+                            super_over.showModal();
+                        }
+                        setTimeout(() => {
+                            //Bypass reload
+                            // window.removeEventListener("beforeunload", preventReload);
+                            // location.reload();
+                        }, 300); 
+                    }
                 })
                 .catch(error => console.log(error));
 
-                //Bypass reload
-                // window.removeEventListener("beforeunload", preventReload);
-                // location.reload();
+                
 
                 run_per_ball =null;
                 Shot_type = null;
