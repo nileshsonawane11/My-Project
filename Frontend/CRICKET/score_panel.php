@@ -941,7 +941,18 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                 <?php
                                     
                                     $striker = $score_log[$inning_type][$current_innings]['openers']['current_striker']['id'];
-                                    $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$striker'"));
+                                    $striker_query = mysqli_query($conn, "SELECT * FROM users WHERE user_id = '$striker'");
+                                        $name = mysqli_fetch_assoc($striker_query);
+
+                                        // If not found in users table, try players table
+                                        if(!$name) {
+                                            $striker_query = mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$striker'");
+                                            $player_data = mysqli_fetch_assoc($striker_query);
+                                            
+                                            if($player_data) {
+                                                $name = ['fname' => $player_data['player_name']];
+                                            }
+                                        }
                                 ?>
                             <div class="batsman-type" data-striker='<?php echo $striker; ?>'>
                                 <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -965,7 +976,19 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                 <?php
                                     
                                     $non_striker = $score_log[$inning_type][$current_innings]['openers']['current_non_striker']['id'];
-                                    $name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$non_striker'"));
+
+                                    $non_striker_query = mysqli_query($conn, "SELECT * FROM users WHERE user_id = '$non_striker'");
+                                        $name = mysqli_fetch_assoc($non_striker_query);
+
+                                        // If not found in users table, try players table
+                                        if(!$name) {
+                                            $non_striker_query = mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$non_striker'");
+                                            $player_data = mysqli_fetch_assoc($non_striker_query);
+                                            
+                                            if($player_data) {
+                                                $name = ['fname' => $player_data['player_name']];
+                                            }
+                                        }
                                 ?>
                             <div class="batsman-type" data-non-striker='<?php echo $non_striker; ?>'>
                                 <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
