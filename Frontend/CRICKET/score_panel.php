@@ -999,7 +999,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                             
                                             if($player_data) {
                                                 // Create a compatible array structure using player data
-                                                $name = $player_data['player_name'];
+                                                $name = ['fname' => $player_data['player_name']];
                                                     
                                             }
                                         }
