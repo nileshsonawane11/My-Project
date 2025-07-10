@@ -1,3 +1,77 @@
+<?php
+    session_start();
+    include '../../config.php';
+
+    if(!isset($_SESSION['user'])){
+        header('location: ../../front-page.php');
+        exit();
+    }
+    if($_SESSION['role'] == "User"){
+        header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    $match_id = '';
+    $set_team1 = '';
+    $set_team2 = '';
+    $back_decision = false;
+
+    $for = $_GET['for'] ?? '';
+    $data = json_decode($_GET['data'] ?? '', true);
+
+    if (empty($data)) {
+        $match_id = $_GET['match_id'];
+    } else {
+        $match_id = $data['match_id'];
+        $back_decision = true;
+    }
+
+    $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
+    $score_log = json_decode($row['score_log'], true);
+
+    // Redirect if no toss winner
+    if (empty($row['toss_winner'])) {
+        header('Location: ./match_toss.php?match_id=' . $match_id);
+        exit();
+    }
+
+    // Redirect if match is completed
+    if (!empty($score_log['completed'])) {
+        header('Location: ../../dashboard.php?update=live&sport=VOLLEYBALL');
+        exit();
+    }
+
+    // Detect current set
+    $current_set = null;
+    $last_rally = null;
+
+    if (isset($score_log['sets']) && is_array($score_log['sets'])) {
+        foreach ($score_log['sets'] as $set_number => $set_data) {
+            if (isset($set_data['set_completed']) && $set_data['set_completed'] === false) {
+                $current_set = $set_number;
+                $set_team1 = $score_log['team1'];
+                $set_team2 = $score_log['team2'];
+                if (!empty($set_data['rallies'])) {
+                    $last_rally = end($set_data['rallies']);
+                    reset($set_data['rallies']);
+                }
+                break;
+            }
+        }
+    }
+
+    // If no active set, fallback to last one (even if completed)
+    if ($current_set === null && isset($score_log['sets']) && is_array($score_log['sets'])) {
+        $last_set_number = array_key_last($score_log['sets']);
+        if (is_array($score_log['sets'][$last_set_number])) {
+            $current_set = $last_set_number;
+            $set_team1 = $score_log['team1'];
+            $set_team2 = $score_log['team2'];
+            $last_rally = end($score_log['sets'][$last_set_number]['rallies'] ?? []);
+        }
+    }
+    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -571,10 +645,16 @@
                         <img src="" alt="">
                     </div>
                     <div class="score-team-data">
-                        <div class="score1">0</div>
+                        <div class="score1"><?php echo $score_log['team1_score']; ?></div>
                         <div class="team-data">
-                            <label class="teams-name">Team 1</label>
-                            <label class="set">Sets : 0</label>
+                            <label class="teams-name">
+                                <?php
+                                    $t_id1 = $score_log['team1'];
+                                    $t_name1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id1'"));
+                                    echo $t_name1['t_name'];
+                                ?>
+                            </label>
+                            <label class="set">Sets : <?php echo $score_log['sets_won']['team1']; ?></label>
                         </div>
                     </div>
                 </div>
@@ -584,10 +664,16 @@
                         <img src="" alt="">
                     </div>
                     <div class="score-team-data">
-                        <div class="score2">0</div>
+                        <div class="score2"><?php echo $score_log['team2_score']; ?></div>
                         <div class="team-data">
-                            <label class="teams-name">Team 2</label>
-                            <label class="set">Sets : 0</label>
+                            <label class="teams-name">
+                                <?php
+                                    $t_id2 = $score_log['team2'];
+                                    $t_name2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id2'"));
+                                    echo $t_name2['t_name'];
+                                ?>
+                            </label>
+                            <label class="set">Sets : <?php echo $score_log['sets_won']['team2']; ?></label>
                         </div>
                     </div>
                 </div>
@@ -605,12 +691,12 @@
         <div class="buttons">
             <div class="point-buttons">
                 <div class="team-btn">
-                    <label class="team-name">Team 1</label>
-                    <button class="team-button">Point</button>
+                    <label class="team-name"><?php echo $t_name1['t_name']; ?></label>
+                    <button class="team-button" data-team="<?php echo $score_log['team1']; ?>">Point</button>
                 </div>
                 <div class="team-btn">
-                    <label class="team-name">Team 2</label>
-                    <button class="team-button">Point</button>
+                    <label class="team-name"><?php echo $t_name2['t_name']; ?></label>
+                    <button class="team-button" data-team="<?php echo $score_log['team2']; ?>">Point</button>
                 </div>
             </div>
 
@@ -857,7 +943,7 @@ clickableSelectors.forEach(selector => {
 
 document.querySelectorAll(".team-button").forEach(team => {
     team.addEventListener("click",() => {
-        console.log("Point added to team ....");
+        console.log(team.getAttribute('data-team'));
     })
 })
 
