@@ -597,7 +597,7 @@
         
         //Default section
         let defaultsec = document.querySelector('.schedule').textContent.trim();
-        let defaultmem = 'Staff';
+        let defaultmem = 'Players';
         console.log(defaultsec,defaultmem);
         loadsection(defaultsec,defaultmem);
 
