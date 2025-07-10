@@ -38,22 +38,87 @@
     if($score_log['super_over'] == true){
         $inning_type = 'super_over_innings';
     }
+
+    if(isset($score_log['match_completed']) && $score_log['match_completed'] == true){
+        header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
     
     //detect current inning
     $current_innings = null;
-    foreach ($score_log[$inning_type] as $innings_name => $innings_data) {
-        if ($innings_data['completed'] == false) {
+    $lastBall = null;
+
+    // 1. First check super over innings if they exist
+if (isset($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])) {
+    foreach ($score_log['super_over_innings'] as $innings_name => $innings_data) {
+        if (is_array($innings_data) && 
+            isset($innings_data['completed']) && 
+            $innings_data['completed'] == false) {
+            
             $current_innings = $innings_name;
-            $bat_team = $score_log[$inning_type][$current_innings]['batting_team'];
-            $bowl_team = $score_log[$inning_type][$current_innings]['bowling_team'];
+            $is_super_over = true;
+            $bat_team = $innings_data['batting_team'] ?? null;
+            $bowl_team = $innings_data['bowling_team'] ?? null;
+            
+            if (!empty($innings_data['balls']) && is_array($innings_data['balls'])) {
+                $lastBall = end($innings_data['balls']);
+                reset($innings_data['balls']);
+            }
             break;
         }
     }
+}
 
-    $isfreehit_allow = $score_log['freehit'];
-    $iswide_allow = $score_log['wide'];
+// 2. If no active super over innings, check regular innings
+if ($current_innings === null && isset($score_log['innings']) && is_array($score_log['innings'])) {
+    foreach ($score_log['innings'] as $innings_name => $innings_data) {
+        if (is_array($innings_data) && 
+            isset($innings_data['completed']) && 
+            $innings_data['completed'] == false) {
+            
+            $current_innings = $innings_name;
+            $bat_team = $innings_data['batting_team'] ?? null;
+            $bowl_team = $innings_data['bowling_team'] ?? null;
+            
+            if (!empty($innings_data['balls']) && is_array($innings_data['balls'])) {
+                $lastBall = end($innings_data['balls']);
+                reset($innings_data['balls']);
+            }
+            break;
+        }
+    }
+}
 
-    $lastBall = end($score_log[$inning_type][$current_innings]['balls']) ?? null;
+// 3. If no active innings found but match isn't completed, use last inning
+if ($current_innings === null && (!isset($score_log['match_completed']) || $score_log['match_completed'] != true)) {
+    // Try super over innings first
+    if (isset($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])) {
+        $last_super_over = end($score_log['super_over_innings']);
+        if (is_array($last_super_over)) {
+            $current_innings = key($score_log['super_over_innings']);
+            $is_super_over = true;
+            $bat_team = $last_super_over['batting_team'] ?? null;
+            $bowl_team = $last_super_over['bowling_team'] ?? null;
+            reset($score_log['super_over_innings']);
+        }
+    }
+    
+    // If no super over, use last regular inning
+    if ($current_innings === null && isset($score_log['innings']) && is_array($score_log['innings'])) {
+        $last_regular_inning = end($score_log['innings']);
+        if (is_array($last_regular_inning)) {
+            $current_innings = key($score_log['innings']);
+            $bat_team = $last_regular_inning['batting_team'] ?? null;
+            $bowl_team = $last_regular_inning['bowling_team'] ?? null;
+            reset($score_log['innings']);
+        }
+    }
+}
+    
+
+    // Safely get settings with defaults
+    $isfreehit_allow = $score_log['freehit'] ?? false;
+    $iswide_allow = $score_log['wide'] ?? false;
 
     if ($lastBall) {
         $freehit = $lastBall['Freehit'] ?? false;
@@ -235,6 +300,11 @@
             align-items: center;
             justify-items: center;
             height: 32vh;
+        }
+        .score-numpad .num:disabled {
+            background-color:rgb(255, 255, 255);  /* or whatever color you want */
+            opacity: 1;
+            cursor: auto;
         }
         .num-columns{
             display: flex;
@@ -478,7 +548,7 @@
         }
         #selectshot,
         #undo,
-        #super_over{
+        #match_completed{
             position: fixed;
             transform: translateX(-50%) translateY(-50%);
             top: 50%;
@@ -559,6 +629,7 @@
             font-size: 18px;
             color: #A5A5A5;
             letter-spacing: 1px;
+            text-align: center;
         }
         .undo-btn,
         .super-over-btn{
@@ -569,7 +640,7 @@
             border: none;
             background: var(--background);
         }
-        .undo-cancel{
+        .undo-cancel,.complete-cancel{
             color: #AFAFAF;
             font-size: 15px;
         }
@@ -711,17 +782,23 @@
                 </div>
                 <div class="undo-seyup"><p class="undo-txt">UNDO ?</p></div>
                 <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
-                <div class="undo-seyup"><button class="undo-btn">Yes I’m certain</button></div>
+                <div class="undo-seyup"><button class="undo-btn" id='undo-btn'>Yes I’m certain</button></div>
                 <div class="undo-seyup"><p class="undo-cancel">Cancel</p></div>
             </div>
         </dialog>
 
-        <dialog id="super_over" open>
+        <dialog id="match_completed">
             <div class="undo-container">
-                
-                <div class="undo-seyup"><p class="undo-warn">Match Tied! Do you want to start a Super Over?</p></div>
-                <div class="undo-seyup"><button class="super-over-btn">Start Super Over</button></div>
-                <div class="undo-seyup"><p class="undo-cancel">Cancel</p></div>
+                <div class="undo-seyup">
+                    <p class="undo-warn undo-txt">Match Completed! Do you want to continue scoring or finish the match?</p>
+                </div>
+                <div class="undo-seyup">
+                    <button class="complete-match-btn undo-btn" onclick='complete_match()'>Complete Match</button>
+                </div>
+                <div class="undo-seyup">
+                    <p class="continue-match-btn complete-cancel" onclick="document.querySelector('#match_completed').close();
+                    is_match_complete = false;">Continue Scoring</p>
+                </div>
             </div>
         </dialog>
 
@@ -770,12 +847,6 @@
                             </svg>
                             <p>Full Scoreboard</p>
                         </div>
-                        <div class="menu">
-                            <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M19 9.99998V6.99998C19 6.46954 18.7893 5.96084 18.4142 5.58576C18.0391 5.21069 17.5304 4.99998 17 4.99998H11M11 4.99998L14 7.99998M11 4.99998L14 1.99998M1 12.013V15.013C1 15.5434 1.21071 16.0521 1.58579 16.4272C1.96086 16.8023 2.46957 17.013 3 17.013H9M9 17.013L6 14.013M9 17.013L6 20.013M19 20.499C19 19.9685 18.7893 19.4598 18.4142 19.0848C18.0391 18.7097 17.5304 18.499 17 18.499H15C14.4696 18.499 13.9609 18.7097 13.5858 19.0848C13.2107 19.4598 13 19.9685 13 20.499M7 8.49898C7 7.96854 6.78929 7.45984 6.41421 7.08476C6.03914 6.70969 5.53043 6.49898 5 6.49898H3C2.46957 6.49898 1.96086 6.70969 1.58579 7.08476C1.21071 7.45984 1 7.96854 1 8.49898M14 15.502C14.0001 15.7647 14.0519 16.0248 14.1525 16.2675C14.2531 16.5102 14.4005 16.7307 14.5863 16.9164C14.7721 17.1021 14.9927 17.2494 15.2354 17.3499C15.4781 17.4504 15.7383 17.502 16.001 17.502C16.2637 17.5019 16.5238 17.4501 16.7665 17.3495C17.0092 17.2489 17.2297 17.1015 17.4154 16.9157C17.6011 16.7299 17.7484 16.5093 17.8489 16.2666C17.9494 16.0238 18.0011 15.7637 18.001 15.501C18.0009 14.9704 17.79 14.4616 17.4147 14.0866C17.0395 13.7115 16.5306 13.5008 16 13.501C15.4694 13.5011 14.9607 13.712 14.5856 14.0873C14.2105 14.4625 13.9999 14.9714 14 15.502ZM2 3.50198C2.00007 3.76469 2.05187 4.02481 2.15247 4.2675C2.25307 4.51018 2.40048 4.73068 2.58629 4.9164C2.7721 5.10211 2.99267 5.24941 3.2354 5.34989C3.47814 5.45036 3.73829 5.50204 4.001 5.50198C4.26371 5.50191 4.52383 5.4501 4.76652 5.34951C5.00921 5.24891 5.2297 5.1015 5.41542 4.91569C5.60114 4.72988 5.74844 4.50931 5.84891 4.26657C5.94939 4.02384 6.00107 3.76369 6.001 3.50098C6.00087 2.97041 5.78997 2.46163 5.41471 2.08656C5.03945 1.71148 4.53057 1.50084 4 1.50098C3.46943 1.50111 2.96065 1.712 2.58558 2.08726C2.21051 2.46252 1.99987 2.97141 2 3.50198Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <p>Replace Batter</p>
-                        </div>
                     </div>
                     <div class="menu-columns">
                         <div class="menu">
@@ -784,23 +855,7 @@
                             </svg>
                             <p>Replace Bowler</p>
                         </div>
-                        <div class="menu">
-                            <svg width="21" height="23" viewBox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6.33508 8.13039L6.60508 8.39539L6.29508 8.70039C6.42054 8.89595 6.56096 9.08151 6.71508 9.25539L13.7552 2.21039C13.5807 2.06069 13.397 1.92209 13.2052 1.79539L12.8952 2.10039L12.6302 1.83539L12.8702 1.59539C11.9232 1.08617 10.8374 0.895748 9.7737 1.05236C8.71 1.20897 7.72512 1.70427 6.96514 2.4648C6.20517 3.22533 5.71058 4.21056 5.55475 5.27436C5.39893 6.33816 5.59015 7.42385 6.10007 8.37039L6.33508 8.13039ZM11.9302 2.53539L12.1952 2.80039L11.5001 3.50039L11.2351 3.23539L11.9302 2.53539ZM10.5351 3.93539L10.7951 4.20039L10.1001 4.90039L9.83513 4.63539L10.5351 3.93539ZM9.13512 5.33539L9.40012 5.60039L8.70011 6.29539L8.43511 6.03039L9.13512 5.33539ZM7.7351 6.73039L8.0001 7.00039L7.30009 7.70039L7.03509 7.43539L7.7351 6.73039ZM7.7951 10.2054L8.1051 9.90039L8.37011 10.1654L8.1301 10.4054C9.07703 10.9146 10.1629 11.105 11.2266 10.9484C12.2903 10.7918 13.2752 10.2965 14.0351 9.53597C14.7951 8.77545 15.2897 7.79021 15.4455 6.72641C15.6013 5.66262 15.4101 4.57693 14.9002 3.63039L14.6652 3.87039L14.3952 3.60539L14.7052 3.30039C14.5797 3.10482 14.4393 2.91927 14.2852 2.74539L7.24509 9.79039C7.41957 9.94008 7.60327 10.0787 7.7951 10.2054ZM13.7002 4.30539L13.9652 4.57039L13.2652 5.27039L13.0002 5.00039L13.7002 4.30539ZM12.3002 5.70539L12.5652 5.97039L11.8652 6.66539L11.6002 6.40039L12.3002 5.70539ZM10.9001 7.10039L11.1651 7.36539L10.4701 8.06539L10.2001 7.80039L10.9001 7.10039ZM9.50012 8.50039L9.76513 8.76539L9.06512 9.46539L8.80011 9.20039L9.50012 8.50039Z" fill="#272727"/>
-                            <g clip-path="url(#clip0_789_487)">
-                            <path d="M17.2233 21.522L19.5633 18.5925C19.9877 18.0609 20.2189 17.4008 20.2188 16.7205V10.2705C20.2188 9.87268 20.0608 9.49115 19.7794 9.20985C19.4981 8.92854 19.1166 8.77051 18.7188 8.77051C18.3209 8.77051 17.9394 8.92854 17.6581 9.20985C17.3768 9.49115 17.2188 9.87268 17.2188 10.2705V14.7705" stroke="black" stroke-linecap="round"/>
-                            <path d="M15.8463 17.5133L16.9068 16.4528C17.188 16.1715 17.346 15.79 17.346 15.3923C17.346 14.9945 17.188 14.613 16.9068 14.3318C16.6255 14.0506 16.2441 13.8926 15.8463 13.8926C15.4486 13.8926 15.0671 14.0506 14.7858 14.3318L14.1648 14.9528C12.7587 16.3592 11.9688 18.2665 11.9688 20.2553V21.5213" stroke="black" stroke-linecap="round"/>
-                            <path d="M3.77878 21.522L1.43875 18.5925C1.01378 18.0611 0.7821 17.401 0.781738 16.7205V10.2705C0.781738 9.87268 0.939776 9.49115 1.22108 9.20985C1.50239 8.92854 1.88393 8.77051 2.28176 8.77051C2.67959 8.77051 3.06113 8.92854 3.34243 9.20985C3.62374 9.49115 3.78178 9.87268 3.78178 10.2705V14.7705" stroke="black" stroke-linecap="round"/>
-                            <path d="M5.15449 17.5133L4.09397 16.4528C3.81276 16.1715 3.65479 15.79 3.65479 15.3923C3.65479 14.9945 3.81276 14.613 4.09397 14.3318C4.37527 14.0506 4.75673 13.8926 5.15449 13.8926C5.55224 13.8926 5.93371 14.0506 6.215 14.3318L6.83601 14.9528C8.2421 16.3592 9.03201 18.2665 9.03204 20.2553V21.5213" stroke="black" stroke-linecap="round"/>
-                            </g>
-                            <defs>
-                            <clipPath id="clip0_789_487">
-                            <rect width="21.0003" height="21" fill="white" transform="translate(0 1.5)"/>
-                            </clipPath>
-                            </defs>
-                            </svg>
-                            <p>Dropped Catch</p>
-                        </div>
+                        
                         <div class="menu">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19.25 2.75H4.75C4.21957 2.75 3.71086 2.96071 3.33579 3.33579C2.96071 3.71086 2.75 4.21957 2.75 4.75V19.25C2.75 19.7804 2.96071 20.2891 3.33579 20.6642C3.71086 21.0393 4.21957 21.25 4.75 21.25H19.25C19.7804 21.25 20.2891 21.0393 20.6642 20.6642C21.0393 20.2891 21.25 19.7804 21.25 19.25V4.75C21.25 4.21957 21.0393 3.71086 20.6642 3.33579C20.2891 2.96071 19.7804 2.75 19.25 2.75Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -824,14 +879,7 @@
                             </svg>
                             <p>Match Breaks</p>
                         </div>
-                        <div class="menu">
-                            <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4.00006 4C4.00006 1.79 5.79006 0 8.00006 0C10.2101 0 12.0001 1.79 12.0001 4C12.0001 6.21 10.2101 8 8.00006 8C5.79006 8 4.00006 6.21 4.00006 4ZM13.0001 20H14.0001C15.1001 20 16.0001 19.1 16.0001 18V13.22C16.0001 12.1 15.3901 11.07 14.3901 10.56C13.9601 10.34 13.5001 10.13 13.0001 9.94V20ZM8.34007 15L11.0001 9.33C10.0701 9.12 9.07006 9 8.00006 9C5.47007 9 3.29007 9.7 1.61007 10.56C1.12212 10.8113 0.713366 11.1929 0.429165 11.6625C0.144963 12.132 -0.00356536 12.6712 6.49903e-05 13.22V20H2.34007C2.12007 19.55 2.00007 19.04 2.00007 18.5C2.00007 16.57 3.57007 15 5.50006 15H8.34007ZM6.00006 20L7.41006 17H5.50006C4.67006 17 4.00006 17.67 4.00006 18.5C4.00006 19.33 4.67006 20 5.50006 20H6.00006Z" fill="black"/>
-                            </svg>
-                            <p>Retired Hurt</p>
-                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -859,17 +907,21 @@
                             $t_name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id'"));
                             echo $t_name['t_name'];
                         ?>
-                        (toss winning team)
+                        (Batting Team)
                     </h4>
                 </div>
                 
                 <div class="score-container">
                     <div class="score">
                         <?php 
-                            echo $score_log[$inning_type][$current_innings]['total_runs'].'/'.$score_log['innings'][$current_innings]['wickets']; 
+                            echo $score_log[$inning_type][$current_innings]['total_runs'].'/'.$score_log[$inning_type][$current_innings]['wickets']; 
                         ?> 
                         <p class="overs">(<?php echo $score_log[$inning_type][$current_innings]['overs_completed']; ?>/
-                        <?php echo $score_log['overs']; ?>)</p>
+                        <?php if($inning_type == 'innings'){
+                                echo $score_log['overs'];
+                            }else if($inning_type == 'super_over_innings'){
+                                echo '1';
+                            }  ?>)</p>
                     </div>
                     <div class="decision">
                         <?php 
@@ -950,7 +1002,16 @@
                                     ?>
                                     (bowler)
                                 </div>
-                                <div class="bowls">0.0-0-0-0</div>
+                                <div class="bowls">
+                                    <?php
+                                        $current_bowler = $score_log[$inning_type][$current_innings]['current_bowler'];
+
+                                        echo ($current_bowler['overs_bowled'] ?? "0.0") . "-" .
+                                            ($current_bowler['maidens'] ?? 0) . "-" .
+                                            ($current_bowler['runs_conceded'] ?? 0) . "-" .
+                                            ($current_bowler['wickets'] ?? 0);
+                                    ?>
+                                </div>
                         </div>
                         <div class="score-numpad">
 
@@ -1041,7 +1102,6 @@
         let data_container = document.querySelector('.data');
         let undo = document.querySelector('.undo');
         let undo_container = document.querySelector('#undo');
-        let super_over = document.querySelector('#super_over');
         let out = document.querySelector('.out');
         let bye = document.querySelector('.bye');
         let lb = document.querySelector('.lb');
@@ -1051,6 +1111,7 @@
         let players_page = document.querySelector('.player-frame');
         let bat_team = '<?php echo $bat_team; ?>';
         let bowl_team = '<?php echo $bowl_team; ?>';
+        let match_completed = document.querySelector('#match_completed');
         let DeepFineLeg = `
         <div class="style-container" onclick="get_shot(this)">FLICK</div>
         <div class="style-container" onclick="get_shot(this)">PULL</div>
@@ -1124,17 +1185,19 @@
         <div class="style-container" onclick="get_shot(this)">Caught</div>
         <div class="style-container" onclick="get_shot(this)">Caught Behind</div>
         <div class="style-container" onclick="get_shot(this)">Caught & Bowled</div>
-        <div class="style-container" onclick="get_shot(this)">Run Out (Striker)</div>
-        <div class="style-container" onclick="get_shot(this)">Run Out (Non-Striker)</div>
+        <div class="style-container" onclick="get_shot(this)">Run Out (Striker End)</div>
+        <div class="style-container" onclick="get_shot(this)">Run Out (Non-Striker End)</div>
         <div class="style-container" onclick="get_shot(this)">LBW</div>
         <div class="style-container" onclick="get_shot(this)">Stumped</div>
         <div class="style-container" onclick="get_shot(this)">Retired Out(Striker)</div>
         <div class="style-container" onclick="get_shot(this)">Run out (Mankaded)</div>
+        <div class="style-container" onclick="get_shot(this)">Run Out (Striker Returning)</div>
+        <div class="style-container" onclick="get_shot(this)">Run Out (Non-Striker Returning)</div>
         <div class="style-container" onclick="get_shot(this)">Hit Wicket</div>
         <div class="style-container" onclick="get_shot(this)">Retired Out(Non-Striker)</div>
         <div class="style-container" onclick="get_shot(this)">Hit the Ball Twice</div>
-        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Striker)</div>
-        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Non-Striker)</div>`;
+        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Striker End)</div>
+        <div class="style-container" onclick="get_shot(this)">Obstructing the Field (Non-Striker End)</div>`;
         let byes = `
         <div class="style-container" onclick="get_shot(this)">1</div>
         <div class="style-container" onclick="get_shot(this)">2</div>
@@ -1156,7 +1219,9 @@
 
         let new_player = '';
         let wicket_by = '';
-        let issuperOver = false;
+        let is_match_complete = false;
+        let match_complete = false;
+        let undo_operation = false;
 
         //go to prevoius page
         let goBack = () => {
@@ -1211,10 +1276,6 @@
                 verifyPlayers();
             });
 
-        document.querySelector('.super-over-btn').addEventListener('click', (e)=>{
-            issuperOver = true;
-            display_content();
-        })
 
         window.addEventListener("message", (event) => {
             if (event.data === "closeIframe") {
@@ -1276,7 +1337,7 @@
         });
 
         //block wide if not allowed
-        wide_ball.disabled = !allowwide;
+       wide_ball.disabled = (allowwide === 'true') ? false : true;
 
         let commentaryEnabled = true;
 
@@ -1296,7 +1357,15 @@
             }
         });
 
+        let complete_match = () => {
+            is_match_complete = true;
+            display_content();
+        }
 
+        document.getElementById('undo-btn').addEventListener('click', () => {
+            undo_operation = true;
+            display_content();
+        });
 
         //close opacity container
         opacity.addEventListener('click', () => {
@@ -1311,7 +1380,12 @@
 
         num.forEach((el) => {
             el.addEventListener('click', () => {
-                if (!verifyPlayers()) return;
+                if(el.classList.contains('undo')){
+
+                }else{
+                   if (!verifyPlayers()) return; 
+                }
+                
                 let value = el.innerText.trim();
                 let match = value.match(/\b\d+\b/);  // finds first standalone number
                 if (match) {
@@ -1473,7 +1547,7 @@
             if(freehit && ["Bowled","Caught","Caught Behind","Caught & Bowled","LBW","Stumped","Hit Wicket","Run out (Mankaded)"].includes(selectedShot)){
                 display_content();
             }else{
-                if(["Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)"].includes(selectedShot)){
+                if(["Run Out (Striker End)","Run Out (Non-Striker End)","Obstructing the Field (Striker End)","Obstructing the Field (Non-Striker End)","Run Out (Non-Striker Returing)","Run Out (Striker Returing)"].includes(selectedShot)){
                     setTimeout(() => {
                             shotdialog.style.display = 'flex';
                             opacity.style.display = 'block';
@@ -1548,11 +1622,13 @@
                         let data = '';
                         document.querySelector('.text').innerHTML = '<p class="out-text">Select out type</p>'
                             
-                        data = data + `<div class="style-container" onclick="get_shot_noball(this)">Run Out (Striker)</div>
-                                        <div class="style-container" onclick="get_shot_noball(this)">Run Out (Non-Striker)</div>
+                        data = data + `<div class="style-container" onclick="get_shot_noball(this)">Run Out (Striker End)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Run Out (Non-Striker End)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Run Out (Striker Returning)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Run Out (Non-Striker Returning)</div>
                                         <div class="style-container" onclick="get_shot_noball(this)">Run out (Mankaded)</div>
-                                        <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Striker)</div>
-                                        <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Non-Striker)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Striker End)</div>
+                                        <div class="style-container" onclick="get_shot_noball(this)">Obstructing the Field (Non-Striker End)</div>
                                         <div class="style-container" onclick="get_shot_noball(this)">Hit the Ball Twice</div>
                                         <div class="style-container" onclick="get_shot_noball(this)">Retired Out(Striker)</div>
                                         <div class="style-container" onclick="get_shot_noball(this)">Retired Out(Non-Striker)</div>`;
@@ -1589,7 +1665,7 @@
                     shot.close();
                 }, 300);
 
-                if(["Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)"].includes(out_type)){
+                if(["Run Out (Striker End)","Run Out (Non-Striker End)","Obstructing the Field (Striker End)","Obstructing the Field (Non-Striker End)","Run Out (Non-Striker Returing)","Run Out (Striker Returing)"].includes(out_type)){
                     setTimeout(() => {
                         shotdialog.style.display = 'flex';
                         opacity.style.display = 'block';
@@ -1730,19 +1806,33 @@
                     out_type = selectedShot;
                     ball_type = 'Wicket';
 
-                    
+                    let allowedWicketsOnFreeHit = [
+                        "Run Out (Striker End)",
+                        "Run Out (Non-Striker End)",
+                        "Obstructing the Field (Striker End)",
+                        "Obstructing the Field (Non-Striker End)",
+                        "Retired Out(Non-Striker)",
+                        "Retired Out(Striker)",
+                        "Run Out (Non-Striker Returning)",
+                        "Run Out (Striker Returning)"
+                    ];
 
-                    if([ "Run Out (Striker)","Run Out (Non-Striker)","Obstructing the Field (Striker)","Obstructing the Field (Non-Striker)","Retired Out(Non-Striker)","Retired Out(Striker)"].includes(selectedShot)){
+                    if (freehit && !allowedWicketsOnFreeHit.includes(selectedShot)) {
+                        get_score_on_wicket();
+                    }
+
+                    if([ "Run Out (Striker End)","Run Out (Non-Striker End)","Obstructing the Field (Striker End)","Obstructing the Field (Non-Striker End)","Retired Out(Non-Striker)","Retired Out(Striker)","Run Out (Non-Striker Returning)","Run Out (Striker Returning)"].includes(selectedShot)){
                         
                         get_score_on_wicket();
                        
                     }else if(["Caught","Caught Behind"].includes(selectedShot)){
                         
                         if(freehit){
-                            setTimeout(() => {
-                                shot.close();
-                            }, 300);
-                            display_content();
+                            // setTimeout(() => {
+                            //     shot.close();
+                            // }, 300);
+                            get_score_on_wicket();
+                            //display_content();
                         }else{
                             players_page.classList.add('active');
                             players_page.src = `./select-player-from-team.php?for=Fielder&team=${bowl_team}`;
@@ -1753,10 +1843,13 @@
                         
                     }else{
 
-                        setTimeout(() => {
-                            shot.close();
-                        }, 300);
-                        display_content();
+                        if(!freehit){
+                            setTimeout(() => {
+                                shot.close();
+                            }, 300);
+                            display_content();
+                        }
+                        
                     }
                 }
 
@@ -1764,18 +1857,22 @@
 
             //open dialog for undo
             undo.addEventListener('click',()=>{
-                if (!verifyPlayers()) return;
+                
                 undo_container.showModal();
                 undo_container.classList.add('shake');
                 navigator.vibrate(100);
             });
 
             //close dialog of undo
-            document.querySelectorAll('.undo-cancel').forEach(button => {
+            document.querySelectorAll('.undo-cancel, .complete-cancel').forEach(button => {
                 button.addEventListener('click', () => {
                     undo_container.close();
                     undo_container.classList.remove('shake');
-                    super_over.close();
+
+                    if(button.classList.contains('undo-cancel') && match_complete == true){
+                        match_completed.showModal();
+                    }
+
                 });
             });
 
@@ -1866,12 +1963,14 @@
                 
                 // Run Out or Obstruction — Non-Striker out or Mankaded
                 if (
-                    out_type.includes("Non-Striker") ||
-                    out_type == "Run out (Mankaded)"
+                    out_type.includes("Non-Striker End") ||
+                    out_type == "Run out (Mankaded)" ||
+                    out_type =="Run Out (Non-Striker Returing)"
                 ) {
                     console.log(`nonStriker is out — ${out_type}`); 
                 }else // Run Out or Obstruction — Striker out
-                if (out_type.includes("Striker")) {
+                if (out_type.includes("Striker End") ||
+                    out_type == "Run Out (Striker Returing)") {
                     console.log(`striker is out — ${out_type}`);
                 }
                 // All other types — always Striker out
@@ -1907,23 +2006,24 @@
 
                 let dismissedPlayer, dismissedPlayerId;
 
-                // Now decide dismissal based on type
-                if (['Run', 'Obstructing'].some(type => outType.includes(type)) &&
-                !outType.includes('Mankaded')) {
-                    
+                if (
+                (['Run', 'Obstructing'].some(type => outType.includes(type))) &&
+                !outType.includes('Mankaded') &&
+                !outType.includes('Returning')
+                ) {
                     // For Run Outs & Obstructing dismissals
-                    dismissedPlayer = (outType.includes("(Non-Striker)")) ? striker : non_striker;
-                    dismissedPlayerId = (outType.includes("(Non-Striker)"))
+                    dismissedPlayer = (outType.includes("(Non-Striker End)")) ? striker : non_striker;
+                    dismissedPlayerId = (outType.includes("(Non-Striker End)"))
                         ? batsmen[0]?.getAttribute('data-striker')
                         : batsmen[1]?.getAttribute('data-non-striker');
 
                 } else {
                     // For other wicket types
-                    dismissedPlayer = (["(Non-Striker)", "Mankaded"].some(sub => outType.includes(sub)))
+                    dismissedPlayer = (["(Non-Striker)", "Mankaded", "(Non-Striker Returning)"].some(sub => outType.includes(sub)))
                         ? non_striker
                         : striker;
 
-                    dismissedPlayerId = (["(Non-Striker)", "Mankaded"].some(sub => outType.includes(sub)))
+                    dismissedPlayerId = (["(Non-Striker)", "Mankaded", "(Non-Striker Returning)"].some(sub => outType.includes(sub)))
                         ? batsmen[1]?.getAttribute('data-non-striker')
                         : batsmen[0]?.getAttribute('data-striker');
                 }
@@ -2007,14 +2107,17 @@
                     }
 
                     // Tune commentary feel
-                    utter.pitch = 0.95;
-                    utter.rate = 1.2;
+                    utter.pitch = 1;
+                    utter.rate = 1;
                     utter.volume = 1;
 
                     // Speak it
-                    setTimeout(() => {
-                        window.speechSynthesis.speak(utter);
-                    }, 000);
+                    if(is_match_complete != true && ball_type != null){
+                        setTimeout(() => {
+                            window.speechSynthesis.speak(utter);
+                        }, 000);
+                    }
+                    
                     
                 }
             }
@@ -2043,8 +2146,11 @@
                 }
                 free = ball_type;
 
-                
+                if(undo_operation == true){
+                    ball_type = null;
+                }
                 let strikerName = document.querySelector('.batsman-type').getAttribute('data-striker');
+                let bowler_id = document.querySelector('.bowler-name').getAttribute('data-bowler');
                 ball_data = {
                     'Run' : run_per_ball,
                     'Shot Type' : Shot_type,
@@ -2054,7 +2160,7 @@
                     'Inning Type' : '<?php echo $inning_type; ?>',
                     ...(ball_type == 'No Ball' ? {'Ball Type': `${ball_type}-${no_balltype}`}:{'Ball Type': ball_type}),
                     ...(freehit? { 'Freehit': freehit } : {}),
-                    'Bowler': document.querySelector('.bowler-name').innerText,
+                    'Bowler': bowler_id,
                     'Wicket By': wicket_by,
                     ...(ball_type == 'Wicket' || no_balltype == 'Wicket' ? { 'Out Player': dismissedPlayerid ,'New Player':new_player} : { 'Striker': strikerName }),
                     'TotalScore': scoreText[0],
@@ -2062,7 +2168,8 @@
                     'Inning' : current_inning,
                     'Commentary': commentary,
                     'Match id': match,
-                    'super over' : issuperOver
+                    ...(is_match_complete == true ? {'Is Match Complete': is_match_complete} : null),
+                    ...(undo_operation == true ? {'Undo': undo_operation} : null)
                 }
 
                 update_score();
@@ -2082,15 +2189,26 @@
                 .then(res => res.json())
                 .then((data)=>{
                     console.log(data);
-                    if(data.status == 200){
-                        if(data.is_super_over && data.is_super_over == true){
-                            super_over.showModal();
-                        }
+                    if(data.status == 200 && data.is_complete == true){
+                        match_completed.showModal();
+                        match_complete = true;
+                        console.log(match_complete)
+                        //block buttons except undo
+                        document.querySelectorAll('.score-numpad .num').forEach(button => {
+                            if (!button.classList.contains('undo')) {
+                                button.disabled = true;
+                            }
+                        });
+                    }else if(data.status == 200){
                         setTimeout(() => {
                             //Bypass reload
-                            // window.removeEventListener("beforeunload", preventReload);
-                            // location.reload();
+                            window.removeEventListener("beforeunload", preventReload);
+                            location.reload();
                         }, 300); 
+                    }else if(data.field == 'undo'){
+                        let warn = document.querySelector('.undo-warn');
+                        warn.innerText = data.message;
+                        warn.style.color = 'red';
                     }
                 })
                 .catch(error => console.log(error));
@@ -2124,7 +2242,7 @@
                         setTimeout(() => {
                             window.removeEventListener("beforeunload", preventReload);
                             location.reload(); 
-                        }, 300);
+                        }, 400);
                         
                     }
                 })
@@ -2132,6 +2250,7 @@
                     console.log(error);
                 });
             }
+
     </script>
 </body>
 </html>

@@ -23,20 +23,53 @@
         exit();
     }
 
+    if(isset($score_logs['match_completed']) && $score_logs['match_completed'] == true){
+        header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
     // Detect current active innings
     $current_innings = null;
-    foreach ($score_logs['innings'] as $innings_name => $innings_data) {
-        if ($innings_data['completed'] == false) {
-            $current_innings = $innings_name;
-            break;
+   $is_super_over = false;
+    // 1. First check super over innings if they exist
+    if (isset($score_logs['super_over_innings']) && is_array($score_logs['super_over_innings'])) {
+        foreach ($score_logs['super_over_innings'] as $innings_name => $innings_data) {
+            if (isset($innings_data['completed']) && $innings_data['completed'] == false) {
+                $current_innings = $innings_name;
+                $batting_team = $innings_data['batting_team'] ?? null;
+                $bowling_team = $innings_data['bowling_team'] ?? null;
+                $is_super_over = true;
+                break;
+            }
         }
     }
 
-     // Check openers
-    $openers       = $score_logs['innings'][$current_innings]['openers'];
-    if (!empty($openers['current_striker']['id']) && !empty($openers['current_non_striker']['id'])) {
-        header("Location: ./score_panel.php?match_id=".$match);
-        exit();
+    // 2. If no active super over innings, check regular innings
+    if ($current_innings === null && isset($score_logs['innings']) && is_array($score_logs['innings'])) {
+        foreach ($score_logs['innings'] as $innings_name => $innings_data) {
+            if (isset($innings_data['completed']) && $innings_data['completed'] == false) {
+                $current_innings = $innings_name;
+                $batting_team = $innings_data['batting_team'] ?? null;
+                $bowling_team = $innings_data['bowling_team'] ?? null;
+                break;
+            }
+        }
+    }
+
+    // 3. Check openers if we have a current innings
+    if ($current_innings !== null) {
+        // Determine which data source to use
+        $innings_data = $is_super_over 
+            ? $score_logs['super_over_innings'][$current_innings] 
+            : $score_logs['innings'][$current_innings];
+        
+        if (isset($innings_data['openers'])) {
+            $openers = $innings_data['openers'];
+            if (!empty($openers['current_striker']['id']) && !empty($openers['current_non_striker']['id']) || $score_logs['match_completed'] != true) {
+                header("Location: ./score_panel.php?match_id=".$match);
+                exit();
+            }
+        }
     }
 
     if ($current_innings) {

@@ -191,11 +191,6 @@
             border: 1px solid rgb(255 89 0);
             transition: background-position .5s ease-in-out;
         }
-        .form-switch{
-            position: absolute;
-            right: 3px;
-            top: 15px;
-        }
         .rules{
             display: flex;
             flex-direction: column;
@@ -401,6 +396,12 @@
                                     <input class="form-check-input iswide" type="checkbox" id="flexSwitchCheckChecked" checked>
                                 </div>
                             </div>
+                            <div class="rule">
+                                <h6>Super Over</h6>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input issuperover" type="checkbox" id="flexSwitchCheckChecked" checked>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="add-btn">
@@ -454,6 +455,7 @@
             e.preventDefault();
             const iswide = document.querySelector('.iswide').checked;
             const isfreehit = document.querySelector('.isfreehit').checked;
+            const issuperover = document.querySelector('.issuperover').checked;
 
             let formdata = new FormData();
             formdata.append('match_id', '<?php echo $match; ?>');
@@ -461,6 +463,7 @@
             formdata.append('selecteddecision', selecteddecision);
             formdata.append('iswide', iswide);
             formdata.append('isfreehit', isfreehit);
+            formdata.append('issuperover', issuperover);
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';

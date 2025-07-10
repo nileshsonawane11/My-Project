@@ -6,6 +6,7 @@ $selectedteam = $_POST['selectedteam'];
 $selecteddecision = $_POST['selecteddecision'];
 $isfreehit = $_POST['isfreehit'];
 $iswide = $_POST['iswide'];
+$issuperover = $_POST['issuperover'];
 
 $match_id = $_POST['match_id'];
 $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE `match_id` = '$match_id'"));
@@ -24,9 +25,14 @@ $score_log = [
   "match_id" => $match_id,
   "team1" => $row['team_1'],
   "team2" => $row['team_2'],
+  "team1_score" => null,
+  "team2_score" => null,
+  "team1_Wickets" => null,
+  "team2_Wickets" => null,
   "overs" => $row['overs'],
   "freehit" => $isfreehit,
   "wide" => $iswide,
+  'issuperallow' => $issuperover,
   "super_over" => false,
   "innings" => [
     "1st" => [
@@ -57,7 +63,8 @@ $score_log = [
         "style"=> null,
         "overs_bowled"=> "0.0",
         "runs_conceded"=> 0,
-        "wickets"=> 0
+        "wickets"=> 0,
+        "maidens" => 0
       ],
       "balls" => [],
       "batmans" => [],
@@ -105,9 +112,11 @@ $score_log = [
       "overs_completed" => "0.0",
       "completed" => false,
     ]
-  ]
+    ],
+  'super_over_innings' => []
 ];
-
+$history_array = [$score_log];  // this makes it an array of one element
+$history_json = json_encode($history_array);
 $json = json_encode($score_log);
 
 if(empty($selecteddecision) && empty($selectedteam)){
@@ -131,7 +140,7 @@ if (empty($bat) || empty($bowl)) {
 }
 
 
-$query = mysqli_query($conn,"UPDATE `matches` SET `toss_winner` = '$selectedteam', `toss_decision` = '$selecteddecision',`score_log` = '$json' WHERE `match_id` = '$match_id'");
+$query = mysqli_query($conn,"UPDATE `matches` SET `toss_winner` = '$selectedteam', `toss_decision` = '$selecteddecision',`score_log` = '$json',`history` = '$history_json' WHERE `match_id` = '$match_id'");
 if($query){
     echo json_encode(['status'=>200,'message'=>$selectedteam.' elected to '.$selecteddecision,'field'=>'team']);
     exit();
