@@ -989,20 +989,22 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     <div class="numpad">
                         <div class="bowler-container">
                                     <?php
+                                    
+                                        $bowler = $score_log[$inning_type][$current_innings]['current_bowler']['id'];
+                                        // First try to get from users table
                                         $bowler_query = mysqli_query($conn, "SELECT * FROM users WHERE user_id = '$bowler'");
                                         $name = mysqli_fetch_assoc($bowler_query);
 
                                         // If not found in users table, try players table
                                         if(!$name) {
-                                            $bowler_query = mysqli_query($conn, "SELECT * FROM players WHERE user_id = '$bowler'");
+                                            $bowler_query = mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$bowler'");
                                             $player_data = mysqli_fetch_assoc($bowler_query);
                                             
                                             if($player_data) {
-                                                // Create a compatible array structure using player data
                                                 $name = ['fname' => $player_data['player_name']];
-                                                    
                                             }
                                         }
+
                                     ?>
                                 <div class="bowler-name" data-bowler="<?php echo $bowler; ?>"> 
                                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
