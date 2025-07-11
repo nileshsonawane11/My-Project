@@ -69,6 +69,7 @@ $Commentary = $data['Commentary'] ?? null;
 $issuper_over = $data['super over'] ?? false;
 $iscomplete =$data['Is Match Complete'] ?? null;
 $undo = $data['Undo'] ?? null;
+$run_type = $data['Run Type'] ?? null;
 
 // Then in your updateBall function, modify the completion handling:
 if (isset($iscomplete) && $iscomplete == true) {
@@ -217,6 +218,7 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     $Inning_type = $data['Inning Type'] ?? null;
     $Commentary = $data['Commentary'] ?? null;
     $issuper_over = $data['super over'] ?? false;
+    $run_type = $data['Run Type'] ?? null;
 
     // Add current ball to log
     $score_log[$Inning_type][$Inning]['balls'][] = $data;
@@ -251,11 +253,17 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
         !str_contains($Wicket_Type, 'Returning')) ||
         str_starts_with($Wicket_Type, 'Obstructing')
     ) {
-        if(($Run % 2) == 0) {
+        if(($Run % 2) == 0 ) {
             swap_batsmans($score_log, $Inning_type, $Inning);
         }
-    } elseif (!in_array($Ball_Type, ['Wide', 'No Ball'], true) && ($Run % 2) == 1) {
-        swap_batsmans($score_log, $Inning_type, $Inning);
+    } elseif (!in_array($Ball_Type, ['Wide', 'No Ball'], true)) {
+
+        if($run_type == 'FULL RUN' && ($Run % 2) == 1){
+            swap_batsmans($score_log, $Inning_type, $Inning);
+        }else if($run_type == 'HALF RUN' && ($Run % 2) == 0){
+            swap_batsmans($score_log, $Inning_type, $Inning);
+        }
+
     }
 
     if(in_array($Ball_Type, ['Bye', 'Leg Bye'], true) && ($Extra % 2) == 1) {
@@ -502,10 +510,10 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
 }
 
 function swap_batsmans(&$score_log, $Inning_type, $Inning) {
-    $temp = $score_log[$Inning_type][$Inning]['openers']['current_striker'];
-    $score_log[$Inning_type][$Inning]['openers']['current_striker'] = 
-        $score_log[$Inning_type][$Inning]['openers']['current_non_striker'];
-    $score_log[$Inning_type][$Inning]['openers']['current_non_striker'] = $temp;
+        $temp = $score_log[$Inning_type][$Inning]['openers']['current_striker'];
+        $score_log[$Inning_type][$Inning]['openers']['current_striker'] = 
+            $score_log[$Inning_type][$Inning]['openers']['current_non_striker'];
+        $score_log[$Inning_type][$Inning]['openers']['current_non_striker'] = $temp;
 }
 
 function handleMatchProgress(&$score_log) {
