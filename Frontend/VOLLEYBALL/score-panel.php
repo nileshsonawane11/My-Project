@@ -132,38 +132,38 @@
         .main-scoreboard {
                     width: 100%;
                     background-color: white;
-                    margin-top: 20px;
                     display: flex;
                     flex-direction: column;
                     padding-right: 5%;
                     padding-left: 5%;
-                    padding-top: 5%;
                     align-items: center;
                     height: 100%;
                     justify-content: space-between;
         }
         .right {
             display: flex;
-            justify-content: flex-start;
+            justify-content: flex-end;
             align-items: center;
             flex-direction: row;
             width: 100%;
             gap: 20px;
-            align-items: flex-end;
+            align-items: flex-start;
         }
         .left {
             display: flex;
-            justify-content: flex-start;
             align-items: center;
             flex-direction: row-reverse;
             width: 100%;
             gap: 20px;
-            align-items: flex-end;
+            align-items: flex-start;
+            justify-content: flex-end;
         }
         .score-team-data {
             display: flex;
             flex-direction: column;
-            width: 80px;
+            width: 100%;
+            align-items: center;
+            gap: 20px;
         }
         .team-logo {
             height: 60px;
@@ -188,12 +188,22 @@
         .team-data {
             display: flex;
             flex-direction: column;
-            padding: 5%;
+            align-items: center;
+            width: 100%;
+            gap: 5px;
         }
-        .teams-name {
+        .team1_name
+        {
             font-size: 1.2rem;
             font-weight: bold;
+            text-align: center;
         }
+        .team2_name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        } 
+        
         .container2 {
             position: relative;
             width: 100%;
@@ -204,6 +214,7 @@
         .scoreboard {
             width: 100%;
             display: flex;
+            align-items: flex-start;
         }
         
         .scoring {
@@ -550,6 +561,12 @@
         .undo-btn {
             margin-top: 20px;
         }
+        .score-teamlogo {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: end;
+            padding: 5%;
+        }
         @media (min-width:450px){
             .blur-container{
                background-position-y: -100px; 
@@ -593,7 +610,7 @@
         @media (max-width:600px){
         .right {
             display: flex;
-            justify-content: flex-start;
+            justify-content: flex-end;
             align-items: center;
             flex-direction: row;
             width: 100%;
@@ -602,7 +619,7 @@
         }
         .left {
             display: flex;
-            justify-content: flex-start;
+            justify-content: flex-end;
             align-items: center;
             flex-direction: row-reverse;
             width: 100%;
@@ -638,16 +655,21 @@
             </div>
         </div>
 
+        <div class="score-teamlogo">
+                    <div class="score2"><?php echo $score_log['team2_score']; ?></div>
+                    <div class="score1"><?php echo $score_log['team1_score']; ?></div>
+        </div>
+
         <div class="main-scoreboard">
             <div class="scoreboard">
-                <div class="right">
-                    <div class="team-logo">
-                        <img src="" alt="">
-                    </div>
+                
+                <div class="right">       
                     <div class="score-team-data">
-                        <div class="score1"><?php echo $score_log['team1_score']; ?></div>
+                        <div class="team-logo">
+                            <img src="" alt="">
+                        </div>
                         <div class="team-data">
-                            <label class="teams-name">
+                            <label class="team1_name">
                                 <?php
                                     $t_id1 = $score_log['team1'];
                                     $t_name1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id1'"));
@@ -660,13 +682,12 @@
                 </div>
 
                 <div class="left">
-                    <div class="team-logo">
+                    <div class="score-team-data">
+                        <div class="team-logo">
                         <img src="" alt="">
                     </div>
-                    <div class="score-team-data">
-                        <div class="score2"><?php echo $score_log['team2_score']; ?></div>
                         <div class="team-data">
-                            <label class="teams-name">
+                            <label class="team2_name">
                                 <?php
                                     $t_id2 = $score_log['team2'];
                                     $t_name2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id2'"));
