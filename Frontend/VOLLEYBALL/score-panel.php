@@ -170,6 +170,7 @@
             width: 60px;
             background-color: #D9D9D9;
             border-radius: 50%;
+            overflow: hidden;
         }
         .score1 {
             color: black;
@@ -538,6 +539,13 @@
             height: 75px;
             border-radius: 50%;
             background-color: #D9D9D9;
+            overflow: hidden;
+        }
+        .team-logo img,
+        .teams-logo img{
+            height: 100%;
+            width: 100%;
+            object-fit : cover;
         }
         .picture {
             height: 50px;
@@ -662,17 +670,22 @@
 
         <div class="main-scoreboard">
             <div class="scoreboard">
-                
+                <?php
+                    $t_id1 = $score_log['team1'];
+                    $t_name1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id1'"));
+                ?>
                 <div class="right">       
                     <div class="score-team-data">
                         <div class="team-logo">
-                            <img src="" alt="">
+                            <?php if($t_name1['t_logo']) { ?>
+                                <img src="../../assets/images/teams/<?php echo $t_name1['t_logo']; ?>" alt="">
+                            <?php }else{ ?>
+                                <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                            <?php } ?>
                         </div>
                         <div class="team-data">
                             <label class="team1_name">
                                 <?php
-                                    $t_id1 = $score_log['team1'];
-                                    $t_name1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id1'"));
                                     echo $t_name1['t_name'];
                                 ?>
                             </label>
@@ -683,14 +696,20 @@
 
                 <div class="left">
                     <div class="score-team-data">
+                        <?php
+                            $t_id2 = $score_log['team2'];
+                            $t_name2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id2'"));  
+                        ?>
                         <div class="team-logo">
-                        <img src="" alt="">
+                        <?php if($t_name2['t_logo']) { ?>
+                                <img src="../../assets/images/teams/<?php echo $t_name2['t_logo']; ?>" alt="">
+                            <?php }else{ ?>
+                                <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                            <?php } ?>
                     </div>
                         <div class="team-data">
                             <label class="team2_name">
                                 <?php
-                                    $t_id2 = $score_log['team2'];
-                                    $t_name2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id2'"));
                                     echo $t_name2['t_name'];
                                 ?>
                             </label>
@@ -807,14 +826,14 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="ace">
+                    <div class="ace" data-team="<?php echo $score_log['team1']; ?>">
                         <div class="picture">
                             <img src="https://i.ibb.co/7tcyp6PP/ACE.jpg">
                         </div>
                         <div class="text">Ace</div>
                         <div class="extra2">+1 to team1</div>
                     </div>
-                    <div class="error">
+                    <div class="error" data-team="<?php echo $score_log['team2']; ?>">
                         <div class="picture">
                             <img src="https://i.ibb.co/Z6Kf65vb/ERROR.jpg">
                         </div>
@@ -830,13 +849,25 @@
                     <label class="who">Who scored the point</label>
                 </div>
                 <div class="teams-info">
-                    <div class="team1-info teams-info">
-                        <div class="teams-logo"></div>
-                        <div class="teams-name">(team1 name)</div>
+                    <div class="team1-info teams-info" data-team="<?php echo $score_log['team1']; ?>">
+                        <div class="teams-logo">
+                            <?php if($t_name1['t_logo']) { ?>
+                                <img src="../../assets/images/teams/<?php echo $t_name1['t_logo']; ?>" alt="">
+                            <?php }else{ ?>
+                                <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                            <?php } ?>
+                        </div>
+                        <div class="teams-name"><?php echo $t_name1['t_name']; ?></div>
                     </div>
-                    <div class="team2-info teams-info">
-                        <div class="teams-logo"></div>
-                        <div class="teams-name">(team2 name)</div>
+                    <div class="team2-info teams-info" data-team="<?php echo $score_log['team2']; ?>">
+                        <div class="teams-logo">
+                            <?php if($t_name2['t_logo']) { ?>
+                                <img src="../../assets/images/teams/<?php echo $t_name2['t_logo']; ?>" alt="">
+                            <?php }else{ ?>
+                                <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                            <?php } ?>
+                        </div>
+                        <div class="teams-name"><?php echo $t_name2['t_name']; ?></div>
                     </div>
                 </div>
             </div>
@@ -845,11 +876,44 @@
 </div>
     
     <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // DOM Elements
-    const serveBtn = document.querySelector('.serve');
+    let serve_player = null;
+    let action = null;
+    let winner_team = null;
 
     
+    let get_score = () => {
+         let data = {
+            'match_id': '<?php echo $match_id; ?>',
+            'winner_team': winner_team,
+            'serve_player': serve_player,
+            'serve_action' : action
+        }
+
+        console.log(data);
+
+        fetch('./Backend/update-volleyball-logs.php',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then((data) => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+
+        serve_player = null;
+        action = null;
+        winner_team = null;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
+    const serveBtn = document.querySelector('.serve');
     // Get existing containers
     const container3 = document.querySelector('.container3');
     const container4 = document.querySelector('.container4');
@@ -862,9 +926,9 @@ document.addEventListener('DOMContentLoaded', () => {
     slideContainer.appendChild(container3);
     slideContainer.appendChild(container4);
     slideContainer.appendChild(container5);
-} else {
-    console.warn("One or more containers not found in the DOM.");
-}
+    } else {
+        console.warn("One or more containers not found in the DOM.");
+    }
     
     const playerNames = document.querySelectorAll('.player-name');
     const assignLater = document.querySelector('.assign-later');
@@ -903,17 +967,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     let getplayername = (el) => {
-        console.log(el.innerText)
+        serve_player = el.innerText;
     }
 
     let serveresult = (el) => {
-        console.log(el.innerText);
+        winner_team = el.getAttribute('data-team');
+        get_score();
+    }
+
+    let getaction = (el) => {
+        action = el.innerText;
     }
 
     assignLater.addEventListener('click', () => goToSlide(1));
     inButton.addEventListener('click', () => {
         goToSlide(2);
-        serveresult(inButton);
+        getaction(inButton);
     });
     
     // Drag to dismiss
@@ -943,36 +1012,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const clickableSelectors = ['.ace', '.error', '.team1-info','.team2-info'];
+    const clickableSelectors = ['.ace', '.error', '.team1-info', '.team2-info'];
 
-clickableSelectors.forEach(selector => {
-    document.querySelectorAll(selector).forEach(element => {
-        element.addEventListener('click', () => {
-            if (slideWrapper) {
-                slideWrapper.style.transition = 'transform 0.5s ease';
-                slideWrapper.style.transform = 'translateY(600px)';
-                serveresult(element);
+    clickableSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(element => {
+            element.addEventListener('click', () => {
+                if (slideWrapper) {
+                    slideWrapper.style.transition = 'transform 0.5s ease';
+                    slideWrapper.style.transform = 'translateY(600px)';
+                    if (element.matches('.ace, .error')) {
+                        getaction(element);
+                        console.log('Action immediately:', element.innerText); // use element here
+                    }
+                    // Use directly here
+                    serveresult(element);
 
-                setTimeout(() => {
-                    slideContainer.style.transform = 'translateX(0)';
-                }, 300);
-                
-            }
+                    setTimeout(() => {
+                        slideContainer.style.transform = 'translateX(0)';
+                    }, 300);
+                }
+            });
         });
     });
-});
+
 
 document.querySelectorAll(".team-button").forEach(team => {
     team.addEventListener("click",() => {
-        console.log(team.getAttribute('data-team'));
+        winner_team = team.getAttribute('data-team');
+        get_score();
     })
 })
 
 });
+
+ const back_decision = '<?php echo $back_decision; ?>';
+
+ // Disable F5 and Ctrl+R keyboard shortcuts
+        window.addEventListener("keydown", function (e) {
+            if (e.key === "F5" || (e.ctrlKey && e.key.toLowerCase() === "r")) {
+                e.preventDefault();
+                alert("Reload is disabled for the scorer!");
+            }
+        });
+
+    //prevent from refesh page
+        function preventReload(e) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    window.addEventListener("beforeunload", preventReload);
+
+    //go to prevoius page
+    let goBack = () => {
+        if(back_decision){
+            window.location.href = '../../dashboard.php?update=Live&sport=CRICKET';
+        }else{
+            window.history.back();
+        }
+    }
+
+   
 </script>
-
-
-
 </body>
 
 </html>
