@@ -548,7 +548,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         }
         #selectshot,
         #undo,
-        #match_completed{
+        #match_completed,
+        #run_type{
             position: fixed;
             transform: translateX(-50%) translateY(-50%);
             top: 50%;
@@ -570,7 +571,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         }
         #selectshot::backdrop,
         #undo::backdrop,
-        #super_over::backdrop{
+        #super_over::backdrop,
+        #run_type::backdrop{
             position: fixed;
             inset: 0px;
             background: rgba(0, 0, 0, 0.15);
@@ -691,6 +693,22 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .style-container2.active{
             border : 2px solid #FF6200;
         }
+        .run-type{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 20px;
+            gap: 10px;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+            background: #80808029;
+            text-align: center;
+            height: 100%;
+            width: 100%;
+            font-size: 15px;
+            letter-spacing: 1px;
+            margin: 10px 0;
+        }
 
         @media (min-width:601px) {
             .container{
@@ -799,6 +817,16 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     <p class="continue-match-btn complete-cancel" onclick="document.querySelector('#match_completed').close();
                     is_match_complete = false;">Continue Scoring</p>
                 </div>
+            </div>
+        </dialog>
+
+        <dialog id="run_type">
+            <div class="text"><h4>Run Type</h4></div>
+            <div class="run-type" onclick="get_run_type(this)">
+                FULL RUN
+            </div>
+            <div class="run-type" onclick="get_run_type(this)">
+                HALF RUN
             </div>
         </dialog>
 
@@ -1135,6 +1163,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         let dropdown = document.querySelector('.dropdown');
         let shotdialog = document.querySelector('#shotdialog');
         let shot = document.querySelector('#selectshot');
+        let run_type_container = document.querySelector('#run_type');
         let data_container = document.querySelector('.data');
         let undo = document.querySelector('.undo');
         let undo_container = document.querySelector('#undo');
@@ -1247,6 +1276,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         let Shot_side = null;
         let Shot_type = null;
         let extras = null;
+        let run_type = null;
         let ball_type = null;
         let out_type = null;
         let freehit = '<?php echo $freehit; ?>';
@@ -1536,6 +1566,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             shot.showModal();
         });
 
+        let get_run_type = (el) => {
+            console.log(el.innerText);
+            run_type = el.innerText;
+            display_content();
+            run_type_container.close();
+        }
+
         //
         let get_score_on_wicket = (el) => {
             let data = '';
@@ -1675,7 +1712,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         setTimeout(() => {
                             shot.close();
                         }, 300);
-                        display_content();
+                        run_type_container.showModal();
                     }
                     
                 }
@@ -1784,7 +1821,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         shot.close();
                     }, 300);
 
-                    display_content();
+                    run_type_container.showModal();
                 }
                 else if (balltype.includes('Leg Bye')) {
                     console.log('Leg Bye');
@@ -1801,7 +1838,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         shot.close();
                     }, 300);
 
-                    display_content();
+                    run_type_container.showModal();
                 }
                 else if (balltype.includes('Bye')) {
                     console.log('Bye');
@@ -1817,7 +1854,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         shot.close();
                     }, 300);
 
-                    display_content();
+                    run_type_container.showModal();
 
                     
                 }else if(balltype.includes('Shot')){
@@ -1834,7 +1871,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         shot.close();
                     }, 300);
 
-                    display_content();
+                    run_type_container.showModal();
 
                 }else if(balltype.includes('out')){
 
@@ -2205,7 +2242,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     'Commentary': commentary,
                     'Match id': match,
                     ...(is_match_complete == true ? {'Is Match Complete': is_match_complete} : null),
-                    ...(undo_operation == true ? {'Undo': undo_operation} : null)
+                    ...(undo_operation == true ? {'Undo': undo_operation} : null),
+                    'Run Type':run_type
                 }
 
                 update_score();
