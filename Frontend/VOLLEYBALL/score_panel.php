@@ -77,69 +77,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Volleyball Scoreboard</title>
     <style>
-        *{
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
-            user-select : none;
+            user-select: none;
             scrollbar-width: none;
         }
 
-        body{
-            margin: auto;
+        body {
+            margin: 0;
+            background: #f8f8f8;
+            min-height: 100vh;
+            color: #333;
+            position: relative;
         }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
         .container0 {
             position: relative;
             height: max-content;
         }
-        .return{
+
+        .return {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-direction: row;
-            padding-left: 9%;
-            padding-right: 90px;
-            padding-top: 40px;
+            padding: 20px 5%;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .return svg{
-            cursor: pointer;
 
-            
+        .return svg {
+            cursor: pointer;
+            fill: #F83900;
         }
-        .exit{
+
+        .exit {
             width: 150px;
             height: 50px;
-            background-color: #D9D9D9;
+            background-color: white;
             border-radius: 85px;
             display: flex;
-            justify-content:center;
-            align-items: center;
-        }
-        .for-exit{
-            display: flex;
             justify-content: center;
+            align-items: center;
+            color: #F83900;
+            border: 2px solid #F83900;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
-        .exit-text{
+
+        .exit:hover {
+            background-color: #F83900;
+            color: white;
+        }
+
+        .exit-text {
             margin-left: 5px;
         }
-        .for-icon1{
+
+        .for-icon1 {
             margin-right: 5px;
         }
+
         .main-scoreboard {
-                    width: 100%;
-                    background-color: white;
-                    display: flex;
-                    flex-direction: column;
-                    padding-right: 5%;
-                    padding-left: 5%;
-                    align-items: center;
-                    height: 100%;
-                    justify-content: space-between;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 0 5%;
+            align-items: center;
+            height: 100%;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: white;
         }
+
         .right {
             display: flex;
             justify-content: flex-end;
@@ -149,6 +178,7 @@
             gap: 20px;
             align-items: flex-start;
         }
+
         .left {
             display: flex;
             align-items: center;
@@ -158,6 +188,7 @@
             align-items: flex-start;
             justify-content: flex-end;
         }
+
         .score-team-data {
             display: flex;
             flex-direction: column;
@@ -165,27 +196,40 @@
             align-items: center;
             gap: 20px;
         }
+
         .team-logo {
-            height: 60px;
-            width: 60px;
-            background-color: #D9D9D9;
+            height: 80px;
+            width: 80px;
+            background-color: white;
             border-radius: 50%;
+            border: 3px solid #FAC01F;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #F83900;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-        .score1 {
-            color: black;
-            font-size: 3.8rem;
+
+        .score1, .score2 {
+            color: #F83900;
+            font-size: 4.5rem;
+            font-weight: bold;
             margin-bottom: 30px;
+        }
+
+        .score1 {
             display: flex;
             justify-content: end;
         }
+
         .score2 {
-            color: black;
-            font-size: 3.8rem;
-            margin-bottom: 30px;
             display: flex;
             justify-content: start;
         }
+
         .team-data {
             display: flex;
             flex-direction: column;
@@ -193,46 +237,26 @@
             width: 100%;
             gap: 5px;
         }
-        .team1_name
-        {
-            font-size: 1.2rem;
+
+        .team1_name, .team2_name {
+            font-size: 1.4rem;
             font-weight: bold;
             text-align: center;
+            color: #333;
         }
-        .team2_name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-        } 
-        
+
+        .set {
+            font-size: 1rem;
+            color: #777;
+        }
+
         .container2 {
             position: relative;
             width: 100%;
             height: 80vh;
-            /* filter: blur(3px); */
+            background: rgba(255, 255, 255, 0.65);
+        }
 
-        }
-        .scoreboard {
-            width: 100%;
-            display: flex;
-            align-items: flex-start;
-        }
-        
-        .scoring {
-            border-bottom: 3px solid black;
-            padding-bottom: 6px;
-        }
-        .current-set {
-            width: 100%;
-            height: 55px;
-            background-color: rgba(217, 217, 217, 0.98);
-            align-content: center;
-            text-align: center;
-            color: white;
-            font-weight: bold;
-            font-size: 22px;
-            border-bottom: 3px solid white;
-        }
         .blur-container {
                 top: 0;
                 position: absolute;
@@ -241,6 +265,7 @@
                 background-color: transparent;
                 filter: blur(3px);
                 z-index: -1;
+                background-position: center;
                 background-image: url("https://images.volleyballworld.com/image/upload/t_ratio10_16-size30-f_webp-c_fill/v1746718372/assets/v2/backgrounds/world_rankings_bkg.jpg");
             background-size: cover;
                 -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
@@ -250,82 +275,157 @@
             -webkit-mask-repeat: no-repeat;
             mask-repeat: no-repeat;
         }
-        .buttons{
+
+        .scoreboard {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .for-exit {
+            display: flex;
+            justify-content: center;
+        }
+
+        .scoring {
+            border-bottom: 3px solid #FAC01F;
+            padding-bottom: 6px;
+        }
+
+        .current-set {
+            width: 100%;
+            height: 55px;
+            background-color: #FAC01F;
+            align-content: center;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 22px;
+            border-bottom: 3px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .buttons {
             position: absolute;
             width: 100%;
             height: 300px;
-            /* background-color: black; */
-            
+            background-color: transparent;
         }
-        .point-buttons{
+
+        .point-buttons {
             display: flex;
             justify-content: space-evenly;
             align-items: center;
             width: 100%;
             height: 50%;
         }
-        .serve-button{
+
+        .serve-button {
             display: flex;
             justify-content: space-evenly;
             align-items: center;
             width: 100%;
             height: 60%;
         }
+
         .team-button {
-            width: 130px;
-            height: 57px;
+            width: 150px;
+            height: 70px;
             background-color: white;
-            color: black;
-            border: 2px solid black;
+            color: #F83900;
+            border: 2px solid #F83900;
             border-radius: 15px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
+
+        .team-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: #F83900;
+            color: white;
+        }
+
+        .team-button:active {
+            transform: translateY(1px);
+        }
+
         .serve {
             width: 220px;
-            height: 57px;
-            background-color: black;
+            height: 70px;
+            background-color: #F83900;
             color: white;
-            border: 2px solid white;
+            border: 2px solid #F83900;
             border-radius: 15px;
             position: relative;
             z-index: 4;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
+
+        .serve:hover {
+            background-color: #e03100;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
         .team-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
+            gap: 10px;
         }
+
         .team-name {
-            color: white;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
+
         button {
             font-size: 1.3rem;
             font-weight: bold;
+            cursor: pointer;
         }
-        .history{
+
+        .history {
             width: 100%;
             height: max-content;
             background-color: transparent;
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px solid #eee;
         }
-        .log{
+
+        .log {
             height: 125px;
             width: 100%;
             margin-top: 10px;
-            background-color: rgba(217, 217, 217, 0.9);
-            border-top: 2px solid white;
-            border-bottom: 2px solid white;
-            color: white;
+            background-color: white;
+            border: 1px solid #eee;
+            color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .serving{
+
+        .serving {
             height: 40px;
             width: 100%;
-            border-bottom: 1px solid white;
+            border-bottom: 1px solid #eee;
             align-content: center;
             padding: 8px;
             font-weight: bold;
             font-size: 1.3rem;
-            color: white;
+            color: #F83900;
+            background-color: #f9f9f9;
         }
+
         .point-to {
             height: 100%;
             width: 85%;
@@ -333,20 +433,27 @@
             flex-direction: column;
             gap: 5px;
         }
-        .point-to-update{
+
+        .point-to-update {
             height: 80px;
             width: 100%;
             display: flex;
             padding: 15px;
+            align-items: center;
         }
+
         .point-text {
             font-weight: bold;
             font-size: 1.1rem;
+            color: #555;
         }
+
         .last-update {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
+            color: #F83900;
         }
+
         /* Slide container wrapper */
         .slide-wrapper {
             position: fixed;
@@ -354,72 +461,95 @@
             left: 0;
             width: 100%;
             height: 543px;
-            overflow: hidden; /* Only hide what overflows */
+            overflow: hidden;
             transform: translateY(600px);
             transition: transform 0.5s ease;
             z-index: 1000;
-            background-color: white;
+            background: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            border-top: 2px solid #FAC01F;
         }
 
         /* Container parent for horizontal sliding */
         .slide-container {
             display: flex;
-            width: 300%; /* 3 containers at 100% each */
+            width: 300%;
             height: 100%;
             transition: transform 0.5s ease;
         }
 
         /* Individual containers */
-        .container3, 
-        .container4, 
+        .container3,
+        .container4,
         .container5 {
             flex: 0 0 33.33%;
-            width: 100%; /* Each takes 1/3 of parent width */
+            width: 100%;
             height: 100%;
             overflow-y: auto;
-            background-color: white;
+            background: white;
+            color: #333;
         }
-        
 
         .current-server {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #D9D9D9;
-            border-bottom: 1px solid #D9D9D9;
+            border-top: 2px solid #eee;
+            border-bottom: 1px solid #eee;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding-left: 8px;
+            padding-left: 15px;
+            background-color: white;
         }
+
         .curr-ser {
             font-size: 1.1rem;
             font-weight: bold;
+            color: #F83900;
         }
+
         .tap {
             font-size: 0.8rem;
-            font-weight: light;
+            color: #777;
         }
+
         .players-info {
             width: 100%;
             height: 492px;
-            background-color: white;
             padding-top: 35px;
+            background-color: white;
         }
+
         .player-name {
-            width: 100%;
-            height: 43px;
-            background-color: rgba(217, 217, 217, 0.31);
+            width: 95%;
+            height: 50px;
+            background-color: white;
             display: flex;
             align-items: center;
-            padding-left: 8px;
+            padding-left: 15px;
             font-size: 1.1rem;
-            margin-top: 5px;
+            margin: 10px auto;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
         }
+
+        .player-name:hover {
+            background-color: #f9f9f9;
+            transform: translateX(5px);
+            border-left: 3px solid #F83900;
+        }
+
         .player-cnt {
-            padding-left: 8px;
+            padding-left: 15px;
             font-size: 1.2rem;
             font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
         }
+
         .player-rel {
             width: 100%;
             height: 140px;
@@ -427,217 +557,294 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            gap: 5px;
+            gap: 15px;
+            background-color: white;
         }
+
         .assign-later {
             height: 50px;
             width: 155px;
             border-radius: 48px;
-            background-color: black;
-            color: white;
+            background-color: white;
+            color: #F83900;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 1.2rem;
+            border: 2px solid #F83900;
+            transition: all 0.3s ease;
         }
+
+        .assign-later:hover {
+            background-color: #F83900;
+            color: white;
+        }
+
         .replace {
             font-weight: bold;
             font-size: 1.2rem;
+            color: #777;
         }
-        
+
         .serve-result {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #D9D9D9;
-            border-bottom: 1px solid #D9D9D9;
+            border-top: 2px solid #eee;
+            border-bottom: 1px solid #eee;
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding-left: 15px;
+            background-color: white;
         }
+
         .ser-res {
             font-size: 1.1rem;
             font-weight: bold;
+            color: #F83900;
         }
+
         .outcome {
             font-size: 0.8rem;
-            font-weight: light;
+            color: #777;
         }
-        .outcomes{
+
+        .outcomes {
             width: 100%;
             height: 490px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            background-color: white;
         }
-        .in,.ace,.error {
-            width: 75%;
-            height: 87px;
-            border: 2.5px solid #D9D9D9;
+
+        .in, .ace, .error {
+            width: 85%;
+            height: 100px;
+            border: 2px solid #FAC01F;
             margin-top: 20px;
             border-radius: 15px;
             display: flex;
             align-items: center;
-            padding-left: 5%;
-            padding-right: 5%;
+            padding: 0 5%;
+            transition: all 0.3s ease;
         }
-        .text{
+
+        .in:hover, .ace:hover, .error:hover {
+            background-color: #fff9f0;
+            transform: scale(1.02);
+        }
+
+        .picture {
+            height: 65px;
+            width: 75px;
+            background-color: transparent;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .picture img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .text {
             margin-left: 7%;
             font-size: 1.2rem;
             font-weight: bold;
+            color: #333;
         }
-        .extra3 {
-            margin-left: 39%;
+
+        .extra1, .extra2, .extra3 {
+            margin-left: auto;
+            color: #777;
         }
-        .extra2 {
-            margin-left: 45%;
-        }
-        .extra1 {
-            margin-left: 58%;
-        }
-        
+
         .point-assign {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #D9D9D9;
-            border-bottom: 1px solid #D9D9D9;
+            border-top: 2px solid #eee;
+            border-bottom: 1px solid #eee;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding-left: 8px;
+            padding-left: 15px;
+            background-color: white;
         }
+
         .poi-ass {
             font-size: 1.1rem;
             font-weight: bold;
+            color: #F83900;
         }
+
         .who {
             font-size: 0.8rem;
-            font-weight: light;
+            color: #777;
         }
+
         .teams-info {
             width: 100%;
             height: 300px;
             display: flex;
             align-items: center;
             justify-content: space-evenly;
+            background-color: white;
         }
+
         .team1-info, .team2-info {
-            width: 157px;
-            height: 184px;
-            border: 3px solid #D9D9D9;
+            width: 160px;
+            height: 200px;
+            border: 3px solid #FAC01F;
             border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            gap: 28px;
+            gap: 20px;
+            background-color: white;
+            transition: all 0.3s ease;
         }
+
+        .team1-info:hover, .team2-info:hover {
+            background-color: #fff9f0;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
         .teams-logo {
-            width: 75px;
-            height: 75px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            background-color: #D9D9D9;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #F83900;
+            font-weight: bold;
+            font-size: 1.5rem;
+            border: 2px solid #FAC01F;
             overflow: hidden;
         }
+
         .team-logo img,
-        .teams-logo img{
+        .teams-logo img {
             height: 100%;
             width: 100%;
-            object-fit : cover;
-        }
-        .picture {
-            height: 50px;
-            width:50px;
-            background-color: transparent;
-            border-radius: 50%;
-            background-size: cover;
-        }
-        .picture img {
-            height: 100%;
             object-fit: cover;
         }
+
         .undo {
             width: 110px;
             height: 50px;
             background-color: white;
-            color: green;
-            border: 2px solid black;
+            color: #F83900;
             border-radius: 15px;
+            outline: none;
+            border: 2px solid #F83900;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
+
+        .undo:hover {
+            background-color: #F83900;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
         .undo-btn {
             margin-top: 20px;
         }
+
         .score-teamlogo {
             display: flex;
             justify-content: space-evenly;
             align-items: end;
             padding: 5%;
+            background-color: white;
         }
-        @media (min-width:450px){
-            .blur-container{
-               background-position-y: -100px; 
+
+        @media (max-width: 450px) {
+            .team-logo {
+                height: 60px;
+                width: 60px;
+                font-size: 1.2rem;
+            }
+            
+            .score1, .score2 {
+                font-size: 3.5rem;
+            }
+            
+            .team-button {
+                width: 130px;
+                height: 60px;
+                font-size: 1.3rem;
+            }
+            
+            .serve {
+                width: 200px;
+                height: 60px;
             }
         }
-        @media (min-width:601px){
+
+        @media (min-width: 601px) {
             .team-data {
-            display: flex;
-            flex-direction: column;
-            padding: 8%;
-        }
-        .score {
-            color: black;
-            font-size: 3.8rem;
-            margin-bottom: 30px;
-            padding-left: 20%;
-            padding-right: 20%;
-        }
-        .blur-container{
-            background-position-y: -200px;
-        }
-        .team-button {
-            width: 180px;
-            height: 80px;
-        }
-        .serve {
-            width: 270px;
-            height: 80px;
-        }
-        }
-        @media (min-width:1000px){
-            .blur-container{
-               background-position-y: -400px; 
+                display: flex;
+                flex-direction: column;
+                padding: 8%;
+            }
+            
+            .score1, .score2 {
+                font-size: 5rem;
+            }
+            
+            .team-button {
+                width: 180px;
+                height: 80px;
+                font-size: 1.5rem;
+            }
+            
+            .serve {
+                width: 250px;
+                height: 80px;
+            }
+            
+            .team-logo {
+                height: 100px;
+                width: 100px;
+                font-size: 2rem;
             }
         }
-        @media (min-width:1300px){
-            .blur-container{
-               background-position-y: -600px; 
+
+        @media (max-width: 600px) {
+            .right {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                flex-direction: row;
+                width: 100%;
+                margin-bottom: 10%;
+                align-items: flex-end;
             }
-        }
-        @media (max-width:600px){
-        .right {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            flex-direction: row;
-            width: 100%;
-            margin-bottom: 10%;
-            align-items: flex-end;
-        }
-        .left {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            flex-direction: row-reverse;
-            width: 100%;
-            margin-bottom: 10%;
-            align-items: flex-end;
-        }
-        .container2 {
-            height: 600px;
-            width: 100%;
-        }
+            
+            .left {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                flex-direction: row-reverse;
+                width: 100%;
+                margin-bottom: 10%;
+                align-items: flex-end;
+            }
+            
+            .container2 {
+                height: 600px;
+                width: 100%;
+            }
         }
     </style>
 </head>
