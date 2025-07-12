@@ -496,7 +496,7 @@
             background-color: white;
         }
 
-        .player-name {
+        .player-replace {
             width: 95%;
             height: 50px;
             background-color: white;
@@ -510,7 +510,7 @@
             border: 1px solid #eee;
         }
 
-        .player-name:hover {
+        .player-replace:hover {
             background-color: #f9f9f9;
             transform: translateX(5px);
             border-left: 3px solid #F83900;
@@ -560,7 +560,10 @@
             font-size: 1.2rem;
             color: #777;
         }
-
+        .player-replace {
+            display: flex;
+            justify-content: space-between;
+        }
         .serve-result {
             width: 100%;
             height: 48px;
@@ -611,7 +614,16 @@
             border: 2px solid #FAC01F;
             color: #F83900;
         }
-
+        .replace {
+            font-weight: 600;
+            font-size: 15px;
+            color: #f83900;
+            width: 80px;
+            height: 40px;
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
         .score-point:hover {
             background-color: #FAC01F;
             color: white;
@@ -944,16 +956,36 @@
                         <label class="tap">Tap to choose the raiding player</label>
                     </div>
                     <div class="players-info">
-                        <label class="player-cnt">Players(6)</label>
-                        <div class="player-name">1. Maninder Singh</div>
-                        <div class="player-name">2. Shrikant Jadhav</div>
-                        <div class="player-name">3. Deepak Narwal</div>
-                        <div class="player-name">4. Rinku Narwal</div>
-                        <div class="player-name">5. Vaibhav Garje</div>
-                        <div class="player-name">6. Shubham Shinde</div>
-                        <div class="player-rel">
-                            <div class="assign-later">Cancel</div>
-                            <label for="" class="replace">Replace Player</label>
+                        <label class="player-cnt">Players(7)</label>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        
                         </div>
                     </div>
                 </div>
@@ -1021,7 +1053,6 @@
             }
             
             const playerNames = document.querySelectorAll('.player-name');
-            const assignLater = document.querySelector('.assign-later');
             const scorepoint = document.querySelectorAll('.score-point');
             const teambtn = document.querySelectorAll('.team-button');
 
@@ -1062,7 +1093,6 @@
                 console.log(el.innerText);
             }
 
-            assignLater.addEventListener('click', () => goToSlide(1));
             
             // Drag to dismiss
             let startY = 0;

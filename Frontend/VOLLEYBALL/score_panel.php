@@ -522,21 +522,7 @@
             background-color: white;
         }
 
-        .player-name {
-            width: 95%;
-            height: 50px;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            padding-left: 15px;
-            font-size: 1.1rem;
-            margin: 10px auto;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            border: 1px solid #eee;
-        }
-
-        .player-name:hover {
+        .player-replace:hover {
             background-color: #f9f9f9;
             transform: translateX(5px);
             border-left: 3px solid #F83900;
@@ -767,6 +753,32 @@
             padding: 5%;
             background-color: white;
         }
+        .replace {
+            font-weight: 600;
+            font-size: 15px;
+            color: #f83900;
+            width: 80px;
+            height: 40px;
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
+        .player-replace {
+            width: 95%;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            font-size: 1.1rem;
+            margin: 10px auto;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
 
         @media (max-width: 450px) {
             .team-logo {
@@ -997,24 +1009,44 @@
     <div class="slide-wrapper">
         <div class="slide-container">
             <div class="container3">
-                <div class="current-server">
-                    <label class="curr-ser">Current Server</label>
-                    <label class="tap">Tap to choose the serving player</label>
-                </div>
-                <div class="players-info">
-                    <label class="player-cnt">Players(6)</label>
-                    <div class="player-name">1. (player name)</div>
-                    <div class="player-name">2. (player name)</div>
-                    <div class="player-name">3. (player name)</div>
-                    <div class="player-name">4. (player name)</div>
-                    <div class="player-name">5. (player name)</div>
-                    <div class="player-name">6. (player name)</div>
-                    <div class="player-rel">
-                        <div class="assign-later">Assign later</div>
-                        <label for="" class="replace">Replace Player</label>
+                    <div class="current-server">
+                        <label class="curr-ser">Current Raider</label>
+                        <label class="tap">Tap to choose the raiding player</label>
+                    </div>
+                    <div class="players-info">
+                        <label class="player-cnt">Players(7)</label>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        <div class="player-replace">
+                            <div class="player-name">1. Maninder Singh</div>
+                            <button class="replace">Replace</button>
+                        </div>
+                        
+                        </div>
                     </div>
                 </div>
-            </div>
 
             <div class="container4">
                 <div class="serve-result">
@@ -1138,7 +1170,6 @@
     }
     
     const playerNames = document.querySelectorAll('.player-name');
-    const assignLater = document.querySelector('.assign-later');
     const inButton = document.querySelector('.in');
     const aceButton = document.querySelector('.ace');
     const errorButton = document.querySelector('.error');
@@ -1186,7 +1217,6 @@
         action = el.innerText;
     }
 
-    assignLater.addEventListener('click', () => goToSlide(1));
     inButton.addEventListener('click', () => {
         goToSlide(2);
         getaction(inButton);
