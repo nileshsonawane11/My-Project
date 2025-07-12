@@ -138,21 +138,24 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             padding: 0;
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
-            user-select : none;
+            user-select: none;
         }
         :root {
             --primary-light: #FAC01F;
             --primary-dark: #F83900;
-            --background : linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --text-light: #f8f8f8;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         body{
             height: -webkit-fill-available;
-            background:white;
-            
+            background: #f5f5f5;
             display: flex;
             align-items: center;
             justify-content: center;
-            
             flex-direction: column;
         }
         .bg{
@@ -166,8 +169,25 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
-            opacity: 0.4;
+            opacity: 0.1;
             z-index: -1;
+        }
+        .container{
+            display: flex;
+            background-color: var(--card-bg);
+            position: relative;
+            width: 90%;
+            max-width: 100%;
+            min-height: 480px;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: column;
+            gap: 30px;
+            z-index: 0;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
         }
         .return{
             width: 100%;
@@ -175,16 +195,19 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             justify-content: space-between;
             align-items: center;
             flex-direction: row;
-            padding: 40px 40px 0 40px;
+            padding: 20px 20px 0 20px;
         }
         .return svg{
             cursor: pointer;
+            fill: var(--primary-dark);
         }
         .txt{
             text-align: left;
             width: 100%;
-            padding-left: 50px;
-            color : white;
+            padding-left: 20px;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 18px;
         }
         .content{
             width: 100%;
@@ -200,6 +223,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             justify-content: space-between;
             align-items: center;
             height: 50%;
+            width: 100%;
+            gap: 20px;
         }
         .error{
             display: none;
@@ -207,7 +232,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             width:100%;
             font-size:12px;
             margin: 5px;
-            transition : all 0.3 ease-in-out;
+            transition: all 0.3 ease-in-out;
         }
         .score-container{
             width: 100%;
@@ -216,8 +241,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             align-items: center;
             flex-direction: column;
             gap: 10px;
-            color : white;
+            color: var(--primary-dark);
             padding: 10px;
+            background: rgba(250, 192, 31, 0.1);
+            border-radius: var(--border-radius);
+            margin: 10px 0;
         }
         .score{
             display: flex;
@@ -225,18 +253,22 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             justify-content: center;
             align-items: center;
             gap: 10px;
-            font-size: 50px;
+            font-size: 36px;
+            font-weight: 700;
         }
         .batsman{
-             width: 100%;
+            width: 100%;
             display: flex;
             height: 70px;
             flex-direction: row;
             justify-content: center;
             align-items: center;
+            gap: 10px;
         }
         .overs{
-            font-size: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
         }
         .batmans{
             width: 50%;
@@ -246,10 +278,17 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border: 1.5px solid white;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            background: var(--card-bg);
+            box-shadow: var(--box-shadow);
         }
         .batmans:first-child{
-            color : white;
+            border-left: 4px solid var(--primary-light);
+        }
+        .batmans:last-child{
+            border-left: 4px solid var(--primary-dark);
         }
         .batsman-type{
             width: 100%;
@@ -258,6 +297,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             flex-direction: row;
             justify-content: center;
             align-items: center;
+            font-weight: 600;
         }
         .data-info{
             width: 100%;
@@ -270,10 +310,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            align-items: flex-start;
-            background: #D9D9D9;
-            padding: 12px;
-            
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border-left: 4px solid var(--primary-dark);
         }
         .bowler-name{
             display: flex;
@@ -281,18 +323,22 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             align-items: center;
             flex-direction: row;
             gap: 10px;
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: 600;
         }
         .bowls{
             font-size: 15px;
+            color: #666;
         }
         .info{
             display: flex;
             justify-content: center;
             gap: 10px;
             align-items: center;
-            background: #AFAFAF;
-            height: 25px;
+            background: #f0f0f0;
+            height: 40px;
+            border-radius: var(--border-radius);
+            margin-top: 10px;
         }
         .score-numpad{
             display: grid;
@@ -300,9 +346,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             align-items: center;
             justify-items: center;
             height: 32vh;
+            gap: 8px;
+            margin-top: 10px;
         }
         .score-numpad .num:disabled {
-            background-color:rgb(255, 255, 255);  /* or whatever color you want */
+            background-color: #e0e0e0;
             opacity: 1;
             cursor: auto;
         }
@@ -312,7 +360,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             justify-content: center;
             width: 100%;
             height: -webkit-fill-available;
-
+            gap: 8px;
         }
         .double{
             display: flex;
@@ -321,12 +369,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             justify-content: center;
             width: 100%;
             height: -webkit-fill-available;
+            gap: 8px;
         }
         .num{
             height: -webkit-fill-available;
             width: 100%;
-            font-size: 20px;
-            border: 0.1px solid #0000002e;
+            font-size: 18px;
+            border: none;
             cursor: pointer;
             outline: none;
             display: flex;
@@ -334,33 +383,62 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             justify-content: center;
             align-items: center;
             position: relative;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .num:hover {
+            transform: translateY(-2px);
         }
         .numbers{
-            background : white ;
+            background: #f0f0f0;
+            color: var(--text-dark);
+        }
+        .numbers:hover {
+            background: #e0e0e0;
         }
         .direct{
             position: absolute;
-            bottom: 0;
-            color: #A8A8A8;
+            bottom: 5px;
+            color: #666;
+            font-size: 10px;
+            font-weight: normal;
         }
         .other-options{
             cursor: pointer;
             display: flex;
             gap: 10px;
-            color: white;
+            color: var(--text-dark);
             align-items: center;
             justify-content: center;
+            font-weight: 500;
         }
         .undo{
-            color: #009E4A;
+            background: var(--primary-light);
+            color: var(--text-dark);
+        }
+        .undo:hover {
+            background: #f0b800;
         }
         .out{
-            color: #A80000;
+            background: var(--primary-dark);
+            color: white;
+        }
+        .out:hover {
+            background: #e03000;
+        }
+        .wide, .nb, .bye, .lb {
+            background: rgba(250, 192, 31, 0.2);
+            color: var(--text-dark);
+        }
+        .wide:hover, .nb:hover, .bye:hover, .lb:hover {
+            background: rgba(250, 192, 31, 0.3);
         }
         .line{
             height: 3px;
             width: 50px;
-            background: white;
+            background: var(--primary-dark);
+            border-radius: 3px;
         }
         .dropdown{
             width: 100%;
@@ -374,6 +452,9 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             z-index: 2;
             transform: translateY(600px);
             transition: all 0.6s ease-in-out;
+            background: var(--card-bg);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
         }
         .dropdown.active{
             transform: translateY(0px);
@@ -387,7 +468,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             align-items: center;
             gap: 20px;
             padding: 20px;
-            background: white;
+            background: var(--card-bg);
         }
         .note{
             display: flex;
@@ -402,19 +483,24 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
         }
-
         .menu-columns {
-            display: contents; /* lets child .menu items participate in parent grid */
+            display: contents;
         }
-
         .menu {
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 10px;
+            background: #f9f9f9;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+        .menu:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
         }
         .opacity-container{
             height: 100%;
@@ -429,15 +515,16 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             transform: translateX(-50%) translateY(-50%);
             top: 50%;
             left: 50%;
-            width: 100%;
+            width: 90%;
+            max-width: 400px;
             border: none;
             height: max-content;
-            background: rgb(255 255 255);
+            background: var(--card-bg);
             transition: all 0.5s ease-in-out;
             padding: 20px;
             display: none;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             flex-direction: column;
             justify-content: center;
             z-index: 2;
@@ -445,16 +532,18 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             scrollbar-width: none;
         }
         .parent-circle{
-            width: 380px;
+            width: 100%;
+            max-width: 380px;
             height: 380px;
             border-radius: 50%;
             display: flex;
             overflow: hidden;
             background: #fff;
-            border: 2px solid rgb(255, 81, 0);
+            border: 2px solid var(--primary-dark);
             align-items: center;
             justify-content: center;
             background: #149428;
+            margin: 15px 0;
         }
         .circle {
             position: relative;
@@ -465,7 +554,6 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             background: #fff;
             border: 3px solid #ffffff;
         }
-
         .slice {
             position: absolute;
             width: 50%;
@@ -479,24 +567,15 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             cursor: pointer;
             clip-path: polygon(0% 0%, 100% 100%, 0% 150%);
         }
-
-        /* Position each slice with a z-index stack */
-        .slice:nth-child(1) { transform: rotate(0deg) }
-        .slice:nth-child(2) { transform: rotate(45deg) }
-        .slice:nth-child(3) { transform: rotate(90deg) }
-        .slice:nth-child(4) { transform: rotate(135deg) }
-        .slice:nth-child(5) { transform: rotate(180deg) }
-        .slice:nth-child(6) { transform: rotate(225deg) }
-        .slice:nth-child(7) { transform: rotate(270deg) }
-        .slice:nth-child(8) { transform: rotate(315deg) }
-
         .slice:hover {
             background:rgba(0, 163, 25, 0.87);
         }
         .batsman-name{
-            color: #FF6200;
+            color: var(--primary-dark);
             font-size: 20px;
             text-transform: capitalize;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
         .side{
             position: absolute;
@@ -507,23 +586,6 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             color: white;
             opacity: 50%;
             padding-left: 10px;
-        }
-        .slice:nth-child(1) .side { transform: rotate(0deg) }
-        .slice:nth-child(2) .side { transform: rotate(315deg) }
-        .slice:nth-child(3) .side { transform: rotate(270deg) }
-        .slice:nth-child(4) .side { transform: rotate(225deg) }
-        .slice:nth-child(5) .side { transform: rotate(180deg) }
-        .slice:nth-child(6) .side { transform: rotate(135deg) }
-        .slice:nth-child(7) .side { transform: rotate(90deg) }
-        .slice:nth-child(8) .side { transform: rotate(45deg) }
-
-        @keyframes shake {
-            0%   { transform: translate(-50%, -50%); }
-            20%  { transform: translate(calc(-50% - 10px), -50%); }
-            40%  { transform: translate(calc(-50% + 10px), -50%); }
-            60%  { transform: translate(calc(-50% - 10px), -50%); }
-            80%  { transform: translate(calc(-50% + 10px), -50%); }
-            100% { transform: translate(-50%, -50%); }
         }
         .pitch-container{
             position: absolute;
@@ -545,6 +607,9 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .side-name{
             color: #fff;
             background: #149428;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
         }
         #selectshot,
         #undo,
@@ -557,13 +622,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             width: 300px;
             border: none;
             height: max-content;
-            background: rgb(255 255 255);
+            background: var(--card-bg);
             transition: all 0.5s ease-in-out;
             align-items: flex-start;
             padding: 20px;
             z-index: 99;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -602,16 +667,22 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             align-items: center;
             padding: 20px;
             gap: 10px;
-            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
-            background: #80808029;
+            box-shadow: var(--box-shadow);
+            background: #f9f9f9;
             text-align: center;
             height: 100%;
             width: 100%;
             font-size: 15px;
             letter-spacing: 1px;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+        .style-container:hover {
+            background: #f0f0f0;
         }
         .style-container.active{
-            border : 2px solid #FF6200;
+            border: 2px solid var(--primary-dark);
+            background: rgba(248, 57, 0, 0.1);
         }
         .style-container:last-child:nth-child(odd){
             grid-column: 1 / -1;
@@ -626,36 +697,52 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .undo-txt{
             font-size: 25px;
             font-weight: bold;
+            color: var(--primary-dark);
         }
         .undo-warn{
             font-size: 18px;
-            color: #A5A5A5;
+            color: #666;
             letter-spacing: 1px;
             text-align: center;
         }
         .undo-btn,
         .super-over-btn{
-            height: 30px;
+            height: 40px;
             width: 130px;
             color: white;
             outline: none;
             border: none;
             background: var(--background);
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .undo-btn:hover,
+        .super-over-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
         }
         .undo-cancel,.complete-cancel{
-            color: #AFAFAF;
+            color: #666;
             font-size: 15px;
+            cursor: pointer;
         }
         .shake {
             animation: shake 0.4s;
         }
         .out-text{
-            color: #FF6200;
+            color: var(--primary-dark);
             font-size: 20px;
             letter-spacing: 2px;
+            font-weight: 600;
         }
         .decision{
             text-transform: capitalize;
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 5px;
         }
         .player-frame{
             position: fixed;
@@ -682,16 +769,22 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .style-container2{
             height: 30px;
             width: max-content;
-            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
-            background: #80808029;
+            box-shadow: var(--box-shadow);
+            background: #f9f9f9;
             text-align: center;
             padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+        .style-container2:hover {
+            background: #f0f0f0;
         }
         .style-container2.active{
-            border : 2px solid #FF6200;
+            border: 2px solid var(--primary-dark);
+            background: rgba(248, 57, 0, 0.1);
         }
         .run-type{
             display: flex;
@@ -700,61 +793,31 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             align-items: center;
             padding: 20px;
             gap: 10px;
-            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
-            background: #80808029;
+            box-shadow: var(--box-shadow);
+            background: #f9f9f9;
             text-align: center;
             height: 100%;
             width: 100%;
             font-size: 15px;
             letter-spacing: 1px;
             margin: 10px 0;
+            border-radius: var(--border-radius);
+            transition: all 0.2s ease;
+        }
+        .run-type:hover {
+            background: #f0f0f0;
         }
 
-        @media (min-width:601px) {
+        @media (max-width:601px){
             .container{
-                display: flex;
-                background-color: #bcbcbc;
-                position: relative;
-                width: 90%;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-                z-index: 0;
-                overflow: hidden;
+                width: 100%;
+                min-height: 100vh;
+                border-radius: 0;
             }
             .container2{
-                gap: 53px;
-                width: 100%;
+                gap: 20px;
             }
-        }
-
-        @media(max-width:601px){
-            .container{
-                display: flex;
-                background-color: #bcbcbc;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                text-align: center;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                flex-wrap: wrap;
-                gap: 30px;
-                scrollbar-width: none;
-                position: relative;
-                overflow: hidden;
-            }
-            .container2{
-                width: 100%;
-                gap: 99px;
-                height: 50%;
-                justify-content: space-between;
-            }
-             .score-numpad{
+            .score-numpad{
                 height: 34vh;
             }
         }

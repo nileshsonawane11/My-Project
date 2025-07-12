@@ -267,13 +267,13 @@
                 z-index: -1;
                 background-position: center;
                 background-image: url("https://images.volleyballworld.com/image/upload/t_ratio10_16-size30-f_webp-c_fill/v1746718372/assets/v2/backgrounds/world_rankings_bkg.jpg");
-            background-size: cover;
-                -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-            -webkit-mask-size: 100% 100%;
-            mask-size: 100% 100%;
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
+                background-size: cover;
+                    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+                mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+                -webkit-mask-size: 100% 100%;
+                mask-size: 100% 100%;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
         }
 
         .scoreboard {
@@ -449,7 +449,7 @@
         }
 
         .last-update {
-            font-size: 1.3rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: #F83900;
         }
