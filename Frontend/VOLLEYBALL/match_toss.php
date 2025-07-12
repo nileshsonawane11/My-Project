@@ -17,7 +17,7 @@
     $row = mysqli_fetch_assoc($query1);
 
     if(!empty($row['toss_winner'])){
-        header("Location: ./score-panel.php?match_id=$match");
+        header("Location: ./score_panel.php?match_id=$match");
         exit();
     }
 
@@ -492,7 +492,7 @@
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }else{
-                    window.location.href = './score-panel.php?match_id=<?php echo $match; ?>';
+                    window.location.href = './score_panel.php?match_id=<?php echo $match; ?>';
                 }
             })
             .catch(error => console.log(error));
