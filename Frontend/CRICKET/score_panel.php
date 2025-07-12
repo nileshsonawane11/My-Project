@@ -847,7 +847,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             padding: 20px;
             gap: 10px;
             box-shadow: var(--box-shadow);
-            background: #f9f9f9;
+            background: var(--primary-light);
             text-align: center;
             height: 100%;
             width: 100%;
@@ -857,9 +857,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             border-radius: var(--border-radius);
             transition: all 0.2s ease;
         }
+        .run-type:nth-child(3){
+            background:#d9d9d9;
+        }
         .run-type:hover {
             background: #f0f0f0;
         }
+        
 
         @media (max-width:601px){
             .container{
