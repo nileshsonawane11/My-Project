@@ -223,7 +223,6 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         }
         .return svg{
             cursor: pointer;
-            fill: var(--primary-dark);
         }
         .txt{
             text-align: left;
@@ -297,9 +296,9 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .batsman_container{
             width: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: space-around;
             gap: 5px;
         }
         .batsman_type{
@@ -582,9 +581,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             scrollbar-width: none;
         }
         .parent-circle{
-            width: 100%;
-            max-width: 380px;
-            height: 380px;
+            width: 350px;
+            height: 350px;
             border-radius: 50%;
             display: flex;
             overflow: hidden;
@@ -620,6 +618,51 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .slice:hover {
             background:rgba(0, 163, 25, 0.87);
         }
+
+        .slice:nth-child(2){
+            transform : rotate(45deg);
+        }
+        .slice:nth-child(3){
+            transform : rotate(90deg);
+        }
+        .slice:nth-child(4){
+            transform : rotate(135deg);
+        }
+        .slice:nth-child(5){
+            transform : rotate(180deg);
+        }
+        .slice:nth-child(6){
+            transform : rotate(225deg);
+        }
+        .slice:nth-child(7){
+            transform : rotate(270deg);
+        }
+        .slice:nth-child(8){
+            transform : rotate(315deg);
+        }
+
+        .slice:nth-child(2) .side{
+            transform : rotate(-45deg);
+        }
+        .slice:nth-child(3) .side{
+            transform : rotate(-90deg);
+        }
+        .slice:nth-child(4) .side{
+            transform : rotate(-135deg);
+        }
+        .slice:nth-child(5) .side{
+            transform : rotate(-180deg);
+        }
+        .slice:nth-child(6) .side{
+            transform : rotate(-225deg);
+        }
+        .slice:nth-child(7) .side{
+            transform : rotate(-270deg);
+        }
+        .slice:nth-child(8) .side{
+            transform : rotate(-315deg);
+        }
+
         .batsman-name{
             color: var(--primary-dark);
             font-size: 20px;
@@ -1080,10 +1123,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 </div>
                 
                 <div class="data-info">
+                    <div class="batsman_container">
+                        <p class="batsman_type">Striker</p>
+                        <p class="batsman_type">Non-Striker</p>
+                    </div>
                     <div class="batsman">
-                        <div class="batsman_container">
-                            <p class="batsman_type">Striker</p>
-                            <div class="batmans">
+                        <div class="batmans">
                                     <?php
                                         
                                         $striker = $score_log[$inning_type][$current_innings]['openers']['current_striker']['id'];
@@ -1116,10 +1161,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                 </p>
 
                             </div>
-                        </div>
 
-                        <div class="batsman_container">
-                            <p class="batsman_type">Non-Striker</p>
                             <div class="batmans">
                                     <?php
                                         
@@ -1154,7 +1196,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                 </p>
 
                             </div>
-                        </div>
+                       
 
                     </div>
                     <div class="numpad">
