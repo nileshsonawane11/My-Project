@@ -449,7 +449,7 @@
         }
 
         .last-update {
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: #F83900;
         }
