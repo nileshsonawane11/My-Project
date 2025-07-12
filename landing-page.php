@@ -24,7 +24,13 @@
         :root {
             --primary-light: #FAC01F;
             --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            --text-light: #ffffff;
+            --text-dark: #333333;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
         }
         .nav-bar{
             display: flex;
@@ -134,7 +140,7 @@
             display: flex;
             flex-direction: column;
             gap: 7px;
-            border-left: solid 2px black;
+            border-left: solid 2px var(--primary-light);
             padding-left: 30px;
         }
         .stage-container > *:last-child{
@@ -145,9 +151,8 @@
             position: absolute;
             height: 10px;
             width: 10px;
-            background-color: black;
+            background-color: var(--primary-dark);
             border-radius: 50%;
-            border: solid 2px ;
             left: -5px;
             top: 0;
         }
@@ -267,6 +272,13 @@
             border-bottom: 1px solid transparent;
             border-image: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
             border-image-slice: 1;
+        }
+        .slide-head {
+            color: var(--primary-dark);
+        }
+        h5{
+            font-weight: 600;
+            color: var(--primary-dark);
         }
         @keyframes spin{
             to{
@@ -482,9 +494,6 @@
                 text-align: center;
                 font-weight: 700;
                 color: #787878;
-            }
-            h5{
-                font-weight: 600;
             }
             .slides-container{
                 
