@@ -1,3 +1,77 @@
+<?php
+    session_start();
+    include '../../config.php';
+
+    if(!isset($_SESSION['user'])){
+        header('location: ../../front-page.php');
+        exit();
+    }
+    if($_SESSION['role'] == "User"){
+        header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    $match_id = '';
+    $set_team1 = '';
+    $set_team2 = '';
+    $back_decision = false;
+
+    $for = $_GET['for'] ?? '';
+    $data = json_decode($_GET['data'] ?? '', true);
+
+    if (empty($data)) {
+        $match_id = $_GET['match_id'];
+    } else {
+        $match_id = $data['match_id'];
+        $back_decision = true;
+    }
+
+    $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
+    $score_log = json_decode($row['score_log'], true);
+
+    // Redirect if no toss winner
+    if (empty($row['toss_winner'])) {
+        header('Location: ./match_toss.php?match_id=' . $match_id);
+        exit();
+    }
+
+    // Redirect if match is completed
+    if (!empty($score_log['completed'])) {
+        header('Location: ../../dashboard.php?update=live&sport=VOLLEYBALL');
+        exit();
+    }
+
+    // Detect current set
+    $current_set = null;
+    $last_rally = null;
+
+    if (isset($score_log['sets']) && is_array($score_log['sets'])) {
+        foreach ($score_log['sets'] as $set_number => $set_data) {
+            if (isset($set_data['set_completed']) && $set_data['set_completed'] === false) {
+                $current_set = $set_number;
+                $set_team1 = $score_log['team1'];
+                $set_team2 = $score_log['team2'];
+                if (!empty($set_data['rallies'])) {
+                    $last_rally = end($set_data['rallies']);
+                    reset($set_data['rallies']);
+                }
+                break;
+            }
+        }
+    }
+
+    // If no active set, fallback to last one (even if completed)
+    if ($current_set === null && isset($score_log['sets']) && is_array($score_log['sets'])) {
+        $last_set_number = array_key_last($score_log['sets']);
+        if (is_array($score_log['sets'][$last_set_number])) {
+            $current_set = $last_set_number;
+            $set_team1 = $score_log['team1'];
+            $set_team2 = $score_log['team2'];
+            $last_rally = end($score_log['sets'][$last_set_number]['rallies'] ?? []);
+        }
+    }
+    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -144,9 +218,14 @@
             color: #F83900;
             font-weight: bold;
             font-size: 1.5rem;
+            overflow:hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-
+        .team-logo img{
+            height: 100%;
+            width: 100%;
+            object-fit : cover;
+        }
         .score1, .score2 {
             color: #F83900;
             font-size: 4.5rem;
@@ -259,7 +338,7 @@
             height: 70px;
             background-color: white;
             color: #F83900;
-            border: 2px solid #F83900;
+            border: none;
             border-radius: 15px;
             font-weight: bold;
             font-size: 1.5rem;
@@ -301,8 +380,8 @@
         .raider {
             background-color: white;
             color: #F83900;
-            border-radius: 30px;
-            border: 2px solid #F83900;
+            border-radius: 15px;
+            border: none;
             font-weight: bold;
             transition: all 0.3s ease;
         }
@@ -507,7 +586,9 @@
             margin: 10px auto;
             border-radius: 10px;
             transition: all 0.3s ease;
-            border: 1px solid #eee;
+            border: 1px solid #00000030;
+            border-left: 2px solid red;
+
         }
 
         .player-replace:hover {
@@ -533,26 +614,6 @@
             flex-direction: column;
             gap: 15px;
             background-color: white;
-        }
-
-        .assign-later {
-            height: 50px;
-            width: 155px;
-            border-radius: 48px;
-            background-color: white;
-            color: #F83900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-            border: 2px solid #F83900;
-            transition: all 0.3s ease;
-        }
-
-        .assign-later:hover {
-            background-color: #F83900;
-            color: white;
         }
 
         .replace {
@@ -696,8 +757,13 @@
             font-weight: bold;
             font-size: 1.5rem;
             border: 2px solid #FAC01F;
+            overflow: hidden;
         }
-
+        .teams-logo img{
+            height: 100%;
+            width: 100%;
+            object-fit : cover;
+        }
         .picture {
             height: 50px;
             width: 50px;
@@ -850,26 +916,54 @@
             </div>
 
             <div class="score-teamlogo">
-                <div class="score2">0</div>
-                <div class="score1">0</div>
+                <div class="score2"><?php echo $score_log['team2_score']; ?></div>
+                <div class="score1"><?php echo $score_log['team1_score']; ?></div>
             </div>
 
             <div class="main-scoreboard">
                 <div class="scoreboard">
+                    <?php
+                        $t_id1 = $score_log['team1'];
+                        $t_name1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id1'"));
+                    ?>
                     <div class="right">       
                         <div class="score-team-data">
-                            <div class="team-logo">T1</div>
+                            <div class="team-logo">
+                                <?php if($t_name1['t_logo']) { ?>
+                                    <img src="../../assets/images/teams/<?php echo $t_name1['t_logo']; ?>" alt="">
+                                <?php }else{ ?>
+                                    <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                                <?php } ?>
+                            </div>
                             <div class="team-data">
-                                <label class="team1_name">Bengal Warriors</label>
+                                <label class="team1_name">
+                                    <?php
+                                        echo $t_name1['t_name'];
+                                    ?>
+                                </label>
                             </div>
                         </div>
                     </div>
 
                     <div class="left">
                         <div class="score-team-data">
-                            <div class="team-logo">T2</div>
+                            <?php
+                                $t_id2 = $score_log['team2'];
+                                $t_name2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id2'"));  
+                            ?>
+                            <div class="team-logo">
+                                <?php if($t_name2['t_logo']) { ?>
+                                    <img src="../../assets/images/teams/<?php echo $t_name2['t_logo']; ?>" alt="">
+                                <?php }else{ ?>
+                                    <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                                <?php } ?>
+                            </div>
                             <div class="team-data">
-                                <label class="team2_name">Patna Pirates</label>
+                                <label class="team2_name">
+                                    <?php
+                                        echo $t_name2['t_name'];
+                                    ?>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -886,12 +980,12 @@
             <div class="buttons">
                 <div class="point-buttons">
                     <div class="team-btn">
-                        <label class="team-name">Bengal Warriors</label>
-                        <button class="team-button" data-team="">Point</button>
+                        <label class="team-name"><?php echo $t_name1['t_name']; ?></label>
+                        <button class="team-button" data-team="<?php echo $score_log['team1']; ?>">Point</button>
                     </div>
                     <div class="team-btn">
-                        <label class="team-name">Patna Pirates</label>
-                        <button class="team-button" data-team="">Point</button>
+                        <label class="team-name"><?php echo $t_name2['t_name']; ?></label>
+                        <button class="team-button" data-team="<?php echo $score_log['team2']; ?>">Point</button>
                     </div>
                 </div>
 
@@ -956,6 +1050,7 @@
                         <label class="tap">Tap to choose the raiding player</label>
                     </div>
                     <div class="players-info">
+<<<<<<< HEAD
                         <label class="player-cnt">Players(7)</label>
                         <div class="player-replace">
                             <div class="player-name">1. Maninder Singh</div>
@@ -987,6 +1082,15 @@
                         </div>
                         
                         </div>
+=======
+                        <label class="player-cnt">Players(6)</label>
+                        <div class="player-name">1. Maninder Singh</div>
+                        <div class="player-name">2. Shrikant Gholap</div>
+                        <div class="player-name">3. Deepak Narwal</div>
+                        <div class="player-name">4. Rinku Narwal</div>
+                        <div class="player-name">5. Vaibhav Garje</div>
+                        <div class="player-name">6. Shubham Shinde</div>
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
                     </div>
                 </div>
 
@@ -996,13 +1100,25 @@
                         <label class="who">Which team scored the point</label>
                     </div>
                     <div class="teams-info">
-                        <div class="team1-info" data-team="team1">
-                            <div class="teams-logo">T1</div>
-                            <div class="teams-name">Bengal Warriors</div>
+                        <div class="team1-info" data-team="<?php echo $score_log['team1']; ?>">
+                            <div class="teams-logo">
+                                <?php if($t_name1['t_logo']) { ?>
+                                    <img src="../../assets/images/teams/<?php echo $t_name1['t_logo']; ?>" alt="">
+                                <?php }else{ ?>
+                                    <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                                <?php } ?>
+                            </div>
+                            <div class="teams-name"><?php echo $t_name1['t_name']; ?></div>
                         </div>
-                        <div class="team2-info" data-team="team2">
-                            <div class="teams-logo">T2</div>
-                            <div class="teams-name">Patna Pirates</div>
+                        <div class="team2-info" data-team="<?php echo $score_log['team2']; ?>">
+                            <div class="teams-logo">
+                                <?php if($t_name2['t_logo']) { ?>
+                                    <img src="../../assets/images/teams/<?php echo $t_name2['t_logo']; ?>" alt="">
+                                <?php }else{ ?>
+                                    <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                                <?php } ?>
+                            </div>
+                            <div class="teams-name"><?php echo $t_name2['t_name']; ?></div>
                         </div>
                     </div>
                 </div>
@@ -1029,7 +1145,7 @@
             </div>
         </div>
     </div>
-    
+    <audio id="beep-sound" src="../../assets/sounds/preview.mp3" preload="auto"></audio>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // DOM Elements
@@ -1092,7 +1208,10 @@
             let serveresult = (el) => {
                 console.log(el.innerText);
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
             
             // Drag to dismiss
             let startY = 0;
@@ -1166,6 +1285,7 @@
                             selector.style.color = "#F83900";
                         }, 600);
                         
+                        console.log(selector.getAttribute('data-team'));
                     }
                 })
             })
@@ -1194,18 +1314,39 @@
             });
 
             function startRaidTimer() {
-                timeLeft = 30;
+                const beepSound = document.getElementById("beep-sound");
+                beepSound.src = '../../assets/sounds/preview.mp3';
+                timeLeft =30;
 
                 raidTimer = setInterval(() => {
                     timeLeft--;
                     document.querySelector('.timer').innerText = `00:${timeLeft < 10 ? '0' + timeLeft : timeLeft}`;
-                    console.log(`Time left: ${timeLeft}s`);
+
+                    if (timeLeft <= 5 && timeLeft > 0) {
+                        beepSound.currentTime = 0; // reset to start
+                        beepSound.play();
+                        navigator.vibrate(100);
+                    }
 
                     if (timeLeft <= 0) {
                         clearInterval(raidTimer);
                         document.querySelector('.timer').innerText = '';
                         serveBtn.innerText = 'Start Timer';
-                        console.log('Raid over!');
+                        
+
+                        // Set long beep sound source
+                        beepSound.src = '../../assets/sounds/mixkit-censorship-beep-long-1083.wav';
+
+                        // Play the long beep
+                        beepSound.currentTime = 0;
+                        beepSound.play();
+                        navigator.vibrate(500);
+
+                        // Stop (pause) it after 3 seconds
+                        setTimeout(() => {
+                        beepSound.pause();
+                        beepSound.currentTime = 0;
+                        }, 1500);
                     }
                 }, 1000);
             }
@@ -1214,14 +1355,35 @@
                 clearInterval(raidTimer);
                 document.querySelector('.timer').innerText = '';
                 serveBtn.innerText = 'Start Timer';
-                console.log('Raid over!');
-                console.log('Raid cancelled.');
             }
 
-            function goBack() {
+        });
+
+         const back_decision = '<?php echo $back_decision; ?>';
+
+        // Disable F5 and Ctrl+R keyboard shortcuts
+            window.addEventListener("keydown", function (e) {
+                if (e.key === "F5" || (e.ctrlKey && e.key.toLowerCase() === "r")) {
+                    e.preventDefault();
+                    alert("Reload is disabled for the scorer!");
+                }
+            });
+
+        //prevent from refesh page
+            function preventReload(e) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        window.addEventListener("beforeunload", preventReload);
+
+        //go to prevoius page
+        let goBack = () => {
+            if(back_decision){
+                window.location.href = '../../dashboard.php?update=Live&sport=CRICKET';
+            }else{
                 window.history.back();
             }
-        });
+        }
     </script>
 </body>
 </html>

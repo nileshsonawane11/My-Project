@@ -133,7 +133,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <title>Team Info</title>
     <style>
-        *{
+         *{
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -171,6 +171,30 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             background-size: cover;
             opacity: 0.1;
             z-index: -1;
+            background-size: cover;
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+        }
+        .container{
+            display: flex;
+            background-color: var(--card-bg);
+            position: relative;
+            width: 90%;
+            max-width: 100%;
+            min-height: 480px;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: column;
+            gap: 30px;
+            z-index: 0;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
         }
         .container{
             display: flex;
@@ -222,7 +246,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
+<<<<<<< HEAD
             height: 50%;
+=======
+            height: 88vh;
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
             width: 100%;
             gap: 20px;
         }
@@ -259,20 +287,43 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .batsman{
             width: 100%;
             display: flex;
-            height: 70px;
             flex-direction: row;
             justify-content: center;
+<<<<<<< HEAD
             align-items: center;
             gap: 10px;
+=======
+            align-items: stretch;
+            gap: 10px;
+            margin-bottom: 10px;
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .overs{
             font-size: 16px;
             font-weight: 500;
             color: var(--text-dark);
+<<<<<<< HEAD
+=======
+        }
+        .batsman_container{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .batsman_type{
+            background: #fef2d257;
+            padding: 5px;
+            border: #f8f4e3 solid 1px;
+            border-radius: 4px;
+            color: var(--text-dark);
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .batmans{
-            width: 50%;
-            height: 100%;
+            width: 100%;
+            /* height: 100%; */
             display: flex;
             gap: 5px;
             flex-direction: column;
@@ -285,10 +336,17 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             box-shadow: var(--box-shadow);
         }
         .batmans:first-child{
+<<<<<<< HEAD
             border-left: 4px solid var(--primary-light);
         }
         .batmans:last-child{
             border-left: 4px solid var(--primary-dark);
+=======
+            border-left: 3px solid var(--primary-light);
+        }
+        .batmans:last-child{
+            border-left: 3px solid var(--primary-dark);
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .batsman-type{
             width: 100%;
@@ -304,18 +362,33 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             position: relative;
             z-index: 0;
         }
+        .bowler-data{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row;
+        }
+        .bowler-bowls{
+            width: 100%;
+            height: 50px;
+        }
         .bowler-container{
             width: 100%;
-            height: 70px;
             display: flex;
-            flex-direction: row;
             justify-content: space-between;
             align-items: center;
             background: var(--card-bg);
             padding: 15px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
+<<<<<<< HEAD
             border-left: 4px solid var(--primary-dark);
+=======
+            border-left: 3px solid var(--primary-dark);
+            flex-direction: column;
+            gap: 7px;
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .bowler-name{
             display: flex;
@@ -642,7 +715,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             inset: 0px;
             background: rgba(0, 0, 0, 0.15);
         }
-        .data{
+         .data{
             text-align: left;
             display: grid;
             align-items: center;
@@ -705,7 +778,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             letter-spacing: 1px;
             text-align: center;
         }
-        .undo-btn,
+         .undo-btn,
         .super-over-btn{
             height: 40px;
             width: 130px;
@@ -794,7 +867,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             padding: 20px;
             gap: 10px;
             box-shadow: var(--box-shadow);
+<<<<<<< HEAD
             background: #f9f9f9;
+=======
+            background: var(--primary-light);
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
             text-align: center;
             height: 100%;
             width: 100%;
@@ -803,10 +880,21 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             margin: 10px 0;
             border-radius: var(--border-radius);
             transition: all 0.2s ease;
+<<<<<<< HEAD
         }
         .run-type:hover {
             background: #f0f0f0;
         }
+=======
+        }
+        .run-type:nth-child(3){
+            background:#d9d9d9;
+        }
+        .run-type:hover {
+            background: #f0f0f0;
+        }
+        
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
 
         @media (max-width:601px){
             .container{
@@ -814,9 +902,15 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 min-height: 100vh;
                 border-radius: 0;
             }
+<<<<<<< HEAD
             .container2{
                 gap: 20px;
             }
+=======
+            /* .container2{
+                gap: 55px;
+            } */
+>>>>>>> e495add21590918fd4385406495225a225ff84f1
             .score-numpad{
                 height: 34vh;
             }
@@ -884,7 +978,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         </dialog>
 
         <dialog id="run_type">
-            <div class="text"><h4>Run Type</h4></div>
+            <div class="text"><p class='out-text'>Run Type</p></div>
             <div class="run-type" onclick="get_run_type(this)">
                 FULL RUN
             </div>
@@ -976,11 +1070,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         </div>
         <div class="return" >
             <div><svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M25.2502 12.75H3.81271L13.0002 21.9375L11.8452 23.25L0.470215 11.875L11.8452 0.5L13.0002 1.8125L3.81271 11H25.2502V12.75Z" fill="white"/>
+                <path d="M25.2502 12.75H3.81271L13.0002 21.9375L11.8452 23.25L0.470215 11.875L11.8452 0.5L13.0002 1.8125L3.81271 11H25.2502V12.75Z" fill="black"/>
                 </svg>
             </div>
             <div id='commentaryIcon'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on">
                 <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/>
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
                 <line x1="12" y1="19" x2="12" y2="23"/>
@@ -1028,75 +1122,79 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 
                 <div class="data-info">
                     <div class="batsman">
-                        <div class="batmans">
-                                <?php
-                                    
-                                    $striker = $score_log[$inning_type][$current_innings]['openers']['current_striker']['id'];
-                                    $striker_query = mysqli_query($conn, "SELECT * FROM users WHERE user_id = '$striker'");
-                                        $name = mysqli_fetch_assoc($striker_query);
+                        <div class="batsman_container">
+                            <p class="batsman_type">Striker</p>
+                            <div class="batmans">
+                                    <?php
+                                        
+                                        $striker = $score_log[$inning_type][$current_innings]['openers']['current_striker']['id'];
+                                        $striker_query = mysqli_query($conn, "SELECT * FROM users WHERE user_id = '$striker'");
+                                            $name = mysqli_fetch_assoc($striker_query);
 
-                                        // If not found in users table, try players table
-                                        if(!$name) {
-                                            $striker_query = mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$striker'");
-                                            $player_data = mysqli_fetch_assoc($striker_query);
-                                            
-                                            if($player_data) {
-                                                $name = ['fname' => $player_data['player_name']];
+                                            // If not found in users table, try players table
+                                            if(!$name) {
+                                                $striker_query = mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$striker'");
+                                                $player_data = mysqli_fetch_assoc($striker_query);
+                                                
+                                                if($player_data) {
+                                                    $name = ['fname' => $player_data['player_name']];
+                                                }
                                             }
-                                        }
-                                ?>
-                            <div class="batsman-type" data-striker='<?php echo $striker; ?>'>
-                                <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="white"/>
-                                </svg>
-                                <?php
-                                    echo $name['fname'] ?? '';
-                                ?>
-                                (striker)
-                            </div>
-                            <p class="batsman-score">
-                                <?php
-                                    echo ($score_log[$inning_type][$current_innings]['openers']['current_striker']['runs'] ?? 0).' ('.
-                                        ($score_log[$inning_type][$current_innings]['openers']['current_striker']['balls_faced'] ?? 0).')';
-                                ?>
-                            </p>
+                                    ?>
+                                <div class="batsman-type" data-striker='<?php echo $striker; ?>'>
+                                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
+                                    </svg>
+                                    <?php
+                                        echo $name['fname'] ?? '';
+                                    ?>
+                                </div>
+                                <p class="batsman-score">
+                                    <?php
+                                        echo ($score_log[$inning_type][$current_innings]['openers']['current_striker']['runs'] ?? 0).' ('.
+                                            ($score_log[$inning_type][$current_innings]['openers']['current_striker']['balls_faced'] ?? 0).')';
+                                    ?>
+                                </p>
 
+                            </div>
                         </div>
 
-                        <div class="batmans">
-                                <?php
-                                    
-                                    $non_striker = $score_log[$inning_type][$current_innings]['openers']['current_non_striker']['id'];
+                        <div class="batsman_container">
+                            <p class="batsman_type">Non-Striker</p>
+                            <div class="batmans">
+                                    <?php
+                                        
+                                        $non_striker = $score_log[$inning_type][$current_innings]['openers']['current_non_striker']['id'];
 
-                                    $non_striker_query = mysqli_query($conn, "SELECT * FROM users WHERE user_id = '$non_striker'");
-                                        $name = mysqli_fetch_assoc($non_striker_query);
+                                        $non_striker_query = mysqli_query($conn, "SELECT * FROM users WHERE user_id = '$non_striker'");
+                                            $name = mysqli_fetch_assoc($non_striker_query);
 
-                                        // If not found in users table, try players table
-                                        if(!$name) {
-                                            $non_striker_query = mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$non_striker'");
-                                            $player_data = mysqli_fetch_assoc($non_striker_query);
-                                            
-                                            if($player_data) {
-                                                $name = ['fname' => $player_data['player_name']];
+                                            // If not found in users table, try players table
+                                            if(!$name) {
+                                                $non_striker_query = mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$non_striker'");
+                                                $player_data = mysqli_fetch_assoc($non_striker_query);
+                                                
+                                                if($player_data) {
+                                                    $name = ['fname' => $player_data['player_name']];
+                                                }
                                             }
-                                        }
-                                ?>
-                            <div class="batsman-type" data-non-striker='<?php echo $non_striker; ?>'>
-                                <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
-                                </svg>
-                                <?php
-                                    echo $name['fname'] ?? '';
-                                ?>
-                                (non-striker)
-                            </div>
-                            <p class="batsman-score">
-                                <?php
-                                    echo ($score_log[$inning_type][$current_innings]['openers']['current_non_striker']['runs'] ?? 0).' ('.
-                                        ($score_log[$inning_type][$current_innings]['openers']['current_non_striker']['balls_faced'] ?? 0).')';
-                                ?>
-                            </p>
+                                    ?>
+                                <div class="batsman-type" data-non-striker='<?php echo $non_striker; ?>'>
+                                    <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
+                                    </svg>
+                                    <?php
+                                        echo $name['fname'] ?? '';
+                                    ?>
+                                </div>
+                                <p class="batsman-score">
+                                    <?php
+                                        echo ($score_log[$inning_type][$current_innings]['openers']['current_non_striker']['runs'] ?? 0).' ('.
+                                            ($score_log[$inning_type][$current_innings]['openers']['current_non_striker']['balls_faced'] ?? 0).')';
+                                    ?>
+                                </p>
 
+                            </div>
                         </div>
 
                     </div>
@@ -1120,25 +1218,28 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                         }
 
                                     ?>
-                                <div class="bowler-name" data-bowler="<?php echo $bowler; ?>"> 
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1.67013 14.2598L2.21013 14.7898L1.59013 15.3998C1.84106 15.7909 2.12189 16.162 2.43013 16.5098L16.5101 2.4198C16.1612 2.12041 15.7938 1.8432 15.4101 1.5898L14.7901 2.1998L14.2601 1.6698L14.7401 1.1898C12.8463 0.171369 10.6746 -0.20948 8.54727 0.103742C6.41991 0.416965 4.45017 1.40757 2.93024 2.92863C1.41031 4.44968 0.421157 6.42015 0.109505 8.54774C-0.202146 10.6753 0.180306 12.8467 1.20013 14.7398L1.67013 14.2598ZM12.8601 3.0698L13.3901 3.5998L12.0001 4.9998L11.4701 4.4698L12.8601 3.0698ZM10.0701 5.8698L10.5901 6.3998L9.20013 7.7998L8.67013 7.2698L10.0701 5.8698ZM7.27013 8.6698L7.80013 9.1998L6.40013 10.5898L5.87013 10.0598L7.27013 8.6698ZM4.47013 11.4598L5.00013 11.9998L3.60013 13.3998L3.07013 12.8698L4.47013 11.4598ZM4.59013 18.4098L5.21013 17.7998L5.74013 18.3298L5.26013 18.8098C7.15396 19.8282 9.32563 20.2091 11.453 19.8959C13.5804 19.5826 15.5501 18.592 17.07 17.071C18.59 15.5499 19.5791 13.5794 19.8908 11.4519C20.2024 9.32426 19.82 7.15287 18.8001 5.2598L18.3301 5.7398L17.7901 5.2098L18.4101 4.5998C18.1592 4.20867 17.8784 3.83756 17.5701 3.4898L3.49013 17.5798C3.83909 17.8792 4.20648 18.1564 4.59013 18.4098ZM16.4001 6.6098L16.9301 7.1398L15.5301 8.5398L15.0001 7.9998L16.4001 6.6098ZM13.6001 9.4098L14.1301 9.9398L12.7301 11.3298L12.2001 10.7998L13.6001 9.4098ZM10.8001 12.1998L11.3301 12.7298L9.94013 14.1298L9.40013 13.5998L10.8001 12.1998ZM8.00013 14.9998L8.53013 15.5298L7.13013 16.9298L6.60013 16.3998L8.00013 14.9998Z" fill="black"/>
-                                    </svg>
-                                    <?php
-                                        echo $name['fname'] ?? '';
-                                    ?>
-                                    (bowler)
-                                </div>
-                                <div class="bowls">
-                                    <?php
-                                        $current_bowler = $score_log[$inning_type][$current_innings]['current_bowler'];
+                                <div class="bowler-data">
+                                    <div class="bowler-name" data-bowler="<?php echo $bowler; ?>"> 
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1.67013 14.2598L2.21013 14.7898L1.59013 15.3998C1.84106 15.7909 2.12189 16.162 2.43013 16.5098L16.5101 2.4198C16.1612 2.12041 15.7938 1.8432 15.4101 1.5898L14.7901 2.1998L14.2601 1.6698L14.7401 1.1898C12.8463 0.171369 10.6746 -0.20948 8.54727 0.103742C6.41991 0.416965 4.45017 1.40757 2.93024 2.92863C1.41031 4.44968 0.421157 6.42015 0.109505 8.54774C-0.202146 10.6753 0.180306 12.8467 1.20013 14.7398L1.67013 14.2598ZM12.8601 3.0698L13.3901 3.5998L12.0001 4.9998L11.4701 4.4698L12.8601 3.0698ZM10.0701 5.8698L10.5901 6.3998L9.20013 7.7998L8.67013 7.2698L10.0701 5.8698ZM7.27013 8.6698L7.80013 9.1998L6.40013 10.5898L5.87013 10.0598L7.27013 8.6698ZM4.47013 11.4598L5.00013 11.9998L3.60013 13.3998L3.07013 12.8698L4.47013 11.4598ZM4.59013 18.4098L5.21013 17.7998L5.74013 18.3298L5.26013 18.8098C7.15396 19.8282 9.32563 20.2091 11.453 19.8959C13.5804 19.5826 15.5501 18.592 17.07 17.071C18.59 15.5499 19.5791 13.5794 19.8908 11.4519C20.2024 9.32426 19.82 7.15287 18.8001 5.2598L18.3301 5.7398L17.7901 5.2098L18.4101 4.5998C18.1592 4.20867 17.8784 3.83756 17.5701 3.4898L3.49013 17.5798C3.83909 17.8792 4.20648 18.1564 4.59013 18.4098ZM16.4001 6.6098L16.9301 7.1398L15.5301 8.5398L15.0001 7.9998L16.4001 6.6098ZM13.6001 9.4098L14.1301 9.9398L12.7301 11.3298L12.2001 10.7998L13.6001 9.4098ZM10.8001 12.1998L11.3301 12.7298L9.94013 14.1298L9.40013 13.5998L10.8001 12.1998ZM8.00013 14.9998L8.53013 15.5298L7.13013 16.9298L6.60013 16.3998L8.00013 14.9998Z" fill="black"/>
+                                        </svg>
+                                        <?php
+                                            echo $name['fname'] ?? '';
+                                        ?>
+                                        (bowler)
+                                    </div>
+                                    <div class="bowls">
+                                        <?php
+                                            $current_bowler = $score_log[$inning_type][$current_innings]['current_bowler'];
 
-                                        echo ($current_bowler['overs_bowled'] ?? "0.0") . "-" .
-                                            ($current_bowler['maidens'] ?? 0) . "-" .
-                                            ($current_bowler['runs_conceded'] ?? 0) . "-" .
-                                            ($current_bowler['wickets'] ?? 0);
-                                    ?>
+                                            echo ($current_bowler['overs_bowled'] ?? "0.0") . "-" .
+                                                ($current_bowler['maidens'] ?? 0) . "-" .
+                                                ($current_bowler['runs_conceded'] ?? 0) . "-" .
+                                                ($current_bowler['wickets'] ?? 0);
+                                        ?>
+                                    </div>
                                 </div>
+                                <div class="bowler-bowls"></div>
                         </div>
                         <div class="score-numpad">
 
@@ -1477,12 +1578,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             if (commentaryEnabled) {
                 console.log("Commentary enabled",commentaryEnabled);
                 //  change icon color to active
-                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
             } else {
                 console.log("Commentary disabled",commentaryEnabled);
                 stopCommentary();
                 //  change icon color to muted
-                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><line x1="4" y1="4" x2="20" y2="20"stroke="#9f9d8b"stroke-width="6"stroke-linecap="round" /><line x1="4" y1="4" x2="20" y2="20"stroke="white"stroke-width="2"stroke-linecap="round" /><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><line x1="4" y1="4" x2="20" y2="20"stroke="#d6d6d65b"stroke-width="6"stroke-linecap="round" /><line x1="4" y1="4" x2="20" y2="20"stroke="red"stroke-width="2"stroke-linecap="round" /><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
             }
         });
 
@@ -1632,8 +1733,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         let get_run_type = (el) => {
             console.log(el.innerText);
             run_type = el.innerText;
+            el.style.border = "2px solid #FF6200";
             display_content();
-            run_type_container.close();
+
+            setTimeout(() => {
+                run_type_container.close();
+            }, 300);
+            
         }
 
         //
@@ -1775,12 +1881,17 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         setTimeout(() => {
                             shot.close();
                         }, 300);
-                        run_type_container.showModal();
+
+                        if(selectedShot === 'NB + 1' || selectedShot === 'NB + 2' || selectedShot === 'NB + 3'){
+                            setTimeout(()=>{
+                                run_type_container.showModal();
+                            },350)
+                        }else{
+                            display_content();
+                        }
                     }
                     
-                }
-
-                
+                }     
         }
 
         let get_shot_noball = (el) => {
@@ -1879,12 +1990,19 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     }
 
                     type(selectedShot);
+                    console.log('selectedShot :',selectedShot)
 
                     setTimeout(() => {
                         shot.close();
                     }, 300);
 
-                    run_type_container.showModal();
+                    if(selectedShot === 'NB + 1' || selectedShot === 'NB + 2' || selectedShot === 'NB + 3'){
+                        setTimeout(()=>{
+                            run_type_container.showModal();
+                        },350)
+                    }else{
+                        display_content();
+                    }
                 }
                 else if (balltype.includes('Leg Bye')) {
                     console.log('Leg Bye');
@@ -1901,7 +2019,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         shot.close();
                     }, 300);
 
-                    run_type_container.showModal();
+                    if(selectedShot == 2 || selectedShot == 1 || selectedShot == 3){
+                        setTimeout(()=>{
+                            run_type_container.showModal();
+                        },350)
+                    }else{
+                        display_content();
+                    }
                 }
                 else if (balltype.includes('Bye')) {
                     console.log('Bye');
@@ -1917,12 +2041,18 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         shot.close();
                     }, 300);
 
-                    run_type_container.showModal();
+                    if(selectedShot == 2 || selectedShot == 1 || selectedShot == 3){
+                        setTimeout(()=>{
+                            run_type_container.showModal();
+                        },350)
+                    }else{
+                        display_content();
+                    }
 
                     
                 }else if(balltype.includes('Shot')){
 
-                    console.log(selectedShot);
+                    console.log("Shot : ",selectedShot);
                     Shot_type = selectedShot;
 
                     if(ball_type == null){
@@ -1934,7 +2064,14 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         shot.close();
                     }, 300);
 
-                    run_type_container.showModal();
+                    if(run_per_ball == 2 || run_per_ball == 1 || run_per_ball == 3){
+                        setTimeout(()=>{
+                            run_type_container.showModal();
+                        },350)
+                    }else{
+                        display_content();
+                    }
+                    
 
                 }else if(balltype.includes('out')){
 

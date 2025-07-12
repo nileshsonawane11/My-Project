@@ -228,6 +228,7 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     if(!str_starts_with($Ball_Type, 'Wide')) {
         if(str_starts_with($Ball_Type, 'No')) {
             $score_log[$Inning_type][$Inning]['openers']['current_striker']['runs'] += $Run;
+            $score_log[$Inning_type][$Inning]['openers']['current_striker']['balls_faced']++;
             
             if ($Run == 4) {
                 $score_log[$Inning_type][$Inning]['openers']['current_striker']['fours']++;
