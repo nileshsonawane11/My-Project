@@ -30,301 +30,381 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Scoring</title>
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            user-select : none;
-            scrollbar-width: none;
-        }
-        .input-fields{
-            width: 100%;
-            position: relative;
-        }
-        .input-fields label{
-            position: absolute;
-            bottom: 22px;
-            left: 14px;
-            text-align: center;
-            font-size: 16px;
-            transition: 0.3s ease-in-out;
-        }
-        .input-fields input:valid ~ label,
-        .input-fields input:focus ~ label {
-            transform: translateX(-5px) translateY(-24px);
-            font-size: 14px;
-            color: black;
-        }
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-        }
-        body{
-            height: max-content;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            flex-direction: column;
-        }
-        .part{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        user-select: none;
+        scrollbar-width: none;
+    }
+    
+    :root {
+        --primary-light: #FAC01F;
+        --primary-dark: #F83900;
+        --primary-light-20: rgba(250, 192, 31, 0.2);
+        --primary-dark-10: rgba(248, 57, 0, 0.1);
+        --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+        --text-dark: #2D3748;
+        --text-muted: #718096;
+        --bg-light: #F8FAFC;
+        --card-bg: #FFFFFF;
+        --border-light: #E2E8F0;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --radius-sm: 6px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    body {
+        height: max-content;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex-direction: column;
+        background-color: var(--bg-light);
+    }
+    
+    .container {
+        display: flex;
+        background-color: var(--card-bg);
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        min-height: 480px;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: 30px;
+        padding: 40px;
+    }
+    
+    .part {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 50px;
+    }
+    
+    .return {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+    }
+    
+    .return svg {
+        cursor: pointer;
+        fill: var(--primary-dark);
+        transition: var(--transition);
+    }
+    
+    .return svg:hover {
+        transform: scale(1.1);
+        fill: var(--primary-light);
+    }
+    
+    .container2 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 60px;
+    }
+    
+    .txt {
+        line-height: 1.6;
+        color: var(--text-muted);
+    }
+    
+    .input-fields {
+        width: 100%;
+        position: relative;
+        margin-bottom: 24px;
+    }
+    
+    .input-fields label {
+        position: absolute;
+        bottom: 22px;
+        left: 14px;
+        font-size: 16px;
+        transition: var(--transition);
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+    
+    .input-fields input:valid ~ label,
+    .input-fields input:focus ~ label {
+        transform: translateX(-5px) translateY(-28px);
+        font-size: 14px;
+        color: var(--primary-dark);
+        font-weight: 600;
+    }
+    
+    .container input[type="text"],
+    .container input[type="email"],
+    .container input[type="password"],
+    .container input[type="number"],
+    .container input[type="tel"],
+    .container input[type="datetime"],
+    .container input[type="time"],
+    .container input[type="date"],
+    .container select {
+        border: none;
+        border-bottom: 2px solid var(--border-light);
+        margin: 8px 0;
+        padding: 10px 15px;
+        font-size: 16px;
+        width: 100%;
+        outline: none;
+        height: 48px;
+        background: transparent;
+        transition: var(--transition);
+    }
+    
+    .container input[type="text"]:focus,
+    .container input[type="email"]:focus,
+    .container input[type="password"]:focus,
+    .container input[type="number"]:focus,
+    .container input[type="tel"]:focus,
+    .container input[type="datetime"]:focus,
+    .container input[type="time"]:focus,
+    .container input[type="date"]:focus,
+    .container select:focus {
+        border-bottom-color: var(--primary-dark);
+        box-shadow: 0 2px 0 0 var(--primary-light-20);
+    }
+    
+    .container3 {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 60px;
+    }
+    
+    .info {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 30px;
+    }
+    
+    .error {
+        display: none;
+        color: #DC2626;
+        width: 100%;
+        font-size: 14px;
+        margin: 5px 0;
+        padding: 8px 12px;
+        background-color: rgba(220, 38, 38, 0.1);
+        border-radius: var(--radius-sm);
+        border-left: 3px solid #DC2626;
+    }
+    
+    .teams,
+    .options {
+        height: 160px;
+        width: 130px;
+        border-radius: var(--radius-md);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--card-bg);
+        box-shadow: var(--shadow-md);
+        cursor: pointer;
+        transition: var(--transition);
+        border: 2px solid transparent;
+        padding: 12px;
+    }
+    
+    .teams:hover,
+    .options:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .teams.active,
+    .options.active {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 4px var(--primary-light-20);
+        background-color: var(--primary-light-20);
+    }
+    
+    .logo {
+        height: 80px;
+        width: 80px;
+        background: var(--bg-light);
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        transition: var(--transition);
+        margin-bottom: 12px;
+    }
+    
+    .types .logo {
+        background: transparent;
+    }
+    
+    .logo img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        filter: contrast(1.1);
+        border-radius: 50%;
+    }
+    
+    .tname {
+        font-size: 15px;
+        text-align: center;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+    
+    .sector {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .add-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    .add-btn button {
+        background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+        color: white;
+        font-size: 14px;
+        padding: 12px 45px;
+        border: none;
+        border-radius: var(--radius-md);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        height: 48px;
+        width: 300px;
+        transition: var(--transition);
+        box-shadow: 0 4px 6px rgba(248, 57, 0, 0.2);
+    }
+    
+    .add-btn button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(248, 57, 0, 0.3);
+        opacity: 0.9;
+    }
+    
+    .add-btn button:active {
+        transform: translateY(0);
+    }
+    
+    #flexSwitchCheckChecked.form-check-input {
+        height: 24px;
+        width: 48px;
+    }
+    
+    #flexSwitchCheckChecked.form-check-input:checked {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-light);
+    }
+    
+    .form-check-input:focus {
+        border-color: var(--primary-dark);
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(248, 57, 0, 0.25);
+    }
+    
+    .form-check-input {
+        border: 1px solid var(--primary-dark);
+        transition: var(--transition);
+    }
+    
+    .form-switch {
+        position: absolute;
+        right: 3px;
+        top: 15px;
+    }
+    
+    .rules {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 20px;
+    }
+    
+    .rule { 
+        width: 100%;
+        padding: 16px;
+        background-color: var(--card-bg);
+        transition: var(--transition);
+    }
+    
+
+    @media (min-width: 601px) {
+        .container2 {
             gap: 70px;
-        }
-        .return{
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-direction: row;
-        }
-        .return svg{
-            cursor: pointer;
-            
-        }
-        .container2{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            width: 100%;
-            gap: 80px
-        }
-        .txt{
-            line-height: 20px;
+            width: 80%;
         }
         
-        .input-fields{
+        .add-btn button {
+            width: 320px;
+            font-size: 15px;
+        }
+    }
+    
+    @media (max-width: 600px) {
+        
+        .container2 {
+            gap: 40px;
+        }
+        
+        
+        .add-btn button {
             width: 100%;
-            position: relative;
+            max-width: 280px;
         }
-        .input-fields label{
-            position: absolute;
-            bottom: 22px;
-            left: 14px;
-            text-align: center;
-            font-size: 16px;
-            transition: 0.3s ease-in-out;
+        
+        .part {
+            gap: 40px;
         }
-        .input-fields input:valid ~ label,
-        .input-fields input:focus ~ label {
-            transform: translateX(-5px) translateY(-24px);
-            font-size: 14px;
-            color: black;
+        
+        .container input[type="text"],
+        .container input[type="email"],
+        .container input[type="password"],
+        .container input[type="number"],
+        .container input[type="tel"],
+        .container input[type="datetime"],
+        .container input[type="time"],
+        .container input[type="date"],
+        .container select {
+            font-size: 15px;
         }
-        .container3{
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 100px;
-        }
-        .info{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 40px
-        }
-        .error{
-            display: none;
-            color:red; 
-            width:100%;
-            font-size:14px;
-            margin: 5px;
-        }
-        .teams,
-        .options{
-            height: 147px;
-            width: 111px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            background: #EEEEEE;
-            box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-        }
-        .teams.active,
-        .options.active{
-            border:#ffae00 2px solid;
-            box-shadow: none;
-        }
-        .logo{
-            height: 75px;
-            width: 75px;
-            background: #D9D9D9;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        .types .logo{
-            background: none;
-        }
-        .logo img{
-            height: 100%;
-            width: 100%;
-            object-fit: contain;
-        }
-        .tname{
-            font-size: 17px;
-            text-wrap: auto;
-            text-align: center;
-            font-weight: 600;
-        }
-        .sector{
-            display: flex;
-            width: 100%;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-        }
-        .add-btn{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #flexSwitchCheckChecked.form-check-input{
-            height: 25px;
-            width: 50px;
-        }
-        #flexSwitchCheckChecked.form-check-input:checked {
-            background-color: #ff7100;
-            border-color: #fd9f0d;
-        }
-        .form-check-input:focus {
-            border-color:rgb(255, 111, 0);
-            outline: 0;
-            box-shadow: 0 0 0 .25rem rgba(253, 65, 13, 0.22);
-        }
-        .form-check-input{
-            border: 1px solid rgb(255 89 0);
-            transition: background-position .5s ease-in-out;
-        }
-        .form-switch{
-            position: absolute;
-            right: 3px;
-            top: 15px;
-        }
-        .rules{
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            gap: 30px;
-        }
-        .rule{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            position: relative;
-        }
-        .logo {
-            height: 75px;
-            width:75px;
-            background-color: transparent;
-            border-radius: 50%;
-            background-size: cover;
-        }
-
-        @media (min-width:601px) {
-             .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 90%;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-                padding: 40px;
-            }
-            .container2{
-                gap: 100px;
-                width: 70%;
-            }
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
-                border: none;
-                border-bottom: solid 1px black;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 16px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                background: white;
-            }
-            .add-btn button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                height: 40px;
-                width: 300px;
-            }
-        }
-
-        @media(max-width: 601px) {
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                min-height: 480px;
-                padding: 40px 40px;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px
-            }
-            
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
-                border: none;
-                border-bottom: solid 1px black;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 15px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                background: white;
-            }
-            .add-btn button{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                width: 90%;
-                height: 45px;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
     <div class="container">

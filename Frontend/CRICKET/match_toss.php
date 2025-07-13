@@ -30,271 +30,351 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Scoring</title>
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            user-select : none;
-            scrollbar-width: none;
-        }
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-        }
-        body{
-            height: max-content;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            flex-direction: column;
-        }
-        .part{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 70px;
-        }
-        .return{
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-direction: row;
-        }
-        .return svg{
-            cursor: pointer;
-            
-        }
-        .container2{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            width: 100%;
-            gap: 80px
-        }
-        .txt{
-            line-height: 20px;
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        user-select: none;
+        scrollbar-width: none;
+    }
+    
+    :root {
+        --primary-light: #FAC01F;
+        --primary-dark: #F83900;
+        --primary-light-transparent: rgba(250, 192, 31, 0.1);
+        --primary-dark-transparent: rgba(248, 57, 0, 0.1);
+        --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+        --text-color: #333333;
+        --light-bg: #f8f9fa;
+        --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    body {
+        height: max-content;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex-direction: column;
+        background-color: var(--light-bg);
+        color: var(--text-color);
+    }
+    
+    .part {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 70px;
+    }
+    
+    .return {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+    }
+    
+    .return svg {
+        cursor: pointer;
+        fill: var(--primary-dark);
+        transition: transform 0.2s;
+    }
+    
+    .return svg:hover {
+        transform: scale(1.1);
+    }
+    
+    .container {
+        display: flex;
+        background-color: #fff;
+        box-shadow: var(--card-shadow);
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 100%;
+        min-height: 480px;
+        padding: 40px;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: 30px;
+        border: 1px solid rgba(248, 57, 0, 0.1);
+    }
+    
+    .container2 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 60px;
+    }
+    
+    .txt {
+        line-height: 20px;
+        color: var(--text-color);
+    }
+    
+    .input-fields {
+        width: 100%;
+        position: relative;
+    }
+    
+    .input-fields label {
+        position: absolute;
+        bottom: 22px;
+        left: 14px;
+        text-align: center;
+        font-size: 16px;
+        transition: 0.3s ease-in-out;
+        color: #666;
+    }
+    
+    .input-fields input:valid~label,
+    .input-fields input:focus~label {
+        transform: translateX(-5px) translateY(-24px);
+        font-size: 14px;
+        color: var(--primary-dark);
+    }
+    
+    .container input[type="text"],
+    .container input[type="email"],
+    .container input[type="password"],
+    .container input[type="number"],
+    .container input[type="tel"],
+    .container input[type="datetime"],
+    .container input[type="time"],
+    .container input[type="date"],
+    .container select {
+        border: none;
+        border-bottom: solid 2px #ddd;
+        margin: 8px 0;
+        padding: 10px 15px;
+        font-size: 16px;
+        width: 100%;
+        outline: none;
+        height: 45px;
+        background: white;
+        transition: all 0.3s;
+    }
+    
+    .container input[type="text"]:focus,
+    .container input[type="email"]:focus,
+    .container input[type="password"]:focus,
+    .container input[type="number"]:focus,
+    .container input[type="tel"]:focus,
+    .container input[type="datetime"]:focus,
+    .container input[type="time"]:focus,
+    .container input[type="date"]:focus,
+    .container select:focus {
+        border-bottom-color: var(--primary-dark);
+        box-shadow: 0 2px 0 0 var(--primary-light-transparent);
+    }
+    
+    .container3 {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 60px;
+    }
+    
+    .info {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 30px;
+    }
+    
+    .error {
+        display: none;
+        color: #d32f2f;
+        width: 100%;
+        font-size: 14px;
+        margin: 5px;
+        padding: 8px 12px;
+        background-color: rgba(211, 47, 47, 0.1);
+        border-radius: 4px;
+    }
+    
+    .teams,
+    .options {
+        height: 147px;
+        width: 130px;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        background: #fff;
+        box-shadow: var(--card-shadow);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .teams:hover,
+    .options:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+    
+    .teams.active,
+    .options.active {
+        border: 2px solid var(--primary-dark);
+        box-shadow: 0 0 0 4px var(--primary-light-transparent);
+    }
+    
+    .logo {
+        height: 75px;
+        width: 75px;
+        background: #f5f5f5;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .types .logo {
+        background: none;
+    }
+    
+    .logo img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    .tname {
+        font-size: 15px;
+        text-wrap: auto;
+        text-align: center;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .sector {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .add-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .add-btn button {
+        background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+        color: #fff;
+        font-size: 14px;
+        padding: 12px 45px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        height: 48px;
+        width: 300px;
+        max-width: 100%;
+        transition: all 0.3s;
+        box-shadow: 0 4px 8px rgba(248, 57, 0, 0.2);
+    }
+    
+    .add-btn button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(248, 57, 0, 0.3);
+    }
+    
+    .add-btn button:active {
+        transform: translateY(0);
+    }
+    
+    #flexSwitchCheckChecked.form-check-input {
+        height: 25px;
+        width: 50px;
+    }
+    
+    #flexSwitchCheckChecked.form-check-input:checked {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-light);
+    }
+    
+    .form-check-input:focus {
+        border-color: var(--primary-dark);
+        outline: 0;
+        box-shadow: 0 0 0 .25rem rgba(248, 57, 0, 0.22);
+    }
+    
+    .form-check-input {
+        border: 1px solid var(--primary-dark);
+        transition: background-position .5s ease-in-out;
+    }
+    
+    .rules {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 20px;
+    }
+    
+    .rule {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        position: relative;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+    }
+    
+    @media (min-width: 601px) {
+        
+        .container2 {
+            gap: 80px;
+            width: 70%;
         }
         
-        .input-fields{
+        .add-btn button {
+            width: 300px;
+        }
+    }
+    
+    @media (max-width: 601px) {
+        
+        .container2 {
+            gap: 50px;
+        }
+        
+        .add-btn button {
             width: 100%;
-            position: relative;
         }
-        .input-fields label{
-            position: absolute;
-            bottom: 22px;
-            left: 14px;
-            text-align: center;
-            font-size: 16px;
-            transition: 0.3s ease-in-out;
+        
+        
+        .logo {
+            height: 60px;
+            width: 60px;
         }
-        .input-fields input:valid ~ label,
-        .input-fields input:focus ~ label {
-            transform: translateX(-5px) translateY(-24px);
-            font-size: 14px;
-            color: black;
-        }
-        .container3{
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 100px;
-        }
-        .info{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 40px
-        }
-        .error{
-            display: none;
-            color:red; 
-            width:100%;
-            font-size:14px;
-            margin: 5px;
-        }
-        .teams,
-        .options{
-            height: 147px;
-            width: 111px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            background: #EEEEEE;
-            box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-        }
-        .teams.active,
-        .options.active{
-            border:#ffae00 2px solid;
-            box-shadow: none;
-        }
-        .logo{
-            height: 75px;
-            width: 75px;
-            background: #D9D9D9;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        .types .logo{
-            background: none;
-        }
-        .logo img{
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-        }
-        .tname{
-            font-size: 17px;
-            text-wrap: auto;
-            text-align: center;
-            font-weight: 600;
-        }
-        .sector{
-            display: flex;
-            width: 100%;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-        }
-        .add-btn{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #flexSwitchCheckChecked.form-check-input{
-            height: 25px;
-            width: 50px;
-        }
-        #flexSwitchCheckChecked.form-check-input:checked {
-            background-color: #ff7100;
-            border-color: #fd9f0d;
-        }
-        .form-check-input:focus {
-            border-color:rgb(255, 111, 0);
-            outline: 0;
-            box-shadow: 0 0 0 .25rem rgba(253, 65, 13, 0.22);
-        }
-        .form-check-input{
-            border: 1px solid rgb(255 89 0);
-            transition: background-position .5s ease-in-out;
-        }
-        .rules{
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            gap: 30px;
-        }
-        .rule{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            position: relative;
-        }
-
-        @media (min-width:601px) {
-             .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 90%;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-                padding: 40px;
-            }
-            .container2{
-                gap: 100px;
-                width: 70%;
-            }
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
-                border: none;
-                border-bottom: solid 1px black;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 16px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                background: white;
-            }
-            .add-btn button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                height: 40px;
-                width: 300px;
-            }
-        }
-
-        @media(max-width: 601px) {
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                min-height: 480px;
-                padding: 40px 40px;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px
-            }
-            
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
-                border: none;
-                border-bottom: solid 1px black;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 15px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                background: white;
-            }
-            .add-btn button{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                width: 90%;
-                height: 45px;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
     <div class="container">
