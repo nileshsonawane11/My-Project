@@ -188,7 +188,32 @@
             width: 100%;
             object-fit: cover;
         }
-
+        #add-btn {
+            background: var(--background);
+            color: white;
+            font-size: 14px;
+            padding: 15px 45px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            height: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(248, 57, 0, 0.2);
+        }
+        
+        #add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(248, 57, 0, 0.3);
+        }
+        
+        #add-btn:active {
+            transform: translateY(0);
+        }
         @media (min-width:601px) {
             .container{
                 display: flex;
@@ -218,21 +243,6 @@
                 outline: none;
                 height: 45px;
                 background: white;
-            }
-            #add-btn{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                width: 300px;
-                height: 40px;
-                
             }
             .content{
                 flex-direction: row;
@@ -275,20 +285,6 @@
                 outline: none;
                 height: 45px;
                 background: white;
-            }
-            #add-btn{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                width: 100%;
-                height: 45px;
             }
             .info{
                 gap : 20px;

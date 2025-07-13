@@ -143,7 +143,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         :root {
             --primary-light: #FAC01F;
             --primary-dark: #F83900;
-            --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
             --card-bg: #ffffff;
             --text-dark: #333333;
             --text-light: #f8f8f8;
@@ -247,7 +247,6 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             align-items: center;
             height: 88vh;
             width: 100%;
-            gap: 20px;
         }
         .error{
             display: none;
@@ -735,7 +734,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             inset: 0px;
             background: rgba(0, 0, 0, 0.15);
         }
-         .data{
+        .data{
             text-align: left;
             display: grid;
             align-items: center;
@@ -820,6 +819,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             color: #666;
             font-size: 15px;
             cursor: pointer;
+        }
+        @keyframes shake {
+            0%   { transform: translateX(-50%) translateY(-50%) translateX(0); }
+            25%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
+            50%  { transform: translateX(-50%) translateY(-50%) translateX(10px); }
+            75%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
+            100% { transform: translateX(-50%) translateY(-50%) translateX(0); }
         }
         .shake {
             animation: shake 0.4s;
@@ -2134,7 +2140,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 
                 undo_container.showModal();
                 undo_container.classList.add('shake');
-                navigator.vibrate(100);
+                navigator.vibrate([100,50,100,50,100]);
             });
 
             //close dialog of undo
