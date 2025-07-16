@@ -25,9 +25,13 @@ $point_type        = $data['point_type'] ?? null;
 $end_half          = $data['Isend_half'] ?? false;
 $is_complete       = $data['is_complete'] ?? false;
 $is_start          = $data['is_start'] ?? false;
+$tech_point        = $data['tech_point'] ?? null;
 $last_score        = null;
 $points = (int)$points;
 
+
+// echo json_encode($data);
+// exit();
 if(!$match_id) {
     echo json_encode(['status'=>400,'message'=>'Match ID required']);
     exit();
@@ -171,27 +175,35 @@ if($end_half == true){
         }
     }
 }else{
-    update_score_log($conn, $point_taken_by, $current_raid_team, $raider, $undo, $match_id, $point_type, $points, $score_log);
+    update_score_log($conn, $tech_point, $point_taken_by, $current_raid_team, $raider, $undo, $match_id, $point_type, $points, $score_log);
 }
 
-function update_score_log($conn, $point_taken_by, $current_raid_team, $raider, $undo, $match_id, $point_type, $points, &$score_log) {
+function update_score_log($conn, $tech_point, $point_taken_by, $current_raid_team, $raider, $undo, $match_id, $point_type, $points, &$score_log) {
 
-    if($score_log['current_raid_team'] == $score_log['team1']){
-        $score_log['current_raid_team'] = $score_log['team2'];
-    }else{
-        $score_log['current_raid_team'] = $score_log['team1'];
+    if($tech_point === null){
+        if($score_log['current_raid_team'] == $score_log['team1']){
+            $score_log['current_raid_team'] = $score_log['team2'];
+        }else{
+            $score_log['current_raid_team'] = $score_log['team1'];
+        }
     }
 
     $current_half = $score_log['current_half'];
+    $total_points = $points + $tech_point; 
     
     if ($point_taken_by == $score_log['team1']) {
-        $score_log['team1_score'] += $points;
-        $score_log['halves'][$current_half]['team1_points'] += $points;
+        $score_log['team1_score'] += $total_points;
+        $score_log['halves'][$current_half]['team1_points'] += $total_points;
     } elseif ($point_taken_by == $score_log['team2']) {
-        $score_log['team2_score'] += $points;
-        $score_log['halves'][$current_half]['team2_points'] += $points;
+        $score_log['team2_score'] += $total_points;
+        $score_log['halves'][$current_half]['team2_points'] += $total_points;
     }
     $last_score = $score_log['team1_score'].'-'.$score_log['team2_score'];
+
+    // if ($tech_point != null && !empty($score_log['halves'][$current_half]['raids'])) {
+    //     $last_raid = end($score_log['halves'][$current_half]['raids']);
+    //     $point_taken_by = $last_raid['point_taken_by'];
+    // }
 
     $raid_log = [
         "point_taken_by"    => $point_taken_by,
@@ -200,7 +212,8 @@ function update_score_log($conn, $point_taken_by, $current_raid_team, $raider, $
         "points"            => $points,
         "point_type"        => $point_type,
         "current Half"      => $current_half,
-        "last score"        => $last_score
+        "last score"        => $last_score,
+        "Technical Point"   => $tech_point
     ];
 
     $score_log['halves'][$current_half]['raids'][] = $raid_log;
@@ -229,7 +242,5 @@ try{
     exit();
 }
 
-// echo json_encode($data);
-// exit();
 
 ?>
