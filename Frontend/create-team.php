@@ -18,155 +18,244 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <title>select team</title>
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            user-select : none;
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        user-select: none;
+    }
+    
+    :root {
+        --primary-light: #FAC01F;
+        --primary-dark: #F83900;
+        --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+        --card-bg: #ffffff;
+        --text-dark: #333333;
+        --text-light: #666666;
+        --border-color: #e0e0e0;
+        --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    body {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background-color: #f8f8f8;
+    }
+    
+    .return {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+    }
+    
+    .return svg {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    
+    .return svg:hover {
+        transform: translateX(-3px);
+    }
+    
+    .container {
+        display: flex;
+        background-color: var(--card-bg);
+        position: relative;
+        width: 90%;
+        max-width: 1200px;
+        min-height: 480px;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 40px;
+        flex-direction: column;
+        gap: 30px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        padding: 30px;
+        overflow: hidden;
+    }
+    
+    .container2 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        gap: 40px;
+    }
+    
+    .game-list {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: row;
+        gap: 15px;
+        width: 100%;
+        background: rgba(250, 192, 31, 0.08);
+        padding: 15px 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .game-list:hover {
+        background: rgba(250, 192, 31, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .game-list svg {
+        margin-left: 10px;
+        width: 24px;
+        height: 24px;
+    }
+    
+    .list {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 20px;
+        width: 100%;
+        scroll-behavior: smooth;
+        overflow-y: auto;
+        height: 450px;
+        scrollbar-width: none;
+        padding: 10px 5px;
+    }
+    
+    .txt {
+        line-height: 20px;
+        font-size: 16px;
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+    
+    .team-frame {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        z-index: 999;
+        background: white;
+        border-radius: 25px 25px 0 0;
+        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .team-frame.active {
+        bottom: 0;
+    }
+    
+    /* Scrollbar styling */
+    .list::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .list::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .list::-webkit-scrollbar-thumb {
+        background: var(--primary-light);
+        border-radius: 10px;
+    }
+    
+    .list::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+
+    @media (min-width: 601px) {
+        .container {
+            padding: 40px;
+            margin: 20px;
         }
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+        
+        .container2 {
+            width: 80%;
+            gap: 50px;
         }
-        body{
+        
+        .list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            height: max-content;
+            max-height: 500px;
+            padding: 20px 10px;
+        }
+        
+        .game-list {
+            height: 70px;
+            padding: 20px;
+            align-items: center;
+        }
+        
+        .txt {
+            font-size: 17px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            width: 100%;
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            flex-direction: column;
+            border-radius: 0;
+            margin: 0;
+            padding: 25px;
+            box-shadow: none;
         }
-        .return{
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-direction: row;
+        
+        .container2 {
+            gap: 40px;
         }
-        .return svg{
-            cursor: pointer;
-            
+        
+        .list {
+            height: calc(100vh - 200px);
+            padding-bottom: 100px;
         }
-        .container2{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-        .game-list{
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            flex-direction: row;
-            gap: 15px;
-        }
-        .game-list svg{
-            margin-left: 10px;
-        }
-        .list{
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
-            gap: 30px;
-            width: 100%;
-            scroll-behavior: smooth;
-            overflow: scroll;
-            height: 450px;
-            scrollbar-width: none;
-            padding: 20px 0 20px 0;
-        }
-        .txt{
-                line-height: 20px;
-        }
-        .game-list{
-            width: 100%;
-            background: #d9d9d954;
+        
+        .game-list {
             padding: 15px;
-            border-radius: 20px;
-            box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.4);
         }
-        .team-frame{
-            position: fixed;
-            bottom: -100%;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            transition: bottom 0.8s ease;
-            z-index: 999;
+        
+        .team-frame {
+            border-radius: 20px 20px 0 0;
         }
-        .team-frame.active{
-            bottom: 0;
-        }
+    }
 
-        @media (min-width:601px) {
-             .container{
-                display: flex;
-                background-color: #fff;
-                position: relative;
-                width: 90%;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content: flex-start;
-                margin: 40px;
-                flex-direction: column;
-                gap: 30px;
-            }
-            .container2{
-                gap: 60px;
-                width: 70%;
-            }
-            .list{
-                display: grid;
-                grid-template-columns: 2fr 2fr;
-                align-items: center;
-                justify-content: space-between;
-                gap: 30px;
-                width: 100%;
-                scroll-behavior: smooth;
-                overflow: scroll;
-                height: max-content;
-                scrollbar-width: none;
-                padding: 20px 0 20px 0;
-                justify-items: center;
-            }
-            .game-list{
-                padding: 10px;
-                height: 60px;
-            }
-            
-        }
+    /* Animation for loading items */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        @media(max-width: 601px) {
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                overflow: hidden;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                min-height: 480px;
-                padding: 40px 40px;
-                height: 100vh;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px
-            }
-            .container2{
-                gap: 70px;
-            }
-        }
-    </style>
+    .game-list {
+        animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* Sequential delay for list items */
+    .game-list:nth-child(1) { animation-delay: 0.1s; }
+    .game-list:nth-child(2) { animation-delay: 0.2s; }
+    .game-list:nth-child(3) { animation-delay: 0.3s; }
+    .game-list:nth-child(4) { animation-delay: 0.4s; }
+    .game-list:nth-child(5) { animation-delay: 0.5s; }
+    .game-list:nth-child(6) { animation-delay: 0.6s; }
+    .game-list:nth-child(7) { animation-delay: 0.7s; }
+    .game-list:nth-child(8) { animation-delay: 0.8s; }
+    .game-list:nth-child(9) { animation-delay: 0.9s; }
+    .game-list:nth-child(10) { animation-delay: 1.0s; }
+</style>
 </head>
 <body>
 

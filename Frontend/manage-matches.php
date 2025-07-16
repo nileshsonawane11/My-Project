@@ -19,346 +19,377 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>Manage Teams</title>
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            user-select : none;
-        }
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-        }
-        body{
-            height: -webkit-fill-available;
-            background:white;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            flex-direction: column;
-        }
-        .return{
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        user-select: none;
+        scrollbar-width: none;
+    }
+    
+    :root {
+        --primary-light: #FAC01F;
+        --primary-dark: #F83900;
+        --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+        --card-bg: #ffffff;
+        --text-dark: #333333;
+        --text-light: #666666;
+        --border-color: #e0e0e0;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    body {
+        height: 100vh;
+        height: -webkit-fill-available;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .container {
+        display: flex;
+        background-color: var(--card-bg);
+        box-shadow: var(--shadow);
+        position: relative;
+        width: 90%;
+        max-width: 1200px;
+        height: 90vh;
+        max-height: 900px;
+        align-items: flex-start;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: 20px;
+        border-radius: 20px;
+        padding: 30px;
+        overflow: hidden;
+    }
+    
+    .return {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 20px 10px;
+    }
+    
+    .return svg {
+        cursor: pointer;
+        font-size: 28px;
+        color: var(--text-dark);
+        transition: all 0.2s ease;
+    }
+    
+    .return svg:hover {
+        color: var(--primary-dark);
+        transform: translateX(-3px);
+    }
+    
+    .txt {
+        line-height: 20px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 20px;
+        color: var(--text-dark);
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .game-container {
             width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-direction: row;
-            padding: 40px 0px 0px 40px;
-        }
-        .return svg{
-            cursor: pointer;
-        }
-        .txt{
-            line-height: 20px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-direction: row;
-            padding-left: 40px;
-        }
-        /* .container2{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            width: 100%;
-        } */
-        .game-list{
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            text-align: center;
-        }
-        .plus-icon{
-            display: flex;
-            font-size: 40px; 
-            height: 100%;
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-        }
-        .game.selected {
-            background: #ff630042;
-            border-radius: 10px;
-        }
-        .no-data{
-            color: #0000005e;
-        }
-        .selected-team {
-            border: 2px solid rgb(252, 80, 0);
-            border-radius: 20px;
-        }
-         .game-info{
-            height: 140px;
-            padding: 20px;
-            display: flex;
-            font-size: 12px;
-            gap: 8px;
-            width: 350px;
-            background: linear-gradient(35deg, #ebebeb26, #88888859);
-            border-radius: 35px;
-            box-shadow: inset 0px 2px 0px 0.5px #000;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-        .start-btn{
-            width: 70px;
-            height: 30px;
+            background: white;
             border-radius: 15px;
-            border: none;
-            color: white;
-            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-            box-shadow: 0px 2px 5px rgb(136 136 136 / 75%);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .start-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0px 4px 8px rgb(136 136 136 / 60%);
-        }
-
-        .start-btn:focus {
-            outline: none;
-            box-shadow: 0px 2px 5px rgb(136 136 136 / 0%);
-        }
-        .match-data{
-            display: flex;
-            gap: 8px;
-            flex-direction: column;
-            align-items: flex-start;
-            width: 100%;
-        }
-        .team-container{
-            max-height: max-content;
-            min-height: 100px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-            margin: 50px 0;
-            align-content: center;
-            justify-content: center;
-            align-items: center;
-            gap: 50px;
-            justify-items: center;
-        }
-        .team-container .game-name{
-            font-size: 25px;
-            font-weight: 600;
-            margin-bottom: 10;
-            width: 100%;
-        }
-        .info{
-            display: flex;
-            justify-content: space-between;
-            flex-direction: row;
-            align-items: center;
-            width: 100%;
-        }
-        .team-score{
-            font-size: 17px;
-            font-weight: 600;
-        }
-        .team{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: row;
-            gap: 8px;
-        }
-        .team img{
-            height: 35px;
-            width: 35px;
-            background: #cbcbc6;
-            border-radius: 50%;
-            display: flex;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
             overflow: hidden;
-            object-fit: cover;
-            align-items: center;
-            justify-content: center;
+    }
+    
+    .game-list {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        height: 70px;
+        overflow-x: auto;
+        padding: 0 15px;
+        gap: 15px;
+    }
+    
+    .game {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 90px;
+        padding: 12px;
+        gap: 8px;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 12px;
+    }
+    
+    .game:hover {
+        background: rgba(250, 192, 31, 0.1);
+    }
+    
+    .game.selected {
+        background: rgba(248, 99, 0, 0.15);
+        border-radius: 12px;
+    }
+    
+    .game p {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-dark);
+        text-align: center;
+        text-wrap: auto;
+    }
+    
+    .game svg {
+        height: 28px;
+        width: 28px;
+    }
+    
+    .game.selected p {
+        font-weight: 600;
+        color: var(--primary-dark);
+    }
+    
+    .team-container {
+        width: 100%;
+        height: calc(100% - 180px);
+        padding: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 25px;
+        overflow-y: auto;
+        align-content: flex-start;
+    }
+    
+    .game-info {
+        height: 100%;
+        padding: 15px;
+        display: flex;
+        font-size: 14px;
+        gap: 15px;
+        width: 100%;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid var(--border-color);
+    }
+    
+    .game-info:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary-light);
+    }
+    
+    .selected-team {
+        border: 2px solid var(--primary-dark);
+        background: rgba(248, 99, 0, 0.05);
+    }
+    
+    .match-data {
+        display: flex;
+        gap: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    
+    .game-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 5px;
+        width: 100%;
+    }
+    
+    .info {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .team-score {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+    
+    .team {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .team img {
+        height: 40px;
+        width: 40px;
+        background: #f5f5f5;
+        border-radius: 50%;
+        display: flex;
+        overflow: hidden;
+        object-fit: cover;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-color);
+    }
+    
+    .start-btn {
+        width: 90px;
+        height: 36px;
+        border-radius: 18px;
+        border: none;
+        color: white;
+        font-weight: 600;
+        background: var(--background);
+        box-shadow: 0 4px 10px rgba(248, 57, 0, 0.2);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .start-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(248, 57, 0, 0.3);
+    }
+    
+    .start-btn:active {
+        transform: translateY(0);
+    }
+    
+    .no-data {
+        color: var(--text-light);
+        font-style: italic;
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px 0;
+        font-size: 16px;
+    }
+    
+    .plus {
+        position: fixed;
+        bottom: 40px;
+        right: 40px;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        font-size: 24px;
+        height: 60px;
+        cursor: pointer;
+        width: 60px;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(248, 57, 0, 0.3);
+        background: var(--background);
+        color: white;
+        transition: all 0.2s ease;
+        z-index: 10;
+    }
+    
+    .plus:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 6px 20px rgba(248, 57, 0, 0.4);
+    }
+    
+    .plus:active {
+        transform: translateY(0);
+    }
+
+    .container2 {
+        height: 100%;
+        width: 100%;
+    }
+
+    @media (max-width: 1000px) {
+        .team-container {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+            padding: 20px 15px;
+            box-shadow: none;
+        }
+        
+        .team-container {
+            grid-template-columns: 1fr;
+            padding: 10px 5px;
         }
 
-        @media(max-width: 1000px){
-            .game-list {
-                justify-content: flex-start;
-                height: 100%;
-            }
+     
+        
+        .plus {
+            bottom: 30px;
+            right: 30px;
+            height: 55px;
+            width: 55px;
         }
+        
+        .game-list {
+            height: 70px;
+            padding: 0 15px;
+            gap: 15px;
+        }
+        
+        .game {
+            min-width: 80px;
+            padding: 10px;
+        }
+    }
 
-        @media (min-width:601px) {
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 90%;
-                height: 100vh;
-                max-width: 100%;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-            }
-            .container2{
-                gap: 70px;
-                width: 100%;
-            }
-            .game-container {
-                height: 65px;
-                margin-top: 20px;
-                background: white;
-                overflow: hidden;
-                border-bottom: solid black 1px;
-                position: relative;
-                z-index: 2;
-            }
-            .game {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-width: 80px;
-                padding: 6px 8px;
-                gap: 7px;
-                white-space: nowrap;
-                cursor: pointer;
-            }
-            .game p{
-                font-size: 12px;
-                text-wrap: auto;
-            }
-            svg{
-                height: 25px;
-            }
-            .plus{
-                position: fixed;
-                bottom: 50px;
-                right:100px;
-                border: none;
-                border-radius: 50%;
-                display: flex;
-                font-size: 30px; 
-                height: 60px;
-                cursor: pointer;
-                width: 60px;
-                justify-content: center;
-                align-items: center;
-                overflow:hidden;
-                box-shadow:0px 4px 0px rgb(131 131 131 / 50%);
-                background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-            }
-            .team-list{
-                width: 100%;
-                height: max-content;
-                gap: 30px;
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-                justify-content: center;
-                justify-items: center;
-                align-items: start;
-            }
-           
-        }
-
-        @media(max-width:601px){
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                min-height: 480px;
-                height: 100vh;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-                scrollbar-width: none;
-            }
-            .container2{
-                width: 100%;
-                gap: 50px;
-                justify-content: space-between;
-            }
-            .game-list {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: center;
-                height: 70px;
-                overflow-x: auto;
-                overflow-y: hidden;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                text-align: center;
-            }
-            .game-container {
-                height: 70px;
-                margin-top: 20px;
-                background: white;
-                overflow: hidden;
-                border-bottom: solid black 1px;
-                position: relative;
-                z-index: 2;
-            }
-            .game {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-width: 80px;
-                padding: 6px 10px;
-                gap: 7px;
-                white-space: nowrap;
-                cursor: pointer;
-            }
-            .game p{
-                font-size: 12px;
-                text-wrap: auto;
-            }
-            svg{
-                height: 25px;
-            }
-            .pls{
-                width: 100%;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .plus{
-                position: fixed;
-                bottom: 30px;
-                height: 60px;
-                border: none;
-                cursor: pointer;
-                display: flex;
-                font-size: 30px;
-                width: 60px;
-                border-radius: 50%;
-                justify-content: center;
-                align-items: center;
-                overflow:hidden;
-                box-shadow:0px 4px 0px rgb(131 131 131 / 50%);
-                background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-            }
-            
-        }
-    </style>
+    /* Custom scrollbar */
+    .team-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .team-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    
+    .team-container::-webkit-scrollbar-thumb {
+        background: var(--primary-light);
+        border-radius: 10px;
+    }
+    
+    .team-container::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+    
+    .game-list::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .game-list::-webkit-scrollbar-thumb {
+        background: var(--primary-light);
+        border-radius: 10px;
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -475,9 +506,9 @@
             console.log(SportName);
 
             loadgames(SportName)
-            setInterval(() => {
-                loadgames(SportName)
-            }, 1000);
+            // setInterval(() => {
+            //     loadgames(SportName)
+            // }, 1000);
        }
 
         //update sport
@@ -490,7 +521,7 @@
 
                 setInterval(() => {
                     loadgames(SportName)
-                }, 1000);
+                }, 100);
                 
 
                 document.querySelector('.game.selected').classList.remove('selected');

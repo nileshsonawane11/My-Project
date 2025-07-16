@@ -1050,7 +1050,6 @@
                         <label class="tap">Tap to choose the raiding player</label>
                     </div>
                     <div class="players-info">
-<<<<<<< HEAD
                         <label class="player-cnt">Players(7)</label>
                         <div class="player-replace">
                             <div class="player-name">1. Maninder Singh</div>
@@ -1082,15 +1081,7 @@
                         </div>
                         
                         </div>
-=======
-                        <label class="player-cnt">Players(6)</label>
-                        <div class="player-name">1. Maninder Singh</div>
-                        <div class="player-name">2. Shrikant Gholap</div>
-                        <div class="player-name">3. Deepak Narwal</div>
-                        <div class="player-name">4. Rinku Narwal</div>
-                        <div class="player-name">5. Vaibhav Garje</div>
-                        <div class="player-name">6. Shubham Shinde</div>
->>>>>>> e495add21590918fd4385406495225a225ff84f1
+
                     </div>
                 </div>
 
@@ -1208,10 +1199,7 @@
             let serveresult = (el) => {
                 console.log(el.innerText);
             }
-<<<<<<< HEAD
 
-=======
->>>>>>> e495add21590918fd4385406495225a225ff84f1
             
             // Drag to dismiss
             let startY = 0;
