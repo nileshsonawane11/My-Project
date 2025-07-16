@@ -1,5 +1,5 @@
 <?php
-    ob_start();
+ob_start();
 session_start();
 error_reporting(1);
 ini_set('display_errors', 1);
@@ -41,5 +41,4 @@ $score_log = json_decode($row['score_log'], true);
 
 echo json_encode($data);
 exit();
-
 ?>
