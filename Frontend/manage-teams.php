@@ -19,7 +19,7 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>Manage Teams</title>
-<style>
+    <style>
     * {
         margin: 0;
         padding: 0;
@@ -63,6 +63,7 @@
         gap: 20px;
         border-radius: 20px;
         padding: 20px;
+        overflow: hidden;
     }
     .container2 {
         height: 100%;
@@ -117,8 +118,8 @@
         align-items: center;
         height: 70px;
         overflow-x: auto;
-        padding: 0 15px;
-        gap: 15px;
+        padding: 0 5px;
+        gap: 10px;
     }
     
     .game {
@@ -126,7 +127,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-width: 80px;
+        min-width: 86px;
         padding: 10px;
         gap: 8px;
         white-space: nowrap;
@@ -149,8 +150,9 @@
         font-weight: 500;
         color: var(--text-dark);
         text-align: center;
-        text-wrap: auto;
+        text-wrap:auto;
     }
+    
     .game svg {
         height: 24px;
         width: 24px;
@@ -181,6 +183,7 @@
         justify-items: center;
         align-items: start;
         padding: 10px;
+        margin-bottom: 20px;
     }
     
     .team {

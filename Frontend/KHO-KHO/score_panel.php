@@ -175,7 +175,7 @@
 
         .set {
             font-size: 1rem;
-            color: #777;
+            color: #ffffff;
         }
 
         .container2 {
@@ -254,6 +254,7 @@
             display: flex;
             justify-content: space-evenly;
             align-items: center;
+            flex-direction: column;
             width: 100%;
             height: 60%;
         }
@@ -264,7 +265,7 @@
             height: 90px;
             background-color: white;
             color: #F83900;
-            border: 2px solid #F83900;
+            border: none;
             border-radius: 15px;
             font-weight: bold;
             font-size: 1.5rem;
@@ -395,6 +396,23 @@
             height: 100%;
             width: 100%;
             height: 543px;
+            transform: translateY(0);
+            overflow-y: auto;
+            transition: transform 0.5s ease;
+            z-index: 1000;
+            background: white;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            border-top: 2px solid #FAC01F;
+        }
+
+        .container6 {
+            position: fixed;
+            bottom: 0;
+            height: 100%;
+            width: 100%;
+            height: 543px;
             transform: translateY(600px);
             overflow-y: auto;
             transition: transform 0.5s ease;
@@ -450,7 +468,7 @@
 
         .players-info {
             width: 100%;
-            height: 492px;
+            height: max-content;
             padding-top: 35px;
             background-color: white;
         }
@@ -713,6 +731,30 @@
             position: relative;
             z-index: 10;
         }
+        .tech-point {
+            width: 110px;
+            height: 50px;
+            background-color: white;
+            color: #F83900;
+            border-radius: 15px;
+            outline: none;
+            border: 2px solid #F83900;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            align-content: center;
+        }
+        .tech-point:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: #F83900;
+            color: white;
+        }
+        .teams-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
         @media (max-width: 450px) {
             .team-logo {
                 height: 60px;
@@ -873,6 +915,7 @@
             </div>
 
             <div class="serve-button">
+                <div class="tech-point">Tech. point</div>
                 <div class="team-btn">
                     <div class="undo-btn">
                         <button class="undo">Undo</button>
@@ -1023,7 +1066,28 @@
                     </div>
                 </div>
 
-</div>
+        </div>
+
+        <div class="container6"> 
+                <div class="point-assign">
+                    <label class="poi-ass">Technical Point</label>
+                    <label class="who">Which team got the technical point?</label>
+                </div>
+                <div class="teams-info">
+                    <div class="team1-info teams-info" data-team="">
+                        <div class="teams-logo">                           
+                                <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">                           
+                        </div>
+                        <div class="teams-name">Team1</div>
+                    </div>
+                    <div class="team2-info teams-info" data-team="">
+                        <div class="teams-logo">                                                      
+                                <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">                         
+                        </div>
+                        <div class="teams-name">Team2</div>
+                    </div>
+                </div>
+        </div>
     
     <script>
     let serve_player = null;
@@ -1065,10 +1129,13 @@
     // DOM Elements
     const point1 = document.querySelector('.team1-button');
     const point2 = document.querySelector('.team2-button');
+    const tech_point = document.querySelector('.tech-point');
 
     // Get existing containers
     const container3 = document.querySelector('.container3');
     const container4 = document.querySelector('.container4');
+    const container5 = document.querySelector('.container5');
+    const container6 = document.querySelector('.container6');
     const slideContainer = document.querySelector('.slide-container');
     const slideWrapper = document.querySelector('.slide-wrapper');
     
@@ -1111,12 +1178,14 @@
     // Event listeners
     player1Names.forEach(player => {
         player.addEventListener('click', () => {
+            console.log(player.innerText);
             goToSlide(1);
             getplayername (player);
         })
     });
     player2Names.forEach(player => {
     player.addEventListener('click', () => {
+        console.log(player.innerText);
         goToSlide(1);
         getplayername(player);
 
@@ -1135,18 +1204,25 @@
         serve_player = el.innerText;
     }
 
-    let serveresult = (el) => {
-        winner_team = el.getAttribute('data-team');
-        get_score();
-    }
+    
 
     let getaction = (el) => {
         action = el.innerText;
     }
 
-    inButton.addEventListener('click', () => {
-        goToSlide(2);
-        getaction(inButton);
+
+    tech_point.addEventListener('click', () => {
+    console.log("Technical Point!");
+    });
+
+    tech_point.addEventListener('click', () => {
+                container6.style.transform = 'translateY(0)';
+            });
+
+    document.querySelectorAll('.teams-info').forEach(el => {
+    el.addEventListener('click', (e) => {
+        console.log(e.target.innerText); // or el.innerText
+        });
     });
     
     // Drag to dismiss
@@ -1176,6 +1252,44 @@
         }
     });
 
+    let startYa = 0;
+    const thresholda = 60;
+
+    container5.addEventListener('touchstart', (e) => {
+        startYa = e.touches[0].clientY;
+        container5.style.transition = 'none';
+    });
+
+    container5.addEventListener('touchmove', (e) => {
+        const diffY = e.touches[0].clientY - startYa;
+        if (diffY > 0) {
+            container5.style.transform = `translateY(${diffY}px)`;
+        }
+    });
+
+    container5.addEventListener('touchend', (e) => {
+        const diffY = e.changedTouches[0].clientY - startYa;
+        container5.style.transition = 'transform 0.5s ease';
+        
+        if (diffY > thresholda) {
+            container5.style.transform = 'translateY(600px)';
+        } else {
+            container5.style.transform = 'translateY(0)';
+        }
+    });
+    
+    
+
+        document.querySelectorAll('.teams-info').forEach(element => {
+            element.addEventListener('click', () => {
+                    container6.style.transform = 'translateY(600px)';
+            });
+        });
+
+        
+        
+
+
     const clickableSelectors = ['.ace', '.error', '.team1-info', '.team2-info'];
 
     clickableSelectors.forEach(selector => {
@@ -1189,7 +1303,6 @@
                         console.log('Action immediately:', element.innerText); // use element here
                     }
                     // Use directly here
-                    serveresult(element);
 
                     setTimeout(() => {
                         slideContainer.style.transform = 'translateX(0)';
@@ -1200,12 +1313,6 @@
     });
 
 
-document.querySelectorAll(".team-button").forEach(team => {
-    team.addEventListener("click",() => {
-        winner_team = team.getAttribute('data-team');
-        get_score();
-    })
-})
 
 });
 

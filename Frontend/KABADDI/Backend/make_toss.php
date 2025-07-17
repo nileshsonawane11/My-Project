@@ -22,12 +22,13 @@ $score_log = [
     "match_id" => $match_id,
     "team1" => $row['team_1'],
     "team2" => $row['team_2'],
+    "current_raid_team" => $raid,
     "team1_score" => 0,
     "team2_score" => 0,
     "total_halves" => 2,
     "current_half" => 1,
     "halves" => [],
-    "completed" => false,
+    "match_completed" => false,
     "tie_breaker" => false, // in case match ties, can switch to true
     "winner" => null // 'team1' or 'team2' after result
 ];
@@ -41,7 +42,6 @@ for ($i = 1; $i <= 2; $i++) {
         "half_completed" => false
     ];
 }
-
 
 $history_array = [$score_log];  // this makes it an array of one element
 $history_json = json_encode($history_array);
@@ -64,7 +64,7 @@ if(empty($selectedteam)){
 
 $query = mysqli_query($conn,"UPDATE `matches` SET `toss_winner` = '$selectedteam', `toss_decision` = '$selecteddecision',`score_log` = '$json',`history` = '$history_json' WHERE `match_id` = '$match_id'");
 if($query){
-    echo json_encode(['status'=>200,'message'=>$selectedteam.' elected to '.$selecteddecision,'field'=>'team']);
+    echo json_encode(['status' => 200,'message' => $selectedteam.' elected to '.$selecteddecision,'field' => 'team']);
     exit();
 }
 ?>

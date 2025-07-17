@@ -116,8 +116,8 @@
         align-items: center;
         height: 70px;
         overflow-x: auto;
-        padding: 0 15px;
-        gap: 15px;
+        padding: 0 5px;
+        gap: 10px;
     }
     
     .game {
@@ -352,12 +352,12 @@
         
         .game-list {
             height: 70px;
-            padding: 0 15px;
-            gap: 15px;
+            padding: 0 5px;
+            gap: 10px;
         }
         
         .game {
-            min-width: 80px;
+            min-width: 86px;
             padding: 10px;
         }
     }
@@ -508,7 +508,7 @@
             loadgames(SportName)
             // setInterval(() => {
             //     loadgames(SportName)
-            // }, 1000);
+            // }, 100);
        }
 
         //update sport

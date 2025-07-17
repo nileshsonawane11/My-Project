@@ -278,6 +278,7 @@
         justify-content: center;
         width: 100%;
     }
+<<<<<<< HEAD
     .logo img {
         height: 100%;
         width: 100%;
@@ -285,6 +286,8 @@
         filter: contrast(1.1);
         border-radius: 50%;
     }
+=======
+>>>>>>> 1707ca4e091edd07b456ac8f89e8295804f894c2
     
     .add-btn button {
         background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));

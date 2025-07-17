@@ -366,7 +366,10 @@
             opacity: 1;
             transform: translate(0,0);
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1707ca4e091edd07b456ac8f89e8295804f894c2
         #s-type{
             cursor: pointer;
         }
@@ -685,7 +688,6 @@
                 el.classList.add('show');
             });
 
-           
         };
 
         let schedule_match = (e) => {

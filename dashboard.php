@@ -83,19 +83,15 @@
         background: white;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         z-index: 999;
+        height: 61px;
     }
     
     .items {
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 10px;
+        gap: 5px;
         position: relative;
-    }
-
-    #title {
-        font-size: 18px;
-        font-weight: 500;
     }
     
     .nav-content {
@@ -306,7 +302,7 @@
         border-radius: 10px;
     }
     .game-container {
-        margin-top: 61px;
+        margin-top: 60px;
     }
     .updates {
         height: 70px;
@@ -363,7 +359,7 @@
     }
     
     .game-info {
-        height: 170px;
+        height: 150px;
         padding: 25px;
         display: flex;
         font-size: 14px;
@@ -387,8 +383,8 @@
     }
     
     .start-btn {
-        width: 65px;
-        height: 30px;
+        width: 68px;
+        height: 38px;
         border-radius: 18px;
         border: none;
         color: white;
@@ -410,7 +406,7 @@
     
     .match-data {
         display: flex;
-        gap: 10px;
+        gap: 5px;
         flex-direction: column;
         align-items: flex-start;
         width: 100%;
@@ -594,6 +590,11 @@
         border-color: var(--primary-light);
         box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
     }
+
+    #title{
+        font-size: 18px;
+        font-weight: 500;
+    }
     
     .btns>* {
         width: 110px;
@@ -641,7 +642,6 @@
         font-weight: 600;
         color: var(--text-dark);
         position: relative;
-        height: 40px;
     }
     
     .txt-strike {
@@ -715,7 +715,6 @@
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
-    
     
     .plus {
         height: 70px;
@@ -793,7 +792,7 @@
         border-radius: 50%;
         display: flex;
         font-size: 30px;
-        height: 60px;
+        height: max-content;
         width: 100%;
         justify-content: center;
     }
@@ -859,7 +858,7 @@
     
     @media(max-width: 600px) {
         .nav-content {
-            padding-right: 15px;
+            padding-right: 0;
             padding-left: 0;
         }
 

@@ -143,7 +143,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         :root {
             --primary-light: #FAC01F;
             --primary-dark: #F83900;
-            --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
             --card-bg: #ffffff;
             --text-dark: #333333;
             --text-light: #f8f8f8;
@@ -223,7 +223,6 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         }
         .return svg{
             cursor: pointer;
-            fill: var(--primary-dark);
         }
         .txt{
             text-align: left;
@@ -246,13 +245,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-<<<<<<< HEAD
-            height: 50%;
-=======
             height: 88vh;
->>>>>>> e495add21590918fd4385406495225a225ff84f1
             width: 100%;
-            gap: 20px;
         }
         .error{
             display: none;
@@ -289,28 +283,21 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             display: flex;
             flex-direction: row;
             justify-content: center;
-<<<<<<< HEAD
-            align-items: center;
-            gap: 10px;
-=======
             align-items: stretch;
             gap: 10px;
             margin-bottom: 10px;
->>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .overs{
             font-size: 16px;
             font-weight: 500;
             color: var(--text-dark);
-<<<<<<< HEAD
-=======
         }
         .batsman_container{
             width: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: space-around;
             gap: 5px;
         }
         .batsman_type{
@@ -319,7 +306,6 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             border: #f8f4e3 solid 1px;
             border-radius: 4px;
             color: var(--text-dark);
->>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .batmans{
             width: 100%;
@@ -336,17 +322,10 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             box-shadow: var(--box-shadow);
         }
         .batmans:first-child{
-<<<<<<< HEAD
-            border-left: 4px solid var(--primary-light);
-        }
-        .batmans:last-child{
-            border-left: 4px solid var(--primary-dark);
-=======
             border-left: 3px solid var(--primary-light);
         }
         .batmans:last-child{
             border-left: 3px solid var(--primary-dark);
->>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .batsman-type{
             width: 100%;
@@ -382,13 +361,9 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             padding: 15px;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-<<<<<<< HEAD
-            border-left: 4px solid var(--primary-dark);
-=======
             border-left: 3px solid var(--primary-dark);
             flex-direction: column;
             gap: 7px;
->>>>>>> e495add21590918fd4385406495225a225ff84f1
         }
         .bowler-name{
             display: flex;
@@ -605,9 +580,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             scrollbar-width: none;
         }
         .parent-circle{
-            width: 100%;
-            max-width: 380px;
-            height: 380px;
+            width: 350px;
+            height: 350px;
             border-radius: 50%;
             display: flex;
             overflow: hidden;
@@ -643,6 +617,51 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         .slice:hover {
             background:rgba(0, 163, 25, 0.87);
         }
+
+        .slice:nth-child(2){
+            transform : rotate(45deg);
+        }
+        .slice:nth-child(3){
+            transform : rotate(90deg);
+        }
+        .slice:nth-child(4){
+            transform : rotate(135deg);
+        }
+        .slice:nth-child(5){
+            transform : rotate(180deg);
+        }
+        .slice:nth-child(6){
+            transform : rotate(225deg);
+        }
+        .slice:nth-child(7){
+            transform : rotate(270deg);
+        }
+        .slice:nth-child(8){
+            transform : rotate(315deg);
+        }
+
+        .slice:nth-child(2) .side{
+            transform : rotate(-45deg);
+        }
+        .slice:nth-child(3) .side{
+            transform : rotate(-90deg);
+        }
+        .slice:nth-child(4) .side{
+            transform : rotate(-135deg);
+        }
+        .slice:nth-child(5) .side{
+            transform : rotate(-180deg);
+        }
+        .slice:nth-child(6) .side{
+            transform : rotate(-225deg);
+        }
+        .slice:nth-child(7) .side{
+            transform : rotate(-270deg);
+        }
+        .slice:nth-child(8) .side{
+            transform : rotate(-315deg);
+        }
+
         .batsman-name{
             color: var(--primary-dark);
             font-size: 20px;
@@ -715,7 +734,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             inset: 0px;
             background: rgba(0, 0, 0, 0.15);
         }
-         .data{
+        .data{
             text-align: left;
             display: grid;
             align-items: center;
@@ -801,6 +820,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             font-size: 15px;
             cursor: pointer;
         }
+        @keyframes shake {
+            0%   { transform: translateX(-50%) translateY(-50%) translateX(0); }
+            25%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
+            50%  { transform: translateX(-50%) translateY(-50%) translateX(10px); }
+            75%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
+            100% { transform: translateX(-50%) translateY(-50%) translateX(0); }
+        }
         .shake {
             animation: shake 0.4s;
         }
@@ -867,11 +893,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             padding: 20px;
             gap: 10px;
             box-shadow: var(--box-shadow);
-<<<<<<< HEAD
-            background: #f9f9f9;
-=======
             background: var(--primary-light);
->>>>>>> e495add21590918fd4385406495225a225ff84f1
             text-align: center;
             height: 100%;
             width: 100%;
@@ -880,12 +902,6 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             margin: 10px 0;
             border-radius: var(--border-radius);
             transition: all 0.2s ease;
-<<<<<<< HEAD
-        }
-        .run-type:hover {
-            background: #f0f0f0;
-        }
-=======
         }
         .run-type:nth-child(3){
             background:#d9d9d9;
@@ -894,23 +910,15 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             background: #f0f0f0;
         }
         
->>>>>>> e495add21590918fd4385406495225a225ff84f1
-
         @media (max-width:601px){
             .container{
                 width: 100%;
                 min-height: 100vh;
                 border-radius: 0;
             }
-<<<<<<< HEAD
-            .container2{
-                gap: 20px;
-            }
-=======
             /* .container2{
                 gap: 55px;
             } */
->>>>>>> e495add21590918fd4385406495225a225ff84f1
             .score-numpad{
                 height: 34vh;
             }
@@ -1121,10 +1129,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 </div>
                 
                 <div class="data-info">
+                    <div class="batsman_container">
+                        <p class="batsman_type">Striker</p>
+                        <p class="batsman_type">Non-Striker</p>
+                    </div>
                     <div class="batsman">
-                        <div class="batsman_container">
-                            <p class="batsman_type">Striker</p>
-                            <div class="batmans">
+                        <div class="batmans">
                                     <?php
                                         
                                         $striker = $score_log[$inning_type][$current_innings]['openers']['current_striker']['id'];
@@ -1157,10 +1167,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                 </p>
 
                             </div>
-                        </div>
 
-                        <div class="batsman_container">
-                            <p class="batsman_type">Non-Striker</p>
                             <div class="batmans">
                                     <?php
                                         
@@ -1195,7 +1202,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                 </p>
 
                             </div>
-                        </div>
+                       
 
                     </div>
                     <div class="numpad">
@@ -2133,7 +2140,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 
                 undo_container.showModal();
                 undo_container.classList.add('shake');
-                navigator.vibrate(100);
+                navigator.vibrate([100,50,100,50,100]);
             });
 
             //close dialog of undo
