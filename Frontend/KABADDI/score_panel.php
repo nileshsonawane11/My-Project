@@ -956,7 +956,11 @@
                 height: 80px;
                 font-size: 19px;
             }
-            
+            .tech-button .team-button{
+                width: 120px;
+                height: 50px;
+                font-size: 17px;
+            }
             .serve {
                 width: 250px;
                 height: 80px;
@@ -996,6 +1000,11 @@
                 height: 600px;
                 width: 100%;
             }
+        }
+        .tech-button.team-button{
+            width: 110px;
+            height: 50px;
+            font-size: 17px;
         }
     </style>
 </head>
@@ -1154,7 +1163,7 @@
                 <div class="point-buttons">
                     <div class="team-btn">
                         <label class="team-name"><?php echo $t_name1['t_name']; ?></label>
-                        <button class="team-button" data-team="<?php echo $score_log['team1']; ?>">
+                        <button class="team-button " data-team="<?php echo $score_log['team1']; ?>">
                             <?php
                                 if($score_log['team1'] == $current_raid){
                                     echo 'Raid Point';
@@ -1162,6 +1171,11 @@
                                     echo 'Def. Point';
                                 }
                             ?>
+                        </button>
+                    </div>
+                    <div class="tech-btn">
+                        <button class="tech-button team-button" data-team="">
+                            Tech. Point
                         </button>
                     </div>
                     <div class="team-btn">
@@ -1227,7 +1241,14 @@
                         <div class="serving"><?php echo $team_names[$team2_id]; ?> raiding</div>
                         <div class="point-to-update">
                             <div class="point-to">
-                                <label class="point-text">Point - <?php echo $raid['points']; ?></label>
+                                <label class="point-text">Point - <?php
+                                    
+                                    if (!empty($raid['Technical Point']) && $raid['Technical Point']) {
+                                        echo "{$raid['Technical Point']} (Technical)";
+                                    }else{
+                                        echo $raid['points'];
+                                    }
+                                    ?></label>
                                 <label class="to_team-name">to <?php echo $team_names[$team1_id]; ?></label>
                             </div>
                             <div class="last-update"><?php echo $raid['last score']; ?></div>
@@ -1329,8 +1350,10 @@
         let opacity = document.querySelector('.opacity-container');
         let start_next_btn = document.querySelector('.start-next-btn');
         let complete_btn = document.querySelector('.complete-match-btn');
+        let tech_btn = document.querySelector('.tech-button');
         let point_taken_by = null;
         let raider = null;
+        let tech_point = null;
         let points = null;
         let undo = false;
         let end_half = false;
@@ -1356,7 +1379,8 @@
                 'match_id': match_id,
                 'point_type': point_type,
                 ...(is_complete ? { 'is_complete': is_complete } : {}),
-                ...(is_start ? { 'is_start': is_start } : {})
+                ...(is_start ? { 'is_start': is_start } : {}),
+                'tech_point': tech_point
             };
 
             console.log(data);
@@ -1434,6 +1458,12 @@
             is_complete = true;
             raider = null;
             get_score();
+        });
+
+        tech_btn.addEventListener('click', () => {
+            tech_point = 1;
+            slideContainer.style.transform = `translateX(-${1 * 33.333}%)`;
+            slideWrapper.style.transform = 'translateY(0)';
         });
 
         let cancel_end = () => {
@@ -1590,7 +1620,7 @@
 
             teambtn.forEach(selector => {
                 selector.addEventListener("click", () => {
-                    if (slideWrapper) {
+                   if (slideWrapper && !selector.classList.contains('tech-button')) {
                         slideWrapper.style.transition = 'transform 0.5s ease';
                         slideContainer.style.transform = 'translateX(-66.66%)';
                         setTimeout(() => {
@@ -1609,10 +1639,46 @@
                         
                         point_taken_by = selector.getAttribute('data-team');
 
+                        if(tech_point != null){
+                            slideContainer.style.transform = `translateX(-${1 * 33.333}%)`;
+                            slideWrapper.style.transform = 'translateY(600px)';
+                            get_score();
+                        }else{
+                            let result_container = document.querySelector('.serve-result');
+                            let outcome = document.querySelector('.outcomes');
+                            let outcome_data = outcome.innerHTML;
+                            if(current_raid != point_taken_by){
+                                result_container.children[0].innerText = 'Defence Result';
+                                result_container.children[1].innerText = 'Outcome Of The Defence';
+
+                                outcome.innerHTML = '<div class="score-point">1<label for="" class="point-type">Tackel</label></div><div class="score-point">2<label for="" class="point-type">Sup-Tackel</label></div><div class="score-point">3<label for="" class="point-type">Tackel + All Out</label></div>';
+                                score_point();
+                            }else{
+                                result_container.children[0].innerText = 'Raid Result';
+                                result_container.children[1].innerText = 'Outcome Of The Raid';
+
+                                outcome.innerHTML = '<div class="score-point">0<label for="" class="point-type">No point</label></div><div class="score-point">1<label for="" class="point-type">Touch</label></div><div class="score-point">2<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">3<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">5<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">6<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">7<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">8<label for="" class="point-type">Touch + Bonus</label></div><div class="score-point">9<label for="" class="point-type">Touch + All Out</label></div><div class="score-point">10<label for="" class="point-type">Touch + Bonus + All Out</label></div>';
+                                score_point();
+                            }
+                        }
+                    }
+                })
+            })
+
+            document.querySelectorAll(".team1-info,.team2-info").forEach(team => {
+                team.addEventListener("click",() => {
+                    goToSlide(2);
+                    point_taken_by = team.getAttribute('data-team');
+
+                    if(tech_point != null){
+                        slideContainer.style.transform = `translateX(-${1 * 33.333}%)`;
+                        slideWrapper.style.transform = 'translateY(600px)';
+                        get_score();
+                    }else{
                         let result_container = document.querySelector('.serve-result');
                         let outcome = document.querySelector('.outcomes');
                         let outcome_data = outcome.innerHTML;
-                       if(current_raid != point_taken_by){
+                        if(current_raid != point_taken_by){
                             result_container.children[0].innerText = 'Defence Result';
                             result_container.children[1].innerText = 'Outcome Of The Defence';
 
@@ -1626,31 +1692,6 @@
                             score_point();
                         }
                     }
-                })
-            })
-
-            document.querySelectorAll(".team1-info,.team2-info").forEach(team => {
-                team.addEventListener("click",() => {
-                    goToSlide(2);
-                    point_taken_by = team.getAttribute('data-team');
-
-                    let result_container = document.querySelector('.serve-result');
-                    let outcome = document.querySelector('.outcomes');
-                    let outcome_data = outcome.innerHTML;
-                    if(current_raid != point_taken_by){
-                        result_container.children[0].innerText = 'Defence Result';
-                        result_container.children[1].innerText = 'Outcome Of The Defence';
-
-                        outcome.innerHTML = '<div class="score-point">1<label for="" class="point-type">Tackel</label></div><div class="score-point">2<label for="" class="point-type">Sup-Tackel</label></div><div class="score-point">3<label for="" class="point-type">Tackel + All Out</label></div>';
-                        score_point();
-                    }else{
-                        result_container.children[0].innerText = 'Raid Result';
-                        result_container.children[1].innerText = 'Outcome Of The Raid';
-
-                        outcome.innerHTML = '<div class="score-point">0<label for="" class="point-type">No point</label></div><div class="score-point">1<label for="" class="point-type">Touch</label></div><div class="score-point">2<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">3<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">5<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">6<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">7<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">8<label for="" class="point-type">Touch + Bonus</label></div><div class="score-point">9<label for="" class="point-type">Touch + All Out</label></div><div class="score-point">10<label for="" class="point-type">Touch + Bonus + All Out</label></div>';
-                        score_point();
-                    }
-
                 })
             })
 

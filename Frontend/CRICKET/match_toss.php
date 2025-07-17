@@ -94,7 +94,6 @@
         box-shadow: var(--card-shadow);
         position: relative;
         border-radius: 16px;
-        overflow: hidden;
         width: 100%;
         max-width: 100%;
         min-height: 480px;
@@ -208,7 +207,7 @@
     .teams,
     .options {
         height: 147px;
-        width: 130px;
+        width: 110px;
         border-radius: 20px;
         display: flex;
         flex-direction: column;
@@ -439,7 +438,11 @@
                         <label for="">Toss winner chose to</label>
                         <div class="sector types">
                             <div class="options" data-value="BAT">
+<<<<<<< HEAD
                                 <div class="logo">
+=======
+                               <div class="logo">
+>>>>>>> 5ea4ad1cf62f980d171add0695339e21addc9fee
                                     <img src="https://i.ibb.co/23rGnG2Y/Pngtree-cricketer-hitting-the-ball-20047688.png">
                                 </div>
                                 <div class="tname">BAT</div>
@@ -448,9 +451,13 @@
                             <div class="options" data-value="BOWL">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/rKcjrSFM/Pngtree-cricket-player-bowling-action-illustration-21241027.png">
+<<<<<<< HEAD
                                 </div>
                                     <div class="tname">BOWL</div>
+=======
+>>>>>>> 5ea4ad1cf62f980d171add0695339e21addc9fee
                                 </div>
+                                <div class="tname">BOWL</div>
                             </div>
                             <div class="error" id="error-decision"></div>
                             <div class="error" id="error-empty"></div> 
