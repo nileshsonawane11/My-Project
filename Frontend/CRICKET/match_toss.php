@@ -277,16 +277,6 @@
         justify-content: center;
         width: 100%;
     }
-<<<<<<< HEAD
-    .logo img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        filter: contrast(1.1);
-        border-radius: 50%;
-    }
-=======
->>>>>>> 1707ca4e091edd07b456ac8f89e8295804f894c2
     
     .add-btn button {
         background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
@@ -438,11 +428,7 @@
                         <label for="">Toss winner chose to</label>
                         <div class="sector types">
                             <div class="options" data-value="BAT">
-<<<<<<< HEAD
-                                <div class="logo">
-=======
                                <div class="logo">
->>>>>>> 5ea4ad1cf62f980d171add0695339e21addc9fee
                                     <img src="https://i.ibb.co/23rGnG2Y/Pngtree-cricketer-hitting-the-ball-20047688.png">
                                 </div>
                                 <div class="tname">BAT</div>
@@ -451,11 +437,6 @@
                             <div class="options" data-value="BOWL">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/rKcjrSFM/Pngtree-cricket-player-bowling-action-illustration-21241027.png">
-<<<<<<< HEAD
-                                </div>
-                                    <div class="tname">BOWL</div>
-=======
->>>>>>> 5ea4ad1cf62f980d171add0695339e21addc9fee
                                 </div>
                                 <div class="tname">BOWL</div>
                             </div>
