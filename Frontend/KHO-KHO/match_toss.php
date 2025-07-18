@@ -1,4 +1,27 @@
+<?php
+    session_start();
 
+    if(!isset($_SESSION['user'])){
+        header('location: ./front-page.php');
+        exit();
+    }
+    if($_SESSION['role'] == "User"){
+        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    include '../../config.php';
+    $match = $_GET['match_id'] ?? '';
+
+    $query1 = mysqli_query($conn, "SELECT * FROM `matches` WHERE `match_id` = '$match'");
+    $row = mysqli_fetch_assoc($query1);
+
+    if(!empty($row['toss_winner'])){
+        header("Location: ./score_panel.php?match_id=$match");
+        exit();
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +73,6 @@
     }
     
     .container {
-        height: 100vh;
         display: flex;
         background-color: var(--card-bg);
         box-shadow: var(--shadow-lg);
@@ -340,13 +362,6 @@
         position: relative;
         padding: 16px;
         background-color: var(--card-bg);
-        border-radius: var(--radius-md);
-        box-shadow: var(--shadow-sm);
-        transition: var(--transition);
-    }
-    
-    .rule:hover {
-        box-shadow: var(--shadow-md);
     }
     
     @media (min-width: 601px) {
@@ -401,17 +416,34 @@
                     <h4>Toss</h4>
                 </div>
                 <div class="container3">
-                    
+                    <?php
+                        $query = mysqli_query($conn,"SELECT m.*, t1.t_id AS team1, t2.t_id AS team2, t1.t_logo AS team1_logo, t1.t_name AS team1_name, t2.t_logo AS team2_logo , t2.t_name AS team2_name FROM `matches` m JOIN `teams` t1 ON m.team_1 = t1.t_id JOIN `teams` t2 ON m.team_2 = t2.t_id WHERE m.match_id = '$match' ");
+                        $row = mysqli_fetch_assoc($query);
+                    ?>
                     <div class="info">
                         <label for="">Who won the toss?</label>
                         <div class="sector team">
-                            <div class="teams" data-value="">
-                                
-                                <div class="tname">Team1</div>
+                            <div class="teams" data-value="<?php echo $row['team1']; ?>">
+                                <?php
+                                    if (empty($row['team1_logo'])) {
+                                        echo '<div class="logo"></div>';
+                                    } else {
+                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team1_logo']}\" alt=\"\"></div>";
+                                    }
+
+                                ?>
+                                <div class="tname"><?php echo $row['team1_name']; ?></div>
                             </div>
-                            <div class="teams" data-value="">
-                                 
-                                <div class="tname">Team2</div>
+                            <div class="teams" data-value="<?php echo $row['team2']; ?>">
+                                 <?php
+                                    if (empty($row['team2_logo'])) {
+                                        echo '<div class="logo"></div>';
+                                    } else {
+                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team2_logo']}\" alt=\"\"></div>";
+                                    }
+
+                                ?>
+                                <div class="tname"><?php echo $row['team2_name'] ?></div>
                             </div>
                         </div>
                         <div class="error" id="error-team"></div>
@@ -420,7 +452,7 @@
                     <div class="info">
                         <label for="">Toss winner chose to</label>
                         <div class="sector types">
-                            <div class="options" data-value="RAID">
+                            <div class="options" data-value="RUN">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/gZdYSLmv/117186091-silhouettes-noires-les-coureurs-sprintent-les-hommes-sur-fond-blanc.jpg">
 
@@ -428,7 +460,7 @@
                                 <div class="tname">RUN</div>
                             </div>
 
-                            <div class="options" data-value="DEFENCE">
+                            <div class="options" data-value="CHASE">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/QFTsmzwB/images.png">
 
@@ -441,6 +473,15 @@
                         </div>
                     </div>
 
+                    <div class="info">
+                        <label for="">Enter match format</label>
+                        <div class="rule">
+                            <div class="input-fields event-time">
+                                <input type="number" id="innings"  required><label for="points" id="time">Enter Number of Innings</label>
+                            </div>
+                        </div>
+                        <div class="error" id="error-data_empty"></div>
+                    </div>
                     
                     <div class="add-btn">
                         <button onclick="start_match(event)" type="submit" id="start-match">Let’s Start</button>
@@ -453,6 +494,7 @@
 
         const teams = document.querySelectorAll('.teams');
         const options = document.querySelectorAll('.options');
+        const match_id = "<?php echo $match; ?>";
         let selecteddecision = '';
         let selectedteam = '';
 
@@ -492,11 +534,14 @@
 
         let start_match = (e) => {
             e.preventDefault();
+            let innings = document.querySelector('#innings');
 
             let formdata = new FormData();
-            formdata.append('match_id', '');
+            formdata.append('match_id', match_id);
             formdata.append('selectedteam', selectedteam);
             formdata.append('selecteddecision', selecteddecision);
+            formdata.append('innings', innings.value);
+
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';
@@ -515,7 +560,7 @@
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }else{
-                    window.location.href = './score_panel.php?match_id=';
+                    window.location.href = './score_panel.php?match_id='+match_id;
                 }
             })
             .catch(error => console.log(error));
