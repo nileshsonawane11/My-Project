@@ -440,8 +440,7 @@
                             <div class="error" id="error-empty"></div> 
                         </div>
                     </div>
-
-                    
+                  
                     <div class="add-btn">
                         <button onclick="start_match(event)" type="submit" id="start-match">Let’s Start</button>
                     </div>
