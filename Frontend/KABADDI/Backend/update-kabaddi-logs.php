@@ -15,17 +15,17 @@ if(empty($data)){
 }
 
 // Validate and sanitize input
-$point_taken_by    = $data['point_taken_by'] ?? null;
 $current_raid_team = $data['current_raid_team'] ?? null;
 $raider            = $data['raider'] ?? null;
-$points            = $data['points'] ?? null;
 $undo              = $data['undo'] ?? false;
 $match_id          = $data['match_id'] ?? null;
-$point_type        = $data['point_type'] ?? null;
 $end_half          = $data['Isend_half'] ?? false;
 $is_complete       = $data['is_complete'] ?? false;
+$raid_tech_point   = $data['raid_tech_point'] ?? null;
+$def_tech_point   = $data['def_tech_point'] ?? null;
+$raid_points   = $data['raid_points'] ?? null;
+$def_points   = $data['def_points'] ?? null;
 $is_start          = $data['is_start'] ?? false;
-$tech_point        = $data['tech_point'] ?? null;
 $last_score        = null;
 $points = (int)$points;
 
@@ -175,29 +175,47 @@ if($end_half == true){
         }
     }
 }else{
-    update_score_log($conn, $tech_point, $point_taken_by, $current_raid_team, $raider, $undo, $match_id, $point_type, $points, $score_log);
+    update_score_log($conn, $raid_points, $def_points, $def_tech_point, $raid_tech_point, $current_raid_team, $raider, $undo, $match_id, $score_log);
 }
 
-function update_score_log($conn, $tech_point, $point_taken_by, $current_raid_team, $raider, $undo, $match_id, $point_type, $points, &$score_log) {
+function update_score_log($conn, $raid_points, $def_points, $def_tech_point, $raid_tech_point, $current_raid_team, $raider, $undo, $match_id, &$score_log) {
 
-    if($tech_point === null){
         if($score_log['current_raid_team'] == $score_log['team1']){
             $score_log['current_raid_team'] = $score_log['team2'];
         }else{
             $score_log['current_raid_team'] = $score_log['team1'];
         }
-    }
 
     $current_half = $score_log['current_half'];
-    $total_points = $points + $tech_point; 
+    $total_raid_points = $raid_points + $raid_tech_point; 
+    $total_def_points = $def_points + $def_tech_point;
     
-    if ($point_taken_by == $score_log['team1']) {
-        $score_log['team1_score'] += $total_points;
-        $score_log['halves'][$current_half]['team1_points'] += $total_points;
-    } elseif ($point_taken_by == $score_log['team2']) {
-        $score_log['team2_score'] += $total_points;
-        $score_log['halves'][$current_half]['team2_points'] += $total_points;
+    if ($current_raid_team == $score_log['team1']) {
+
+        if ($total_raid_points > 0) {
+            $score_log['team1_score'] += $total_raid_points;
+            $score_log['halves'][$current_half]['team1_points'] += $total_raid_points;
+        }
+
+        if ($total_def_points > 0) {
+            $score_log['team2_score'] += $total_def_points;
+            $score_log['halves'][$current_half]['team2_points'] += $total_def_points;
+        }
+
+    } else if ($current_raid_team == $score_log['team2']) {
+
+        if ($total_raid_points > 0) {
+            $score_log['team2_score'] += $total_raid_points;
+            $score_log['halves'][$current_half]['team2_points'] += $total_raid_points;
+        }
+
+        if ($total_def_points > 0) {
+            $score_log['team1_score'] += $total_def_points;
+            $score_log['halves'][$current_half]['team1_points'] += $total_def_points;
+        }
     }
+
+
     $last_score = $score_log['team1_score'].'-'.$score_log['team2_score'];
 
     // if ($tech_point != null && !empty($score_log['halves'][$current_half]['raids'])) {
@@ -206,14 +224,12 @@ function update_score_log($conn, $tech_point, $point_taken_by, $current_raid_tea
     // }
 
     $raid_log = [
-        "point_taken_by"    => $point_taken_by,
         "current_raid_team" => $current_raid_team,
         "raider"            => $raider,
-        "points"            => $points,
-        "point_type"        => $point_type,
         "current Half"      => $current_half,
         "last score"        => $last_score,
-        "Technical Point"   => $tech_point
+        "raid points"       => $total_raid_points,
+        "def points"       => $total_def_points
     ];
 
     $score_log['halves'][$current_half]['raids'][] = $raid_log;

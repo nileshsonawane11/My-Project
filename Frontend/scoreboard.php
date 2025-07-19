@@ -13,9 +13,10 @@
             padding: 0px;
             user-select: none;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body{
-            background-color: #ffffffff;
+            background-color: #f9f9f9;
         }
         :root {
             --primary-light: #FAC01F;
@@ -25,17 +26,25 @@
             --text-dark: #333333;
             --text-light: #666666;
             --border-color: #e0e0e0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
         .nav-bar{
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            /* box-shadow: 0px -5px 20px black; */
+            position: sticky;
             top: 0;
             width: 100%;
             background-color: white;
             z-index: 999;
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid rgba(248, 57, 0, 0.1);
         }
         .nav-content{
             display: flex;
@@ -43,20 +52,21 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: 6px 20px;
+            padding: 8px 20px;
         }
         .items,.list{
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 5px;
-            }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
         html, body {
             height: 100%;
             margin: 0;
         }
         .swiper {
             width: 100%;
+            background: #f9f9f9;
         }
         .swiper-slide {
             box-sizing: border-box;
@@ -66,79 +76,105 @@
             align-items: center;
             justify-content: flex-start;
             flex-direction: column;
-            background: #ffffff;
-            gap: 20px;
+            background: transparent;
+            gap: 16px;
         }
         .ad{
             height: 150px;
             width: 100%;
             position: relative;
-            background : #f0f0f0;
+            background: linear-gradient(135deg, rgba(250,192,31,0.1), rgba(248,57,0,0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(248, 57, 0, 0.1);
         }
         .ad2{
             height: 60px;
             width: 100%;
-            background : #f0f0f0;
+            background: linear-gradient(135deg, rgba(250,192,31,0.1), rgba(248,57,0,0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(248, 57, 0, 0.1);
         }
         .hide-ad{
             position: absolute;
             top: 15px;
             right: 15px;
             width: 25px;
-            background: #d9d9d9;
+            background: rgba(248, 57, 0, 0.1);
             height: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .hide-ad:hover {
+            background: rgba(248, 57, 0, 0.2);
         }
         .match_score{
             height: max-content;
             width: 100%;
             background: white;
-            /* padding: 15px; */
+            padding: 10px 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: var(--shadow-sm);
         }
         .menu-line{
             width: 100%;
-            height: 40px;
+            height: 48px;
             background: #ffffff;
-            box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-sm);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: sticky;
+            top: 60px;
+            z-index: 99;
         }
         .menu {
             display: flex;
             position: relative;
-            border-bottom: 1px solid #ddd;
+            width: 100%;
+            max-width: 500px;
         }
 
         .menu-items {
             cursor: pointer;
-            height: 40px;
-            width: 75px;
+            height: 48px;
+            width: 25%;
             align-items: center;
             justify-content: center;
             display: flex;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-light);
+            font-size: 14px;
         }
 
         .menu-items.active {
-        color: #ff6800;
+            color: var(--primary-dark);
+            font-weight: 600;
         }
 
         .menu-line-indicator {
             position: absolute;
             bottom: 0;
-            height: 2px;
-            width: 75px;
-            background: #ff6800;
+            height: 3px;
+            width: 25%;
+            background: var(--primary-dark);
             transition: left 0.3s ease;
             left: 0;
+            border-radius: 3px 3px 0 0;
         }
 
         .menu{
@@ -149,8 +185,8 @@
             width: 100%;
         }
         .game-info {
-            height: 150px;
-            padding: 10px;
+            height: auto;
+            padding: 16px;
             display: flex;
             font-size: 14px;
             gap: 15px;
@@ -161,11 +197,18 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            margin: 10px 0;
+            margin: 5px 0;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease;
+        }
+        .game-info:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
         .match-data {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             flex-direction: column;
             align-items: flex-start;
             width: 100%;
@@ -176,9 +219,11 @@
             flex-direction: row;
             align-items: center;
             width: 100%;
+            color: var(--text-light);
+            font-size: 13px;
         }
         .team-score {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
         }
@@ -192,20 +237,21 @@
         }
         
         .team img {
-            height: 40px;
-            width: 40px;
-            background: #f0f0f0;
+            height: 36px;
+            width: 36px;
+            background: #f5f5f5;
             border-radius: 50%;
             display: flex;
             overflow: hidden;
             object-fit: cover;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(248, 57, 0, 0.1);
         }
         .start-btn {
-            width: 68px;
-            height: 38px;
-            border-radius: 18px;
+            width: 80px;
+            height: 40px;
+            border-radius: 20px;
             border: none;
             color: white;
             font-weight: 600;
@@ -213,6 +259,7 @@
             box-shadow: 0 4px 10px rgba(248, 57, 0, 0.2);
             cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 14px;
         }
         
         .start-btn:hover {
@@ -225,27 +272,30 @@
         }
         table {
             width: 100%;
-            border: solid 1px #f8f8f8;
-            border-radius: 20px;
-            font-size: 1.2rem;
+            border: 1px solid #f0f0f0;
+            border-radius: var(--radius-md);
+            font-size: 14px;
             margin: 10px 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
 
         table td {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         table .title {
             font-weight: 550;
-            background: #f8f8f8;
+            background: #fafafa;
             width: 110px;
-            color: #626262;
+            color: #666;
         }
 
         table .data {
             text-align: left;
             color: #333;
+            font-weight: 500;
         }
         .innings{
             width: 100%;
@@ -255,8 +305,10 @@
             flex-direction: column;
             gap: 10px;
             overflow: hidden;
-            border-radius: 10px;
-            border: 1px solid #bab8b8;
+            border-radius: var(--radius-md);
+            border: 1px solid #f0f0f0;
+            box-shadow: var(--shadow-sm);
+            background: white;
         }
         .inning-data{
             width: 100%;
@@ -265,7 +317,7 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-            gap: 25px;
+            gap: 15px;
             padding: 15px;
             box-sizing: border-box;
         }
@@ -275,9 +327,11 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            border: 1px solid #627385;
-            border-radius: 5px;
+            border: 1px solid #f0f0f0;
+            border-radius: var(--radius-sm);
             overflow: hidden;
+            background: white;
+            box-shadow: var(--shadow-sm);
         }
         .inn-info{
             display: flex;
@@ -285,26 +339,30 @@
             align-items: center;
             text-align: center;
             width: 100%;
-            padding: 5px;
+            padding: 10px 5px;
             height: -webkit-fill-available;
             justify-content: center;
             position: relative;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
         }
         .inn-info label,
         .inn-no{
-            color: #595959a6;
-            font-size: 15px;
+            color: #888;
+            font-size: 13px;
+            font-weight: 400;
         }
         .stat{
-            background: #d5d5d5;
+            background: linear-gradient(90deg, rgba(250,192,31,0.1), rgba(248,57,0,0.1));
             width: 100%;
-            height: 125px;
+            height: 40px;
             display: flex;
             align-items: center;
             padding: 0px 20px;
             box-sizing: border-box;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 15px;
         }
         .skew{
             position: absolute;
@@ -312,18 +370,20 @@
             width: 127%;
             transform: skew(-15deg, 0deg);
             transform-origin: top left;
-            background: #e9f3ff73;
+            background: linear-gradient(90deg, rgba(250,192,31,0.05), rgba(248,57,0,0.05));
             z-index: -1;
         }
         .weather{
             width: 100%;
-            border: 1px solid black;
+            border: 1px solid #f0f0f0;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            border-radius: 15px;
+            border-radius: var(--radius-md);
             overflow: hidden;
+            background: white;
+            box-shadow: var(--shadow-sm);
         }
         .weather-info{
             height: 100%;
@@ -334,9 +394,9 @@
             justify-content: center;
         }
         .weather-info label{
-            font-size: 15px;
+            font-size: 13px;
             text-align: center;
-            color: #dddddd
+            color: #888;
         }
         .weather-data{
             display: flex;
@@ -344,30 +404,41 @@
             align-items: center;
             height: 80px;
             padding: 5px;
-            background: linear-gradient(180deg, #11569d, #447ab0);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
             color: white;
             justify-content: space-evenly;
         }
         .weather-title {
-            background: #eef7ff;
-            height: 25px;
+            background: #fafafa;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 15px;
         }
         .comm{
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            border-radius: 15px;
+            border-radius: var(--radius-md);
             overflow: hidden;
+            background: white;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #f0f0f0;
         }
         .comm-name{
-            height: 40px;
+            height: 48px;
             display: flex;
             align-items: center;
             box-sizing: border-box;
-            padding: 0 15px;
-            font-size: 20px;
-            background: #00000017;
+            padding: 0 20px;
+            font-size: 16px;
+            background: #fafafa;
+            font-weight: 600;
+            color: var(--text-dark);
         }
         .comm-data{
             height: max-content;
@@ -382,17 +453,21 @@
             justify-content: center;
             align-items: flex-start;
             margin: 15px 0px;
+            gap: 10px;
         }
         .ball-runs{
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             padding: 5px;
         }
         .commentry{
             padding: 5px;
+            font-size: 14px;
+            color: var(--text-dark);
+            line-height: 1.5;
         }
         .run{
             height: 25px;
@@ -400,11 +475,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid black;
+            border: 1px solid var(--primary-dark);
             border-radius: 50%;
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        .ball {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
         }
         .line{
-            border: 1px solid #0000001f;
+            border: 1px solid #f0f0f0;
+            margin: 10px 0;
         }
         section{
             width: 100%;
@@ -420,18 +505,22 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             overflow: hidden;
-            border: 1px solid #0000001a;
+            border: 1px solid #f0f0f0;
+            background: white;
+            box-shadow: var(--shadow-sm);
         }
         .team-container{
             width: 100%;
-            height: 30px;
+            height: 40px;
             display: flex;
-            background: #f0f0f0;
+            background: #fafafa;
             align-items: center;
             padding: 0 20px;
             box-sizing: border-box;
+            font-weight: 600;
+            color: var(--text-dark);
         }
         .team-name{
             width: 100%;
@@ -446,7 +535,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 0px;
             box-sizing: border-box;
         }
         .dt{
@@ -456,9 +545,13 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .dt:last-child {
+            border-bottom: none;
         }
         .dt.not-out{
-            background: #E9F7F2;
+            background: rgba(46, 125, 50, 0.05);
         }
         .dt1{
             width: 100%;
@@ -468,7 +561,7 @@
             align-items: center;
             justify-content: center;
             justify-content: space-between;
-            padding: 5px 15px;
+            padding: 10px 15px;
         }
         .dt2{
             width: 100%;
@@ -476,14 +569,17 @@
             align-items: center;
             justify-content: flex-start;
             flex-direction: row;
-            padding: 0px 15px;
+            padding: 0px 15px 10px 15px;
             box-sizing: border-box;
+            font-size: 13px;
+            color: #666;
         }
         .not-out .dt2{
             color: #2E7D32;
         }
         .inning-batsman{
             width: 50%;
+            text-align: left;
         }
         .match-not-start{
             width: 100%;
@@ -492,33 +588,43 @@
             align-items: center;
             flex-direction: column;
             gap: 15px;
-            font-size: 18px;
-            color: #666666;
-            padding: 35px;
-            border: 1px solid #0000001c;
+            font-size: 16px;
+            color: #666;
+            padding: 40px;
+            border: 1px solid #f0f0f0;
             box-sizing: border-box;
             text-align: center;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
         }
         .error-text{
             width: 230px;
+            font-size: 14px;
+            color: #888;
         }
         .bowl-data{
             display: flex;
             width: 100%;
-            gap: 5px;
+            gap: 0px;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             overflow: hidden;
-            border: 1px solid #0000001a;
+            border: 1px solid #f0f0f0;
+            background: white;
+            box-shadow: var(--shadow-sm);
         }
         .table-head{
-            background: #F7F7FA;
+            background: #fafafa;
+            font-weight: 600;
+            color: var(--text-dark);
         }
         .playername{
-            color: #0B65F0;
+            color: var(--primary-dark);
+            font-weight: 500;
         }
         .fall-of-wickets{
             width: 100%;
@@ -527,17 +633,19 @@
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
-            padding: 5px 15px;
-            border-radius: 10px;
+            padding: 0px;
+            border-radius: var(--radius-md);
             overflow: hidden;
-            border: 1px solid #0000001a;
+            border: 1px solid #f0f0f0;
+            background: white;
+            box-shadow: var(--shadow-sm);
         }
         .fall-of-wickets .dt{
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            padding: 5px 15px;
+            padding: 10px 15px;
         }
         .score-and-over{
             display: flex;
@@ -556,8 +664,11 @@
             justify-content: center;
             flex-direction: column;
             box-sizing: border-box;
-            border: 1px solid #00000024;
+            border: 1px solid #f0f0f0;
             overflow: hidden;
+            background: white;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
         }
         .row{
             width: 100%;
@@ -565,64 +676,71 @@
             align-items: center;
             justify-content: space-between;
             flex-direction: row;
-            padding: 15px 15px;
+            padding: 15px;
             font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 1px solid #f0f0f0;
         }
         .teamimg{
-            height: 25px;
-            width: 25px;
-            background: #d9d9d9;
+            height: 28px;
+            width: 28px;
+            background: #f5f5f5;
             border-radius: 50%;
+            border: 1px solid rgba(248, 57, 0, 0.1);
         }
-        .t1{
+        .t1, .t2{
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
             gap: 10px;
         }
-        .t2{
-            display: flex;
-            flex-direction: row-reverse;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+        .vs {
+            color: var(--text-light);
+            font-size: 14px;
         }
         .teams{
             width: 100%;
             display: flex;
             flex-direction: row;
             justify-content: space-between;
-            align-items: center;
-            padding: 5px 15px;
+            align-items: flex-start;
+            padding: 15px;
+            gap: 15px;
         }
         .teams .playername{
             text-wrap: auto;
             width: 110px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            font-size: 15px;
-            
+            gap: 2px;
+            font-size: 14px;
         }
         .teams .playername .role{
-            color: #8e8e8eff;
+            color: #888;
+            font-size: 12px;
+            font-weight: 400;
         }
         .squad-border{
-            border: 1px solid #ebebeb;
+            border: 1px solid #f0f0f0;
             height: 100%;
+            align-self: stretch;
         }
         .playerimg{
-            height: 35px;
-            width: 35px;
-            background: #d9d9d9;
+            height: 40px;
+            width: 40px;
+            background: #f5f5f5;
             border-radius: 50%;
+            border: 1px solid rgba(248, 57, 0, 0.1);
+            flex-shrink: 0;
         }
         .team2 .squad-player{
             display: flex;
             align-items: center;
             justify-content: flex-end;
             gap: 10px;
+            width: 100%;
         }
         .team1 .squad-player{
             display: flex;
@@ -630,6 +748,7 @@
             justify-content: flex-start;
             flex-direction: row-reverse;
             gap: 10px;
+            width: 100%;
         }
         .team2{
             display: flex;
@@ -638,6 +757,7 @@
             justify-content: center;
             align-items: flex-end;
             text-align: right;
+            width: 50%;
         }
         .team1{
             display: flex;
@@ -646,12 +766,14 @@
             justify-content: center;
             align-items: flex-start;
             text-align: left;
+            width: 50%;
         }
         .popup-container{
             position: fixed;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
             top: 0;
             left: 0;
             z-index: 99999;
@@ -665,15 +787,21 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            border: 1px solid black;
+            border: none;
             background: white;
-            border-radius: 10px;
+            border-radius: var(--radius-lg);
             flex-direction: column;
             overflow: hidden;
+            box-shadow: var(--shadow-lg);
         }
         .exit img{
             height: 15px;
             cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        .exit img:hover {
+            opacity: 1;
         }
         .fed-head{
             display: flex;
@@ -681,27 +809,36 @@
             justify-content: space-between;
             flex-direction: row;
             width: 100%;
-            padding: 5px 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
         }
         .fed-body{
             height: 100%;
             width: 100%;
             display: flex;
-            gap: 10px;
+            gap: 15px;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            padding: 10px 15px;
-            background: #f5f5f596;
+            padding: 20px;
+            background: #fafafa;
         }
         .feedback-container{
-            height: 80px;
+            height: 100px;
             min-width: 300px;
             max-width: 300px;
             resize: none;
-            border-radius: 5px;
-            border: 1px solid #00000013;
-            background: #ededed;
+            border-radius: var(--radius-sm);
+            border: 1px solid #f0f0f0;
+            background: white;
+            padding: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .feedback-container:focus {
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 2px rgba(248, 57, 0, 0.1);
         }
         .fed-btns{
             width: 100%;
@@ -709,40 +846,54 @@
             align-items: center;
             justify-content: space-around;
             flex-direction: row;
+            gap: 10px;
         }
         .fed-btns button{
             width: 50%;
             background: transparent;
             border: none;
-            color: #666666;
+            color: #666;
             font-weight: 500;
             font-size: 14px;
             border-radius: 20px;
             line-height: 16px;
-            padding: 10px 16px;
+            padding: 12px 16px;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .fed-btns .cancel:hover {
+            background: #f0f0f0;
         }
         .fed-btns .submit{
-            background: gray;
+            background: var(--primary-dark);
             color: white;
+        }
+        .fed-btns .submit:hover {
+            background: #e03400;
         }
         .feedback-cta-container{
             display: inline-flex;
             align-items: center;
             width: 100%;
             justify-content: center;
+            margin-top: 10px;
         }
         .feedback-cta-holder{
-            padding: 5px;
+            padding: 8px 12px;
             border: 1px solid hsl(148, 57%, 50%);
-            border-radius: 4px;
-            background: #E9F7F2;
+            border-radius: 20px;
+            background: rgba(46, 125, 50, 0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .feedback-cta-holder:hover {
+            background: rgba(46, 125, 50, 0.1);
         }
         .feedback-cta-button{
             font-weight: 600;
             font-size: 14px;
             line-height: 18px;
-            color: #37C77A;
+            color: #2E7D32;
             border: none;
             background: none;
             cursor: pointer;
@@ -752,18 +903,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 15px 0;
         }
         #cmc-report-issue-button{
-            padding: 5px 12px;
+            padding: 8px 16px;
             border: 1px solid #c83737;
-            border-radius: 4px;
-            background: #f7e9e9;
+            border-radius: 20px;
+            background: rgba(200, 55, 55, 0.05);
             font-weight: 600;
             font-size: 14px;
             line-height: 18px;
             color: #c73737;
-            font-family: 'Poppins-cmc', -apple-system, BlinkMacSystemFont, "Segoe UI", "Liberation Sans", sans-serif;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #cmc-report-issue-button:hover {
+            background: rgba(200, 55, 55, 0.1);
         }
 
         @media(max-width: 600px) {
@@ -778,7 +933,7 @@
                 padding: 4px 0;
             }
             .logo-name {
-                font-size: 25px;
+                font-size: 22px;
                 color: black;
                 text-align: left;
                 width: 130px;
@@ -788,70 +943,86 @@
                 text-align: left;
             }
             .txt-strike{
-                font-weight: 200;
+                font-weight: 600;
                 background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
+            .txt-live {
+                font-weight: 600;
+            }
             .swiper-slide{
-                width: 382px;
+                width: 100%;
             }
             .stat{
-                height: 30px;
+                height: 40px;
+            }
+            .weather-data {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 15px 5px;
+                gap: 15px;
+            }
+            .weather-info {
+                min-width: 80px;
             }
         }
 
         @media(min-width: 601px) {
             .logo-img img{
-                height: 35px;
+                height: 38px;
                 padding: 4px 0;
             }
             .txt-strike{
-                font-weight: 200;
+                font-weight: 600;
                 background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
                 background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
+            .txt-live {
+                font-weight: 600;
+            }
             .logo-name {
-                font-size: 25px;
+                font-size: 24px;
                 color: black;
                 text-align: left;
-                width: 130px;
+                width: 140px;
                 font-weight: 400;
                 overflow: hidden;
                 white-space: nowrap;
                 margin-bottom: 0;
             }
             .swiper-slide{
-                width: 382px;
+                width: 100%;
+                max-width: 600px;
             }
             .weather-data{
-                height: 100px;
-            }
-            .stat{
-                height: 35px;
+                height: 90px;
             }
             .weather-title{
-                height: 35px;
+                height: 40px;
+            }
+            .stat{
+                height: 40px;
             }
         }
 </style>
 <body>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    window.swiper = new Swiper(".swiper", {
-        speed: 300,
-        slidesPerView: 1,
-        on: {
-            slideChange: () => {
-                menuItems.forEach(i => i.classList.remove('active'));
-                menuItems[swiper.activeIndex].classList.add('active');
-                moveIndicator(swiper.activeIndex);
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        window.swiper = new Swiper(".swiper", {
+            speed: 300,
+            slidesPerView: 1,
+            on: {
+                slideChange: () => {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    menuItems[swiper.activeIndex].classList.add('active');
+                    moveIndicator(swiper.activeIndex);
+                }
             }
-        }
+        });
     });
-});
-</script>
+    </script>
 
 
     <div class="popup-container">
@@ -1001,42 +1172,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <?php
                     $apiKey = "76604801ccb3576d81ddd1bca09b978a";
-$location = "Nashik";
-$geo_url = "http://api.openweathermap.org/geo/1.0/direct?q=".urlencode($location)."&limit=1&appid={$apiKey}";
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $geo_url);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$geo_response = curl_exec($ch);
-curl_close($ch);
-
-$geo_data = json_decode($geo_response, true);
-
-if (!empty($geo_data)) {
-    $lat = $geo_data[0]['lat'];
-    $lon = $geo_data[0]['lon'];
-
-    // Now fetch weather using lat & lon
-    $weather_url = "https://api.openweathermap.org/data/2.5/weather?lat={$lat}&lon={$lon}&appid={$apiKey}&units=metric";
+    $location = "Nashik";
+    $geo_url = "http://api.openweathermap.org/geo/1.0/direct?q=".urlencode($location)."&limit=1&appid={$apiKey}";
 
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $weather_url);
+    curl_setopt($ch, CURLOPT_URL, $geo_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $weather_response = curl_exec($ch);
+    $geo_response = curl_exec($ch);
     curl_close($ch);
 
-    // echo $weather_response;
+    $geo_data = json_decode($geo_response, true);
 
-    $weather_data = json_decode($weather_response, true);
+    if (!empty($geo_data)) {
+        $lat = $geo_data[0]['lat'];
+        $lon = $geo_data[0]['lon'];
 
-    if ($weather_data['cod'] == 200) {
-        echo "Temperature at {$location}: " . $weather_data['main']['temp'] . "°C";
+        // Now fetch weather using lat & lon
+        $weather_url = "https://api.openweathermap.org/data/2.5/weather?lat={$lat}&lon={$lon}&appid={$apiKey}&units=metric";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $weather_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $weather_response = curl_exec($ch);
+        curl_close($ch);
+
+        // echo $weather_response;
+
+        $weather_data = json_decode($weather_response, true);
+
+        if ($weather_data['cod'] == 200) {
+            echo "Temperature at {$location}: " . $weather_data['main']['temp'] . "°C";
+        } else {
+            echo "Weather data unavailable. " . $weather_data['message'];
+        }
     } else {
-        echo "Weather data unavailable. " . $weather_data['message'];
+        echo "Could not find location.";
     }
-} else {
-    echo "Could not find location.";
-}
 
                 ?>
 

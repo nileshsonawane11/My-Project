@@ -58,6 +58,16 @@
     }
 
     $current_raid = $score_log['current_raid_team'];
+
+    $team1_role = null;
+    $team2_role = null;
+    if($current_raid == $score_log['team1']){
+        $team1_role = 'Raiding';
+        $team2_role = 'Defending';
+    }else{
+        $team1_role = 'Defending';
+        $team2_role = 'Raiding';
+    }
     
 ?>
 <!DOCTYPE html>
@@ -165,7 +175,7 @@
             align-items: center;
             height: 100%;
             justify-content: space-between;
-            margin-bottom: 20px;
+            padding-bottom: 20px;
             background-color: rgba(255, 255, 255, 0.9);
             position: relative;
             z-index: 2;
@@ -206,7 +216,7 @@
             border-radius: 50%;
             border: 3px solid #FAC01F;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             color: #F83900;
             font-weight: bold;
@@ -324,6 +334,7 @@
             justify-content: space-evenly;
             align-items: center;
             width: 100%;
+            padding: 30px;
         }
 
         .team-button {
@@ -339,18 +350,14 @@
             transition: all 0.3s ease;
         }
 
-        .team-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            background-color: #F83900;
-            color: white;
-        }
+        
 
         .team-button:active {
             transform: translateY(1px);
         }
 
-        .serve {
+        .serve,
+        .raider{
             width: 220px;
             height: 70px;
             background-color: #F83900;
@@ -359,16 +366,12 @@
             border-radius: 15px;
             position: relative;
             z-index: 4;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: bold;
             transition: all 0.3s ease;
         }
 
-        .serve:hover {
-            background-color: #e03100;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
+        
 
         .raider {
             background-color: white;
@@ -379,12 +382,7 @@
             transition: all 0.3s ease;
         }
 
-        .raider:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            background-color: #F83900;
-            color: white;
-        }
+        
 
         .team-btn {
             display: flex;
@@ -430,7 +428,7 @@
         .team-name {
             color: #333;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 0.8rem;
         }
 
         button {
@@ -584,10 +582,11 @@
 
         }
 
-        .player-replace:hover {
-            background-color: #f9f9f9;
-            transform: translateX(5px);
-            border-left: 3px solid #F83900;
+        .t1-points{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
         }
 
         .player-cnt {
@@ -643,7 +642,7 @@
 
         .outcomes {
             width: 100%;
-            height: 490px;
+            height: max-content;
             display: grid;
             align-items: center;
             grid-template-columns: repeat(3, 1fr);
@@ -654,7 +653,26 @@
             background-color: white;
         }
 
-        .score-point {
+        .score-point,
+        .score-point2 {
+            width: 90%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid #FAC01F;
+            color: #F83900;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .tech-score-point,
+        .tech-score-point2 {
             width: 90%;
             height: 80px;
             display: flex;
@@ -687,12 +705,7 @@
             border: none;
             outline: none;
         }
-        .score-point:hover {
-            background-color: #FAC01F;
-            color: white;
-            transform: scale(1.05);
-        }
-
+        
         .point-assign {
             width: 100%;
             height: 48px;
@@ -740,12 +753,7 @@
             transition: all 0.3s ease;
         }
 
-        .team1-info:hover,
-        .team2-info:hover {
-            background-color: #fff9f0;
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
+       
 
         .teams-logo {
             width: 80px;
@@ -753,7 +761,7 @@
             border-radius: 50%;
             background-color: white;
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             color: #F83900;
             font-weight: bold;
@@ -791,12 +799,7 @@
             transition: all 0.3s ease;
         }
 
-        .undo:hover {
-            background-color: #F83900;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+       
 
         .undo-btn {
             margin-top: 20px;
@@ -887,16 +890,29 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .undo-btn:hover,
-        .super-over-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
+        
         .undo-cancel,.complete-cancel{
             color: #666;
             font-size: 15px;
             cursor: pointer;
         }
+
+        .outcomes.tech-info {
+            max-height: 0;
+            overflow: hidden;
+            display: grid;
+            transition: max-height 0.4s ease, opacity 0.3s ease;
+            opacity: 0;
+            font-weight: bold;
+            border-bottom: 2px solid #FAC01F;
+        }
+
+        .outcomes.tech-info.active {
+            max-height: 300px; /* Adjust as needed */
+            opacity: 1;
+        }
+
+
         @keyframes shake {
             0%   { transform: translateX(-50%) translateY(-50%) translateX(0); }
             25%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
@@ -935,13 +951,68 @@
                 font-size: 19px;
             }
             
-            .serve {
-                width: 200px;
+            .serve,
+            .raider{
+                width: 220px;
                 height: 60px;
             }
         }
 
         @media (min-width: 601px) {
+            
+            .undo-btn:hover,
+        .super-over-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+             .undo:hover {
+            background-color: #F83900;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+             .team1-info:hover,
+        .team2-info:hover {
+            background-color: #fff9f0;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+            .player-replace:hover {
+            background-color: #f9f9f9;
+            transform: translateX(5px);
+            border-left: 3px solid #F83900;
+        }
+
+
+            .raider:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: #F83900;
+            color: white;
+        }
+            .serve:hover {
+            background-color: #e03100;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+            .team-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: #F83900;
+            color: white;
+        }
+
+            .score-point:hover,
+            .score-point2:hover {
+            background-color: #FAC01F;
+            color: white;
+            transform: scale(1.05);
+        }
+
             .team-data {
                 display: flex;
                 flex-direction: column;
@@ -961,7 +1032,8 @@
                 height: 50px;
                 font-size: 17px;
             }
-            .serve {
+            .serve,
+            .raider {
                 width: 250px;
                 height: 80px;
             }
@@ -1077,20 +1149,16 @@
                             <path d="M6.36196 6.62029L11.672 1.04729C11.7606 0.954302 11.8101 0.830761 11.8101 0.70229C11.8101 0.573819 11.7606 0.450279 11.672 0.357291L11.666 0.35129C11.623 0.306055 11.5713 0.270036 11.5139 0.245422C11.4566 0.220808 11.3949 0.208115 11.3325 0.208115C11.2701 0.208115 11.2083 0.220808 11.151 0.245422C11.0937 0.270036 11.0419 0.306055 10.999 0.35129L5.99896 5.59929L1.00096 0.35129C0.95799 0.306055 0.906263 0.270036 0.84893 0.245422C0.791597 0.220808 0.729857 0.208115 0.667463 0.208115C0.60507 0.208115 0.543329 0.220808 0.485996 0.245422C0.428663 0.270036 0.376937 0.306055 0.333963 0.35129L0.327963 0.357291C0.239318 0.450279 0.189867 0.573819 0.189867 0.70229C0.189867 0.830761 0.239318 0.954302 0.327963 1.04729L5.63796 6.62029C5.68466 6.6693 5.74082 6.70832 5.80305 6.73498C5.86528 6.76164 5.93227 6.77539 5.99996 6.77539C6.06766 6.77539 6.13465 6.76164 6.19688 6.73498C6.2591 6.70832 6.31527 6.6693 6.36196 6.62029Z" fill="#F83900"/>
                         </svg>
                     </div>
-                    <div class="exit-text">End 
-                        <?php 
-                            if($current_half == 1){
-                                echo '1st Half';
-                            }else{
-                                echo '2nd Half';
-                            }
-                        ?>
+                    <div class="exit-text">
+                    <?php
+                        echo 'End Half '. $current_half;
+                    ?>
                     </div>
                 </div>
             </div>
 
             <div class="score-teamlogo">
-                <div class="score2"><?php echo $score_log['team1_score']; ?></div>
+                <div class="score2"><?php echo $score_log['team1_score'];?></div>
                 <div class="score1"><?php echo $score_log['team2_score']; ?></div>
             </div>
 
@@ -1115,6 +1183,7 @@
                                         echo $t_name1['t_name'];
                                     ?>
                                 </label>
+                                <label class="team1_pos"><?php echo $team1_role; ?></label>
                             </div>
                         </div>
                     </div>
@@ -1138,6 +1207,7 @@
                                         echo $t_name2['t_name'];
                                     ?>
                                 </label>
+                                <label class="team2_pos"><?php echo $team2_role; ?></label>
                             </div>
                         </div>
                     </div>
@@ -1148,60 +1218,21 @@
         <div class="container2">
             
             <div class="image"></div>
-                <div class="current-set">
-                    <?php 
-                        if($current_half == 1){
-                            echo '1st Half';
-                        }else{
-                            echo '2nd Half';
-                        }
-                    ?>
-                </div>
+                <div class="current-set">Half No. <?php echo $current_half; ?></div>
             <div class="blur-container"></div>
 
             <div class="buttons">
-                <div class="point-buttons">
-                    <div class="team-btn">
-                        <label class="team-name"><?php echo $t_name1['t_name']; ?></label>
-                        <button class="team-button " data-team="<?php echo $score_log['team1']; ?>">
-                            <?php
-                                if($score_log['team1'] == $current_raid){
-                                    echo 'Raid Point';
-                                }else{
-                                    echo 'Def. Point';
-                                }
-                            ?>
-                        </button>
-                    </div>
-                    <div class="tech-btn">
-                        <button class="tech-button team-button" data-team="">
-                            Tech. Point
-                        </button>
-                    </div>
-                    <div class="team-btn">
-                        <label class="team-name"><?php echo $t_name2['t_name']; ?></label>
-                        <button class="team-button" data-team="<?php echo $score_log['team2']; ?>">
-                            <?php
-                                if($score_log['team2'] == $current_raid){
-                                    echo 'Raid Point';
-                                }else{
-                                    echo 'Def. Point';
-                                }
-                            ?>
-                        </button>
-                    </div>
-                </div>
 
                 <div class="serve-button">
                     <div class="raid-btn">
-                        <div class="serve-timer">
-                            <label class="team-name timer"></label>
-                            <button class="serve">Start Timer</button>
+                        
+                        <div class="raider-info">
+                                <button class="raider">Select Raider</button>
                         </div>
                         <div class="serve-undo">
-                            <div class="raider-info">
-                                <label class="optional">(Optional) </label>
-                                <button class="serve raider">Select Raider</button>
+                            <div class="serve-timer">
+                                <label class="team-name timer"></label>
+                                <button class="serve">Start Raid Timer</button>
                             </div>
                             <div id="error-empty" class="error"></div>
                             <button class="undo">Undo</button>
@@ -1217,16 +1248,29 @@
 
                         $raids = $score_log['halves'][$current_half]['raids'];
                         $last_three_raids = array_reverse(array_slice($raids, -3));
-
+                        $team1_id = null;
+                        $team2_id = null;
+                        $raiding = null;
+                        $defence = null;
                         // Print them nicely
                         foreach ($last_three_raids as $raid) {
 
-                            $team1_id = $raid['point_taken_by'];
-                            $team2_id = $raid['current_raid_team'];
+                            if($raid['current_raid_team'] == $score_log['team1']){
+                                $team1_id = $raid['current_raid_team'];
+                                $team2_id = $score_log['team2'];
+                                $raiding = $raid['current_raid_team'];
+                                $defence = $score_log['team2'];
+                            }else{
+                                $team1_id = $score_log['team1'];
+                                $team2_id = $raid['current_raid_team'];
+                                $raiding = $raid['current_raid_team'];
+                                $defence = $score_log['team1'];
+                            }
+                            
 
                             // Prepare query with IN (?, ?)
-                            $stmt = $conn->prepare("SELECT * FROM teams WHERE t_id IN (?, ?)");
-                            $stmt->bind_param("ss", $team1_id, $team2_id);
+                            $stmt = $conn->prepare("SELECT * FROM teams WHERE t_id IN (?,?,?,?)");
+                            $stmt->bind_param("ssss",$team1_id, $team2_id, $raiding, $defence);
                             $stmt->execute();
                             $result = $stmt->get_result();
 
@@ -1238,24 +1282,24 @@
                         
                     ?>
                     <div class="log">
-                        <div class="serving"><?php echo $team_names[$team2_id]; ?> raiding</div>
+                        <div class="serving"><?php echo $team_names[$raiding]; ?> raiding</div>
                         <div class="point-to-update">
                             <div class="point-to">
-                                <label class="point-text">Point - <?php
-                                    
-                                    if (!empty($raid['Technical Point']) && $raid['Technical Point']) {
-                                        echo "{$raid['Technical Point']} (Technical)";
-                                    }else{
-                                        echo $raid['points'];
-                                    }
-                                    ?></label>
-                                <label class="to_team-name">to <?php echo $team_names[$team1_id]; ?></label>
+                                <div class="t1-points">
+                                    <label class="point-text">Point - <?php echo $raid['raid points']; ?></label>
+                                    <label class="to_team-name">to <?php echo $team_names[$raiding]; ?></label>
+                                </div>
+                                <div class="t1-points">
+                                    <label class="point-text">Point - <?php echo $raid['def points']; ?></label>
+                                    <label class="to_team-name">to <?php echo $team_names[$defence]; ?></label>
+                                </div>
                             </div>
                             <div class="last-update"><?php echo $raid['last score']; ?></div>
                         </div>
                     </div>
                     <?php } ?>
-                </div>
+                </div>
+                
             </div>
         </div>
 
@@ -1267,52 +1311,40 @@
                         <label class="tap">Tap to choose the raiding player</label>
                     </div>
                     <?php
-                        $result = mysqli_query($conn, "SELECT * FROM players WHERE team_id = '$current_raid' LIMIT 7");
+                        $query = "SELECT * FROM `players` WHERE `team_id` = '$current_raid'";
+                        $result = mysqli_query($conn, $query);
                         $count = mysqli_num_rows($result);
-                        echo '<div class="players-info"><label class="player-cnt">Players('.$count.')</label>';
-                        if($count > 0){
-                            while($row = mysqli_fetch_assoc($result)){
-                    ?>
-                        
-                            
-                            <div class="player-replace">
-                                <div class="player-name"><?php echo $row['player_name']; ?></div>
-                                <button class="replace">Replace</button>
-                            </div>
-
+                    ?>   
+                    <?php
+                            if($count > 0){
+                                $index = 1;
+                                while($row = mysqli_fetch_assoc($result)){
+                        ?>
+                        <div class="player-replace" data-player-id ='<?php echo $row['user_id']; ?>'>
+                            <div class="player1-name"><?php echo $index.'. '. $row['player_name']; ?></div>
                         </div>
-                    <?php }} else {
-                        echo "<p class='warning'>No players found for this team</p>";
-                    } ?>
-                    
+                        <?php
+                                    $index++;
+                                }
+                            }
+                        ?>
                 </div>
 
                 <div class="container5">
-                    <div class="point-assign">
-                        <label class="poi-ass">Point</label>
-                        <label class="who">Which team scored the point</label>
+                     <div class="serve-result">
+                        <label class="ser-res">Defence Result</label>
+                        <label class="outcome">Outcome of the Raid</label>
                     </div>
-                    <div class="teams-info">
-                        <div class="team1-info" data-team="<?php echo $score_log['team1']; ?>">
-                            <div class="teams-logo">
-                                <?php if($t_name1['t_logo']) { ?>
-                                    <img src="../../assets/images/teams/<?php echo $t_name1['t_logo']; ?>" alt="">
-                                <?php }else{ ?>
-                                    <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
-                                <?php } ?>
-                            </div>
-                            <div class="teams-name"><?php echo $t_name1['t_name']; ?></div>
-                        </div>
-                        <div class="team2-info" data-team="<?php echo $score_log['team2']; ?>">
-                            <div class="teams-logo">
-                                <?php if($t_name2['t_logo']) { ?>
-                                    <img src="../../assets/images/teams/<?php echo $t_name2['t_logo']; ?>" alt="">
-                                <?php }else{ ?>
-                                    <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
-                                <?php } ?>
-                            </div>
-                            <div class="teams-name"><?php echo $t_name2['t_name']; ?></div>
-                        </div>
+                    <div class="outcomes tech-info">
+                        <label for="" class="tech-p">Technical Point?</label>
+                        <div class="tech-score-point2" onclick="deftakepoint(this)">0 <label for="" class="point-type">No Point</label></div>
+                        <div class="tech-score-point2" onclick="deftakepoint(this)">1 <label for="" class="point-type">+1 Tech.</label></div>
+                    </div>
+                    <div class="outcomes">
+                        <div class="score-point2">0<label for="" class="point-type">No Point</label></div>
+                        <div class="score-point2">1<label for="" class="point-type">Tackel</label></div>
+                        <div class="score-point2">2<label for="" class="point-type">Sup-Tackel</label></div>
+                        <div class="score-point2">3<label for="" class="point-type">Tackel + All Out</label></div>
                     </div>
                 </div>
 
@@ -1321,18 +1353,23 @@
                         <label class="ser-res">Raid Result</label>
                         <label class="outcome">Outcome of the Raid</label>
                     </div>
+                    <div class="outcomes tech-info">
+                        <label for="" class="tech-p">Technical Point?</label>
+                        <div class="tech-score-point" onclick="getraidtechpoint(this)">0 <label for="" class="point-type">No Point</label></div>
+                        <div class="tech-score-point" onclick="getraidtechpoint(this)">1 <label for="" class="point-type">+1 Tech.</label></div>
+                    </div>
                     <div class="outcomes">
-                        <div class="score-point" onclick="score_point()">0 <label for="" class="point-type">No point</label></div>
-                        <div class="score-point" onclick="score_point()">1 <label for="" class="point-type">Touch</label></div>
-                        <div class="score-point" onclick="score_point()">2 <label for="" class="point-type">Touch / Extra</label></div>
-                        <div class="score-point" onclick="score_point()">3 <label for="" class="point-type">Touch / Extra</label></div>
-                        <div class="score-point" onclick="score_point()">4 <label for="" class="point-type">Touch / Extra</label></div>
-                        <div class="score-point" onclick="score_point()">5 <label for="" class="point-type">Touch / Extra</label></div>
-                        <div class="score-point" onclick="score_point()">6 <label for="" class="point-type">Touch / Extra</label></div>
-                        <div class="score-point" onclick="score_point()">7 <label for="" class="point-type">Touch / Extra</label></div>
-                        <div class="score-point" onclick="score_point()">8 <label for="" class="point-type">Touch + Bonus</label></div>
-                        <div class="score-point" onclick="score_point()">9 <label for="" class="point-type">Touch + All Out</label></div>
-                        <div class="score-point" onclick="score_point()">10 <label for="" class="point-type">Touch + Bonus + All Out</label></div>
+                        <div class="score-point" >0 <label for="" class="point-type">No point</label></div>
+                        <div class="score-point" >1 <label for="" class="point-type">Touch</label></div>
+                        <div class="score-point" >2 <label for="" class="point-type">Touch / Extra</label></div>
+                        <div class="score-point" >3 <label for="" class="point-type">Touch / Extra</label></div>
+                        <div class="score-point" >4 <label for="" class="point-type">Touch / Extra</label></div>
+                        <div class="score-point" >5 <label for="" class="point-type">Touch / Extra</label></div>
+                        <div class="score-point" >6 <label for="" class="point-type">Touch / Extra</label></div>
+                        <div class="score-point" >7 <label for="" class="point-type">Touch / Extra</label></div>
+                        <div class="score-point" >8 <label for="" class="point-type">Touch + Bonus</label></div>
+                        <div class="score-point" >9 <label for="" class="point-type">Touch + All Out</label></div>
+                        <div class="score-point" >10 <label for="" class="point-type">Touch + Bonus + All Out</label></div>
                     </div>
                 </div>
             </div>
@@ -1340,47 +1377,41 @@
     </div>
     <audio id="beep-sound" src="../../assets/sounds/preview.mp3" preload="auto"></audio>
     <script>
-        const back_decision = '<?php echo $back_decision; ?>';
-        let current_raid = '<?php echo $current_raid; ?>';
-        let current_half = '<?php echo $current_half ?>';
-        let match_id = '<?php echo $match_id; ?>';
+        const back_decision = <?php echo json_encode($back_decision) ?>;
+        let current_raid = <?php echo json_encode($current_raid) ?>;
+        let current_half = <?php echo json_encode($current_half) ?>;
+        let match_id = <?php echo json_encode($match_id) ?>;
         let undo_button = document.querySelector('.undo');
         let match_dialogue = document.querySelector('#match_completed');
         let start_dialogue = document.querySelector('#start_second');
         let opacity = document.querySelector('.opacity-container');
         let start_next_btn = document.querySelector('.start-next-btn');
         let complete_btn = document.querySelector('.complete-match-btn');
-        let tech_btn = document.querySelector('.tech-button');
-        let point_taken_by = null;
         let raider = null;
-        let tech_point = null;
-        let points = null;
-        let undo = false;
-        let end_half = false;
+        let raid_tech_point = null;
+        let def_tech_point = null;
+        let raid_points = null;
+        let def_points = null;
         let point_type = null;
         let is_complete = false;
         let is_start = false;
-
+        let undo = false;
+        let end_half = false;
         let get_score = () => {
 
-            if (point_taken_by == current_raid) {
-                point_type = 'Raid Point';
-            } else {
-                point_type = 'Defense Point';
-            }
 
             let data = {
-                'point_taken_by': point_taken_by,
                 'current_raid_team' : current_raid,
                 'raider': raider,
-                'points': points,
                 'undo': undo,
                 'Isend_half' : end_half,
                 'match_id': match_id,
-                'point_type': point_type,
                 ...(is_complete ? { 'is_complete': is_complete } : {}),
                 ...(is_start ? { 'is_start': is_start } : {}),
-                'tech_point': tech_point
+                'raid_tech_point': raid_tech_point,
+                'def_tech_point': def_tech_point,
+                'raid_points': raid_points,
+                'def_points': def_points
             };
 
             console.log(data);
@@ -1460,11 +1491,7 @@
             get_score();
         });
 
-        tech_btn.addEventListener('click', () => {
-            tech_point = 1;
-            slideContainer.style.transform = `translateX(-${1 * 33.333}%)`;
-            slideWrapper.style.transform = 'translateY(0)';
-        });
+    
 
         let cancel_end = () => {
             let cancel = document.querySelector('#start_second');
@@ -1505,17 +1532,18 @@
             // Wrap containers in sliding parent
             if (slideContainer && container3 && container4 && container5) {
                 slideContainer.appendChild(container3);
-                slideContainer.appendChild(container5);
                 slideContainer.appendChild(container4);
+                slideContainer.appendChild(container5);
             } else {
                 console.warn("One or more containers not found in the DOM.");
             }
             
-            const playerNames = document.querySelectorAll('.player-name');
+            const playerNames = document.querySelectorAll('.player-replace');
             const scorepoint = document.querySelectorAll('.score-point');
-            const teambtn = document.querySelectorAll('.team-button');
+            const scorepoint2 = document.querySelectorAll('.score-point2');
+            const tech_info = document.querySelectorAll('.tech-info');
 
-            // Current slide position (0=container3, 1=container5, 2=container4)
+            // Current slide position (0=container3, 1=container4, 2=container5)
             let currentSlide = 0;
 
             // Open modal
@@ -1538,9 +1566,11 @@
 
             // Event listeners
             playerNames.forEach(player => {
-                player.addEventListener('click', () => {
+                player.addEventListener('click', (el) => {
                     goToSlide(1);
                     getplayername(player);
+                    player.style.backgroundColor = "#FAC01F";
+                    raider=player.innerText;
                 })
             });
             
@@ -1548,12 +1578,6 @@
                 raider = el.innerText;
             }
 
-            let serveresult = (el) => {
-                points = el.innerText;
-                setTimeout(() => {
-                    get_score();
-                }, 600);
-            }
             
             // Drag to dismiss
             let startY = 0;
@@ -1582,126 +1606,104 @@
                 }
             });
 
-            let score_point = () => {
-                let scorepoint = document.querySelectorAll('.score-point');
+            // let score_point = () => {
                 scorepoint.forEach(selector => {
                     selector.addEventListener("click", () => {
                         if (slideWrapper) {
-                            slideWrapper.style.transition = 'transform 0.5s ease';
+                            raid_points = parseInt(selector.innerText);
                             setTimeout(() => {
-                                slideWrapper.style.transform = 'translateY(600px)';
+                                const tech_info = container4.querySelector('.outcomes.tech-info');
+                                if (tech_info) {
+                                    tech_info.classList.add("active");
+                                }
                             }, 300);
 
-                            points = selector.innerText;
-                            setTimeout(() => {
-                                get_score();
-                            }, 600);
-                            
 
                             selector.style.border = "2px solid #F83900";
                             selector.style.backgroundColor = "#FAC01F";
                             selector.style.color = "white";
                             cancelRaidTimer();
+
+                            
+                        }
+                    });
+                    
+                });
+            // };
+
+                scorepoint2.forEach(selector => {
+                    selector.addEventListener("click", () => {
+                        if (slideWrapper) {
+                            def_points = parseInt(selector.innerText);
                             setTimeout(() => {
-                                slideContainer.style.transform = 'translateX(0)';
-                                selector.style.border = "2px solid #FAC01F";
-                                selector.style.backgroundColor = "white";
-                                selector.style.color = "#F83900";
-                            }, 600);
-                        }
-                    })
-                })
-            }
+                                const tech_info = container5.querySelector('.outcomes.tech-info');
+                                if (tech_info) {
+                                    tech_info.classList.add("active");
+                                }
+                            }, 300);
 
 
-            teambtn.forEach(selector => {
-                selector.addEventListener("click", () => {
-                   if (slideWrapper && !selector.classList.contains('tech-button')) {
-                        slideWrapper.style.transition = 'transform 0.5s ease';
-                        slideContainer.style.transform = 'translateX(-66.66%)';
-                        setTimeout(() => {
-                           slideWrapper.style.transform = 'translateY(0px)'; 
-                        }, 300);
-                        
-                        selector.style.border = "2px solid #F83900";
-                        selector.style.backgroundColor = "#F83900";
-                        selector.style.color = "white";
-                        cancelRaidTimer();
-                        setTimeout(() => {
                             selector.style.border = "2px solid #F83900";
-                            selector.style.backgroundColor = "white";
-                            selector.style.color = "#F83900";
-                        }, 600);
+                            selector.style.backgroundColor = "#FAC01F";
+                            selector.style.color = "white";
+                            cancelRaidTimer();
+
                         
-                        point_taken_by = selector.getAttribute('data-team');
+                        }
+                    });
+                    
+                });
 
-                        if(tech_point != null){
-                            slideContainer.style.transform = `translateX(-${1 * 33.333}%)`;
+                let getraidtechpoint = (el) => {
+                    setTimeout(() => {
+                        if (el && el.textContent) {
+                            goToSlide(2);
+                            raid_tech_point = parseInt(el.textContent);
+                        } else {
+                            console.warn("Invalid element passed to getraidtechpoint:", el);
+                        }
+                    }, 300);
+                     raid_tech_point = parseInt(el.textContent);
+                            el.style.border = "2px solid #F83900";
+                            el.style.backgroundColor = "#FAC01F";
+                            el.style.color = "white";
+                            cancelRaidTimer();
+                }
+
+
+                let deftakepoint = (el) => {
+                    setTimeout(() => {
+                        if (el && el.textContent) {
+                            
                             slideWrapper.style.transform = 'translateY(600px)';
-                            get_score();
-                        }else{
-                            let result_container = document.querySelector('.serve-result');
-                            let outcome = document.querySelector('.outcomes');
-                            let outcome_data = outcome.innerHTML;
-                            if(current_raid != point_taken_by){
-                                result_container.children[0].innerText = 'Defence Result';
-                                result_container.children[1].innerText = 'Outcome Of The Defence';
 
-                                outcome.innerHTML = '<div class="score-point">1<label for="" class="point-type">Tackel</label></div><div class="score-point">2<label for="" class="point-type">Sup-Tackel</label></div><div class="score-point">3<label for="" class="point-type">Tackel + All Out</label></div>';
-                                score_point();
-                            }else{
-                                result_container.children[0].innerText = 'Raid Result';
-                                result_container.children[1].innerText = 'Outcome Of The Raid';
-
-                                outcome.innerHTML = '<div class="score-point">0<label for="" class="point-type">No point</label></div><div class="score-point">1<label for="" class="point-type">Touch</label></div><div class="score-point">2<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">3<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">5<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">6<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">7<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">8<label for="" class="point-type">Touch + Bonus</label></div><div class="score-point">9<label for="" class="point-type">Touch + All Out</label></div><div class="score-point">10<label for="" class="point-type">Touch + Bonus + All Out</label></div>';
-                                score_point();
-                            }
+                        } else {
+                            console.warn("Invalid element passed to getraidtechpoint:", el);
                         }
-                    }
-                })
-            })
+                    }, 300);
+                    def_tech_point = parseInt(el.textContent);
+                            el.style.border = "2px solid #F83900";
+                            el.style.backgroundColor = "#FAC01F";
+                            el.style.color = "white";
+                            cancelRaidTimer();
 
-            document.querySelectorAll(".team1-info,.team2-info").forEach(team => {
-                team.addEventListener("click",() => {
-                    goToSlide(2);
-                    point_taken_by = team.getAttribute('data-team');
 
-                    if(tech_point != null){
-                        slideContainer.style.transform = `translateX(-${1 * 33.333}%)`;
-                        slideWrapper.style.transform = 'translateY(600px)';
-                        get_score();
-                    }else{
-                        let result_container = document.querySelector('.serve-result');
-                        let outcome = document.querySelector('.outcomes');
-                        let outcome_data = outcome.innerHTML;
-                        if(current_raid != point_taken_by){
-                            result_container.children[0].innerText = 'Defence Result';
-                            result_container.children[1].innerText = 'Outcome Of The Defence';
+                    get_score();
+                    
+                }
 
-                            outcome.innerHTML = '<div class="score-point">1<label for="" class="point-type">Tackel</label></div><div class="score-point">2<label for="" class="point-type">Sup-Tackel</label></div><div class="score-point">3<label for="" class="point-type">Tackel + All Out</label></div>';
-                            score_point();
-                        }else{
-                            result_container.children[0].innerText = 'Raid Result';
-                            result_container.children[1].innerText = 'Outcome Of The Raid';
-
-                            outcome.innerHTML = '<div class="score-point">0<label for="" class="point-type">No point</label></div><div class="score-point">1<label for="" class="point-type">Touch</label></div><div class="score-point">2<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">3<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">4<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">5<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">6<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">7<label for="" class="point-type">Touch / Extra</label></div><div class="score-point">8<label for="" class="point-type">Touch + Bonus</label></div><div class="score-point">9<label for="" class="point-type">Touch + All Out</label></div><div class="score-point">10<label for="" class="point-type">Touch + Bonus + All Out</label></div>';
-                            score_point();
-                        }
-                    }
-                })
-            })
-
+            
             let raidTimer;
             let timeLeft = 30;
 
             serveBtn.addEventListener('click', () => {
-                const isStarting = serveBtn.innerText === 'Start Timer';
+                const isStarting = serveBtn.innerText === 'Start Raid Timer';
 
                 if (isStarting) {
                     serveBtn.innerText = 'Cancel';
                     startRaidTimer();
                 } else {
-                    serveBtn.innerText = 'Start Timer';
+                    serveBtn.innerText = 'Start Raid Timer';
                     document.querySelector('.timer').innerText = '';
                     cancelRaidTimer();
                 }
@@ -1725,7 +1727,7 @@
                     if (timeLeft <= 0) {
                         clearInterval(raidTimer);
                         document.querySelector('.timer').innerText = '';
-                        serveBtn.innerText = 'Start Timer';
+                        serveBtn.innerText = 'Start Raid Timer';
                         
 
                         // Set long beep sound source
@@ -1748,7 +1750,7 @@
             function cancelRaidTimer() {
                 clearInterval(raidTimer);
                 document.querySelector('.timer').innerText = '';
-                serveBtn.innerText = 'Start Timer';
+                serveBtn.innerText = 'Start Raid Timer';
             }
 
         // Disable F5 and Ctrl+R keyboard shortcuts
