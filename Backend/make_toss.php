@@ -71,6 +71,13 @@ $score_log = [
       "bowlers" => [],
       "total_runs" => 0,
       "wickets" => 0,
+      "Extras" => [
+        "B" => 0,
+        "NB" => 0,
+        "LB" => 0,
+        "W" => 0,
+        "total_extras" => 0
+      ],
       "overs_completed" => "0.0",
       "completed" => false   
     ],
@@ -109,6 +116,13 @@ $score_log = [
       "bowlers" => [],
       "total_runs" => 0,
       "wickets" => 0,
+      "Extras" => [
+        "B" => 0,
+        "NB" => 0,
+        "LB" => 0,
+        "W" => 0,
+        "total_extras" => 0
+      ],
       "overs_completed" => "0.0",
       "completed" => false,
     ]

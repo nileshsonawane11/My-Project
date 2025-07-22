@@ -93,14 +93,38 @@ if($person == 'Bowler'){
     saveHistorySnapshot($conn, $match_id, $score_log);
 
 }else if($person == 'Striker'){
-    $score_log[$Inning_type][$Inning]['openers']['current_striker']['id']=$player_id;
-    $score_log[$Inning_type][$Inning]['openers']['current_striker']['style']=$player_Style;
+    $score_log[$Inning_type][$Inning]['openers']['current_striker']['id'] = $player_id;
+    $score_log[$Inning_type][$Inning]['openers']['current_striker']['style'] = $player_Style;
+
+    // Also add to batmans if not already present
+    $already_present = false;
+    foreach ($score_log[$Inning_type][$Inning]['batmans'] as $b) {
+        if ($b['id'] === $player_id) {
+            $already_present = true;
+            break;
+        }
+    }
+    if (!$already_present) {
+        $score_log[$Inning_type][$Inning]['batmans'][] = $score_log[$Inning_type][$Inning]['openers']['current_striker'];
+    }
 
     saveHistorySnapshot($conn, $match_id, $score_log);
 
-}else if($person == 'Non-Striker'){
-    $score_log[$Inning_type][$Inning]['openers']['current_non_striker']['id']=$player_id;
-    $score_log[$Inning_type][$Inning]['openers']['current_non_striker']['style']=$player_Style;
+} else if($person == 'Non-Striker'){
+    $score_log[$Inning_type][$Inning]['openers']['current_non_striker']['id'] = $player_id;
+    $score_log[$Inning_type][$Inning]['openers']['current_non_striker']['style'] = $player_Style;
+
+    // Also add to batmans if not already present
+    $already_present = false;
+    foreach ($score_log[$Inning_type][$Inning]['batmans'] as $b) {
+        if ($b['id'] === $player_id) {
+            $already_present = true;
+            break;
+        }
+    }
+    if (!$already_present) {
+        $score_log[$Inning_type][$Inning]['batmans'][] = $score_log[$Inning_type][$Inning]['openers']['current_non_striker'];
+    }
 
     saveHistorySnapshot($conn, $match_id, $score_log);
 }

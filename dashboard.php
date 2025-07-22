@@ -1241,7 +1241,8 @@
         }
 
         // Open dialog for password
-        function openDialog(button) {
+        function openDialog(button, event) {
+            if (event) event.stopPropagation();
             const dialog = document.getElementById("startMatchDialog");
             dialog.showModal();
 
@@ -1358,13 +1359,16 @@
         //open option container
         let add_container = document.querySelector('.add-container');
         let plus_sign = document.querySelector('.plus');
-        plus_sign.addEventListener('click', function () {
-            console.log("clicked")
-            //add_container.style.display = "flex";
-            add_container.classList.add('active');
-            opacity.style.display = 'block';
-            plus_sign.style.display = 'none';
-        });
+        if(plus_sign){
+            plus_sign.addEventListener('click', function () {
+                console.log("clicked")
+                //add_container.style.display = "flex";
+                add_container.classList.add('active');
+                opacity.style.display = 'block';
+                plus_sign.style.display = 'none';
+            });
+        }
+        
 
         //close option container
         let close_container = document.querySelector('.close-icon');
@@ -1413,6 +1417,12 @@
             plus_sign.style.display = 'block';
         }
 
+        let open_scoreboard = (el) => {
+            let match = el.getAttribute('data-match_id');
+            console.log(match);
+            console.log(SportName);
+            window.location.href = `./Frontend/${SportName}/scoreboard.php?match_id=${match}`;
+        }
     </script>
 </body>
 </html>

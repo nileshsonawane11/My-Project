@@ -16,7 +16,7 @@ if ($selecteddecision == "SERVE") {
     $serve  = $selectedteam;
     $court = ($row['team_1'] == $serve) ? $row['team_2'] : $row['team_1'];
 } else if ($selecteddecision == "COURT") {
-    $court = $selectedteam;
+    $bowl = $selectedteam;
     $serve  = ($row['team_1'] == $court) ? $row['team_2'] : $row['team_1'];
 }
 
@@ -28,6 +28,7 @@ $score_log = [
     "team2_score" => 0,
     "total_sets" => $sets,
     "points_required" => $points,
+    'current_serve' => $serve,
     "sets_won" => [
         "team1" => 0,
         "team2" => 0
@@ -44,6 +45,7 @@ for ($i = 1; $i <= $sets; $i++) {
         "team2_points" => 0,
         "serving_team" => null,  // 'team1' or 'team2'
         "set_completed" => false,
+        "points_required" => $points,
         "rallies" => [] // optional
     ];
 }

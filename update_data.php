@@ -48,7 +48,7 @@ if($for == "dashboard"){
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
 
-                echo "<div class='game-info' data-match_id='{$row['match_id']}'>";
+                echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='open_scoreboard(this)'>";
                 echo "<div class='match-data'>";
 
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
@@ -95,12 +95,20 @@ if($for == "dashboard"){
 
                     echo "<div class='strt-btn'>";
                     
-                    $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    $scorer_emails = explode(",", $scorers[0]);
+                    $scorers = [];
+
+                    if (!empty($row['scorers'])) {
+                        $decoded = json_decode($row['scorers'], true); // decode as array
+                        if (is_array($decoded)) {
+                            $scorers = $decoded;
+                        }
+                    }
+
+                    $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
                     $session_email = $_SESSION['email'];
 
                     if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
-                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this)'>Start</button></div>";
+                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
                 echo "</div>";
@@ -120,7 +128,7 @@ if($for == "dashboard"){
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
 
-                echo "<div class='game-info' data-match_id='{$row['match_id']}'>";
+                echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='open_scoreboard(this)'>";
                 echo "<div class='match-data'>";
 
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
@@ -172,7 +180,7 @@ if($for == "dashboard"){
                     $session_email = $_SESSION['email'];
 
                     if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
-                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this)'>Start</button></div>";
+                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
 
