@@ -595,7 +595,7 @@ function getWicketBallDetails($balls, $player_id) {
             height: max-content;
             display: flex;
             flex-direction: row;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: flex-start;
             margin: 15px 0px;
             gap: 10px;
@@ -771,6 +771,9 @@ function getWicketBallDetails($balls, $player_id) {
         .playername{
             color: var(--primary-dark);
             font-weight: 500;
+        }
+        #fall-of-wickets{
+            width: 100%;
         }
         .fall-of-wickets{
             width: 100%;
@@ -1108,7 +1111,12 @@ function getWicketBallDetails($balls, $player_id) {
         .out-by{
             width: 140px;
         }
-
+        .batsmanStats{
+            width: 100%;
+        }
+        #bowler-stats{
+            width: 100%;
+        }
         @media(max-width: 600px) {
             .nav-content{
                 display: flex;
@@ -1839,7 +1847,7 @@ function getWicketBallDetails($balls, $player_id) {
                         }
                 ?>
 
-                <section id="team1">
+                <section id="team1" data-team = '<?php echo $batting_team; ?>'>
                     <div class="bat-data">
                         <div class="team-container">
                             <div class="team-name"><lable class="name"><?php echo $team_names[$batting_team]; ?></lable><label for="" class="score">258/6(2.1)</label></div>
@@ -1856,7 +1864,7 @@ function getWicketBallDetails($balls, $player_id) {
                                 </div>
                                 <div class="dt2"></div>
                             </div>
-
+                        <div class="batsmanStats">
 
                         <?php
                             foreach ($batmans as $batsman) {
@@ -1923,9 +1931,9 @@ function getWicketBallDetails($balls, $player_id) {
                                     <div class="dt2"><?= $status ?></div>
                                 </div>
                                 <?php
-                            }?>
+                            }?></div>
 
-                            <div class="dt">
+                            <div class="dt" id="Extra-block">
                                 <div class="dt1">
                                     <div class="inning-batsman">Extras</div>
                                     <div class="player-runs"><?php echo $inning['Extras']['total_extras'] ?? 0; $extras = $inning['Extras'];?></div>
@@ -1934,7 +1942,7 @@ function getWicketBallDetails($balls, $player_id) {
                                 </div>
                             </div>
 
-                            <div class="dt">
+                            <div class="dt" id='total-team-score'>
                                 <?php
                                     $total_fours = 0;
                                     $total_sixes = 0;
@@ -1973,6 +1981,7 @@ function getWicketBallDetails($balls, $player_id) {
                                     <div class="player-EXT">EXT</div>
                                 </div>
                             </div>
+                            <div id="bowler-stats">
                             <?php
                                 $current_bowler = $inning['current_bowler'] ?? [];
 
@@ -2001,7 +2010,7 @@ function getWicketBallDetails($balls, $player_id) {
                                             </div>
                                         </div>";
                                 }
-                            ?>
+                            ?></div>
                     </div>
 
                     <div class="fall-of-wickets">
@@ -2013,7 +2022,7 @@ function getWicketBallDetails($balls, $player_id) {
                                     <div class="overs">OVER</div>
                                 </div>
                         </div>
-
+                        <div id="fall-of-wickets">
                         <?php
                         $fall_number = 1;
                         foreach ($batmans as $batsman) {
@@ -2058,7 +2067,7 @@ function getWicketBallDetails($balls, $player_id) {
                                 $fall_number++;
                             }
                             }
-                            ?>
+                            ?></div>
                     </div>
                 </section>
                 <?php } }?>
@@ -2301,12 +2310,17 @@ function fetchScoreboard() {
             if (typeof data === 'string') {
                 data = JSON.Parse(data);
             }
-            let balls = data['innings'][current_innings]['balls'];
+            const innings = (data?.super_over_innings && Object.keys(data.super_over_innings).length > 0)
+            ? 'super_over_innings'
+            : 'innings';
+
+            let balls = data[innings][current_innings]['balls'];
             let latestBall = balls[balls.length - 1];
             let speech = latestBall['Commentary'];
-            console.log()
+            let ball_type = latestBall['Ball Type'];
+            console.log(ball_type)
             // Only update if data has changed
-            if (data !== null && !isEqual(previousData, data,speech)) {
+            if (data !== null && !isEqual(previousData, data,speech,ball_type)) {
                 previousData = deepClone(data); // Store copy for next comparison
                 updateMatchUI(data);
                 showUpdateIndicator();
@@ -2330,7 +2344,7 @@ function speakText(text) {
     }
 
 // Deep comparison of objects (excluding circular references)
-function isEqual(obj1, obj2, text) {
+function isEqual(obj1, obj2, text,ball_type) {
     // Simple cases
     if (obj1 === obj2) return true;
     if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 === null || obj2 === null) {
@@ -2342,8 +2356,11 @@ function isEqual(obj1, obj2, text) {
     const keys2 = Object.keys(obj2);
     if (keys1.length !== keys2.length){
         
-        speakText(text);
-        smoothReload();
+        if(ball_type !== null || ball_type != ''){
+            speakText(text);
+        }
+        
+        // smoothReload();
         return false;
     } 
 
@@ -2351,8 +2368,11 @@ function isEqual(obj1, obj2, text) {
     for (const key of keys1) {
         if (!keys2.includes(key)) return false;
         if (!isEqual(obj1[key], obj2[key])){
-            speakText(text);
-            smoothReload();
+            
+            if(ball_type !== null || ball_type != ''){
+                speakText(text);
+            }
+            // smoothReload();
             
             return false;
         } 
@@ -2438,8 +2458,21 @@ function updateCommentary(data) {
         return;
     }
 
-    const currentInnings = data.innings['1st'] || data.innings['2nd'] || {};
-    const balls = currentInnings?.balls || currentInnings?.commentary || [];
+let balls = [];
+
+const regular = data.innings;
+const superOvers = data.super_over_innings;
+
+// Collect all balls from all innings in correct match order
+balls = [
+    ...(regular?.['1st']?.balls || []),
+    ...(regular?.['2nd']?.balls || []),
+    ...(superOvers?.['1st']?.balls || []),
+    ...(superOvers?.['2nd']?.balls || [])
+];
+
+// Optional: reverse to show latest first
+//balls = balls.reverse();
 
     if (balls.length === 0) {
         container.innerHTML = '<p>No commentary available yet</p>';
@@ -2498,7 +2531,301 @@ function updateCommentary(data) {
 
     container.appendChild(fragment);
     initShowMoreButton();
+    updatebatsman(data);
 }
+
+let updatebatsman = (data) => {
+    let bat_team = data['innings'][current_innings]['batting_team'];
+    let section = document.querySelector(`section[data-team="${bat_team}"]`);
+    let batmans = data['innings'][current_innings]['batmans'];
+    const ids = [...new Set([
+        ...batmans.map(player => player.id),
+        ...batmans.map(player => player.bowler).filter(Boolean),
+        ...batmans.map(player => (player.wicket_by || '').split(',')[0].trim()).filter(Boolean)
+    ])].join(',');
+
+    fetch(`../../API/get_player.php?ids=${ids}`)
+        .then(res => res.json())
+        .then(players => {
+            const container = section.querySelector('.batsmanStats');
+            container.innerHTML = ''; // clear previous if needed
+
+            batmans.forEach(batsman => {
+                const name = players[batsman.id] || 'Unknown Player';
+                const runs = batsman.runs;
+                const balls = batsman.balls_faced;
+                const fours = batsman.fours;
+                const sixes = batsman.sixes;
+                const sr = (balls > 0) ? ((runs / balls) * 100).toFixed(2) : 0;
+                let status = batsman.out_status.charAt(0).toUpperCase() + batsman.out_status.slice(1);
+
+                const wicket_type = batsman.wicket_type || '';
+                const wicket_by = batsman.wicket_by || '';
+                const bowler_id = batsman.bowler || '';
+                const bowler_name = players[bowler_id] || '';
+                
+                let fielder_name = '';
+                if (wicket_by) {
+                    const fielder_id = wicket_by.split(',')[0].trim();
+                    if (fielder_id) {
+                        fielder_name = players[fielder_id] || '';
+                    }
+                }
+
+                // Build status message
+                if (wicket_type) {
+                    if (wicket_type === "Caught" && fielder_name && bowler_name) {
+                        status = `c ${fielder_name} b ${bowler_name}`;
+                    } else if (wicket_type === "Run Out" && bowler_name) {
+                        status = `run out (${bowler_name})`;
+                    } else if (wicket_type === "Bowled" && bowler_name) {
+                        status = `b ${bowler_name}`;
+                    } else if (wicket_type === "LBW" && bowler_name) {
+                        status = `lbw b ${bowler_name}`;
+                    } else {
+                        status = `${wicket_type}${bowler_name ? ' b ' + bowler_name : ''}`;
+                    }
+                }
+
+                const notOutClass = (batsman.out_status === 'not out') ? 'not-out' : '';
+
+                const div = document.createElement('div');
+                div.className = `dt ${notOutClass}`;
+                div.innerHTML = `
+                    <div class="dt1">
+                        <div class="inning-batsman playername">${name}</div>
+                        <div class="player-runs">${runs}</div>
+                        <div class="player-balls">${balls}</div>
+                        <div class="player-fours">${fours}</div>
+                        <div class="player-sixs">${sixes}</div>
+                        <div class="player-SR">${sr}</div>
+                    </div>
+                    <div class="dt2">${status}</div>
+                `;
+
+                container.appendChild(div);
+            });
+        })
+        .catch(error => console.error('Error fetching player names:', error));
+    
+        let extra = data['innings'][current_innings]['Extras'];
+        let total_ex = extra['total_extras'];
+        let B   = extra['B'] ;
+        let LB  = extra['LB'];
+        let NB  = extra['NB'];
+        let W   = extra['W'];
+
+        let Extras = `
+                        <div class="dt1">
+                            <div class="inning-batsman">Extras</div>
+                            <div class="player-runs">${total_ex}</div>
+                            <div class="player-balls">(B: ${B}, LB: ${LB}, NB: ${NB}, W: ${W})</div>
+                            <div class="player-fours"></div>
+                        </div>`;
+
+        section.querySelector('#Extra-block').innerHTML = Extras;
+
+        let totalFours = 0;
+        let totalSixes = 0;
+
+        let balls = data.innings[current_innings]?.balls || [];
+        let total_runs = data.innings[current_innings]['total_runs'];
+        let wickets = data.innings[current_innings]['wickets'];
+
+        balls.forEach(ball => {
+            const runs = parseInt(ball.Run) || 0;
+
+            if (runs === 4) {
+                totalFours++;
+            } else if (runs === 6) {
+                totalSixes++;
+            }
+        });
+
+        let Total = `
+                    <div class="dt1">
+                        <div class="inning-batsman">TOTAL</div>
+                        <div class="player-runs">${total_runs} / ${wickets}</div>
+                        <div class="player-balls"></div>
+                        <div class="player-fours">${totalFours}</div>
+                        <div class="player-sixs">${totalSixes}</div>
+                        <div class="player-SR"></div>
+                    </div>`;
+
+        console.log(Total);
+        section.querySelector('#total-team-score').innerHTML = Total;
+
+        //Bowler Stats
+        const targetContainer = section.querySelector('#bowler-stats');
+        const innings = data['innings'] || {};
+        const superOverInnings = data['super_over_innings'] || {};
+
+        // Step 1: Collect all bowlers from all innings
+        const allBowlerInnings = {
+            [current_innings]: innings[current_innings]?.bowlers || {}
+        };
+
+        const currentBowlers = {
+            [current_innings]: innings[current_innings]?.current_bowler || {}
+        };
+
+        // Step 2: Extract all unique bowler IDs
+        const bowlerIdsSet = new Set();
+
+        for (const inningKey in allBowlerInnings) {
+            const bowlers = allBowlerInnings[inningKey];
+            for (const bowlerId in bowlers) {
+                if (bowlerId) bowlerIdsSet.add(bowlerId);
+            }
+
+            const currentId = currentBowlers[inningKey]?.id;
+            if (currentId) bowlerIdsSet.add(currentId);
+        }
+
+        const bowlerIds = Array.from(bowlerIdsSet).join(',');
+
+        // Step 3: Fetch names and render UI
+        fetch(`../../API/get_player.php?ids=${bowlerIds}`)
+            .then(res => res.json())
+            .then(playerMap => {
+                targetContainer.innerHTML = '';
+
+                for (const inningKey in allBowlerInnings) {
+                    const bowlerStats = allBowlerInnings[inningKey];
+                    const currentBowler = currentBowlers[inningKey];
+
+                    for (const bowlerId in bowlerStats) {
+                        let bowlerData = bowlerStats[bowlerId];
+
+                        // Prefer current_bowler data if ID matches
+                        if (currentBowler.id && currentBowler.id === bowlerId) {
+                            bowlerData = currentBowler;
+                        }
+
+                        const bowlerName = playerMap[bowlerId] || 'Unknown Bowler';
+                        const overs = bowlerData.overs_bowled || '0.0';
+                        const maidens = bowlerData.maidens || 0;
+                        const runs = bowlerData.runs_conceded || 0;
+                        const wickets = bowlerData.wickets || 0;
+
+                        const oversFloat = parseFloat(overs) || 0;
+                        const economyRate = (oversFloat > 0) ? (runs / oversFloat).toFixed(2) : '0.00';
+
+                        const div = document.createElement('div');
+                        div.className = 'dt';
+                        div.innerHTML = `
+                            <div class="dt1">
+                                <div class="inning-batsman playername">${bowlerName}</div>
+                                <div class="player-runs">${overs}</div>
+                                <div class="player-balls">${maidens}</div>
+                                <div class="player-fours">${runs}</div>
+                                <div class="player-sixs">${wickets}</div>
+                                <div class="player-SR">${economyRate}</div>
+                                <div class="player-EXT">0</div>
+                            </div>
+                        `;
+                        targetContainer.appendChild(div);
+                        console.log(div)
+                    }
+                }
+            })
+            .catch(err => console.error("Error fetching bowler names:", err));
+
+        //Fall Of Wickets
+        // 1. Collect all unique player IDs (batsman, bowler, fielder)
+const batsmanIds = batmans
+    .filter(b => b.out_status !== 'not out')
+    .map(b => b.id);
+
+const bowlerIds2 = batmans
+    .filter(b => b.out_status !== 'not out')
+    .map(b => b.bowler)
+    .filter(Boolean);
+
+const fielderIds = batmans
+    .filter(b => b.out_status !== 'not out' && b.wicket_by)
+    .map(b => b.wicket_by.split(',')[0].trim())
+    .filter(Boolean);
+
+const allIds = [...new Set([...batsmanIds, ...bowlerIds2, ...fielderIds])];
+const idsParam = allIds.join(',');
+
+// 2. Fetch player names using your API
+fetch(`../../API/get_player.php?ids=${idsParam}`)
+    .then(res => res.json())
+    .then(players => {
+        // 3. Render Fall of Wickets block
+        let fall_number = 1;
+        const fallOfWicketsContainer = section.querySelector('#fall-of-wickets');
+        fallOfWicketsContainer.innerHTML = '';
+
+        batmans.forEach(batsman => {
+            if (batsman.out_status !== 'not out') {
+                const playerId = batsman.id;
+                const name = players[playerId] || 'Unknown Player';
+
+                const bowlerId = batsman.bowler || '';
+                const wicketType = batsman.wicket_type || '';
+                const wicketBy = batsman.wicket_by || '';
+
+                const bowlerName = players[bowlerId] || '';
+                let fielderName = '';
+                if (wicketBy) {
+                    const fielderId = wicketBy.split(',')[0].trim();
+                    fielderName = players[fielderId] || '';
+                }
+
+                let outBy = '';
+                if (wicketType === "Caught" && fielderName && bowlerName) {
+                    outBy = `c ${fielderName} b ${bowlerName}`;
+                } else if (wicketType === "Run Out" && bowlerName) {
+                    outBy = `run out (${bowlerName})`;
+                } else if (wicketType === "Bowled" && bowlerName) {
+                    outBy = `b ${bowlerName}`;
+                } else if (wicketType === "LBW" && bowlerName) {
+                    outBy = `lbw b ${bowlerName}`;
+                } else {
+                    outBy = bowlerName ? `b ${bowlerName}` : 'Unknown';
+                }
+
+                // Find ball where wicket happened
+                let wicket_over = '-';
+                let wicket_runs = '-';
+
+                for (let ball of balls) {
+                    if (
+                        ball['Ball Type'] === 'Wicket' &&
+                        ball['Out Player'] === playerId
+                    ) {
+                        let wickets = ball['Wickets'] ?? '-';
+                        let totalScore = ball['TotalScore'] ?? '-';
+                        wicket_over = ball['overs_completed'] ?? '-';
+                        wicket_runs = `${totalScore}-${wickets}`;
+                        break;
+                    }
+                }
+
+                // Create HTML
+                const div = document.createElement('div');
+                div.className = 'dt';
+                div.innerHTML = `
+                    <div class="inning-batsman playername">${name}</div>
+                    <div class="out-by">${outBy}</div>
+                    <div class="score-and-over">
+                        <div class="score">${wicket_runs}</div>
+                        <div class="overs">${wicket_over}</div>
+                    </div>
+                `;
+
+                fallOfWicketsContainer.appendChild(div);
+                fall_number++;
+            }
+        });
+    })
+    .catch(err => console.error('Error fetching player names:', err));
+
+}
+
 
 function initShowMoreButton() {
     const container = document.querySelector('.comm-data');

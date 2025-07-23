@@ -525,9 +525,9 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     }
 
     // Prepare score string for database
-    $team_over = $score_log[$Inning_type][$Inning]['overs_completed'];
-    $team_runs = $score_log[$Inning_type][$Inning]['total_runs'];
-    $team_wickets = $score_log[$Inning_type][$Inning]['wickets'];
+    $team_over = $score_log['innings'][$Inning]['overs_completed'];
+    $team_runs = $score_log['innings'][$Inning]['total_runs'];
+    $team_wickets = $score_log['innings'][$Inning]['wickets'];
     $score = $team_runs.'/'.$team_wickets.' ('.$team_over.'ov)';
 
     $battingTeamId = $score_log[$Inning_type][$Inning]['batting_team'];
@@ -541,7 +541,6 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     $conn->begin_transaction();
     
     try {
-        
         
         // Update team score
         $stmt = $conn->prepare("UPDATE matches SET $score_field = ? WHERE match_id = ?");
