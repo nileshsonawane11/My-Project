@@ -948,7 +948,7 @@
             <div id="close-sidebar">&times;</div>
             <div class="menu-list">
                 <div class="menu-part">
-                    <div class="menu-items"><div><p class="username"><?php echo $_SESSION['name']." (".$_SESSION['role'].") "; ?></p>
+                    <div class="menu-items"><div onclick="window.location.href=`./Frontend/profile.php`"><p class="username"><?php echo $_SESSION['name']." (".$_SESSION['role'].") "; ?></p>
                         <?php
                             $query = mysqli_query($conn,"SELECT * FROM `users` WHERE user_id = '$_SESSION[user]'");
                             $row = mysqli_fetch_assoc($query);
