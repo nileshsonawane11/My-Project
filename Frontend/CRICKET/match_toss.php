@@ -382,7 +382,6 @@
                 <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z" fill="black"/>
                 </svg>
             </div>
-            <div></div>
         </div>
         <div class="container2">
             <div class="part">

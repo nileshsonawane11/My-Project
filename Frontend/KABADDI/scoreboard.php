@@ -270,7 +270,7 @@
         .start-btn:active {
             transform: translateY(0);
         }
-        table {
+        .table {
             width: 100%;
             border: 1px solid #f0f0f0;
             border-radius: var(--radius-md);
@@ -768,6 +768,12 @@
             text-align: left;
             width: 50%;
         }
+        .error-img2 {
+            height: 74px;
+            width: 74px;
+            background-image: url("https://i.ibb.co/mVjZYxK2/Pngtree-hourglass-waiting-for-mouse-pointer-5453296.png");
+            background-size: cover;
+        }
         .popup-container{
             position: fixed;
             width: 100%;
@@ -921,6 +927,35 @@
             background: rgba(200, 55, 55, 0.1);
         }
 
+        .bowl-data table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+        }
+
+        .bowl-data th,
+        .bowl-data td {
+            border: none !important;
+            text-align: left;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .bowl-data thead th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .bowl-data tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .bowl-data,
+        .bowl-data * {
+            box-sizing: border-box;
+        }
+
         @media(max-width: 600px) {
             .nav-content{
                 display: flex;
@@ -1068,7 +1103,7 @@
 
                 <div class="info team-score">
                     <div class="team">
-                        <img src="./assets/images/teams/team1_logo.png" alt="Team 1 Name" onerror="this.style.opacity='0'">
+                        <img src="" onerror="this.style.opacity='0'">
                         Team 1 Name
                     </div>
                     <div class="score">100/2 (10.0)</div>
@@ -1076,7 +1111,7 @@
 
                 <div class="info team-score">
                     <div class="team">
-                        <img src="./assets/images/teams/team2_logo.png" alt="Team 2 Name" onerror="this.style.opacity='0'">
+                        <img src="" alt="Team 2 Name" onerror="this.style.opacity='0'">
                         Team 2 Name
                     </div>
                     <div class="score">98/3 (9.2)</div>
@@ -1085,9 +1120,7 @@
                 <div class="info">
                     <p>14 Jul 2025 | 3:00 PM</p>
                 </div>
-                <div class="info">
-                    <p>CRR : 123</p>
-                </div>
+                
                 <!-- OR if toss declared -->
                 <!--
                 <div class="info update">
@@ -1121,7 +1154,7 @@
     <div class="swiper">
         <div class="swiper-wrapper">
             <div class="swiper-slide">
-                <table>
+                <table class="table">
                     <tbody>
                         <tr>
                             <td class="title">Date & Time</td>
@@ -1153,23 +1186,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="innings">
-                    <div class="stat">VENUE STATS</div>
-                    <div class="inning-data">
-                        <div class="inning">
-                            <div class="inn-no inn-info"><div class="skew"></div> 1st Inning</div>
-                            <div class="runs inn-info">453 <label for="">Avg Runs</label></div>
-                            <div class="wicket inn-info">9 <label for="">Avg Wickets</label></div>
-                            <div class="SR inn-info">55.00 <label for="">Avg SR</label></div>
-                        </div>
-                        <div class="inning">
-                            <div class="inn-no inn-info"><div class="skew"></div> 2nd Inning</div>
-                            <div class="runs inn-info">453 <label for="">Avg Runs</label></div>
-                            <div class="wicket inn-info">9 <label for="">Avg Wickets</label></div>
-                            <div class="SR inn-info">55.00 <label for="">Avg SR</label></div>
-                        </div>
-                    </div>
-                </div>
                 <?php
                     $apiKey = "76604801ccb3576d81ddd1bca09b978a";
     $location = "Nashik";
@@ -1236,8 +1252,8 @@
 
                         <div class="ball-data">
                             <div class="ball-runs">
-                                <div class="ball">50.0</div>
-                                <div class="run">4</div>
+                                <div class="ball">1</div>
+                                <div class="run">2</div>
                             </div>
                             <div class="commentry">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur quas, optio, magnam quo nobis dolorum labore minima laborum odio veritatis explicabo maxime similique, provident accusamus asperiores placeat eveniet? Saepe, corrupti.
@@ -1263,151 +1279,38 @@
             <div class="swiper-slide">
 
                 <div class="match-not-start">
-                    <div class="error-img"><img src="https://staticg.sportskeeda.com/cricket_images/scorecard/cmc-pre-scorecard-icon.svg" alt=""></div>
+                    <div class="error-img2"></div>
                     <span class="error-text">Match has not started yet</span>
                 </div>
 
                 <section id="team1">
-                    <div class="bat-data">
-                        <div class="team-container">
-                            <div class="team-name"><lable class="name">Team 1</lable><label for="" class="score">258/6(2.1)</label></div>
-                        </div>
-                        <div class="team-data">
-                            <div class="dt">
-                                <div class="dt1 table-head">
-                                    <div class="inning-batsman">Batters</div>
-                                    <div class="player-runs">R</div>
-                                    <div class="player-balls">B</div>
-                                    <div class="player-fours">4s</div>
-                                    <div class="player-sixs">6s</div>
-                                    <div class="player-SR">SR</div>
-                                </div>
-                                <div class="dt2"></div>
-                            </div>
-
-                            <div class="dt">
-                                <div class="dt1">
-                                    <div class="inning-batsman playername">Tammy Beaumont</div>
-                                    <div class="player-runs">5</div>
-                                    <div class="player-balls">7</div>
-                                    <div class="player-fours">0</div>
-                                    <div class="player-sixs">0</div>
-                                    <div class="player-SR">71.43</div>
-                                </div>
-                                <div class="dt2">lbw b Goud</div>
-                            </div>
-
-                            <div class="dt not-out">
-                                <div class="dt1">
-                                    <div class="inning-batsman playername">Tammy Beaumont</div>
-                                    <div class="player-runs">5</div>
-                                    <div class="player-balls">7</div>
-                                    <div class="player-fours">0</div>
-                                    <div class="player-sixs">0</div>
-                                    <div class="player-SR">71.43</div>
-                                </div>
-                                <div class="dt2">Not Out</div>
-                            </div>
-
-                            <div class="dt">
-                                <div class="dt1">
-                                    <div class="inning-batsman">Extras</div>
-                                    <div class="player-runs">13</div>
-                                    <div class="player-balls">(B: 0, LB: 3, NB: 0, W: 10)</div>
-                                    <div class="player-fours"></div>
-                                    <div class="player-sixs"></div>
-                                    <div class="player-SR"></div>
-                                </div>
-                            </div>
-
-                            <div class="dt">
-                                <div class="dt1">
-                                    <div class="inning-batsman">TOTAL</div>
-                                    <div class="player-runs">258/6</div>
-                                    <div class="player-balls"></div>
-                                    <div class="player-fours">23</div>
-                                    <div class="player-sixs">0</div>
-                                    <div class="player-SR"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="bowl-data">
-                        <div class="dt">
-                                <div class="dt1 table-head">
-                                    <div class="inning-batsman">Bowlers</div>
-                                    <div class="player-runs">O</div>
-                                    <div class="player-balls">M</div>
-                                    <div class="player-fours">R</div>
-                                    <div class="player-sixs">W</div>
-                                    <div class="player-SR">ER</div>
-                                    <div class="player-EXT">EXT</div>
-                                </div>
-                            </div>
-                            <div class="dt">
-                                <div class="dt1">
-                                    <div class="inning-batsman playername">Amanjot Kaur</div>
-                                    <div class="player-runs">10</div>
-                                    <div class="player-balls">0</div>
-                                    <div class="player-fours">58</div>
-                                    <div class="player-sixs">6</div>
-                                    <div class="player-SR">2.11</div>
-                                    <div class="player-EXT">6</div>
-                                </div>
-                            </div>
-                            <div class="dt">
-                                <div class="dt1">
-                                    <div class="inning-batsman playername">Amanjot Kaur</div>
-                                    <div class="player-runs">10</div>
-                                    <div class="player-balls">0</div>
-                                    <div class="player-fours">58</div>
-                                    <div class="player-sixs">6</div>
-                                    <div class="player-SR">2.11</div>
-                                    <div class="player-EXT">6</div>
-                                </div>
-                            </div>
-                            <div class="dt">
-                                <div class="dt1">
-                                    <div class="inning-batsman playername">Amanjot Kaur</div>
-                                    <div class="player-runs">10</div>
-                                    <div class="player-balls">0</div>
-                                    <div class="player-fours">58</div>
-                                    <div class="player-sixs">6</div>
-                                    <div class="player-SR">2.11</div>
-                                    <div class="player-EXT">6</div>
-                                </div>
-                            </div>
+                        <table class="table-score">
+                            <thead>
+                                <tr class="table-head">
+                                    <th>Teams</th>
+                                    <th>FR</th>
+                                    <th>2<sup>nd</sup></th>
+                                    <th>1<sup>st</sup></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Team1</td>
+                                    <td>Win</td>
+                                    <td>23</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>Team2</td>
+                                    <td>Loss</td>
+                                    <td>20</td>
+                                    <td>15</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="fall-of-wickets">
-                        <div class="dt table-head">
-                                <div class="inning-batsman">Fall Of Wickets</div>
-                                <div class="out-by"></div>
-                                <div class="score-and-over">
-                                    <div class="score">SCORE</div>
-                                    <div class="overs">OVER</div>
-                                </div>
-                        </div>
-
-                        <div class="dt">
-                                <div class="inning-batsman playername">Amy Jones</div>
-                                <div class="out-by">b Goud</div>
-                                <div class="score-and-over">
-                                    <div class="score">1-8</div>
-                                    <div class="overs">1.2</div>
-                                </div>
-                        </div>
-
-                        <div class="dt">
-                                <div class="inning-batsman playername">Tammy Beaumont</div>
-                                <div class="out-by">lbw b Goud</div>
-                                <div class="score-and-over">
-                                    <div class="score">2-20</div>
-                                    <div class="overs">3.6</div>
-                                </div>
-                        </div>
-                    </div>
                 </section>
                 
                 <div class="feedback-cta-container">
