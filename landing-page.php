@@ -610,9 +610,9 @@
         <div class="sidebar">
             <div id="close-sidebar">&times;</div>
             <div class="menu-list">
-                <div class="list1">About</div>
-                <div class="list1">Contact</div>
-                <div class="list1">Feedback</div>
+                <div class="list1" onclick="window.location.href=`./about-us.php`">About</div>
+                <div class="list1" onclick="window.location.href=`./support.php`">Contact</div>
+                <div class="list1" onclick="window.location.href=`./feedback.php`">Feedback</div>
             </div>
         </div>
         <div>
@@ -626,9 +626,9 @@
                         <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
                     </div>
                     <div class="items list">
-                        <div class="list-items">About</div>
-                        <div class="list-items">Contact</div>
-                        <div class="list-items">Feedback</div>
+                        <div class="list-items" onclick="window.location.href=`./about-us.php`">About</div>
+                        <div class="list-items" onclick="window.location.href=`./support.php`">Contact</div>
+                        <div class="list-items" onclick="window.location.href=`./feedback.php`">Feedback</div>
                     </div>
                 </div>
             </nav>
@@ -765,8 +765,8 @@
                             </div>
             
                         </div>
-                    </div><hr>
-                    <h4 style="text-align: center;">Team :</h4>
+                    </div>
+                    <!-- <hr><h4 style="text-align: center;">Team :</h4>
                     <div class="team">
                         <div class="teammates">
                             <div class="img-border">
@@ -798,7 +798,7 @@
                             </div>
                             <p class="mem-name">Chavan Pranav</p>  
                         </div>
-                    
+                     -->
                 </div>
                 <div class="footer-legal">
                     <div class="container">

@@ -1259,6 +1259,14 @@ function getWicketBallDetails($balls, $player_id) {
                 <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
             </div>
             <div class="items">
+                <div id='commentaryIcon'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on">
+                    <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="23"/>
+                    <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                </div>
                 <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
             </div>
         </div>
@@ -2256,6 +2264,28 @@ function getWicketBallDetails($balls, $player_id) {
         });
     });
 
+    function stopCommentary() {
+                window.speechSynthesis.cancel();
+            }
+
+    let commentaryEnabled = true;
+
+        //allow and deny voice commentry
+        document.getElementById('commentaryIcon').addEventListener('click', function() {
+            commentaryEnabled = commentaryEnabled ? false : true;
+
+            if (commentaryEnabled) {
+                console.log("Commentary enabled",commentaryEnabled);
+                //  change icon color to active
+                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+            } else {
+                console.log("Commentary disabled",commentaryEnabled);
+                stopCommentary();
+                //  change icon color to muted
+                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><line x1="4" y1="4" x2="20" y2="20"stroke="#d6d6d65b"stroke-width="6"stroke-linecap="round" /><line x1="4" y1="4" x2="20" y2="20"stroke="red"stroke-width="2"stroke-linecap="round" /><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+            }
+        });
+
     //show more
 document.addEventListener("DOMContentLoaded", function () {
     const container = document.querySelector(".comm-data");
@@ -2356,7 +2386,7 @@ function isEqual(obj1, obj2, text,ball_type) {
     const keys2 = Object.keys(obj2);
     if (keys1.length !== keys2.length){
         
-        if(ball_type !== null || ball_type != ''){
+        if((ball_type !== null || ball_type != '') && commentaryEnabled){
             speakText(text);
         }
         
@@ -2369,7 +2399,7 @@ function isEqual(obj1, obj2, text,ball_type) {
         if (!keys2.includes(key)) return false;
         if (!isEqual(obj1[key], obj2[key])){
             
-            if(ball_type !== null || ball_type != ''){
+            if((ball_type !== null || ball_type != '') && commentaryEnabled){
                 speakText(text);
             }
             // smoothReload();

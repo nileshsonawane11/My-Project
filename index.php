@@ -1,5 +1,6 @@
 <?php
     session_start();
+    include './config.php';
     if(isset($_COOKIE['user'])){
       $_SESSION['user']=$_COOKIE['user'];
     }
@@ -14,9 +15,9 @@
     $stmt->bind_param("s", $current_time);
 
     if ($stmt->execute()) {
-        echo (['status' => 'success', 'message' => 'Accounts older than 24 hours deleted']);
+        // echo (['status' => 'success', 'message' => 'Accounts older than 24 hours deleted']);
     } else {
-        echo (['status' => 'error', 'message' => 'Deletion failed: ' . $stmt->error]);
+        // echo (['status' => 'error', 'message' => 'Deletion failed: ' . $stmt->error]);
     }
 
     $stmt->close();
