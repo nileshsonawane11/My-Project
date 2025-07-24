@@ -4,6 +4,23 @@
       $_SESSION['user']=$_COOKIE['user'];
     }
     $isloggedin = isset($_COOKIE['user']);
+
+    $current_time = date('Y-m-d H:i:s');
+
+    // Prepare and execute delete query
+    $query = "DELETE FROM users WHERE delete_on IS NOT NULL AND TIMESTAMPDIFF(HOUR, delete_on, ?) >= 24";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $current_time);
+
+    if ($stmt->execute()) {
+        echo (['status' => 'success', 'message' => 'Accounts older than 24 hours deleted']);
+    } else {
+        echo (['status' => 'error', 'message' => 'Deletion failed: ' . $stmt->error]);
+    }
+
+    $stmt->close();
+    $conn->close();
 ?> 
 
 <!DOCTYPE html>

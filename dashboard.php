@@ -102,7 +102,7 @@
         gap: 15px;
         width: 100%;
         padding-left: 15px;
-        padding-right: 30px;
+        padding-right: 15px;
     }
     
     #loader {
@@ -199,14 +199,14 @@
     }
     
     .menu-items .username {
-        text-align: left;
+        text-align: right;
         font-size: 14px;
         color: var(--text-light);
     }
     
     .menu-items .user-photo {
-        height: 45px;
-        width: 45px;
+        height: 50px;
+        width: 60px;
         border-radius: 50%;
         object-fit: cover;
     }
@@ -948,7 +948,7 @@
             <div id="close-sidebar">&times;</div>
             <div class="menu-list">
                 <div class="menu-part">
-                    <div class="menu-items"><div onclick="window.location.href=`./Frontend/profile.php`"><p class="username"><?php echo $_SESSION['name']." (".$_SESSION['role'].") "; ?></p>
+                    <div class="menu-items"><div onclick="window.location.href=`./profile.php`"><p class="username"><?php echo $_SESSION['name']." (".$_SESSION['role'].") "; ?></p>
                         <?php
                             $query = mysqli_query($conn,"SELECT * FROM `users` WHERE user_id = '$_SESSION[user]'");
                             $row = mysqli_fetch_assoc($query);
@@ -1017,7 +1017,7 @@
                         </svg></div>
                     </div>
 
-                    <div class="menu-items danger"><div><p>Delete Account</p><svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="menu-items danger"><div onclick='deleteAccount()';><p>Delete Account</p><svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1.375 21.625V20.5C1.375 18.0137 3.38875 16 5.875 16H10.375C12.8612 16 14.875 18.0137 14.875 20.5V21.625" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M8.125 12.625C6.2575 12.625 4.75 11.1175 4.75 9.25C4.75 7.3825 6.2575 5.875 8.125 5.875C9.9925 5.875 11.5 7.3825 11.5 9.25C11.5 11.1175 9.9925 12.625 8.125 12.625Z" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M14.875 1.375L21.625 8.125" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1387,6 +1387,18 @@
                 if(data.status === 200){
                     window.location.href = 'front-page.php';
                     alert ('You have been logged out!')
+                }
+                console.log(data)})
+            .catch(error => console.error(error));
+        }
+
+        function deleteAccount(){
+            fetch('./Backend/delete_account.php')
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 200){
+                    // window.location.href = 'front-page.php';
+                    alert ('Account will deactivate in 24 hrs.!')
                 }
                 console.log(data)})
             .catch(error => console.error(error));
