@@ -796,7 +796,10 @@
         width: 100%;
         justify-content: center;
     }
-    
+    a{
+        text-decoration: none;
+        color : black;
+    }
     @media(max-width: 1000px) {
         .game-list {
             justify-content: flex-start;
@@ -1089,10 +1092,13 @@
         <div class="main-body">
             <nav class="nav-bar">
                 <div class="nav-content">
-                    <div class="items">
-                        <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
-                        <div class="logo-name"><p class="logo-name"><span class="txt-live"><span>Live</span></span><span class="txt-strike">Strike</span></p></div>
-                    <sup class="trade-mark">TM</sup></div>
+                    <a href="javascript:location.reload()">
+                        <div class="items">
+                            <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
+                            <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
+                            <sup class="trade-mark">TM</sup>
+                        </div>
+                    </a>
 
                     <div class="items list">
 
@@ -1428,6 +1434,7 @@
             opacity.style.display = 'none';
             plus_sign.style.display = 'block';
         }
+        
 
         let open_scoreboard = (el) => {
             let match = el.getAttribute('data-match_id');

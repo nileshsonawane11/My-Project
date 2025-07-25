@@ -868,7 +868,7 @@ function getWicketBallDetails($balls, $player_id) {
         }
         .teams .playername{
             text-wrap: auto;
-            width: 110px;
+            width: 80%;
             display: flex;
             flex-direction: column;
             gap: 2px;
@@ -1117,6 +1117,106 @@ function getWicketBallDetails($balls, $player_id) {
         #bowler-stats{
             width: 100%;
         }
+         .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 60%;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            scroll-behavior: smooth;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            z-index: 99999;
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        #close-sidebar {
+            text-align: right;
+            font-size: 32px;
+            font-weight: 300;
+            margin: 15px 25px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        #opacity-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            transition: all 0.3s ease-in-out;
+        }
+        .menu-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 18px;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .menu-item:last-child:hover{
+            background : none;
+        }
+        .menu-item:hover {
+            background: rgba(250, 192, 31, 0.1);
+        }
+        .menu-item div {
+            max-width: fit-content;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-align : right;
+        }
+        .login-btn {
+            width: 130px;
+            height: 40px;
+            border-radius: 18px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            background: var(--background);
+            box-shadow: 0 4px 10px rgba(248, 57, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        a{
+            text-decoration: none;
+            color: black;
+        }
+        .trade-mark{
+            position: absolute;
+            top: 3px;
+            right: 23px;
+            font-size: 7px;
+        }
+        .l-name{
+            position: relative;
+        }
         @media(max-width: 600px) {
             .nav-content{
                 display: flex;
@@ -1216,6 +1316,9 @@ function getWicketBallDetails($balls, $player_id) {
             .line{
                 width: 100%;
             }
+            .sidebar{
+                width: 30%;
+            }
         }
 </style>
 <body>
@@ -1235,6 +1338,53 @@ function getWicketBallDetails($balls, $player_id) {
     });
     </script>
 
+    <div id="opacity-container" onclick="hide()"></div>
+
+        <div class="sidebar">
+            <div id="close-sidebar">&times;</div>
+            <div class="menu-list">
+               
+                <div class="menu-item"><div><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23.25 9L14.5 0.25V5.25C5.75 6.5 2 12.75 0.75 19C3.875 14.625 8.25 12.625 14.5 12.625V17.75L23.25 9Z" fill="black"/>
+                    </svg></div>
+                </div>
+
+                <div class="menu-item"><div onclick="window.location.href=`../../privacy-policy.php`"><p>Privacy Policy</p><svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 14V6.18625C21.0001 6.08758 20.9807 5.98987 20.9429 5.8987C20.9052 5.80754 20.8498 5.72473 20.78 5.655L16.845 1.72C16.7045 1.57931 16.5138 1.50018 16.315 1.5H1.75C1.55109 1.5 1.36032 1.57902 1.21967 1.71967C1.07902 1.86032 1 2.05109 1 2.25V25.75C1 25.9489 1.07902 26.1397 1.21967 26.2803C1.36032 26.421 1.55109 26.5 1.75 26.5H12.25M6 11.5H16M6 6.5H11M6 16.5H9.75" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg></div>
+                    </div>
+
+                    <div class="menu-item"><div><p>Follow Us</p><svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21.375 1.75C20.5462 1.75 19.7513 2.07924 19.1653 2.66529C18.5792 3.25134 18.25 4.0462 18.25 4.875C18.25 5.32125 18.3475 5.745 18.5175 6.13125L16.0738 8.88C15.2428 8.30862 14.2585 8.00186 13.25 8C12.325 8 11.47 8.27 10.7263 8.7075L7.88375 5.86625L7.855 5.895C8.1 5.3975 8.25 4.84375 8.25 4.25C8.25 3.50832 8.03007 2.7833 7.61801 2.16661C7.20596 1.54993 6.62029 1.06928 5.93506 0.785453C5.24984 0.501625 4.49584 0.427362 3.76841 0.572057C3.04098 0.716751 2.3728 1.0739 1.84835 1.59835C1.3239 2.1228 0.966751 2.79098 0.822057 3.51841C0.677362 4.24584 0.751625 4.99984 1.03545 5.68506C1.31928 6.37029 1.79993 6.95596 2.41661 7.36801C3.0333 7.78007 3.75832 8 4.5 8C5.09375 8 5.64625 7.85 6.145 7.605L6.11625 7.63375L8.95875 10.475C8.49978 11.2376 8.25494 12.1099 8.25 13C8.25 14.2463 8.725 15.3738 9.48125 16.2513L6.26 19.4713C5.89873 19.3275 5.5138 19.2525 5.125 19.25C3.4025 19.25 2 20.6513 2 22.375C2 24.0988 3.4025 25.5 5.125 25.5C6.8475 25.5 8.25 24.0988 8.25 22.375C8.25 21.9738 8.1675 21.5925 8.02875 21.2388L11.5763 17.6913C12.1025 17.8788 12.66 18 13.25 18C16.0075 18 18.25 15.7575 18.25 13C18.25 12.205 18.0463 11.4638 17.715 10.795L20.3612 7.81625C20.6812 7.92625 21.0188 8 21.375 8C23.0988 8 24.5 6.59875 24.5 4.875C24.5 3.15125 23.0988 1.75 21.375 1.75ZM13.25 15.5C11.8713 15.5 10.75 14.3788 10.75 13C10.75 11.6213 11.8713 10.5 13.25 10.5C14.6288 10.5 15.75 11.6213 15.75 13C15.75 14.3788 14.6288 15.5 13.25 15.5Z" fill="black"/>
+                        </svg></div>
+                    </div>
+
+                    <div class="menu-item"><div onclick="window.location.href=`../../feedback.php`"><p>Feedback</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 16.75C13.3542 16.75 13.6513 16.63 13.8913 16.39C14.1313 16.15 14.2508 15.8533 14.25 15.5C14.2492 15.1467 14.1292 14.85 13.89 14.61C13.6508 14.37 13.3542 14.25 13 14.25C12.6458 14.25 12.3492 14.37 12.11 14.61C11.8708 14.85 11.7508 15.1467 11.75 15.5C11.7492 15.8533 11.8692 16.1504 12.11 16.3913C12.3508 16.6321 12.6475 16.7517 13 16.75ZM11.75 11.75H14.25V4.25H11.75V11.75ZM0.5 25.5V3C0.5 2.3125 0.745 1.72417 1.235 1.235C1.725 0.745833 2.31333 0.500833 3 0.5H23C23.6875 0.5 24.2763 0.745 24.7663 1.235C25.2563 1.725 25.5008 2.31333 25.5 3V18C25.5 18.6875 25.2554 19.2763 24.7663 19.7663C24.2771 20.2563 23.6883 20.5008 23 20.5H5.5L0.5 25.5ZM4.4375 18H23V3H3V19.4062L4.4375 18Z" fill="black"/>
+                        </svg></div>
+                    </div>
+
+                    <div class="menu-item"><div onclick="window.location.href=`../../about-us.php`"><p>About Us</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13 0.5C6.09647 0.5 0.5 6.09641 0.5 13C0.5 19.9035 6.09647 25.5 13 25.5C19.9036 25.5 25.5 19.9036 25.5 13C25.5 6.09641 19.9036 0.5 13 0.5ZM13 23C7.48602 23 3.00002 18.514 3.00002 13C3.00002 7.48596 7.48596 3.00002 13 3.00002C18.5141 3.00002 23 7.48596 23 13C23 18.514 18.5141 23 13 23ZM14.5653 8C14.5653 8.90633 13.9054 9.56252 13.0127 9.56252C12.0839 9.56252 11.4402 8.90627 11.4402 7.98266C11.4402 7.09496 12.1013 6.43754 13.0127 6.43754C13.9054 6.43754 14.5653 7.09496 14.5653 8ZM11.7528 11.75H14.2527V19.25H11.7528V11.75Z" fill="black"/>
+                        </svg></div>
+                    </div>
+
+                    <div class="menu-item"><div onclick="window.location.href=`../../support.php`"><p>Support</p><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 16.375C20.4375 16.375 18.9375 16.125 17.5375 15.6625C17.4125 15.625 17.275 15.6 17.15 15.6C16.825 15.6 16.5125 15.725 16.2625 15.9625L13.5125 18.7125C9.96717 16.9093 7.08361 14.0301 5.275 10.4875L8.025 7.725C8.375 7.3875 8.475 6.9 8.3375 6.4625C7.86415 5.02237 7.62363 3.51593 7.625 2C7.625 1.3125 7.0625 0.75 6.375 0.75H2C1.3125 0.75 0.75 1.3125 0.75 2C0.75 13.7375 10.2625 23.25 22 23.25C22.6875 23.25 23.25 22.6875 23.25 22V17.625C23.25 16.9375 22.6875 16.375 22 16.375ZM3.2875 3.25H5.1625C5.25 4.35 5.4375 5.4375 5.7375 6.4875L4.2375 8C3.725 6.4875 3.4 4.9 3.2875 3.25ZM20.75 20.7125C19.1 20.6 17.5 20.275 16 19.7625L17.5 18.2625C18.5625 18.5625 19.65 18.75 20.75 18.825V20.7125ZM12 0.75V13.25L15.75 9.5H23.25V0.75H12ZM20.75 7H14.5V3.25H20.75V7Z" fill="black"/>
+                        </svg></div>
+                    </div>
+                    <?php
+                        if(!isset($_SESSION['user'])){
+                    ?>
+                    <div class="menu-item">
+                        <button class="login-btn" onclick="window.location.href=`../../front-page.php`">Sign In</button>
+                    </div>
+                    <?php
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
 
     <div class="popup-container">
         <div id="team-feedback" open>
@@ -1254,10 +1404,13 @@ function getWicketBallDetails($balls, $player_id) {
 
     <nav class="nav-bar">
         <div class="nav-content">
-            <div class="items">
-                <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
-                <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
-            </div>
+            <a href="javascript:location.reload()">
+                <div class="items">
+                    <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
+                    <div class="l-name"><div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
+                    <sup class="trade-mark">TM</sup></div>
+                </div>
+            </a>
             <div class="items">
                 <div id='commentaryIcon'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on">
@@ -2131,56 +2284,67 @@ function getWicketBallDetails($balls, $player_id) {
                     </div>
 
                     <div class="teams">
-                        <div class="team1">
-                            <?php
-                                $Team1_id = $team1['t_id'];
-                                $team1_query = mysqli_query($conn,"SELECT * FROM `players` WHERE team_id = '$Team1_id'");
-                                if(mysqli_num_rows($team1_query)){
-                                    while($row = mysqli_fetch_assoc($team1_query)){
-                            ?>
-                            <div class="squad-player">
-                                <div class="playername"><?php echo $row['player_name']; ?><span class="role">all</span>  </div>
-                                <div class="playerimg">
-                                    <?php
-                                        if(!empty($row['photo'])){
-                                            echo "<img src='../../assets/images/users/{$row['photo']}' alt='{$row['player_name']}' onerror=\"this.style.opacity='0'\">";
-                                        }else{
-                                            echo "<img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s' onerror=\"this.style.opacity='0'\">";
+                        <div class="teams">
+                        <?php
+                            $teams = [$team1, $team2];
+                            foreach ($teams as $index => $team) {
+                                $team_id = $team['t_id'];
+                                $result = mysqli_query($conn, "SELECT * FROM `players` WHERE `team_id` = '$team_id'");
+                                $teamClass = $index === 0 ? 'team1' : 'team2';
+                                echo "<div class='$teamClass'>";
+                                if (mysqli_num_rows($result)) {
+                                    $count = 0;
+                                    while ($row2 = mysqli_fetch_assoc($result)) {
+                                        $user_id = $row2['user_id'];
+
+                                        // First check users table
+                                        $user_query = mysqli_query($conn, "SELECT * FROM `users` WHERE `user_id` = '$user_id'");
+                                        $user_data = mysqli_fetch_assoc($user_query);
+
+                                        if (!$user_data) {
+                                            // Fallback to players table
+                                            $player_query = mysqli_query($conn, "SELECT * FROM `players` WHERE `user_id` = '$user_id'");
+                                            $player_data = mysqli_fetch_assoc($player_query);
+
+                                            if ($player_data) {
+                                                $row = [
+                                                    'fname' => $player_data['player_name'] ? explode(' ', $player_data['player_name'])[0] : 'Player',
+                                                    'lname' => $player_data['player_name'] ? (explode(' ', $player_data['player_name'])[1] ?? '') : '',
+                                                    'user_photo' => $player_data['photo']
+                                                ];
+                                            } else {
+                                                // If no record at all
+                                                $row = [
+                                                    'fname' => 'Unknown',
+                                                    'lname' => 'Player',
+                                                    'user_photo' => null
+                                                ];
+                                            }
+                                        } else {
+                                            // Use users table data
+                                            $row = [
+                                                'fname' => $user_data['fname'],
+                                                'lname' => $user_data['lname'],
+                                                'user_photo' => $user_data['user_photo']
+                                            ];
                                         }
-                                    ?>
-                                </div>
-                            </div>
-                            <?php
+
+                                        // Photo fallback
+                                        $src = !empty($row['user_photo']) ? "../../assets/images/users/{$row['user_photo']}" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+
+                                        // Output player block
+                                        echo "
+                                            <div class='squad-player'>
+                                                <div class='playername'>{$row['fname']} {$row['lname']}<span class='role'>all</span></div>
+                                                <div class='playerimg'><img src='$src' alt='{$row['fname']} {$row['lname']}' onerror=\"this.style.opacity='0'\"></div>
+                                            </div>
+                                        ";
                                     }
                                 }
-                            ?>
-                        </div>
-
-                        <div class="squad-border"></div>
-
-                        <div class="team2">
-                            <?php
-                                $Team2_id = $team2['t_id'];
-                                $team2_query = mysqli_query($conn,"SELECT * FROM `players` WHERE team_id = '$Team2_id'");
-                                if(mysqli_num_rows($team2_query)){
-                                    while($row = mysqli_fetch_assoc($team2_query)){
-                            ?>
-                            <div class="squad-player">
-                                <div class="playername"><?php echo $row['player_name']; ?><span class="role">all</span>  </div>
-                                <div class="playerimg">
-                                    <?php
-                                        if(!empty($row['photo'])){
-                                            echo "<img src='../../assets/images/users/{$row['photo']}' alt='{$row['player_name']}' onerror=\"this.style.opacity='0'\">";
-                                        }else{
-                                            echo "<img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s' onerror=\"this.style.opacity='0'\">";
-                                        }
-                                    ?>
-                                </div>
-                            </div>
-                            <?php
-                                    }
-                                }
-                            ?>
+                                echo "</div>"; // Close team div
+                                if ($index === 0) echo "<div class='squad-border'></div>"; // Border between two teams
+                            }
+                        ?>
                         </div>
                     </div>
                 </div>
@@ -2214,6 +2378,28 @@ function getWicketBallDetails($balls, $player_id) {
     const ad_container = document.querySelector('.ad');
     const matchID = <?php echo json_encode($match_id); ?>;
     const current_innings = <?php echo json_encode($current_innings); ?>;
+    //Menu Bar
+        const menu_bar = document.querySelector('.menu-bar');
+        const side = document.querySelector('.sidebar');
+        const closeside = document.querySelector('#close-sidebar');
+        const opacity = document.querySelector('#opacity-container');
+
+        menu_bar.addEventListener('click', function (e) {
+            e.preventDefault();
+            side.classList.add('active');
+            opacity.style.display = 'block';
+        });
+
+        closeside.addEventListener('click',function(){
+            side.classList.remove('active');
+            opacity.style.display = 'none';
+        });
+
+        //hide sidebar 
+        let hide = ()=>{
+            side.classList.remove('active');
+            opacity.style.display = 'none';
+        }
 
     const swiper = new Swiper(".swiper", {
         speed: 300,
