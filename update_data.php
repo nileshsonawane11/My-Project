@@ -285,7 +285,7 @@ if($for == "manage_matches"){
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
 
-                echo "<div class='game-info'>";
+                echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='edit_match(this)'>";
                 echo "<div class='match-data'>";
 
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
@@ -324,7 +324,7 @@ if($for == "manage_matches"){
                     $session_email = $_SESSION['email'];
 
                     if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
-                        echo "<div class='info'><button class='start-btn'>Start</button></div>";
+                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
                 echo "</div>";

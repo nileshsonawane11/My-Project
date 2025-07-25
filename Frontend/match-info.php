@@ -1,3 +1,46 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['user'])){
+        header('location: ./front-page.php');
+        exit();
+    }
+
+    if($_SESSION['role'] == "User"){
+        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    include '../config.php';
+
+    $match_id = $_GET['match_id'];
+
+    if (empty($match_id)) {
+        header("Location: ../dashboard.php?update=Live&sport=CRICKET"); // Change 'index.php' to your actual file
+        exit();
+    }
+
+    if (isset($_POST['confirm']) && isset($_POST['match_id'])) {
+
+        $delete = mysqli_query($conn, "DELETE FROM matches WHERE match_id = '$match_id'");
+
+        if ($delete) {
+            echo "<script>window.history.back();</script>";
+        } else {
+            echo "<script>alert('Failed to delete match');</script>";
+        }
+    }
+
+
+    // Example: assume $conn is your database connection
+    $query = mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'");
+    $result = mysqli_fetch_assoc($query);
+
+    if(mysqli_num_rows($query) == 0) {
+        echo "<script>window.history.back();</script>";
+        exit;
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -401,7 +444,7 @@
         </div>
         <div class="password">
             <div class="pass-el">
-                <input type="password" class="pass" value="ker43" disabled>
+                <input type="password" class="pass" value="<?php echo $result['password'] ?>" disabled>
                 <div id= "editToggle1">
                     <svg class="eye" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 17.1429C10.932 17.1429 9.88795 16.8412 8.99992 16.2761C8.1119 15.711 7.41976 14.9078 7.01105 13.9681C6.60234 13.0284 6.4954 11.9943 6.70376 10.9967C6.91212 9.99906 7.42642 9.08269 8.18162 8.36345C8.93683 7.64421 9.89901 7.1544 10.9465 6.95596C11.994 6.75752 13.0798 6.85937 14.0665 7.24862C15.0532 7.63787 15.8966 8.29704 16.4899 9.14278C17.0833 9.98852 17.4 10.9828 17.4 12C17.4 13.364 16.8311 14.6721 15.8184 15.6365C14.8057 16.601 13.4322 17.1429 12 17.1429ZM12 4C3.6 4 0 12 0 12C0 12 3.6 20 12 20C20.4 20 24 12 24 12C24 12 20.4 4 12 4Z" fill="black"/>
@@ -411,6 +454,15 @@
             </div>
         </div>
         <!-- Teams Display -->
+        <?php
+            $sql2 = "SELECT * FROM `teams` WHERE t_id = '{$result['team_1']}'";
+            $query = mysqli_query($conn, $sql2) or die("Error: ");
+            $team1 = mysqli_fetch_assoc($query);
+
+            $sql3 = "SELECT * FROM `teams` WHERE t_id = '{$result['team_2']}'";
+            $query3 = mysqli_query($conn, $sql3) or die("Error: ");
+            $team2 = mysqli_fetch_assoc($query3);
+        ?>
         <div class="teams-section">
             <div class="team">
                 <div class="team-logo-container">
@@ -422,7 +474,7 @@
                         <input type="file" id="team1LogoInput" class="file-input" accept="image/*">
                     </div>
                 </div>
-                <input type="text" class="team-name" value="Mumbai Indians" disabled>
+                <input type="text" class="team-name" value="<?php echo $team1['t_name']; ?>" disabled>
             </div>
             
             <div class="vs">VS</div>
@@ -437,7 +489,7 @@
                         <input type="file" id="team2LogoInput" class="file-input" accept="image/*">
                     </div>
                 </div>
-                <input type="text" class="team-name" value="Chennai Super Kings" disabled>
+                <input type="text" class="team-name" value="<?php echo $team2['t_name']; ?>" disabled>
             </div>
         </div>
         
@@ -446,43 +498,130 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">City/Town</label>
-                    <input type="text" class="form-input" value="Mumbai" disabled>
+                    <input type="text" class="form-input" value="<?php echo $result['venue']; ?>" disabled>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Ground</label>
-                    <input type="text" class="form-input" value="Wankhede Stadium" disabled>
+                    <input type="text" class="form-input" value="<?php echo $result['venue']; ?>" disabled>
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Date</label>
-                    <input type="date" class="form-input" value="2024-05-04" disabled>
+                    <input type="date" class="form-input" value="<?php echo $result['match_date']; ?>" disabled>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Time</label>
-                    <input type="time" class="form-input" value="19:30" disabled>
+                    <input type="time" class="form-input" value="<?php echo $result['start_time']; ?>" disabled>
                 </div>
             </div>
             
             <div class="fixed-info">
                 <div class="form-group">
+                    <?php
+                        $umpires = json_decode($result['umpires']);
+                        $valid_emails = array_filter($umpires);
+
+                        if (!empty($valid_emails)) {
+                            $emails_list = "'" . implode("','", $valid_emails) . "'";
+                            $query = "SELECT fname, lname, email FROM users WHERE email IN ($emails_list)";
+                            $result0 = mysqli_query($conn, $query);
+
+                            $names = [];
+
+                            while ($row = mysqli_fetch_assoc($result0)) {
+                                $names[] = $row['fname'] . ' ' . $row['lname'];
+                            }
+
+                            // Output or use the names
+                            
+                        }
+                    ?>
                     <label class="form-label">Umpires</label>
-                    <p class="name-info">Nitin Menon, Richard Illingworth</p>
+                    <p class="name-info">
+                    <?php 
+                       $count = count($names);
+                        foreach ($names as $i => $name) {
+                            echo $name;
+                            if ($i < $count - 1) {
+                                echo ', ';
+                            }
+                        };
+                    ?>
+                    </p>
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
                 <div class="form-group">
+                     <?php
+                        $commentators = json_decode($result['commentators']);
+                        $valid_emails = array_filter($commentators);
+
+                        if (!empty($valid_emails)) {
+                            $emails_list = "'" . implode("','", $valid_emails) . "'";
+                            $query = "SELECT fname, lname, email FROM users WHERE email IN ($emails_list)";
+                            $result1 = mysqli_query($conn, $query);
+
+                            $names = [];
+
+                            while ($row = mysqli_fetch_assoc($result1)) {
+                                $names[] = $row['fname'] . ' ' . $row['lname'];
+                            }
+
+                            // Output or use the names
+                            
+                        }
+                    ?>
                     <label class="form-label">Commentators</label>
-                    <p class="name-info">Harsha Bhogle, Danny Morrison</p>
+                    <p class="name-info">
+                    <?php 
+                       $count = count($names);
+                        foreach ($names as $i => $name) {
+                            echo $name;
+                            if ($i < $count - 1) {
+                                echo ', ';
+                            }
+                        };
+                    ?>
+                    </p>
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
                 <div class="form-group">
+                    <?php
+                        $scorers = json_decode($result['scorers']);
+                        $valid_emails = array_filter($scorers);
+
+                        if (!empty($valid_emails)) {
+                            $emails_list = "'" . implode("','", $valid_emails) . "'";
+                            $query = "SELECT fname, lname, email FROM users WHERE email IN ($emails_list)";
+                            $result2 = mysqli_query($conn, $query);
+
+                            $names = [];
+
+                            while ($row = mysqli_fetch_assoc($result2)) {
+                                $names[] = $row['fname'] . ' ' . $row['lname'];
+                            }
+
+                            // Output or use the names
+                            
+                        }
+                    ?>
                     <label class="form-label">Scorers</label>
-                    <p class="name-info">K Narayan Kutty, Anil Dandekar</p>
+                    <p class="name-info">
+                    <?php 
+                       $count = count($names);
+                        foreach ($names as $i => $name) {
+                            echo $name;
+                            if ($i < $count - 1) {
+                                echo ', ';
+                            }
+                        };
+                    ?>
+                    </p>
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
@@ -493,15 +632,17 @@
                 <button class="logout-btn">DELETE MATCH</button>
             </div>
     </div>
-    <div class="popup-overlay" id="popupOverlay">
+    <form method="post" class="popup-overlay" id="popupOverlay">
         <div class="popup-box" id="popupBox">
+            <input type="hidden" name="match_id" value="<?php echo $match_id; ?>"> <!-- ✅ This is required -->
+
             <p class="popup-message" id="popupMessage"></p>
             <div class="popup-actions">
-                <button class="popup-btn cancel" id="cancelBtn">Cancel</button>
-                <button class="popup-btn confirm" id="confirmBtn">Confirm</button>
+                <button type="button" class="popup-btn cancel" id="cancelBtn">Cancel</button>
+                <button type="submit" class="popup-btn confirm" id="confirmBtn" name="confirm">Confirm</button>
             </div>
         </div>
-    </div>
+    </form>
 
     <script>
         // Edit Toggle Functionality
@@ -576,12 +717,11 @@
         // Back button functionality
         function goBack() {
             // Implement your back navigation logic here
-            console.log("Going back...");
+            window.history.back();
         }
 
         const popupOverlay = document.getElementById("popupOverlay");
         const popupMessage = document.getElementById("popupMessage");
-        const confirmBtn = document.getElementById("confirmBtn");
         const cancelBtn = document.getElementById("cancelBtn");
 
         // Messages for logout
@@ -597,14 +737,6 @@
         popupMessage.innerHTML = messages[className] || "Are you sure?";
         popupOverlay.style.display = "flex";
 
-        // Handle Confirm
-        confirmBtn.onclick = () => {
-            alert("Match Deleted successfully.");
-            popupOverlay.style.display = "none";
-
-            // Optional: perform actual logout
-            // window.location.href = "/logout";
-        };
 
         cancelBtn.onclick = () => {
             popupOverlay.style.display = "none";

@@ -1217,6 +1217,126 @@ function getWicketBallDetails($balls, $player_id) {
         .l-name{
             position: relative;
         }
+        #startMatchDialog {
+            z-index: 9999;
+            position: fixed;
+            transform: translateX(-50%) translateY(-50%);
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            max-width: 500px;
+            border: none;
+            height: max-content;
+            background: white;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        #startMatchDialog::backdrop {
+            position: fixed;
+            inset: 0px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(3px);
+        }
+        
+        #content-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 25px
+        }
+        
+        #matchPasswordForm {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .form-data {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .form-data label {
+            font-size: 15px;
+            line-height: 35px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .error {
+            display: none;
+            color: #e74c3c;
+            width: 100%;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+        
+        .btns {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        #matchPassword {
+            padding: 12px 15px;
+            height: 45px;
+            outline: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #f8f8f8;
+            color: var(--text-dark);
+            font-size: 15px;
+        }
+        
+        #matchPassword:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
+        }
+
+        #title{
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .btns>* {
+            width: 110px;
+            height: 40px;
+            border-radius: 25px;
+            border: solid 1px var(--primary-light);
+            color: var(--primary-light);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        
+        .btns>*:last-child {
+            background: var(--background);
+            color: white;
+            border: none;
+        }
+        
+        .btns>*:last-child:hover {
+            background: linear-gradient(135deg, #fac01fdb, #f83900cc);
+        }
+        
+        .btns>*:first-child:hover {
+            background: rgba(250, 192, 31, 0.1);
+        }
         @media(max-width: 600px) {
             .nav-content{
                 display: flex;
@@ -1338,6 +1458,30 @@ function getWicketBallDetails($balls, $player_id) {
     });
     </script>
 
+    <dialog id="startMatchDialog">
+            <div id="content-wrapper">
+                <div class="top-container">
+                    <p id="title">Enter Password to Start Match</p>
+                </div>
+
+                <div class="body-container">
+                <form id="matchPasswordForm">
+                    <div class="form-data">
+                        <label for="matchPassword">Password:</label>
+                        <input type="text" name="" id="match_id" hidden>
+                        <input type="text" id="matchPassword" name="matchPassword" required>
+                        <div id="error-matchpassword" class="error"></div>
+                    </div>
+
+                    <div class='btns'>
+                        <button id='submit-btn' type="button" onclick="closeDialog()">Cancel</button>
+                        <button id='cancel-btn' type="submit">Start Match</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </dialog>
+
     <div id="opacity-container" onclick="hide()"></div>
 
         <div class="sidebar">
@@ -1442,7 +1586,7 @@ function getWicketBallDetails($balls, $player_id) {
         $team2 = mysqli_fetch_assoc($query3);
     ?>
     <div class="match_score">
-        <div class="game-info" data-match_id="MATCH_ID_HERE">
+        <div class="game-info" data-match_id="<?php echo $row['match_id']?>">
             <div class="match-data">
                 <div class="info">
                     <p><?php echo (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") ?></p>
@@ -3079,6 +3223,64 @@ function initShowMoreButton() {
     window.addEventListener("pageshow", function () {
     //   document.body.classList.remove("fade-out");
     });
+
+    // Open dialog for password
+        function openDialog(button, event) {
+            if (event) event.stopPropagation();
+            const dialog = document.getElementById("startMatchDialog");
+            dialog.showModal();
+
+            const match_to_start = button.closest('.game-info').getAttribute('data-match_id');
+            console.log("Match : " + match_to_start);
+
+            document.getElementById("match_id").value = match_to_start;
+        }
+
+        // Close dialog of password
+        function closeDialog() {
+            const dialog = document.getElementById("startMatchDialog");
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                el.innerHTML = '';
+                el.style.display = 'none';
+            });
+            document.getElementById("matchPasswordForm").reset();
+            dialog.close();
+        }
+
+        
+        // Variefy match password
+        document.getElementById("matchPasswordForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            password = document.getElementById("matchPassword").value;
+            match_id = document.getElementById("match_id").value;
+
+            let formdata = new FormData();
+            formdata.append('password', password.trim());
+            formdata.append('match_id', match_id);
+
+            fetch('../../Backend/ckeck-match-password.php',{
+                method : 'POST',
+                body : formdata
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                console.log(data);
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+                if(data.status != 200){
+                    let err = document.getElementById(`error-${data.field}`);
+                    err.innerHTML = data.message;
+                    err.style.display = 'block';
+                }else{
+                    window.location.href = `./match_toss.php?match_id=${match_id}`;
+                    document.getElementById("matchPasswordForm").reset();
+                    closeDialog();
+                }
+            })
+            .catch();
+        });
     </script>
 </body>
 </html>
