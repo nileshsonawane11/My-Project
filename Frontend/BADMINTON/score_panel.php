@@ -962,10 +962,10 @@
     <dialog id="half_completed">
             <div class="undo-container">
                 <div class="undo-seyup">
-                    <p class="undo-warn undo-txt">You really want to End the Set?</p>
+                    <p class="undo-warn undo-txt">You really want to End the Game?</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="undo-btn" onclick="proceed_end_set()">End Set</button>
+                    <button class="undo-btn" onclick="proceed_end_set()">End Game</button>
                 </div>
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="
@@ -1048,7 +1048,7 @@
                         <path d="M6.36196 6.62029L11.672 1.04729C11.7606 0.954302 11.8101 0.830761 11.8101 0.70229C11.8101 0.573819 11.7606 0.450279 11.672 0.357291L11.666 0.35129C11.623 0.306055 11.5713 0.270036 11.5139 0.245422C11.4566 0.220808 11.3949 0.208115 11.3325 0.208115C11.2701 0.208115 11.2083 0.220808 11.151 0.245422C11.0937 0.270036 11.0419 0.306055 10.999 0.35129L5.99896 5.59929L1.00096 0.35129C0.95799 0.306055 0.906263 0.270036 0.84893 0.245422C0.791597 0.220808 0.729857 0.208115 0.667463 0.208115C0.60507 0.208115 0.543329 0.220808 0.485996 0.245422C0.428663 0.270036 0.376937 0.306055 0.333963 0.35129L0.327963 0.357291C0.239318 0.450279 0.189867 0.573819 0.189867 0.70229C0.189867 0.830761 0.239318 0.954302 0.327963 1.04729L5.63796 6.62029C5.68466 6.6693 5.74082 6.70832 5.80305 6.73498C5.86528 6.76164 5.93227 6.77539 5.99996 6.77539C6.06766 6.77539 6.13465 6.76164 6.19688 6.73498C6.2591 6.70832 6.31527 6.6693 6.36196 6.62029Z" fill="black"/>
                     </svg>
                 </div>
-                <div class="exit-text">End Set <?php echo $current_set; ?></div>
+                <div class="exit-text">End Game <?php echo $current_set; ?></div>
             </div>
         </div>
 
@@ -1078,7 +1078,7 @@
                                     echo $t_name1['t_name'];
                                 ?>
                             </label>
-                            <label class="set">Sets : <?php echo $score_log['sets_won']['team1']; ?></label>
+                            <label class="set">Games : <?php echo $score_log['sets_won']['team1']; ?></label>
                         </div>
                     </div>
                 </div>
@@ -1102,7 +1102,7 @@
                                     echo $t_name2['t_name'];
                                 ?>
                             </label>
-                            <label class="set">Sets : <?php echo $score_log['sets_won']['team2']; ?></label>
+                            <label class="set">Games : <?php echo $score_log['sets_won']['team2']; ?></label>
                         </div>
                     </div>
                 </div>
@@ -1114,7 +1114,7 @@
 
     <div class="container2">
         <div class="image"></div>
-        <div class="current-set">Set <?php echo $current_set; ?></div>
+        <div class="current-set">Game <?php echo $current_set; ?></div>
         <div class="blur-container"></div>
 
         <div class="buttons">
