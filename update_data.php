@@ -47,6 +47,8 @@ if($for == "dashboard"){
                 $sql3 = "SELECT * FROM `teams` WHERE t_id = '{$row['team_2']}'";
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
+                
+                $score_log = json_decode($row['score_log'], true);
 
                 echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='open_scoreboard(this)'>";
                 echo "<div class='match-data'>";
@@ -79,7 +81,8 @@ if($for == "dashboard"){
 
                     if(empty($row['toss_winner'])){
                         echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
-                    }else{
+                    }else if($row['status'] == 'Live'){
+                        
 
                         $team = '';
                         if($row['toss_winner'] == $team1['t_id']){
@@ -89,6 +92,16 @@ if($for == "dashboard"){
                         }
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
+                    }else if($row['status'] == 'Completed'){
+                        $winner = $score_log['winner'];
+                        $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                        // If match is not completed and no winner is declared
+                        if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
+                            echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                        }else{
+                            echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
+                        }
+                        
                     }
 
                 echo "</div>";
@@ -128,6 +141,8 @@ if($for == "dashboard"){
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
 
+                $score_log = json_decode($row['score_log'], true);
+
                 echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='open_scoreboard(this)'>";
                 echo "<div class='match-data'>";
 
@@ -159,7 +174,8 @@ if($for == "dashboard"){
 
                     if(empty($row['toss_winner'])){
                         echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
-                    }else{
+                    }else if($row['status'] == 'Live'){
+                        
 
                         $team = '';
                         if($row['toss_winner'] == $team1['t_id']){
@@ -169,6 +185,16 @@ if($for == "dashboard"){
                         }
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
+                    }else if($row['status'] == 'Completed'){
+                        $winner = $score_log['winner'];
+                        $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                        // If match is not completed and no winner is declared
+                        if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
+                            echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                        }else{
+                            echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
+                        }
+                        
                     }
                     
                 echo "</div>";

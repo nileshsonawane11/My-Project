@@ -67,7 +67,12 @@ if($person == 'Bowler'){
             "overs_bowled" => "0.0",
             "runs_conceded" => 0,
             "wickets" => 0,
-            "maidens" => 0
+            "maidens" => 0,
+            "Extras" => [
+            "NB" => 0,
+            "W" => 0,
+            "total_extras" => 0
+            ]
         ];
 
         $bowlers[$player_id] = [
@@ -76,7 +81,12 @@ if($person == 'Bowler'){
             "overs_bowled" => "0.0",
             "runs_conceded" => 0,
             "wickets" => 0,
-            "maidens" => 0
+            "maidens" => 0,
+            "Extras" => [
+            "NB" => 0,
+            "W" => 0,
+            "total_extras" => 0
+            ]
         ];
     }
 
@@ -87,7 +97,12 @@ if($person == 'Bowler'){
         "overs_bowled" => $bowlers[$player_id]['overs_bowled'],
         "runs_conceded" => $bowlers[$player_id]['runs_conceded'],
         "wickets" => $bowlers[$player_id]['wickets'],
-        "maidens" => $bowlers[$player_id]['maidens']
+        "maidens" => $bowlers[$player_id]['maidens'],
+            "Extras" => [
+            "NB" => 0,
+            "W" => 0,
+            "total_extras" => 0
+            ]
     ];
 
     saveHistorySnapshot($conn, $match_id, $score_log);

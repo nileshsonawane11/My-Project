@@ -72,10 +72,12 @@
         }
     }
 
-    if ($current_innings) {
-        $batting_team = $score_logs['innings'][$current_innings]['batting_team'];
-        $bowling_team = $score_logs['innings'][$current_innings]['bowling_team'];
-    }
+    // if ($current_innings) {
+    //     $batting_team = $score_logs['innings'][$current_innings]['batting_team'];
+    //     $bowling_team = $score_logs['innings'][$current_innings]['bowling_team'];
+    // }
+
+    echo $match;
 
         $team1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT `t_name` FROM `teams` WHERE `t_id` = '$batting_team'"));
         $decision_bat_team = $team1['t_name'];
