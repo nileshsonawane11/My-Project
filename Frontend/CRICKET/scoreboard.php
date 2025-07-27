@@ -2801,7 +2801,7 @@ function fetchScoreboard() {
 }
 
 // Fetch every 5 seconds
-setInterval(fetchScoreboard, 1000);
+setInterval(fetchScoreboard, 1500);
 
 //speech
 function speakText(text) {

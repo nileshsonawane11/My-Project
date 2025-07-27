@@ -521,7 +521,13 @@
                 <div class="form-group">
                     <?php
                         $umpires = json_decode($result['umpires']);
-                        $valid_emails = array_filter($umpires);
+
+                        // Ensure $umpires is an array before filtering
+                        if (is_array($umpires)) {
+                            $valid_emails = array_filter($umpires);
+                        } else {
+                            $valid_emails = [];
+                        }
 
                         if (!empty($valid_emails)) {
                             $emails_list = "'" . implode("','", $valid_emails) . "'";
@@ -535,19 +541,20 @@
                             }
 
                             // Output or use the names
-                            
                         }
                     ?>
                     <label class="form-label">Umpires</label>
                     <p class="name-info">
                     <?php 
-                       $count = count($names);
-                        foreach ($names as $i => $name) {
-                            echo $name;
-                            if ($i < $count - 1) {
-                                echo ', ';
-                            }
-                        };
+                        if (!empty($valid_emails)) {
+                            $count = count($names);
+                            foreach ($names as $i => $name) {
+                                echo $name;
+                                if ($i < $count - 1) {
+                                    echo ', ';
+                                }
+                            };
+                        }
                     ?>
                     </p>
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -557,7 +564,13 @@
                 <div class="form-group">
                      <?php
                         $commentators = json_decode($result['commentators']);
-                        $valid_emails = array_filter($commentators);
+                        
+                        // Ensure $umpires is an array before filtering
+                        if (is_array($commentators)) {
+                            $valid_emails = array_filter($commentators);
+                        } else {
+                            $valid_emails = [];
+                        }
 
                         if (!empty($valid_emails)) {
                             $emails_list = "'" . implode("','", $valid_emails) . "'";
@@ -577,13 +590,15 @@
                     <label class="form-label">Commentators</label>
                     <p class="name-info">
                     <?php 
-                       $count = count($names);
-                        foreach ($names as $i => $name) {
-                            echo $name;
-                            if ($i < $count - 1) {
-                                echo ', ';
-                            }
-                        };
+                        if (!empty($valid_emails)) {
+                            $count = count($names);
+                            foreach ($names as $i => $name) {
+                                echo $name;
+                                if ($i < $count - 1) {
+                                    echo ', ';
+                                }
+                            };
+                        }
                     ?>
                     </p>
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -593,7 +608,13 @@
                 <div class="form-group">
                     <?php
                         $scorers = json_decode($result['scorers']);
-                        $valid_emails = array_filter($scorers);
+                        
+                        // Ensure $umpires is an array before filtering
+                        if (is_array($scorers)) {
+                            $valid_emails = array_filter($scorers);
+                        } else {
+                            $valid_emails = [];
+                        }
 
                         if (!empty($valid_emails)) {
                             $emails_list = "'" . implode("','", $valid_emails) . "'";
@@ -613,13 +634,15 @@
                     <label class="form-label">Scorers</label>
                     <p class="name-info">
                     <?php 
-                       $count = count($names);
-                        foreach ($names as $i => $name) {
-                            echo $name;
-                            if ($i < $count - 1) {
-                                echo ', ';
-                            }
-                        };
+                       if (!empty($valid_emails)) {
+                            $count = count($names);
+                            foreach ($names as $i => $name) {
+                                echo $name;
+                                if ($i < $count - 1) {
+                                    echo ', ';
+                                }
+                            };
+                        }
                     ?>
                     </p>
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

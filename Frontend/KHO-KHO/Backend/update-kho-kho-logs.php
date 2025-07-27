@@ -52,7 +52,7 @@ function saveHistorySnapshot($conn, $match_id, $score_log) {
     return $stmt->execute();
 }
 
-if (($out_player == null && $undo == true)) {
+if (($undo == true)) {
     global $match_id;
     
     // Start transaction
@@ -107,7 +107,7 @@ if(isset($is_complete) && $is_complete){
     $score_log['completed'] = true;
     if($score_log['team1_score'] > $score_log['team2_score']){
         $score_log['winner'] = $score_log['team1'];
-    }else{
+    }else if($score_log['team1_score'] < $score_log['team2_score']){
         $score_log['winner'] = $score_log['team2'];
     }
 
@@ -134,10 +134,10 @@ if(isset($is_complete) && $is_complete){
     }
 }
 
-if($out_player == null && $exit == true){
-    if ($score_log[$current_inning] < $score_log['total_innings']) {
+if($exit == true){
+    if ($score_log['current_inning'] < $score_log['total_innings']) {
         $score_log['current_inning'] += 1;
-    }else if($score_log[$current_inning] == $score_log['total_innings']){
+    }else if($score_log['current_inning'] == $score_log['total_innings']){
         if($score_log['team1_score'] == $score_log['team2_score']){
             echo json_encode(['status' => 200, 'message' => 'Match Completed','field'=>'is_tie']);
             exit();
@@ -181,9 +181,6 @@ if($out_player == null && $exit == true){
         $score_log['innings'][$current_inning]['out_runners'] = [];
     }
 }
-
-
-
 
 $team1_points = $score_log['team1_score'];
 $team2_points = $score_log['team2_score'];
