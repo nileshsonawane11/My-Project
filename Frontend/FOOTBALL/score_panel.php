@@ -410,7 +410,7 @@
             height: 100%;
             width: 100%;
             height: 543px;
-            transform: translateY(0);
+            transform: translateY(600px);
             overflow-y: auto;
             transition: transform 0.5s ease;
             z-index: 1000;
@@ -995,6 +995,30 @@
                 </div>
             </div>
         </dialog>
+        <dialog id="undo">
+            <div class="undo-container">
+                <div class="undo-seyup">
+                    <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M72.4125 77.036C72.9522 77.5504 73.674 77.8295 74.4194 77.812C75.1648 77.7944 75.8727 77.4815 76.3875 76.9422C84.2325 68.7185 89.0625 57.431 89.0625 44.9997C89.0625 32.5685 84.2325 21.281 76.3875 13.0572C76.1324 12.7898 75.8271 12.5753 75.4891 12.4259C75.1511 12.2764 74.787 12.195 74.4175 12.1863C74.0481 12.1776 73.6805 12.2418 73.3359 12.3751C72.9912 12.5085 72.6762 12.7084 72.4088 12.9635C72.1413 13.2186 71.9268 13.5238 71.7774 13.8618C71.6279 14.1998 71.5466 14.564 71.5378 14.9334C71.5291 15.3029 71.5933 15.6705 71.7266 16.0151C71.86 16.3598 72.0599 16.6748 72.315 16.9422C79.185 24.1422 83.4375 34.0422 83.4375 44.9997C83.4375 55.9535 79.185 65.861 72.315 73.0572C71.8006 73.5969 71.5214 74.3188 71.539 75.0641C71.5566 75.8095 71.8694 76.5174 72.4088 77.0322M17.5875 77.036C18.1273 76.5217 18.4408 75.814 18.4591 75.0687C18.4774 74.3233 18.199 73.6011 17.685 73.061C10.815 65.8572 6.5625 55.9497 6.5625 44.9997C6.5625 34.0497 10.815 24.1385 17.685 16.9422C18.2002 16.4022 18.4797 15.6796 18.4622 14.9334C18.4446 14.1873 18.1313 13.4787 17.5912 12.9635C17.0512 12.4483 16.3286 12.1687 15.5825 12.1863C14.8363 12.2039 14.1277 12.5172 13.6125 13.0572C5.7675 21.281 0.9375 32.5685 0.9375 44.9997C0.9375 57.431 5.7675 68.7185 13.6125 76.9422C14.1273 77.4815 14.8352 77.7944 15.5806 77.812C16.326 77.8295 17.0478 77.5504 17.5875 77.036ZM40.335 31.4997C40.0725 28.6872 42.24 26.2497 45 26.2497C47.76 26.2497 49.9238 28.6835 49.665 31.4997L47.8125 47.0622C47.7563 47.772 47.4365 48.4351 46.916 48.9209C46.3955 49.4067 45.712 49.6801 45 49.6872C44.288 49.6801 43.6045 49.4067 43.084 48.9209C42.5635 48.4351 42.2437 47.772 42.1875 47.0622L40.335 31.4997ZM49.6875 59.0622C49.6875 60.3054 49.1936 61.4977 48.3146 62.3768C47.4355 63.2559 46.2432 63.7497 45 63.7497C43.7568 63.7497 42.5645 63.2559 41.6854 62.3768C40.8064 61.4977 40.3125 60.3054 40.3125 59.0622C40.3125 57.819 40.8064 56.6267 41.6854 55.7477C42.5645 54.8686 43.7568 54.3747 45 54.3747C46.2432 54.3747 47.4355 54.8686 48.3146 55.7477C49.1936 56.6267 49.6875 57.819 49.6875 59.0622Z" fill="url(#paint0_linear_789_687)"/>
+                    <path d="M12.1875 45C12.1875 36.2976 15.6445 27.9516 21.7981 21.7981C27.9516 15.6445 36.2976 12.1875 45 12.1875C53.7024 12.1875 62.0484 15.6445 68.2019 21.7981C74.3555 27.9516 77.8125 36.2976 77.8125 45C77.8125 53.7024 74.3555 62.0484 68.2019 68.2019C62.0484 74.3555 53.7024 77.8125 45 77.8125C36.2976 77.8125 27.9516 74.3555 21.7981 68.2019C15.6445 62.0484 12.1875 53.7024 12.1875 45ZM45 17.8125C41.4297 17.8125 37.8943 18.5157 34.5958 19.882C31.2973 21.2483 28.3001 23.2509 25.7755 25.7755C23.2509 28.3001 21.2483 31.2973 19.882 34.5958C18.5157 37.8943 17.8125 41.4297 17.8125 45C17.8125 48.5703 18.5157 52.1057 19.882 55.4042C21.2483 58.7027 23.2509 61.6999 25.7755 64.2245C28.3001 66.7491 31.2973 68.7517 34.5958 70.118C37.8943 71.4843 41.4297 72.1875 45 72.1875C52.2106 72.1875 59.1258 69.3231 64.2245 64.2245C69.3231 59.1258 72.1875 52.2106 72.1875 45C72.1875 37.7894 69.3231 30.8742 64.2245 25.7755C59.1258 20.6769 52.2106 17.8125 45 17.8125Z" fill="url(#paint1_linear_789_687)"/>
+                    <defs>
+                    <linearGradient id="paint0_linear_789_687" x1="45" y1="12.1855" x2="45" y2="77.8127" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FAC01F"/>
+                    <stop offset="1" stop-color="#F83900"/>
+                    </linearGradient>
+                    <linearGradient id="paint1_linear_789_687" x1="45" y1="12.1875" x2="45" y2="77.8125" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FAC01F"/>
+                    <stop offset="1" stop-color="#F83900"/>
+                    </linearGradient>
+                    </defs>
+                    </svg>
+                </div>
+                <div class="undo-seyup"><p class="undo-txt">UNDO ?</p></div>
+                <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
+                <div class="undo-seyup"><button class="undo-btn" id='undo-btn' onclick="process_undo()">Yes I’m certain</button></div>
+                <div class="undo-seyup"><p class="undo-cancel" onclick="document.querySelector('#undo').close();">Cancel</p></div>
+            </div>
+        </dialog>
 
         <dialog id="start_second">
             <div class="undo-container">
@@ -1019,7 +1043,7 @@
         </div>
 
         <div class="for-exit">
-            <div class="exit">
+            <div class="exit" onclick="end_halfs()">
                 <div class="for-icon1">
                     <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M6.36196 6.62029L11.672 1.04729C11.7606 0.954302 11.8101 0.830761 11.8101 0.70229C11.8101 0.573819 11.7606 0.450279 11.672 0.357291L11.666 0.35129C11.623 0.306055 11.5713 0.270036 11.5139 0.245422C11.4566 0.220808 11.3949 0.208115 11.3325 0.208115C11.2701 0.208115 11.2083 0.220808 11.151 0.245422C11.0937 0.270036 11.0419 0.306055 10.999 0.35129L5.99896 5.59929L1.00096 0.35129C0.95799 0.306055 0.906263 0.270036 0.84893 0.245422C0.791597 0.220808 0.729857 0.208115 0.667463 0.208115C0.60507 0.208115 0.543329 0.220808 0.485996 0.245422C0.428663 0.270036 0.376937 0.306055 0.333963 0.35129L0.327963 0.357291C0.239318 0.450279 0.189867 0.573819 0.189867 0.70229C0.189867 0.830761 0.239318 0.954302 0.327963 1.04729L5.63796 6.62029C5.68466 6.6693 5.74082 6.70832 5.80305 6.73498C5.86528 6.76164 5.93227 6.77539 5.99996 6.77539C6.06766 6.77539 6.13465 6.76164 6.19688 6.73498C6.2591 6.70832 6.31527 6.6693 6.36196 6.62029Z" fill="black"/>
@@ -1163,7 +1187,7 @@
     </div>
     
     <script>
-    let match_dialogue = document.querySelector('#match_completed');
+    let match_dialogue = document.querySelector('#match_completed');    
     let start_dialogue = document.querySelector('#start_second');
     let opacity = document.querySelector('.opacity-container');
     let start_next_btn = document.querySelector('.start-next-btn');
@@ -1175,14 +1199,14 @@
     let undo = false;
     let back_decision = null;
     let match = null;
-    let current_inning = null;
+    let end_half = false;
     is_complete = false;
     
     let get_score = () => {
         let data = {
             'match_id': match,
-            'current_inning': current_inning,
             'point_taken_by': point_taken_by,
+            'Isend_half' : end_half,
             'chaser_player': chaser,
             'out_player' : out_player,
             ...(exit_inn == true ? {'exit' : exit_inn} : {}),
@@ -1192,56 +1216,82 @@
 
         console.log(data);
 
-        fetch('./Backend/update-kho-kho-logs.php',{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then((data) => {
-            console.log(data);
-            if(data.status == 200){
-                    if(data.field == 'is_complete'){
+        // fetch('./Backend/update-kho-kho-logs.php',{
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(data)
+        // })
+        // .then(response => response.json())
+        // .then((data) => {
+        //     console.log(data);
+        //     if(data.status == 200){
+        //             if(data.field == 'is_complete'){
 
-                        match_dialogue.showModal();
-                        match_dialogue.classList.add('shake');
-                        navigator.vibrate([200,100,200]);
-                        document.querySelectorAll('button:not(.undo, .undo-btn)').forEach(btn => {
-                            btn.disabled = true;
-                            btn.style.pointerEvents = 'none';
-                        });
+        //                 match_dialogue.showModal();
+        //                 match_dialogue.classList.add('shake');
+        //                 navigator.vibrate([200,100,200]);
+        //                 document.querySelectorAll('button:not(.undo, .undo-btn)').forEach(btn => {
+        //                     btn.disabled = true;
+        //                     btn.style.pointerEvents = 'none';
+        //                 });
 
-                    }else if(data.field == 'is_tie'){
+        //             }else if(data.field == 'is_tie'){
 
-                        start_dialogue.showModal();
-                        start_dialogue.classList.add('shake');
-                        navigator.vibrate([200,100,200]);
+        //                 start_dialogue.showModal();
+        //                 start_dialogue.classList.add('shake');
+        //                 navigator.vibrate([200,100,200]);
 
-                    }else if(data.field == 'empty'){
+        //             }else if(data.field == 'empty'){
 
-                        let el = document.getElementById('error-'+data.field);
-                        el.innerHTML = data.message;
-                        el.style.display = 'block';
-                        el.style.color = 'red';
-                        undo = false;
-                        setTimeout(() => {
-                            el.innerHTML = null;
-                            el.style.display = 'none';
-                        }, 2000);
-                    }else{
-                        //Bypass reload
-                        window.removeEventListener("beforeunload", preventReload);
-                        location.reload();
-                    }
+        //                 let el = document.getElementById('error-'+data.field);
+        //                 el.innerHTML = data.message;
+        //                 el.style.display = 'block';
+        //                 el.style.color = 'red';
+        //                 undo = false;
+        //                 setTimeout(() => {
+        //                     el.innerHTML = null;
+        //                     el.style.display = 'none';
+        //                 }, 2000);
+        //             }else{
+        //                 //Bypass reload
+        //                 window.removeEventListener("beforeunload", preventReload);
+        //                 location.reload();
+        //             }
                     
-                }
-        })
-        .catch(error => {
-            console.log(error);
-        })
+        //         }
+        // })
+        // .catch(error => {
+        //     console.log(error);
+        // })
     }
+
+    let cancel_end = () => {
+            let cancel = document.querySelector('#start_second');
+            cancel.close();
+            end_half = false;
+        }
+
+        let proceed_end_half = () => {
+            end_half = true;
+            raider = null;
+            get_score();
+        }
+
+    let end_halfs = () => {
+            // if(current_half != 1){
+            //     end_half = true;
+            //     raider = null;
+            //     get_score();
+            // }else{
+                let half_container = document.querySelector('#half_completed');
+                half_container.showModal();
+                half_container.classList.add('shake');
+                navigator.vibrate([1000,50,100,50,100]);
+            // }
+            
+        }
 
     document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements

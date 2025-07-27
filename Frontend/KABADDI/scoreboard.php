@@ -17,6 +17,10 @@
         }
         body{
             background-color: #f9f9f9;
+            transition: opacity 0.5s ease;
+        }
+        body.fade-out {
+            opacity: 0;
         }
         :root {
             --primary-light: #FAC01F;
@@ -83,7 +87,7 @@
             height: 150px;
             width: 100%;
             position: relative;
-            background: linear-gradient(135deg, rgba(250,192,31,0.1), rgba(248,57,0,0.1));
+            background: rgb(20 20 20 / 12%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,7 +98,18 @@
         .ad2{
             height: 60px;
             width: 100%;
-            background: linear-gradient(135deg, rgba(250,192,31,0.1), rgba(248,57,0,0.1));
+            background: rgb(20 20 20 / 12%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(248, 57, 0, 0.1);
+        }
+        .ad3{
+            height: 300px;
+            width: 600px;
+            background: rgb(20 20 20 / 12%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -107,7 +122,7 @@
             top: 15px;
             right: 15px;
             width: 25px;
-            background: rgba(248, 57, 0, 0.1);
+            background: rgb(153 153 153);
             height: 25px;
             display: flex;
             align-items: center;
@@ -128,6 +143,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: var(--shadow-sm);
+            flex-direction: column;
         }
         .menu-line{
             width: 100%;
@@ -138,7 +154,7 @@
             align-items: center;
             justify-content: center;
             position: sticky;
-            top: 60px;
+            top: 55px;
             z-index: 99;
         }
         .menu {
@@ -199,12 +215,7 @@
             cursor: pointer;
             margin: 5px 0;
             border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
             transition: transform 0.2s ease;
-        }
-        .game-info:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
         .match-data {
             display: flex;
@@ -221,6 +232,8 @@
             width: 100%;
             color: var(--text-light);
             font-size: 13px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         .team-score {
             font-size: 16px;
@@ -270,14 +283,14 @@
         .start-btn:active {
             transform: translateY(0);
         }
-        .table {
+        table {
             width: 100%;
             border: 1px solid #f0f0f0;
             border-radius: var(--radius-md);
             font-size: 14px;
-            margin: 10px 0;
             overflow: hidden;
             box-shadow: var(--shadow-sm);
+            text-align: center;
         }
 
         table td {
@@ -392,11 +405,16 @@
             justify-items: center;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
         }
         .weather-info label{
             font-size: 13px;
             text-align: center;
-            color: #888;
+            color: #b0bfff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
         }
         .weather-data{
             display: flex;
@@ -404,12 +422,16 @@
             align-items: center;
             height: 80px;
             padding: 5px;
-            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            background: linear-gradient(135deg, #5594c6, #0054a1);
             color: white;
             justify-content: space-evenly;
         }
+        .weather-icon{
+            height: 30px;
+            width: 30px;
+        }
         .weather-title {
-            background: #fafafa;
+            background: aliceblue;
             height: 40px;
             display: flex;
             align-items: center;
@@ -450,7 +472,7 @@
             height: max-content;
             display: flex;
             flex-direction: row;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: flex-start;
             margin: 15px 0px;
             gap: 10px;
@@ -515,7 +537,7 @@
             width: 100%;
             height: 40px;
             display: flex;
-            background: #fafafa;
+            background: linear-gradient(90deg, rgba(250, 192, 31, 0.1), rgba(248, 57, 0, 0.1));
             align-items: center;
             padding: 0 20px;
             box-sizing: border-box;
@@ -562,6 +584,7 @@
             justify-content: center;
             justify-content: space-between;
             padding: 10px 15px;
+            flex-wrap: wrap;
         }
         .dt2{
             width: 100%;
@@ -626,6 +649,9 @@
             color: var(--primary-dark);
             font-weight: 500;
         }
+        #fall-of-wickets{
+            width: 100%;
+        }
         .fall-of-wickets{
             width: 100%;
             display: flex;
@@ -655,7 +681,7 @@
             gap: 20px;
         }
         .fall-of-wickets .inning-batsman {
-            width: 50%;
+            width: 20%;
         }
         .teams-container{
             width: 100%;
@@ -688,6 +714,12 @@
             background: #f5f5f5;
             border-radius: 50%;
             border: 1px solid rgba(248, 57, 0, 0.1);
+            overflow: hidden;
+        }
+        .teamimg img{
+            height: 100%;
+            width: 100%;
+            object-fit:cover;
         }
         .t1, .t2{
             display: flex;
@@ -695,6 +727,9 @@
             justify-content: center;
             align-items: center;
             gap: 10px;
+        }
+        .t2{
+            flex-direction: row-reverse;
         }
         .vs {
             color: var(--text-light);
@@ -707,11 +742,10 @@
             justify-content: space-between;
             align-items: flex-start;
             padding: 15px;
-            gap: 15px;
         }
         .teams .playername{
             text-wrap: auto;
-            width: 110px;
+            width: 80%;
             display: flex;
             flex-direction: column;
             gap: 2px;
@@ -724,7 +758,6 @@
         }
         .squad-border{
             border: 1px solid #f0f0f0;
-            height: 100%;
             align-self: stretch;
         }
         .playerimg{
@@ -734,6 +767,12 @@
             border-radius: 50%;
             border: 1px solid rgba(248, 57, 0, 0.1);
             flex-shrink: 0;
+            overflow: hidden;
+        }
+        .playerimg img{
+            height: 100%;
+            width: 100%;
+            object-fit:cover;
         }
         .team2 .squad-player{
             display: flex;
@@ -744,8 +783,8 @@
         }
         .team1 .squad-player{
             display: flex;
-            align-items: center;
-            justify-content: flex-start;
+            align-items: center;      
+            justify-content: flex-end;
             flex-direction: row-reverse;
             gap: 10px;
             width: 100%;
@@ -767,12 +806,6 @@
             align-items: flex-start;
             text-align: left;
             width: 50%;
-        }
-        .error-img2 {
-            height: 74px;
-            width: 74px;
-            background-image: url("https://i.ibb.co/mVjZYxK2/Pngtree-hourglass-waiting-for-mouse-pointer-5453296.png");
-            background-size: cover;
         }
         .popup-container{
             position: fixed;
@@ -926,36 +959,290 @@
         #cmc-report-issue-button:hover {
             background: rgba(200, 55, 55, 0.1);
         }
-
-        .bowl-data table {
+        .update {
+            color: #e74c3c;
             width: 100%;
-            border-collapse: collapse;
-            font-family: Arial, sans-serif;
+            word-spacing: 2px;
+            letter-spacing: 1px;
         }
-
-        .bowl-data th,
-        .bowl-data td {
-            border: none !important;
-            text-align: left;
-            padding: 10px 12px;
+        .date-time{
+            font-weight: 700;
+            max-width: 100px;
+            font-size: 15px;
+        }
+        #toggle-button {
+            padding: 8px 16px;
+            background-color: #dddddd57;
+            backdrop-filter: blur(5px);
+            color: #000000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 14px;
-            color: #333;
         }
 
-        .bowl-data thead th {
-            background-color: #f0f0f0;
-            font-weight: bold;
+        #toggle-button:hover {
+            background-color: #dddddd57;
+            backdrop-filter: blur(5px);
+        }
+        .out-by{
+            width: 140px;
+        }
+        .batsmanStats{
+            width: 100%;
+        }
+        #bowler-stats{
+            width: 100%;
+        }
+         .sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 60%;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            scroll-behavior: smooth;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            z-index: 99999;
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        #close-sidebar {
+            text-align: right;
+            font-size: 32px;
+            font-weight: 300;
+            margin: 15px 25px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        #opacity-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            transition: all 0.3s ease-in-out;
+        }
+        .menu-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 18px;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .menu-item:last-child:hover{
+            background : none;
+        }
+        .menu-item:hover {
+            background: rgba(250, 192, 31, 0.1);
+        }
+        .menu-item div {
+            max-width: fit-content;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-align : right;
+        }
+        .login-btn {
+            width: 130px;
+            height: 40px;
+            border-radius: 18px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            background: var(--background);
+            box-shadow: 0 4px 10px rgba(248, 57, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        a{
+            text-decoration: none;
+            color: black;
+        }
+        .trade-mark{
+            position: absolute;
+            top: 3px;
+            right: 23px;
+            font-size: 7px;
+        }
+        .l-name{
+            position: relative;
+        }
+        #startMatchDialog {
+            z-index: 9999;
+            position: fixed;
+            transform: translateX(-50%) translateY(-50%);
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            max-width: 500px;
+            border: none;
+            height: max-content;
+            background: white;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        #startMatchDialog::backdrop {
+            position: fixed;
+            inset: 0px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(3px);
+        }
+        
+        #content-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 25px
+        }
+        
+        #matchPasswordForm {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .form-data {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .form-data label {
+            font-size: 15px;
+            line-height: 35px;
+            font-weight: 500;
+            color: var(--text-dark);
         }
 
-        .bowl-data tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .error {
+            display: none;
+            color: #e74c3c;
+            width: 100%;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+        
+        .btns {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        #matchPassword {
+            padding: 12px 15px;
+            height: 45px;
+            outline: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #f8f8f8;
+            color: var(--text-dark);
+            font-size: 15px;
+        }
+        
+        #matchPassword:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
         }
 
-        .bowl-data,
-        .bowl-data * {
-            box-sizing: border-box;
+        #title{
+            font-size: 18px;
+            font-weight: 500;
         }
-
+        .error-img2 {
+            height: 70px;
+            width: 70px;
+            background-image: url(https://i.ibb.co/HTggnkW2/Pngtree-hourglass-waiting-for-mouse-pointer-5453296.png);
+            background-size: cover;
+        }
+        
+        .btns>* {
+            width: 110px;
+            height: 40px;
+            border-radius: 25px;
+            border: solid 1px var(--primary-light);
+            color: var(--primary-light);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        
+        .btns>*:last-child {
+            background: var(--background);
+            color: white;
+            border: none;
+        }
+        
+        .btns>*:last-child:hover {
+            background: linear-gradient(135deg, #fac01fdb, #f83900cc);
+        }
+        
+        .btns>*:first-child:hover {
+            background: rgba(250, 192, 31, 0.1);
+        }
+        .curr_players{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .striker-non_striker,
+        .curr-bowler{
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        #striker{
+            height: 18px;
+        }
+        .total_runs{
+            font-weight: 700;
+        }
         @media(max-width: 600px) {
             .nav-content{
                 display: flex;
@@ -1001,6 +1288,10 @@
             .weather-info {
                 min-width: 80px;
             }
+            .ad3{
+                height: 150px;
+                width: 300px;
+            }
         }
 
         @media(min-width: 601px) {
@@ -1029,7 +1320,6 @@
             }
             .swiper-slide{
                 width: 100%;
-                max-width: 600px;
             }
             .weather-data{
                 height: 90px;
@@ -1039,6 +1329,21 @@
             }
             .stat{
                 height: 40px;
+            }
+            .ball-data{
+                width: 500px;
+            }
+            .comm-data{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .line{
+                width: 100%;
+            }
+            .sidebar{
+                width: 30%;
             }
         }
 </style>
