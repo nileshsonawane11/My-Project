@@ -73,7 +73,6 @@
     }
     
     .container {
-        height: 100vh;
         display: flex;
         background-color: var(--card-bg);
         box-shadow: var(--shadow-lg);

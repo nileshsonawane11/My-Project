@@ -20,7 +20,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <title>Schedule Match</title>
     <style>
         *{
@@ -687,6 +687,9 @@
         };
 
         let schedule_match = (e) => {
+            let match_btn = document.querySelector('#schedule_match');
+            match_btn.innerText = 'Proccessing...';
+            match_btn.disabled = true;
             e.preventDefault();
 
             let city = document.getElementById('city').value;
@@ -743,6 +746,8 @@
                     let el = document.getElementById(`error-${data.field}`);
                     el.innerHTML = data.message;
                     el.style.display = 'block';
+                    match_btn.innerText = 'Make Match';
+                    match_btn.disabled = false;
                 } else if (data.status == 200) {
                     password = data.pass;
 

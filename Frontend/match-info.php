@@ -283,7 +283,8 @@
             flex-direction: column;
             gap: 40px;
         }
-        .logout-btn {
+        .logout-btn,
+        .save-btn {
             display: inline-flex;
             justify-content: center;
             align-items: center;
@@ -300,7 +301,8 @@
             box-shadow: 0 4px 12px rgba(248, 57, 0, 0.2);
         }
 
-        .logout-btn:hover {
+        .logout-btn:hover,
+        .save-btn:hover {
             background-color: #e03400;
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(248, 57, 0, 0.3);
@@ -415,15 +417,35 @@
             width: 100%;
             height: 100%;
             background-color: transparent;
-            font-size: 25px;
+            font-size: 20px;
         }
 
         .pass-el {
-        height: 35px;
-        width: 120px;
-        margin-top: 30px;
-        position: relative;
-    }
+            height: 35px;
+            width: 120px;
+            margin-top: 30px;
+            position: relative;
+        }
+        .officials-frame{
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: bottom 0.8s ease;
+            z-index: 999;
+        }
+        .officials-frame.active{
+            bottom: 0;
+        }
+        .error{
+            display: none;
+            color:red; 
+            width:100%;
+            font-size:14px;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -466,7 +488,9 @@
         <div class="teams-section">
             <div class="team">
                 <div class="team-logo-container">
-                    <img id="team1Logo" class="team-logo" src="https://i.ibb.co/WvW312RQ/istockphoto-1473259144-612x612.jpg" >
+                    <?php if(!($team1['t_logo'])){ echo "<img id='team1Logo' class='team-logo'  src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' alt=''>"; }else{
+                        echo "<img id='team1Logo' class='team-logo'  src='../assets/images/teams/{$team1['t_logo']}' alt=''>";
+                    } ?>
                     <div class="team-logo-edit" onclick="document.getElementById('team1LogoInput').click()">
                         <svg width="28" height="22" viewBox="0 0 31 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M26.2918 3.24984H23.8467L22.3051 1.70817C21.4125 0.815546 19.8461 0.166504 18.5835 0.166504H12.4168C11.1542 0.166504 9.58787 0.815546 8.69525 1.70817L7.15358 3.24984H4.7085C2.15858 3.24984 0.0834961 5.32492 0.0834961 7.87484V20.2082C0.0834961 22.7581 2.15858 24.8332 4.7085 24.8332H26.2918C28.8417 24.8332 30.9168 22.7581 30.9168 20.2082V7.87484C30.9168 5.32492 28.8417 3.24984 26.2918 3.24984ZM15.5002 18.6665C14.0689 18.6663 12.6963 18.0975 11.6844 17.0853C10.6725 16.0731 10.1041 14.7004 10.1043 13.2691C10.1045 11.8379 10.6733 10.4653 11.6855 9.45338C12.6977 8.44146 14.0704 7.87309 15.5017 7.87329C16.933 7.8735 18.3055 8.44227 19.3175 9.45447C20.3294 10.4667 20.8977 11.8394 20.8975 13.2707C20.8973 14.7019 20.3286 16.0745 19.3164 17.0864C18.3042 18.0983 16.9314 18.6667 15.5002 18.6665ZM24.7502 11.4191C24.487 11.4191 24.2264 11.3673 23.9832 11.2666C23.74 11.1659 23.5191 11.0182 23.333 10.8321C23.1469 10.646 22.9993 10.4251 22.8986 10.1819C22.7978 9.93877 22.746 9.67815 22.746 9.41496C22.746 9.15177 22.7978 8.89116 22.8986 8.648C22.9993 8.40484 23.1469 8.18391 23.333 7.9978C23.5191 7.8117 23.74 7.66407 23.9832 7.56335C24.2264 7.46263 24.487 7.4108 24.7502 7.4108C25.2817 7.4108 25.7915 7.62195 26.1673 7.9978C26.5432 8.37366 26.7543 8.88342 26.7543 9.41496C26.7543 9.9465 26.5432 10.4563 26.1673 10.8321C25.7915 11.208 25.2817 11.4191 24.7502 11.4191Z" fill="var(--primary-dark)"/>
@@ -481,7 +505,9 @@
             
             <div class="team">
                 <div class="team-logo-container">
-                    <img id="team2Logo" class="team-logo" src="https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Chennai_Super_Kings_Logo.svg/1200px-Chennai_Super_Kings_Logo.svg.png" >
+                    <?php if(!($team2['t_logo'])){ echo "<img id='team2Logo' class='team-logo'  src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' alt=''>"; }else{
+                        echo "<img id='team2Logo' class='team-logo'  src='../assets/images/teams/{$team2['t_logo']}' alt=''>";
+                    } ?>
                     <div class="team-logo-edit" onclick="document.getElementById('team2LogoInput').click()">
                         <svg width="28" height="22" viewBox="0 0 31 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M26.2918 3.24984H23.8467L22.3051 1.70817C21.4125 0.815546 19.8461 0.166504 18.5835 0.166504H12.4168C11.1542 0.166504 9.58787 0.815546 8.69525 1.70817L7.15358 3.24984H4.7085C2.15858 3.24984 0.0834961 5.32492 0.0834961 7.87484V20.2082C0.0834961 22.7581 2.15858 24.8332 4.7085 24.8332H26.2918C28.8417 24.8332 30.9168 22.7581 30.9168 20.2082V7.87484C30.9168 5.32492 28.8417 3.24984 26.2918 3.24984ZM15.5002 18.6665C14.0689 18.6663 12.6963 18.0975 11.6844 17.0853C10.6725 16.0731 10.1041 14.7004 10.1043 13.2691C10.1045 11.8379 10.6733 10.4653 11.6855 9.45338C12.6977 8.44146 14.0704 7.87309 15.5017 7.87329C16.933 7.8735 18.3055 8.44227 19.3175 9.45447C20.3294 10.4667 20.8977 11.8394 20.8975 13.2707C20.8973 14.7019 20.3286 16.0745 19.3164 17.0864C18.3042 18.0983 16.9314 18.6667 15.5002 18.6665ZM24.7502 11.4191C24.487 11.4191 24.2264 11.3673 23.9832 11.2666C23.74 11.1659 23.5191 11.0182 23.333 10.8321C23.1469 10.646 22.9993 10.4251 22.8986 10.1819C22.7978 9.93877 22.746 9.67815 22.746 9.41496C22.746 9.15177 22.7978 8.89116 22.8986 8.648C22.9993 8.40484 23.1469 8.18391 23.333 7.9978C23.5191 7.8117 23.74 7.66407 23.9832 7.56335C24.2264 7.46263 24.487 7.4108 24.7502 7.4108C25.2817 7.4108 25.7915 7.62195 26.1673 7.9978C26.5432 8.37366 26.7543 8.88342 26.7543 9.41496C26.7543 9.9465 26.5432 10.4563 26.1673 10.8321C25.7915 11.208 25.2817 11.4191 24.7502 11.4191Z" fill="var(--primary-dark)"/>
@@ -557,7 +583,7 @@
                         }
                     ?>
                     </p>
-                    <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg onclick="select_person(this)" class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
@@ -587,7 +613,7 @@
                             
                         }
                     ?>
-                    <label class="form-label">Commentators</label>
+                    <label class="form-label">Commentator</label>
                     <p class="name-info">
                     <?php 
                         if (!empty($valid_emails)) {
@@ -601,7 +627,7 @@
                         }
                     ?>
                     </p>
-                    <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg onclick="select_person(this)" class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
@@ -645,14 +671,16 @@
                         }
                     ?>
                     </p>
-                    <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg onclick="select_person(this)" class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
             </div>
         </div>
+        <div class="error" id="error-datetime"></div>
         <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column; align-items: center;">
-                <button class="logout-btn">DELETE MATCH</button>
+        <button class="save-btn">SAVE CHANGES</button>        
+        <button class="logout-btn">DELETE MATCH</button>
             </div>
     </div>
     <form method="post" class="popup-overlay" id="popupOverlay">
@@ -666,15 +694,53 @@
             </div>
         </div>
     </form>
-
+    <iframe src="./select-officials.php?p=Scorers" frameborder="0" class="officials-frame"></iframe>
     <script>
         // Edit Toggle Functionality
         const toggle = document.getElementById("editToggle");
+        const matchID = <?php echo json_encode($match_id); ?>;
         let edit = false;
         const inputs = document.querySelectorAll("input:not(.file-input)");
         const logoEdits = document.querySelectorAll(".team-logo-edit");
         const pencil = document.querySelectorAll(".pencil");
         const pass = document.querySelector(".pass");
+        const save_btn = document.querySelector(".save-btn");
+        save_btn.style.display = "none";
+        let Umpires = [];
+        let Scorers = [];
+        let Commentators = [];
+        let next_page = document.querySelector('.officials-frame');
+
+        let select_person = (el) => {
+            let parent = el.closest('.form-group');
+            let text = parent.querySelector('.form-label').textContent.trim();
+            next_page.src = `./select-officials.php?p=${text}`;
+            next_page.classList.add('active');
+        };
+        
+         window.addEventListener("message", (event) => {
+            if (event.data === "closeIframe") {
+                next_page.classList.remove('active');  
+
+            }
+
+            if (event.data.type === "emailList" && (event.data.Umpires)) {
+                let arr = event.data.Umpires;
+                Umpires = arr;
+            }
+
+            if (event.data.type === "emailList" && (event.data.Scorers)) {
+                let arr = event.data.Scorers;
+                Scorers = arr;
+
+            }
+
+            if (event.data.type === "emailList" && (event.data.Commentator)) {
+                let arr = event.data.Commentator;
+                Commentators = arr;
+            }
+        });
+
         let passfield = true;
         
         // Initially hide edit buttons
@@ -694,6 +760,8 @@
                 logoEdits.forEach(el => el.style.display = "flex");
 
                 pencil.forEach(el => el.style.display = "flex");
+
+                save_btn.style.display = "block";
                 
                 // Add edit mode class
                 document.querySelector('.container').classList.add('edit-mode');
@@ -708,6 +776,8 @@
                 logoEdits.forEach(el => el.style.display = "none");
 
                 pencil.forEach(el => el.style.display = "none");
+
+                save_btn.style.display = "none";
                 
                 // Remove edit mode class
                 document.querySelector('.container').classList.remove('edit-mode');
@@ -778,7 +848,102 @@
             }
         });
 
+        save_btn.addEventListener("click", function() {
+            
+            const team1Name = document.querySelectorAll(".team-name")[0].value;
+            const team2Name = document.querySelectorAll(".team-name")[1].value;
+            const team1Logo = document.getElementById("team1LogoInput").files[0];
+            const team2Logo = document.getElementById("team2LogoInput").files[0];
+            const matchVenue = document.querySelectorAll(".form-input")[0].value;
+            const matchCity = document.querySelectorAll(".form-input")[1].value;
+            const matchDate = document.querySelectorAll(".form-input")[2].value;
+            const matchTime = document.querySelectorAll(".form-input")[3].value;
+            const matchPass = document.querySelector(".pass").value;
 
+            const formdata = new FormData();
+            formdata.append("match_id", matchID);
+            formdata.append("team1Name", team1Name);
+            formdata.append("team2Name", team2Name);
+            formdata.append("team1Logo", team1Logo);
+            formdata.append("team2Logo", team2Logo);
+            formdata.append("matchVenue", matchVenue);
+            formdata.append("matchCity", matchCity);
+            formdata.append("matchDate", matchDate);
+            formdata.append("matchTime", matchTime);
+            formdata.append("matchPass", matchPass);
+            formdata.append('Umpires[]', Umpires);
+            formdata.append('Scorers[]', Scorers);
+            formdata.append('Commentators[]', Commentators);
+
+            // for (let [key, value] of formdata.entries()) {
+            //     console.log(`${key}:`, value);
+            // }
+
+             // First schedule the match via fetch()
+            fetch('../Backend/update_match.php', {
+                method: 'POST',
+                body: formdata
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+
+                if (data.status == 409) {
+                    let el = document.getElementById(`error-${data.field}`);
+                    el.innerHTML = data.message;
+                    el.style.display = 'block';
+                } else if (data.status == 200) {
+
+                    // Send mails via sendBeacon (fire-and-forget)
+                    Scorers.forEach((scorer) => {
+                        let scorerData = {
+                            for_value: 'Scorer',
+                            game: data.game,
+                            venue: matchCity,
+                            time: matchTime,
+                            password: matchPass,
+                            date: matchDate,
+                            recipient_email: scorer
+                        };
+                        const scorerBlob = new Blob([JSON.stringify(scorerData)], { type: 'application/json' });
+                        navigator.sendBeacon('../mail.php', scorerBlob);
+                    });
+
+                    Umpires.forEach((umpire) => {
+                        let umpireData = {
+                            for_value: 'Umpire',
+                            game: data.game,
+                            venue: matchCity,
+                            time: matchTime,
+                            date: matchDate,
+                            recipient_email: umpire
+                        };
+                        const umpireBlob = new Blob([JSON.stringify(umpireData)], { type: 'application/json' });
+                        navigator.sendBeacon('../mail.php', umpireBlob);
+                    });
+
+                    const totalBeacons = Scorers.length + Umpires.length;
+
+                        if (totalBeacons > 0) {
+                            console.log("Waiting 500ms before reload");
+                            setTimeout(() => {
+                                console.log("Reloading now...");
+                                window.location.reload();
+                            }, 500);
+                        } else {
+                            console.log("Reloading immediately...");
+                            window.location.reload();
+                        }
+
+                }
+            })
+            .catch(error => console.log(error));
+        });
 
     </script>
 </body>

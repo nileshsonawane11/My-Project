@@ -611,13 +611,13 @@
                 </div>
             </div>
             <div id="error-phone" class="error"></div>
-            
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">ROLE</label>
                     <select class="form-select" id="role" disabled>
-                        <option value="Admin" <?php if ($_SESSION['role'] == 'admin') echo 'selected'; ?>>Admin</option>
-                        <option value="User" <?php if ($_SESSION['role'] == 'user') echo 'selected'; ?>>User</option>
+                        
+                        <option value="Admin" <?php if ($_SESSION['role'] == 'Admin') echo 'selected'; ?>>Admin</option>
+                        <option value="User" <?php if ($_SESSION['role'] == 'User') echo 'selected'; ?>>User</option>
                     </select>
                 </div>
                 <div class="form-group">

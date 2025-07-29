@@ -229,7 +229,9 @@ function update_score_log($conn, $raid_points, $def_points, $def_tech_point, $ra
         "current Half"      => $current_half,
         "last score"        => $last_score,
         "raid points"       => $total_raid_points,
-        "def points"       => $total_def_points
+        "def points"        => $total_def_points,
+        "team1_points"      => $score_log['team1_score'],
+        "team2_points"      => $score_log['team2_score']
     ];
 
     $score_log['halves'][$current_half]['raids'][] = $raid_log;

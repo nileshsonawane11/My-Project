@@ -45,6 +45,9 @@ if (isset($score_log['innings'][$current_inning])) {
 
     // Output or return the filtered list
     // echo json_encode($out_batsmen);
+    if($for =='Bowler'){
+        $out_batsmen = [];
+    }
 }
 ?>
 <!DOCTYPE html>

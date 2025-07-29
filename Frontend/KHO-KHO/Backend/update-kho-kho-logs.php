@@ -191,7 +191,10 @@ $score_log['innings'][$current_inning]['tags'][] = [
     'chaser_player' => $chaser_player,
     'point_taken_by' => $point_taken_by,
     'out_player' => $out_player,
-    'last score' => $last_score
+    'last score' => $last_score,
+    'team1_points' => $team1_points,
+    'team2_points' => $team2_points,
+    'current_inning' => $score_log['current_inning']
 ];
 
 saveHistorySnapshot($conn, $match_id, $score_log);

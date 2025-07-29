@@ -29,7 +29,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <title>LiveStrike</title>
     <style>
         * {
@@ -175,7 +175,7 @@
 
     <div class="container">
         <div class="logo-container">
-            <a href="https://ibb.co/Zp9j6TBS"><img class="logo" src="https://i.ibb.co/gLY2MgSd/logo.png" alt="logo" border="0"></a>         
+            <img class="logo" src="./assets/images/logo.png" alt="logo" border="0">         
             <p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p>   
         </div>
         <div class="mask">

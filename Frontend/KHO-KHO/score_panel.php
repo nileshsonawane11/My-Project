@@ -1154,7 +1154,6 @@
             <div class="history">
 
                 <?php
-                echo $current_inning;
                         $result2 = mysqli_query($conn, "SELECT score_log FROM matches WHERE match_id = '$match_id'");
                         $row2 = mysqli_fetch_assoc($result2);
                         $score_log = json_decode($row2['score_log'], true);

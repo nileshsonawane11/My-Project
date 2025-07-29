@@ -3,6 +3,10 @@
     if(isset($_SESSION['user'])){
         header('location: ./dashboard.php?update="live"&sport="CRICKET"');
     }
+
+    include './config.php';
+
+    $login_url = $client->createAuthUrl();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +17,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> 
 
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
 
     <title>Login & Register Page</title>
     <style>
@@ -575,7 +579,7 @@
             <form action="" method="post" class="register" autocomplete="on">
                 <h1>Create Account</h1>
                 <div class="social-icons">
-                    <a href="#" class="icons"><i class='bx bxl-google'></i></a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a>
@@ -593,25 +597,25 @@
                 
                     <div id="error-phone" class="error"></div>
                 
-                <input type="email" placeholder="E-mail" required name="email" id="email">
+                <input type="email" placeholder="E-mail" required name="email" id="email" autocomplete="username">
                 
                     <div id="error-email" class="error"></div>
                 <button name="send_otp" onclick="sendotp(event)" type="button" id="sendOTP" disabled style="opacity: 0.5;">Send OTP Via Email</button>
                 <label class="otptxt" for="otp">Enter OTP : </label>
                 <div class="otp-container">
-                    <input type="text" name="otp1" maxlength="1" id="otp1" oninput="moveFocus(this, 'otp2', 'next')" onkeydown="handleBackspace(event, this, 'otp1')" />
-                    <input type="text" name="otp2" maxlength="1" id="otp2" oninput="moveFocus(this, 'otp3', 'next')" onkeydown="handleBackspace(event, this, 'otp2')" />
-                    <input type="text" name="otp3" maxlength="1" id="otp3" oninput="moveFocus(this, 'otp4', 'next')" onkeydown="handleBackspace(event, this, 'otp3')" />
-                    <input type="text" name="otp4" maxlength="1" id="otp4" onkeydown="handleBackspace(event, this, 'otp4')" />
+                    <input type="number" name="otp1" maxlength="1" id="otp1" oninput="moveFocus(this, 'otp2', 'next')" onkeydown="handleBackspace(event, this, 'otp1')" />
+                    <input type="number" name="otp2" maxlength="1" id="otp2" oninput="moveFocus(this, 'otp3', 'next')" onkeydown="handleBackspace(event, this, 'otp2')" />
+                    <input type="number" name="otp3" maxlength="1" id="otp3" oninput="moveFocus(this, 'otp4', 'next')" onkeydown="handleBackspace(event, this, 'otp3')" />
+                    <input type="number" name="otp4" maxlength="1" id="otp4" onkeydown="handleBackspace(event, this, 'otp4')" />
                 </div>
                 <div id="error-otp" class="error"></div>
                 <div class="otp-btn" id="otp-btn"></div>
                 
-                <input type="password" name="password" placeholder="Password"  id="password" class='password'>
+                <input type="password" name="password" placeholder="Password"  id="password" class='password' autocomplete="password">
                 
                     <div id="error-password" class="error"></div>
                 
-                <input type="password" name="password2" placeholder="Re-Enter Password"  id="password2" class='password'>
+                <input type="password" name="password2" placeholder="Re-Enter Password"  id="password2" class='password' autocomplete="new-password">
 
                 <div class='toogle-pass'><input type="checkbox" id="showPass" onclick="showPassword()"> Show Password</div>
                 <div id="error-empty" class="error"></div>
@@ -626,7 +630,7 @@
             <form action="" method="post" class="login" autocomplete="on">
                 <h1>Sign In</h1>
                 <div class="social-icons">
-                    <a href="#" class="icons"><i class='bx bxl-google'></i></a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a>
@@ -885,6 +889,7 @@
            },10); 
 
             async function sendotp(e) {
+                let send_btn = document.getElementById('sendOTP');
                 e.preventDefault();
 
                 var role = document.getElementById('role').value;
@@ -905,6 +910,7 @@
                     role_error.style.display = 'block';
                     role_error.innerText = 'Please fill all the required fields';
                 } else {
+                    send_btn.innerText = 'Proccessing...';
                     fetch('./OTP-mail.php', {
                         method: 'POST',
                         body: JSON.stringify(data_for_OTP),
@@ -920,13 +926,14 @@
                         });
 
                         if(data.status == "error"){
-                            let send_btn = document.getElementById('sendOTP'); 
+                             
 
                             if(!send_btn){
                                 console.error("Send OTP button not found");
                                 return;
                             }
 
+                            send_btn.innerText = 'SEND OTP VIA EMAIL';
                             send_btn.setAttribute('disabled', 'true');
                             send_btn.style.opacity = '0.5';
 
@@ -936,6 +943,7 @@
                         }else{
                             sent();
                             alert(`OTP sent successfully! on ${email}`); 
+                            send_btn.innerText = 'SEND OTP VIA EMAIL';
                         }
                         console.log(data);
                     })

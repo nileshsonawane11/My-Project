@@ -19,7 +19,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <title>Schedule Match</title>
     <style>
         *{
@@ -203,7 +203,9 @@
                         <div class="img-container"><?php if(!($row)){ ?><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2.35799 13.2757L13.2757 13.2757L13.2757 2.41452C13.268 2.16688 13.3104 1.92024 13.4003 1.68938C13.4902 1.45852 13.6258 1.24819 13.799 1.07101C14.1741 0.69594 14.6828 0.485226 15.2132 0.485227C15.7436 0.485227 16.2523 0.69594 16.6274 1.07101C16.8041 1.2411 16.9442 1.4455 17.039 1.67167C17.1338 1.89783 17.1815 2.141 17.179 2.38623L17.1082 13.3181L28.1108 13.3181C28.5719 13.313 29.0174 13.4852 29.3553 13.7989C29.7304 14.174 29.9411 14.6827 29.9411 15.2131C29.9411 15.7436 29.7304 16.2523 29.3553 16.6274C29.1826 16.8151 28.9727 16.9648 28.7389 17.0671C28.5052 17.1693 28.2528 17.2219 27.9977 17.2213L17.1507 17.1506L17.1507 28.0401C17.1546 28.283 17.1104 28.5243 17.0206 28.75C16.9308 28.9757 16.7971 29.1815 16.6274 29.3553C16.2523 29.7304 15.7436 29.9411 15.2132 29.9411C14.6828 29.9411 14.1741 29.7304 13.799 29.3553C13.6223 29.1852 13.4822 28.9808 13.3874 28.7546C13.2926 28.5285 13.2449 28.2853 13.2474 28.0401L13.3181 17.1082L2.31557 17.1082C1.85445 17.1132 1.40899 16.9411 1.07106 16.6274C0.695987 16.2523 0.485273 15.7436 0.485273 15.2131C0.485273 14.6827 0.695987 14.174 1.07106 13.7989C1.41471 13.4638 1.87716 13.2757 2.35799 13.2757Z" fill="#838383"/>
                         </svg><?php }else{
-                            echo "<img src='../assets/images/teams/{$row['t_logo']}' alt=''>";
+                            if(!($row['t_logo'])){ echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' alt=''>"; }else{
+                                echo "<img src='../assets/images/teams/{$row['t_logo']}' alt=''>";
+                            }
                         } ?>
                         </div>
                         <div class="team-name"><?php if(($row)){ echo $row['t_name'];} ?></div>
@@ -227,7 +229,9 @@
                         <div class="img-container"><?php if(!($row)){ ?><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2.35799 13.2757L13.2757 13.2757L13.2757 2.41452C13.268 2.16688 13.3104 1.92024 13.4003 1.68938C13.4902 1.45852 13.6258 1.24819 13.799 1.07101C14.1741 0.69594 14.6828 0.485226 15.2132 0.485227C15.7436 0.485227 16.2523 0.69594 16.6274 1.07101C16.8041 1.2411 16.9442 1.4455 17.039 1.67167C17.1338 1.89783 17.1815 2.141 17.179 2.38623L17.1082 13.3181L28.1108 13.3181C28.5719 13.313 29.0174 13.4852 29.3553 13.7989C29.7304 14.174 29.9411 14.6827 29.9411 15.2131C29.9411 15.7436 29.7304 16.2523 29.3553 16.6274C29.1826 16.8151 28.9727 16.9648 28.7389 17.0671C28.5052 17.1693 28.2528 17.2219 27.9977 17.2213L17.1507 17.1506L17.1507 28.0401C17.1546 28.283 17.1104 28.5243 17.0206 28.75C16.9308 28.9757 16.7971 29.1815 16.6274 29.3553C16.2523 29.7304 15.7436 29.9411 15.2132 29.9411C14.6828 29.9411 14.1741 29.7304 13.799 29.3553C13.6223 29.1852 13.4822 28.9808 13.3874 28.7546C13.2926 28.5285 13.2449 28.2853 13.2474 28.0401L13.3181 17.1082L2.31557 17.1082C1.85445 17.1132 1.40899 16.9411 1.07106 16.6274C0.695987 16.2523 0.485273 15.7436 0.485273 15.2131C0.485273 14.6827 0.695987 14.174 1.07106 13.7989C1.41471 13.4638 1.87716 13.2757 2.35799 13.2757Z" fill="#838383"/>
                         </svg><?php }else{
-                            echo "<img src='../assets/images/teams/{$row['t_logo']}' alt=''>";
+                            if(!($row['t_logo'])){ echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' alt=''>"; }else{
+                                echo "<img src='../assets/images/teams/{$row['t_logo']}' alt=''>";
+                            }
                         } ?>
                         </div>
                         <div class="team-name"><?php if(($row)){ echo $row['t_name'];} ?></div>
@@ -247,6 +251,7 @@
         let team1 = '<?php echo $team1;?>';
         let team2 = '<?php echo $team2;?>';
         let next_page = document.querySelector('.match-frame');
+        let vs_txt = document.querySelector('.vs');
         const urlParams = new URLSearchParams(window.location.search);
         const game = urlParams.get('game');
 
@@ -267,17 +272,32 @@
             }
         });
 
+        function startCountdown() {
+            let i = 3;
+
+            const countdown = setInterval(() => {
+                vs_txt.innerText = i;
+                vs_txt.style.fontSize = '40px';
+                vs_txt.style.color = 'red';
+                if (i === 0) {
+                    clearInterval(countdown);
+                }
+                i--;
+            }, 1000); // show each number every 1 second
+        }
+
         if(team1 && team2){
             console.log("both are set")
             if(team1 == team2){
                 alert("Team 1 and Team 2 can't be same");
                 window.location.href = './manage-teams.php?for-team=team2'+ '&sport=' + game;
             }else{
+                startCountdown()
                 setTimeout(() => {
                     next_page.src = './schedule-match.php?team1='+team1+'&team2='+team2+'&sport='+game;
                     next_page.classList.add('active');
                     
-                }, 3000);
+                }, 4000);
             }
         }
 

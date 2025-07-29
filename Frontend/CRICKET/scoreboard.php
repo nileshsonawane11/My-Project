@@ -128,6 +128,7 @@ function getWicketBallDetails($balls, $player_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="icon" type="image/png" href="../../assets/images/logo.png">
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <title>Document</title>
 </head>
@@ -1464,6 +1465,9 @@ function getWicketBallDetails($balls, $player_id) {
                 width: 30%;
             }
         }
+        .txt-live {
+            font-weight: 400;
+        }
 </style>
 <body>
     <script>
@@ -1512,7 +1516,7 @@ function getWicketBallDetails($balls, $player_id) {
             <div id="close-sidebar">&times;</div>
             <div class="menu-list">
                
-                <div class="menu-item"><div><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div class="menu-item"><div onclick="shareContent()"><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M23.25 9L14.5 0.25V5.25C5.75 6.5 2 12.75 0.75 19C3.875 14.625 8.25 12.625 14.5 12.625V17.75L23.25 9Z" fill="black"/>
                     </svg></div>
                 </div>
@@ -1557,13 +1561,13 @@ function getWicketBallDetails($balls, $player_id) {
     <div class="popup-container">
         <div id="team-feedback" open>
             <div class="fed-head"><span class="logo"><div class="items">
-                <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
+                <div class="logo-img"><img src="../../assets/images/logo.png" alt=""></div>
                 <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
             </div></span><span class="exit"><img src="https://staticg.sportskeeda.com/skm/assets/close.png" alt=""></span></div>
             <form class="fed-body">
                 <textarea name="" id="" class="feedback-container"></textarea>
                 <div class="fed-btns">
-                    <button class="cancel" type="button">Cancel</button>
+                    <button type="button" class="cancel" onclick="document.querySelector('.popup-container').style.display = 'none'">Cancel</button>
                     <button class="submit" type="button">Submit</button>
                 </div>
             </form>
@@ -1572,9 +1576,9 @@ function getWicketBallDetails($balls, $player_id) {
 
     <nav class="nav-bar">
         <div class="nav-content">
-            <a href="javascript:location.reload()">
+            <a href="javascript:history.back()">
                 <div class="items">
-                    <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
+                    <div class="logo-img"><img src="../../assets/images/logo.png" alt=""></div>
                     <div class="l-name"><div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
                     <sup class="trade-mark">TM</sup></div>
                 </div>
@@ -2228,7 +2232,7 @@ function getWicketBallDetails($balls, $player_id) {
                                 $balls = $batsman['balls_faced'];
                                 $fours = $batsman['fours'];
                                 $sixes = $batsman['sixes'];
-                                $sr = ($balls > 0) ? round(($runs / $balls) * 100, 2) : 0;
+                                $sr = ($balls > 0) ? round(($runs / $balls) * 100, 0) : 0;
                                 $status = ucfirst($batsman['out_status']);
                                 
                                 // Optional: Add additional wicket info if available
@@ -2333,7 +2337,6 @@ function getWicketBallDetails($balls, $player_id) {
                                     <div class="player-fours">R</div>
                                     <div class="player-sixs">W</div>
                                     <div class="player-SR">ER</div>
-                                    <div class="player-EXT">EXT</div>
                                 </div>
                             </div>
                             <div id="bowler-stats">
@@ -2362,7 +2365,6 @@ function getWicketBallDetails($balls, $player_id) {
                                                 <div class='player-fours'>$runs</div>
                                                 <div class='player-sixs'>$wickets</div>
                                                 <div class='player-SR'>$er</div>
-                                                <div class='player-EXT'>$EXT</div>
                                             </div>
                                         </div>";
                                 }
@@ -3353,7 +3355,7 @@ let updatebatsman = (data) => {
                                     <div class="player-balls">${openers.current_striker.balls_faced}</div>
                                     <div class="player-fours">${openers.current_striker.fours}</div>
                                     <div class="player-sixs">${openers.current_striker.sixes}</div>
-                                    <div class="player-SR">${openers.current_striker.balls_faced > 0 ? ((openers.current_striker.runs/openers.current_striker.balls_faced)*100).toFixed(1) : 0}</div>
+                                    <div class="player-SR">${openers.current_striker.balls_faced > 0 ? ((openers.current_striker.runs/openers.current_striker.balls_faced)*100).toFixed(0) : 0}</div>
                                 </div>
                                 <div class="dt2"></div>
                             </div>
@@ -3364,7 +3366,7 @@ let updatebatsman = (data) => {
                                     <div class="player-balls">${openers.current_non_striker.balls_faced}</div>
                                     <div class="player-fours">${openers.current_non_striker.fours}</div>
                                     <div class="player-sixs">${openers.current_non_striker.sixes}</div>
-                                    <div class="player-SR">${openers.current_non_striker.balls_faced > 0 ? ((openers.current_non_striker.runs/openers.current_non_striker.balls_faced)*100).toFixed(1) : 0}</div>
+                                    <div class="player-SR">${openers.current_non_striker.balls_faced > 0 ? ((openers.current_non_striker.runs/openers.current_non_striker.balls_faced)*100).toFixed(0) : 0}</div>
                                 </div>
                                 <div class="dt2"></div>
                             </div>
@@ -3379,7 +3381,6 @@ let updatebatsman = (data) => {
                                 <div class="player-fours">R</div>
                                 <div class="player-sixs">W</div>
                                 <div class="player-SR">ER</div>
-                                <div class="player-EXT">EXT</div>
                             </div>
                         </div>
                         <div class='dt'>
@@ -3392,7 +3393,6 @@ let updatebatsman = (data) => {
                                 <div class='player-SR'>
                                     ${calculateEconomy(curr_bowler.overs_bowled, curr_bowler.runs_conceded)}
                                     </div>
-                                <div class='player-EXT'>${curr_bowler.Extras.total_extras}</div>
                             </div>
                         </div>
                     </div>`;
@@ -3509,6 +3509,21 @@ function initShowMoreButton() {
             })
             .catch();
         });
+
+        function shareContent() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'LiveStrike',
+                    text: 'Check out this awesome real-time score tracking!',
+                    url: window.location.href
+                })
+                .then(() => console.log('Successfully shared'))
+                .catch((error) => console.error('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+
     </script>
 </body>
 </html>

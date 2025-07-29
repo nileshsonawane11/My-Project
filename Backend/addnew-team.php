@@ -5,13 +5,13 @@ error_reporting(1);
 header('Content-Type: application/json');
 include '../config.php';
 
-$team_name      = $_POST['teamName'];
-$city           = $_POST['city'];
-$country_code   = $_POST['code'];
-$coordinaterNo  = $_POST['coordinaterNo'];
-$coordinaterName= $_POST['coordinaterName'];
+$team_name       = mysqli_real_escape_string($conn, $_POST['teamName']);
+$city            = mysqli_real_escape_string($conn, $_POST['city']);
+$country_code    = mysqli_real_escape_string($conn, $_POST['code']);
+$coordinaterNo   = mysqli_real_escape_string($conn, $_POST['coordinaterNo']);
+$coordinaterName = mysqli_real_escape_string($conn, $_POST['coordinaterName']);
+$game            = mysqli_real_escape_string($conn, $_POST['game']);
 $logo           = $_FILES['logo'];
-$game           = $_POST['game'];
 $date           = date('YmdHis'); // safer format without spaces or slashes
 
 // Validate required fields

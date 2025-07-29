@@ -32,10 +32,37 @@ function formatMatchTime($matchDate, $startTime) {
 
 if($for == "dashboard"){
 
-    
+    $search = isset($data['search']) ? trim(mysqli_real_escape_string($conn, $data['search'])) : '';
 
     if ($data['update'] != "All") {
-        $sql = "SELECT * FROM `matches` LEFT join `sports` ON sports.sport_id = matches.sport_id WHERE sports.sport_name = '$sport' AND matches.status = '$status'";
+        $sql = "SELECT matches.*, 
+                   sports.sport_name,
+                   t1.t_name AS team1_name,
+                   t2.t_name AS team2_name 
+            FROM matches 
+            LEFT JOIN sports ON sports.sport_id = matches.sport_id 
+            LEFT JOIN teams AS t1 ON matches.team_1 = t1.t_id 
+            LEFT JOIN teams AS t2 ON matches.team_2 = t2.t_id 
+            WHERE sports.sport_name = '$sport'";
+
+    if (empty($search)) {
+        $sql .= " AND matches.status = '$status'";
+    }
+
+    if (!empty($search)) {
+        $sql .= " AND (
+            matches.match_name LIKE '%$search%' OR 
+            matches.status LIKE '%$search%' OR 
+            matches.match_id LIKE '%$search%' OR 
+            matches.team_1 LIKE '%$search%' OR 
+            matches.team_2 LIKE '%$search%' OR 
+            t1.t_name LIKE '%$search%' OR 
+            t2.t_name LIKE '%$search%' OR 
+            matches.match_date LIKE '%$search%' OR 
+            matches.start_time LIKE '%$search%' OR 
+            matches.venue LIKE '%$search%'
+        )";
+    }
         $result = mysqli_query($conn, $sql);
 
         if (mysqli_num_rows($result) > 0) { // Check if there are rows in the result
@@ -128,7 +155,32 @@ if($for == "dashboard"){
             }
         }
     } else {
-        $sql = "SELECT * FROM `matches` LEFT join `sports` ON sports.sport_id = matches.sport_id WHERE sports.sport_name = '$sport'";
+        $search = isset($data['search']) ? trim(mysqli_real_escape_string($conn, $data['search'])) : '';
+
+        $sql = "SELECT matches.*, 
+               sports.sport_name, 
+               t1.t_name AS team1_name, 
+               t2.t_name AS team2_name 
+        FROM matches 
+        LEFT JOIN sports ON sports.sport_id = matches.sport_id 
+        LEFT JOIN teams AS t1 ON matches.team_1 = t1.t_id 
+        LEFT JOIN teams AS t2 ON matches.team_2 = t2.t_id 
+        WHERE sports.sport_name = '$sport'";
+
+        if (!empty($search)) {
+            $sql .= " AND (
+                matches.match_name LIKE '%$search%' OR 
+                matches.status LIKE '%$search%' OR 
+                matches.match_id LIKE '%$search%' OR 
+                matches.team_1 LIKE '%$search%' OR 
+                matches.team_2 LIKE '%$search%' OR 
+                t1.t_name LIKE '%$search%' OR 
+                t2.t_name LIKE '%$search%' OR 
+                matches.match_date LIKE '%$search%' OR 
+                matches.start_time LIKE '%$search%' OR 
+                matches.venue LIKE '%$search%'
+            )";
+        }
         $result = mysqli_query($conn, $sql) or die("Error: ");
 
         if (mysqli_num_rows($result) > 0) { // Check if there are rows in the result
@@ -346,7 +398,12 @@ if($for == "manage_matches"){
                     echo "<div class='strt-btn'>";
                     
                     $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    $scorer_emails = explode(",", $scorers[0]);
+                    $scorer_emails = [];
+
+                    if (!empty($scorers) && isset($scorers[0])) {
+                        $scorer_emails = explode(",", $scorers[0]);
+                    }
+                    
                     $session_email = $_SESSION['email'];
 
                     if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
