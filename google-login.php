@@ -1,4 +1,7 @@
 <?php
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 session_start();
 include './config.php'; // your DB connection file
 
@@ -47,8 +50,8 @@ if (isset($_GET['code'])) {
             $input = uniqid(microtime(true) . bin2hex(random_bytes(5)) . $email, true);
             $google_id = hash('sha256', $input);
             // Register new user
-            $stmt = $conn->prepare("INSERT INTO users (user_id, fname, lname, email, role, phone, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssssss", $google_id, $fname, $lname, $email, $role, $phone, $password);
+            $stmt = $conn->prepare("INSERT INTO users (user_id, fname, lname, email, role, phone, password) VALUES ( ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssss", $google_id, $fname, $lname, $email, $role, $phone, $password);
             $stmt->execute();
         }
 

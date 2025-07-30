@@ -3037,7 +3037,7 @@ let updatebatsman = (data) => {
                 const balls = batsman.balls_faced;
                 const fours = batsman.fours;
                 const sixes = batsman.sixes;
-                const sr = (balls > 0) ? ((runs / balls) * 100).toFixed(2) : 0;
+                const sr = (balls > 0) ? ((runs / balls) * 100).toFixed(0) : 0;
                 let status = batsman.out_status.charAt(0).toUpperCase() + batsman.out_status.slice(1);
 
                 const wicket_type = batsman.wicket_type || '';
@@ -3206,7 +3206,6 @@ let updatebatsman = (data) => {
                                 <div class="player-fours">${runs}</div>
                                 <div class="player-sixs">${wickets}</div>
                                 <div class="player-SR">${calculateEconomy(overs, runs)}</div>
-                                <div class="player-EXT">${EXT}</div>
                             </div>
                         `;
                         targetContainer.appendChild(div);

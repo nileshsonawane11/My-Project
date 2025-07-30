@@ -69,21 +69,27 @@
             align-content: center;
             justify-content: space-evenly;
             align-items: center;
-            gap: 10px;
+            gap: 7px;
             color: black;
             padding: 10px;
             border-radius: 20px;
             text-wrap: auto;
             background: #eeeeeeab;
             box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
-            flex-wrap: wrap;
         }
         .logo{
-            min-height: 75px;
-            min-width: 75px;
+            height: 75px;
+            width: 75px;
             background: #e8e8e8;
             margin: 10px;
             border-radius: 50%;
+            overflow: hidden;
+        }
+        .logo img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+
         }
         .other-info{
             display: flex;
@@ -215,6 +221,7 @@
             .team{
                 height: 90px;
                 width: 100%;
+                flex: 1;
             }
             .container input[type="text"],[type="email"],[type="password"],[type="number"],select{
                 border: none;

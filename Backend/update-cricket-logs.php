@@ -325,7 +325,9 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
         
         // Increment wickets
         $score_log[$Inning_type][$Inning]['wickets']++;
-        $score_log[$Inning_type][$Inning]['current_bowler']['wickets']++;
+        if (!strpos($Wicket_Type, "Run out")) {
+            $score_log[$Inning_type][$Inning]['current_bowler']['wickets']++;
+        }
 
         $is_non_striker = (strpos($Wicket_Type, '(Non-Striker End)') !== false || 
                          strpos($Wicket_Type, '(Mankaded)') !== false ||

@@ -11,6 +11,35 @@
         exit();
     }
 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id']) && isset($_GET['mem'])) {
+    $id = $_POST['delete_id'];
+    $type = $_GET['mem']; // 'Player' or 'Staff'
+
+    // Determine table and column
+    if ($type === 'Player') {
+        $table = 'players';
+        $column = 'user_id';
+    } elseif ($type === 'Staff') {
+        $table = 'staff';
+        $column = 'staff_id';
+    } else {
+        echo 'invalid_type';
+        exit;
+    }
+
+    // Prepare and execute delete query
+    $stmt = $conn->prepare("DELETE FROM `$table` WHERE `$column` = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo 'success';
+    } else {
+        echo 'error';
+    }
+
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -372,7 +401,23 @@
             margin: 5px;
             transition : all 0.3 ease-in-out;
         }
-        
+        #playerMenu {
+  position: absolute;
+  background: white;
+  border: 1px solid #000;
+  padding: 8px;
+  z-index: 9999;
+  display: none;
+  min-width: 120px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+#playerMenu div {
+  padding: 5px;
+  cursor: pointer;
+}
+#playerMenu div:hover {
+  background-color: #eee;
+}
 
         @media (min-width:601px) {
             .container{
@@ -574,7 +619,10 @@
     </div>
 
 
-    
+    <div id="playerMenu" style="display:none; position:absolute; background:#fff; border:1px solid #000; padding:10px; z-index:1000;">
+        <div id="editBtn">✏️ Edit</div>
+        <div id="deleteBtn">🗑️ Delete</div>
+    </div>
     
     <script>
         const staff_count = <?php echo $current_staff_count; ?>;
@@ -660,6 +708,7 @@
             .then(data => {
                 // console.log(data);
                 document.querySelector('.data-info').innerHTML = data;
+                attachEditListeners();
             })
             .catch(err => {
                 console.log(err);
@@ -702,6 +751,107 @@
             }
         }
  
+function attachEditListeners() {
+  const players = document.querySelectorAll('.mem');
+
+  players.forEach(player => {
+    // Desktop right-click
+    player.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      showPlayerMenu(this, this.dataset.name); // 👈 pass the element
+    });
+
+    // Android long press
+    let timer;
+
+    player.addEventListener('touchstart', function(e) {
+      timer = setTimeout(() => {
+        showPlayerMenu(this, this.dataset.name); // 👈 pass the element
+      }, 600);
+    });
+
+    player.addEventListener('touchend', () => clearTimeout(timer));
+    player.addEventListener('touchmove', () => clearTimeout(timer));
+  });
+}
+
+
+function showPlayerMenu(targetElement, name) {
+  const menu = document.getElementById('playerMenu');
+  menu.style.display = 'block';
+
+  // Temporarily set position to measure size
+  menu.style.left = '0px';
+  menu.style.top = '0px';
+  const menuWidth = menu.offsetWidth;
+  const menuHeight = menu.offsetHeight;
+
+  // Get position of the clicked .mem element
+  const rect = targetElement.getBoundingClientRect();
+
+  // Calculate position above the element
+  let x = rect.right - menuWidth / 1 - 100;
+  let y = rect.top; // 8px gap
+
+  // Clamp X and Y within screen
+  x = Math.max(10, Math.min(x, window.innerWidth - menuWidth - 10));
+  y = Math.max(10, y); // prevent going off top
+
+  // Apply position relative to document
+  menu.style.left = `${x + window.scrollX}px`;
+  menu.style.top = `${y + window.scrollY}px`;
+
+    // Save both name and id
+  menu.dataset.player = name;
+  menu.dataset.id = targetElement.dataset.id; // 👈 get data-id
+}
+
+// Delete action
+document.getElementById('deleteBtn').addEventListener('click', function () {
+  const menu = document.getElementById('playerMenu');
+  const id = menu.dataset.id;
+  const name = menu.dataset.player;
+
+  // Send to same file using fetch
+  fetch(window.location.href, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `delete_id=${encodeURIComponent(id)}`
+  })
+  .then(res => res.text())
+  .then(result => {
+    if (result === 'success') {
+      document.querySelector(`.mem[data-id="${id}"]`)?.remove();
+    }
+    menu.style.display = 'none';
+  })
+  .catch(err => {
+    alert('Error: ' + err.message);
+    menu.style.display = 'none';
+  });
+});
+
+
+
+// Click outside to hide
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('playerMenu');
+  if (!menu.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+// Menu actions
+document.getElementById('editBtn').addEventListener('click', function() {
+  const name = document.getElementById('playerMenu').dataset.player;
+});
+
+document.getElementById('deleteBtn').addEventListener('click', function() {
+  const name = document.getElementById('playerMenu').dataset.player;
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', attachEditListeners);
     </script>
 </body>
 </html>
