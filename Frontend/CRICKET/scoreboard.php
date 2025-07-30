@@ -523,6 +523,11 @@ function getWicketBallDetails($balls, $player_id) {
             background: white;
             box-shadow: var(--shadow-sm);
         }
+        .playerz{
+            min-width: 30px;
+            max-width: 30px;
+            text-align : center;
+        }
         .weather-info{
             height: 100%;
             padding: 10px;
@@ -1362,6 +1367,7 @@ function getWicketBallDetails($balls, $player_id) {
         .total_runs{
             font-weight: 700;
         }
+
         @media(max-width: 600px) {
             .nav-content{
                 display: flex;
@@ -2215,11 +2221,11 @@ function getWicketBallDetails($balls, $player_id) {
                             <div class="dt">
                                 <div class="dt1 table-head">
                                     <div class="inning-batsman">Batters</div>
-                                    <div class="player-runs">R</div>
-                                    <div class="player-balls">B</div>
-                                    <div class="player-fours">4s</div>
-                                    <div class="player-sixs">6s</div>
-                                    <div class="player-SR">SR</div>
+                                    <div class="playerz player-runs">R</div>
+                                    <div class="playerz player-balls">B</div>
+                                    <div class="playerz player-fours">4s</div>
+                                    <div class="playerz player-sixs">6s</div>
+                                    <div class="playerz player-SR">SR</div>
                                 </div>
                                 <div class="dt2"></div>
                             </div>
@@ -2281,11 +2287,11 @@ function getWicketBallDetails($balls, $player_id) {
                                 <div class="dt <?= $notOutClass ?>">
                                     <div class="dt1">
                                         <div class="inning-batsman playername"><?= htmlspecialchars($name) ?></div>
-                                        <div class="player-runs"><?= $runs ?></div>
-                                        <div class="player-balls"><?= $balls ?></div>
-                                        <div class="player-fours"><?= $fours ?></div>
-                                        <div class="player-sixs"><?= $sixes ?></div>
-                                        <div class="player-SR"><?= $sr ?></div>
+                                        <div class="playerz player-runs"><?= $runs ?></div>
+                                        <div class="playerz player-balls"><?= $balls ?></div>
+                                        <div class="playerz player-fours"><?= $fours ?></div>
+                                        <div class="playerz player-sixs"><?= $sixes ?></div>
+                                        <div class="playerz player-SR"><?= $sr ?></div>
                                     </div>
                                     <div class="dt2"><?= $status ?></div>
                                 </div>
@@ -2332,11 +2338,11 @@ function getWicketBallDetails($balls, $player_id) {
                         <div class="dt">
                                 <div class="dt1 table-head">
                                     <div class="inning-batsman">Bowlers</div>
-                                    <div class="player-runs">O</div>
-                                    <div class="player-balls">M</div>
-                                    <div class="player-fours">R</div>
-                                    <div class="player-sixs">W</div>
-                                    <div class="player-SR">ER</div>
+                                    <div class="playerz player-runs">O</div>
+                                    <div class="playerz player-balls">M</div>
+                                    <div class="playerz player-fours">R</div>
+                                    <div class="playerz player-sixs">W</div>
+                                    <div class="playerz player-SR">ER</div>
                                 </div>
                             </div>
                             <div id="bowler-stats">
@@ -2355,16 +2361,16 @@ function getWicketBallDetails($balls, $player_id) {
                                     $runs = $data['runs_conceded'];
                                     $wickets = $data['wickets'];
                                     $EXT = $data['Extras']['total_extras'];
-                                    $er = round($runs / max(1, floatval($overs)), 2);
+                                    $er = round($runs / max(1, floatval($overs)), 0);
 
                                     echo "<div class='dt'>
                                             <div class='dt1'>
                                                 <div class='inning-batsman playername'>$bowler_name</div>
-                                                <div class='player-runs'>$overs</div>
-                                                <div class='player-balls'>$maidens</div>
-                                                <div class='player-fours'>$runs</div>
-                                                <div class='player-sixs'>$wickets</div>
-                                                <div class='player-SR'>$er</div>
+                                                <div class='playerz player-runs'>$overs</div>
+                                                <div class='playerz player-balls'>$maidens</div>
+                                                <div class='playerz player-fours'>$runs</div>
+                                                <div class='playerz player-sixs'>$wickets</div>
+                                                <div class='playerz player-SR'>$er</div>
                                             </div>
                                         </div>";
                                 }
@@ -3075,11 +3081,11 @@ let updatebatsman = (data) => {
                 div.innerHTML = `
                     <div class="dt1">
                         <div class="inning-batsman playername">${name}</div>
-                        <div class="player-runs">${runs}</div>
-                        <div class="player-balls">${balls}</div>
-                        <div class="player-fours">${fours}</div>
-                        <div class="player-sixs">${sixes}</div>
-                        <div class="player-SR">${sr}</div>
+                        <div class="playerz player-runs">${runs}</div>
+                        <div class="playerz player-balls">${balls}</div>
+                        <div class="playerz player-fours">${fours}</div>
+                        <div class="playerz player-sixs">${sixes}</div>
+                        <div class="playerz player-SR">${sr}</div>
                     </div>
                     <div class="dt2">${status}</div>
                 `;
@@ -3201,11 +3207,11 @@ let updatebatsman = (data) => {
                         div.innerHTML = `
                             <div class="dt1">
                                 <div class="inning-batsman playername">${bowlerName}</div>
-                                <div class="player-runs">${overs}</div>
-                                <div class="player-balls">${maidens}</div>
-                                <div class="player-fours">${runs}</div>
-                                <div class="player-sixs">${wickets}</div>
-                                <div class="player-SR">${calculateEconomy(overs, runs)}</div>
+                                <div class="playerz player-runs">${overs}</div>
+                                <div class="playerz player-balls">${maidens}</div>
+                                <div class="playerz player-fours">${runs}</div>
+                                <div class="playerz player-sixs">${wickets}</div>
+                                <div class="playerz player-SR">${calculateEconomy(overs, runs)}</div>
                             </div>
                         `;
                         targetContainer.appendChild(div);
@@ -3339,33 +3345,33 @@ let updatebatsman = (data) => {
                         <div class="dt">
                             <div class="dt1 table-head">
                                 <div class="inning-batsman">Batters</div>
-                                <div class="player-runs">R</div>
-                                <div class="player-balls">B</div>
-                                <div class="player-fours">4s</div>
-                                <div class="player-sixs">6s</div>
-                                <div class="player-SR">SR</div>
+                                <div class="playerz player-runs">R</div>
+                                <div class="playerz player-balls">B</div>
+                                <div class="playerz player-fours">4s</div>
+                                <div class="playerz player-sixs">6s</div>
+                                <div class="playerz player-SR">SR</div>
                             </div>
                             <div class="dt ">
                                 <div class="dt1">
                                     <div class="inning-batsman playername">${strikerName} <svg id="striker" width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"></path>
                                     </svg></div>
-                                    <div class="player-runs">${openers.current_striker.runs}</div>
-                                    <div class="player-balls">${openers.current_striker.balls_faced}</div>
-                                    <div class="player-fours">${openers.current_striker.fours}</div>
-                                    <div class="player-sixs">${openers.current_striker.sixes}</div>
-                                    <div class="player-SR">${openers.current_striker.balls_faced > 0 ? ((openers.current_striker.runs/openers.current_striker.balls_faced)*100).toFixed(0) : 0}</div>
+                                    <div class="playerz player-runs">${openers.current_striker.runs}</div>
+                                    <div class="playerz player-balls">${openers.current_striker.balls_faced}</div>
+                                    <div class="playerz player-fours">${openers.current_striker.fours}</div>
+                                    <div class="playerz player-sixs">${openers.current_striker.sixes}</div>
+                                    <div class="playerz player-SR">${openers.current_striker.balls_faced > 0 ? ((openers.current_striker.runs/openers.current_striker.balls_faced)*100).toFixed(0) : 0}</div>
                                 </div>
                                 <div class="dt2"></div>
                             </div>
                             <div class="dt ">
                                 <div class="dt1">
                                     <div class="inning-batsman playername">${nonStrikerName}</div>
-                                    <div class="player-runs">${openers.current_non_striker.runs}</div>
-                                    <div class="player-balls">${openers.current_non_striker.balls_faced}</div>
-                                    <div class="player-fours">${openers.current_non_striker.fours}</div>
-                                    <div class="player-sixs">${openers.current_non_striker.sixes}</div>
-                                    <div class="player-SR">${openers.current_non_striker.balls_faced > 0 ? ((openers.current_non_striker.runs/openers.current_non_striker.balls_faced)*100).toFixed(0) : 0}</div>
+                                    <div class="playerz player-runs">${openers.current_non_striker.runs}</div>
+                                    <div class="playerz player-balls">${openers.current_non_striker.balls_faced}</div>
+                                    <div class="playerz player-fours">${openers.current_non_striker.fours}</div>
+                                    <div class="playerz player-sixs">${openers.current_non_striker.sixes}</div>
+                                    <div class="playerz player-SR">${openers.current_non_striker.balls_faced > 0 ? ((openers.current_non_striker.runs/openers.current_non_striker.balls_faced)*100).toFixed(0) : 0}</div>
                                 </div>
                                 <div class="dt2"></div>
                             </div>
@@ -3375,21 +3381,21 @@ let updatebatsman = (data) => {
                         <div class="dt">
                             <div class="dt1 table-head">
                                 <div class="inning-batsman">Bowler</div>
-                                <div class="player-runs">O</div>
-                                <div class="player-balls">M</div>
-                                <div class="player-fours">R</div>
-                                <div class="player-sixs">W</div>
-                                <div class="player-SR">ER</div>
+                                <div class="playerz player-runs">O</div>
+                                <div class="playerz player-balls">M</div>
+                                <div class="playerz player-fours">R</div>
+                                <div class="playerz player-sixs">W</div>
+                                <div class="playerz player-SR">ER</div>
                             </div>
                         </div>
                         <div class='dt'>
                             <div class='dt1'>
                                 <div class='inning-batsman playername'>${currentBowlerName}</div>
-                                <div class='player-runs'>${curr_bowler.overs_bowled}</div>
-                                <div class='player-balls'>${curr_bowler.maidens}</div>
-                                <div class='player-fours'>${curr_bowler.runs_conceded}</div>
-                                <div class='player-sixs'>${curr_bowler.wickets}</div>
-                                <div class='player-SR'>
+                                <div class='playerz player-runs'>${curr_bowler.overs_bowled}</div>
+                                <div class='playerz player-balls'>${curr_bowler.maidens}</div>
+                                <div class='playerz player-fours'>${curr_bowler.runs_conceded}</div>
+                                <div class='playerz player-sixs'>${curr_bowler.wickets}</div>
+                                <div class='playerz player-SR'>
                                     ${calculateEconomy(curr_bowler.overs_bowled, curr_bowler.runs_conceded)}
                                     </div>
                             </div>
@@ -3405,7 +3411,7 @@ let updatebatsman = (data) => {
 
             const totalBalls = fullOvers * 6 + extraBalls;
 
-            return totalBalls > 0 ? ((runs_conceded / totalBalls) * 6).toFixed(2) : '0.00';
+            return totalBalls > 0 ? ((runs_conceded / totalBalls) * 6).toFixed(0) : '0.00';
         }
     }
 }
