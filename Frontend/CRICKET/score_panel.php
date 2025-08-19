@@ -1483,7 +1483,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 navigator.vibrate([100,50,100,50,100]);
                 strikerEl.closest('.batmans').style.borderColor = 'red';
                 players_page.classList.add('active');
-                players_page.src = `./select-player-from-team.php?for=Striker&team=${bat_team}&striker=&non-striker=${non_striker}`;
+                players_page.src = `./select-player-from-team.php?for=Striker&match=${match}&team=${bat_team}&striker=&non-striker=${non_striker}`;
                 return false;
             }
 
@@ -1492,7 +1492,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 navigator.vibrate([100,50,100,50,100]);
                 nonStrikerEl.closest('.batmans').style.borderColor = 'red';
                 players_page.classList.add('active');
-                players_page.src = `./select-player-from-team.php?for=Non-Striker&team=${bat_team}&striker=${striker}&non-striker=`;
+                players_page.src = `./select-player-from-team.php?for=Non-Striker&match=${match}&team=${bat_team}&striker=${striker}&non-striker=`;
                 return false;
             }
 
@@ -1501,7 +1501,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 navigator.vibrate([100,50,100,50,100]);
                 bowlerEl.closest('.bowler-container').style.borderColor = 'red';
                 players_page.classList.add('active');
-                players_page.src = `./select-player-from-team.php?for=Bowler&team=${bowl_team}`;
+                players_page.src = `./select-player-from-team.php?for=Bowler&match=${match}&team=${bowl_team}`;
                 return false;
             }
 

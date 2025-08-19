@@ -19,7 +19,7 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title>Manage Teams</title>
-    <style>
+<style>
     * {
         margin: 0;
         padding: 0;

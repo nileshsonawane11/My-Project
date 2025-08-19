@@ -344,6 +344,9 @@
         border-radius: 12px;
         box-shadow: var(--card-shadow);
     }
+    .rule:first-child{
+        box-shadow: none;
+    }
     
     @media (min-width: 601px) {
         
@@ -448,6 +451,23 @@
                         <label for="">Non-Mandatory Cricket Rules</label>
                         <div class="sector rules">
                             <div class="rule">
+                                <h6>Overs</h6>
+                                <div class="form-check form-switch">
+                                    <select name="" id="over">
+                                        <option value='Null' disabled selected></option>
+                                        <?php
+                                            for ($i = 1; $i <= 20; $i++) {
+                                                echo "<option value='$i'>$i</option>";
+                                            }
+                                        ?>
+                                        <option value='50'>50</option>
+                                        <option value='-'>Unlimited</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="error" id="error-over"></div>
+                            <div class="rule">
                                 <h6>Free Hit on No Ball</h6>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input isfreehit" type="checkbox" id="flexSwitchCheckChecked" checked>
@@ -519,6 +539,7 @@
             const iswide = document.querySelector('.iswide').checked;
             const isfreehit = document.querySelector('.isfreehit').checked;
             const issuperover = document.querySelector('.issuperover').checked;
+            const overs = document.querySelector('#over').value;
 
             let formdata = new FormData();
             formdata.append('match_id', '<?php echo $match; ?>');
@@ -527,6 +548,7 @@
             formdata.append('iswide', iswide);
             formdata.append('isfreehit', isfreehit);
             formdata.append('issuperover', issuperover);
+            formdata.append('overs', overs);
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';

@@ -997,13 +997,11 @@
                     <p class="undo-warn undo-txt">Match tied! A winner is required. Please continue scoring.</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="start-next-btn undo-btn" onclick='complete_match()'>Complete Match</button>
-                </div>
-                <div class="undo-seyup">
-                    <p class="continue-match-btn complete_match" onclick="document.querySelector('#start_second').close();
+                    <button class="start-next-btn undo-btn" onclick="document.querySelector('#start_second').close();
                     is_complete = false;window.removeEventListener('beforeunload', preventReload);
-                        location.reload();">Continue Scoring</p>
+                        location.reload();">Continue Scoring</button>
                 </div>
+                
             </div>
         </dialog>
 
@@ -1027,6 +1025,7 @@
                 </div>
                 <div class="undo-seyup"><p class="undo-txt">UNDO ?</p></div>
                 <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
+                <div class="error" id="error-empty"></div>
                 <div class="undo-seyup"><button class="undo-btn" id='undo-btn' onclick="process_undo()">Yes I’m certain</button></div>
                 <div class="undo-seyup"><p class="undo-cancel" onclick="document.querySelector('#undo').close();">Cancel</p></div>
             </div>
@@ -1397,7 +1396,7 @@
         start_dialogue.classList.add('shake');
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
+
     // DOM Elements
     const serveBtn = document.querySelector('.serve');
     // Get existing containers
@@ -1417,7 +1416,7 @@
         console.warn("One or more containers not found in the DOM.");
     }
     
-    const playerNames = document.querySelectorAll('.player-name');
+    const playerNames = document.querySelectorAll('.player-replace');
     const inButton = document.querySelector('.in');
     const aceButton = document.querySelector('.ace');
     const errorButton = document.querySelector('.error');
@@ -1447,13 +1446,14 @@
     // Event listeners
     playerNames.forEach(player => {
         player.addEventListener('click', () => {
+            console.log(player.innerText);
             goToSlide(1);
             getplayername (player);
         })
     });
     
     let getplayername = (el) => {
-        serve_player = el.innerText;
+        serve_player = el.getAttribute('data-player-id');
     }
 
     let serveresult = (el) => {
@@ -1534,7 +1534,7 @@
         undo_container.classList.add('shake');
     });
 
-});
+
 
  const back_decision = '<?php echo $back_decision; ?>';
 

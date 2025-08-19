@@ -389,10 +389,147 @@
         background: var(--primary-light);
         border-radius: 10px;
     }
+    #startMatchDialog {
+        z-index: 9999;
+        position: fixed;
+        transform: translateX(-50%) translateY(-50%);
+        top: 50%;
+        left: 50%;
+        width: 90%;
+        max-width: 500px;
+        border: none;
+        height: max-content;
+        background: white;
+        flex-direction: column;
+        transition: all 0.3s ease;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    #startMatchDialog::backdrop {
+        position: fixed;
+        inset: 0px;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(3px);
+    }
+    
+    #content-wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 25px
+    }
+    
+    #matchPasswordForm {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .form-data {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+    }
+    
+    .form-data label {
+        font-size: 15px;
+        line-height: 35px;
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+    
+    .btns {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+    }
+    
+    #matchPassword {
+        padding: 12px 15px;
+        height: 45px;
+        outline: none;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: #f8f8f8;
+        color: var(--text-dark);
+        font-size: 15px;
+    }
+    
+    #matchPassword:focus {
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
+    }
+
+    #title{
+        font-size: 18px;
+        font-weight: 500;
+    }
+    
+    .btns>* {
+        width: 110px;
+        height: 40px;
+        border-radius: 25px;
+        border: solid 1px var(--primary-light);
+        color: var(--primary-light);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+    }
+    
+    .btns>*:last-child {
+        background: var(--background);
+        color: white;
+        border: none;
+    }
+    
+    .btns>*:last-child:hover {
+        background: linear-gradient(135deg, #fac01fdb, #f83900cc);
+    }
+    
+    .btns>*:first-child:hover {
+        background: rgba(250, 192, 31, 0.1);
+    }
 </style>
 </head>
 <body>
     <div class="container">
+
+        <dialog id="startMatchDialog">
+            <div id="content-wrapper">
+                <div class="top-container">
+                    <p id="title">Enter Password to Start Match</p>
+                </div>
+
+                <div class="body-container">
+                <form id="matchPasswordForm">
+                    <div class="form-data">
+                        <label for="matchPassword">Password:</label>
+                        <input type="text" name="" id="match_id" hidden>
+                        <input type="text" id="matchPassword" name="matchPassword" required>
+                        <div id="error-matchpassword" class="error"></div>
+                    </div>
+
+                    <div class='btns'>
+                        <button id='submit-btn' type="button" onclick="closeDialog()">Cancel</button>
+                        <button id='cancel-btn' type="submit">Start Match</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </dialog>
+
         <div class="return" >
             <div><svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z" fill="black"/>
@@ -487,6 +624,7 @@
             }?>
     </div>
     <script>
+        let SportName = '';
         let urlParams = new URLSearchParams(window.location.search);
         const tournament = urlParams.get('tournament');
        if (document.referrer.includes('select-teams.php')){
@@ -502,7 +640,7 @@
        }else{
             //Default sport
             const defaultCategory = document.querySelector('.cricket');
-            let SportName = defaultCategory.querySelector('p').textContent.trim();
+            SportName = defaultCategory.querySelector('p').textContent.trim();
             console.log(SportName);
 
             loadgames(SportName)
@@ -615,6 +753,71 @@
         let save = () =>{
             window.location.href = `./match-making.php?t=${tournament}&teams=${selectedTeams}`;
 
+        }
+
+        // Open dialog for password
+        function openDialog(button, event) {
+            if (event) event.stopPropagation();
+            const dialog = document.getElementById("startMatchDialog");
+            dialog.showModal();
+
+            const match_to_start = button.closest('.game-info').getAttribute('data-match_id');
+            console.log("Match : " + match_to_start);
+
+            document.getElementById("match_id").value = match_to_start;
+        }
+
+        // Close dialog of password
+        function closeDialog() {
+            const dialog = document.getElementById("startMatchDialog");
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                el.innerHTML = '';
+                el.style.display = 'none';
+            });
+            document.getElementById("matchPasswordForm").reset();
+            dialog.close();
+        }
+
+        
+        // Variefy match password
+        document.getElementById("matchPasswordForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            password = document.getElementById("matchPassword").value;
+            match_id = document.getElementById("match_id").value;
+
+            let formdata = new FormData();
+            formdata.append('password', password.trim());
+            formdata.append('match_id', match_id);
+
+            fetch('../Backend/ckeck-match-password.php',{
+                method : 'POST',
+                body : formdata
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                console.log(data);
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+                if(data.status != 200){
+                    let err = document.getElementById(`error-${data.field}`);
+                    err.innerHTML = data.message;
+                    err.style.display = 'block';
+                }else{
+                    window.location.href = `./${SportName}/match_toss.php?match_id=${match_id}`;
+                    document.getElementById("matchPasswordForm").reset();
+                    closeDialog();
+                }
+            })
+            .catch();
+        });
+
+        let edit_match = (el) => {
+            let match = el.getAttribute('data-match_id');
+            console.log(match);
+            console.log(SportName);
+            window.location.href = `./match-info.php?match_id=${match}`;
         }
     </script>
 </body>

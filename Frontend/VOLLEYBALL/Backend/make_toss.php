@@ -16,7 +16,7 @@ if ($selecteddecision == "SERVE") {
     $serve  = $selectedteam;
     $court = ($row['team_1'] == $serve) ? $row['team_2'] : $row['team_1'];
 } else if ($selecteddecision == "COURT") {
-    $bowl = $selectedteam;
+    $court = $selectedteam;
     $serve  = ($row['team_1'] == $court) ? $row['team_2'] : $row['team_1'];
 }
 

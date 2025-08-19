@@ -135,7 +135,7 @@
             </div>
         </div>
         <div class="container2">
-            <p><b>LiveStrike</b> is an innovative real-time sports scoring platform designed to transform how athletic competitions are tracked, managed, and experienced. Founded in 2023, our mission is to bring cutting-edge technology to sports at all levels, from local community games to professional tournaments.</p>
+            <p><b>LiveStrike</b> is an innovative real-time sports scoring platform designed to transform how athletic competitions are tracked, managed, and experienced. Founded in 2025, our mission is to bring cutting-edge technology to sports at all levels, from local community games to professional tournaments.</p>
 
             <div class="info">
                 <h3>Our Vision</h3>

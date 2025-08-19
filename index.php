@@ -175,7 +175,7 @@
 
     <div class="container">
         <div class="logo-container">
-            <a href="https://ibb.co/Zp9j6TBS"><img class="logo" src="https://i.ibb.co/gLY2MgSd/logo.png" alt="logo" border="0"></a>         
+            <a href="https://ibb.co/Zp9j6TBS"><img class="logo" src="https://i.ibb.co/vCR3ndct/new-logo-removebg-preview.png" alt="logo" border="0"></a>         
             <p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p>   
         </div>
         <div class="mask">

@@ -2,7 +2,7 @@
     session_start();
 
     if(!isset($_SESSION['user'])){
-        header('location: ./front-page.php');
+        header('location: ../front-page.php');
         exit();
     }
     if($_SESSION['role'] == "User"){
