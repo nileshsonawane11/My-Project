@@ -18,7 +18,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <title>select team</title>
-   <style>
+  <style>
     * {
         margin: 0;
         padding: 0;
@@ -28,14 +28,28 @@
     }
     
     :root {
-        --primary-light: #FAC01F;
-        --primary-dark: #F83900;
-        --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --background: #ffffff;
         --card-bg: #ffffff;
-        --text-dark: #333333;
-        --text-light: #666666;
+        --text-dark: #000000;
+        --text-light: #333333;
         --border-color: #e0e0e0;
         --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        --svg-fill: #000000;
+        --hover-bg: rgba(209, 34, 31, 0.08);
+    }
+
+    /* Dark theme variables */
+    [data-theme="dark"] {
+        --background: #121212;
+        --card-bg: #1e1e1e;
+        --text-dark: #ffffff;
+        --text-light: #e0e0e0;
+        --border-color: #333333;
+        --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        --svg-fill: #ffffff;
+        --hover-bg: rgba(209, 34, 31, 0.8);
     }
     
     body {
@@ -44,7 +58,9 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background-color: #f8f8f8;
+        background: var(--background);
+        color: var(--text-dark);
+        transition: background 0.3s ease, color 0.3s ease;
     }
     
     .return {
@@ -55,9 +71,11 @@
         padding: 20px;
     }
     
-    .return svg {
+    .return svg path,
+    .game-list svg path{
         cursor: pointer;
         transition: transform 0.2s ease;
+        fill: var(--svg-fill);
     }
     
     .return svg:hover {
@@ -80,6 +98,8 @@
         box-shadow: var(--shadow);
         padding: 30px;
         overflow: hidden;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--border-color);
     }
     
     .container2 {
@@ -98,23 +118,27 @@
         flex-direction: row;
         gap: 15px;
         width: 100%;
-        background: rgba(250, 192, 31, 0.08);
+        background: var(--hover-bg);
         padding: 15px 20px;
         border-radius: 15px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
         cursor: pointer;
+        border: 1px solid var(--border-color);
     }
     
     .game-list:hover {
-        background: rgba(250, 192, 31, 0.15);
+        background: rgba(209, 34, 31, 0.2);
         transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(209, 34, 31, 0.1);
     }
     
     .game-list svg {
         margin-left: 10px;
         width: 24px;
         height: 24px;
+        fill: var(--svg-fill);
+        transition: fill 0.3s ease;
     }
     
     .list {
@@ -136,6 +160,7 @@
         font-size: 16px;
         color: var(--text-dark);
         font-weight: 500;
+        transition: color 0.3s ease;
     }
     
     .team-frame {
@@ -147,9 +172,10 @@
         border: none;
         transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
         z-index: 999;
-        background: white;
+        background: var(--card-bg);
         border-radius: 25px 25px 0 0;
         box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.15);
+        border-top: 1px solid var(--border-color);
     }
     
     .team-frame.active {
@@ -162,12 +188,12 @@
     }
     
     .list::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: var(--hover-bg);
         border-radius: 10px;
     }
     
     .list::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
+        background: var(--primary-color);
         border-radius: 10px;
     }
     
@@ -214,6 +240,7 @@
             margin: 0;
             padding: 25px;
             box-shadow: none;
+            border: none;
         }
         
         .container2 {
@@ -255,6 +282,24 @@
     .game-list:nth-child(8) { animation-delay: 0.8s; }
     .game-list:nth-child(9) { animation-delay: 0.9s; }
     .game-list:nth-child(10) { animation-delay: 1.0s; }
+
+    /* Focus states for accessibility */
+    .game-list:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+
+    /* Selection color */
+    ::selection {
+        background-color: var(--primary-light);
+        color: white;
+    }
+
+    /* Placeholder text color */
+    ::placeholder {
+        color: var(--text-light);
+        opacity: 0.7;
+    }
 </style>
 </head>
 <body>
@@ -313,7 +358,7 @@
                 <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15.4507 0.00226117C13.9956 0.0472598 12.8706 1.26222 12.9156 2.70218C12.9306 3.06217 13.0056 3.40716 13.1556 3.75215L13.5906 4.71212C13.6506 4.90712 13.5456 5.11711 13.3356 5.17711C13.2006 5.25211 13.0506 5.17711 12.9456 5.05711L12.3156 4.23214C11.8205 3.60216 11.0705 3.21217 10.2755 3.19717C8.82041 3.16717 7.62035 4.32213 7.59035 5.76209C7.57535 6.39207 7.78536 6.99205 8.17537 7.50204L8.8054 8.25202H8.82041C8.94041 8.44701 8.89541 8.68701 8.7304 8.807C8.59539 8.912 8.41539 8.912 8.29538 8.807L7.50034 8.17702C6.99032 7.78703 6.37529 7.57704 5.76026 7.59204C4.3202 7.62204 3.16515 8.822 3.19515 10.277C3.21015 11.0719 3.60017 11.8219 4.23019 12.3169L5.08523 12.9769C5.25024 13.1269 5.25024 13.3669 5.07023 13.5019C5.02087 13.553 4.95691 13.5877 4.8871 13.6011C4.81729 13.6145 4.74503 13.6061 4.68021 13.5769H4.66521L3.75017 13.1569C3.40516 13.0219 3.06014 12.9319 2.70012 12.9169C1.26006 12.8719 0.0450021 14.0118 0 15.4668C0 16.5468 0.600027 17.5367 1.59007 17.9567L18.6759 25.5615L25.5612 18.6767L17.9558 1.59221C17.5358 0.587244 16.5008 -0.0427375 15.4507 0.00226117ZM16.6958 6.15208C17.3258 6.13708 17.8958 6.49707 18.1358 7.06705L22.711 17.3268L16.7858 11.4169L15.3907 8.25202C14.9407 7.30705 15.6307 6.18208 16.6958 6.15208ZM11.7755 10.277C12.1806 10.277 12.5556 10.427 12.8406 10.7269L20.0559 17.9417C20.6559 18.5117 20.6709 19.4567 20.1009 20.0567C19.5009 20.6567 18.5709 20.6717 17.9408 20.0567L10.7255 12.8419C10.5828 12.706 10.4687 12.5431 10.3898 12.3626C10.3109 12.1821 10.2688 11.9877 10.266 11.7907C10.2632 11.5938 10.2998 11.3982 10.3735 11.2155C10.4473 11.0329 10.5567 10.8668 10.6955 10.7269C10.9805 10.427 11.3705 10.277 11.7755 10.277ZM7.69535 15.2568C7.89036 15.2568 8.10037 15.3168 8.25038 15.3918L11.4455 16.8018L17.3558 22.7116L7.06532 18.1367C5.53525 17.4767 6.04528 15.2118 7.69535 15.2568ZM27.4213 21.0616L21.061 27.4215L22.336 28.6964C23.4761 29.8214 25.1262 30.2564 26.6712 29.8514C27.4323 29.6441 28.126 29.2416 28.6838 28.6839C29.2416 28.1262 29.644 27.4325 29.8514 26.6715C30.2564 25.1265 29.8214 23.4766 28.6963 22.3366L27.4213 21.0616Z" fill="black"/>
                 </svg>
-                <span class="game-name">TENNIS</span>
+                <span class="game-name">BADMINTON</span>
             </div>
 
             <div class="game-list" onclick="slidepage(this)">
@@ -330,12 +375,12 @@
                 <span class="game-name">CHESS</span>
             </div>
 
-            <div class="game-list" onclick="slidepage(this)">
+            <!-- <div class="game-list" onclick="slidepage(this)">
                 <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 0C13.6757 0 12.5212 2.024 12.5212 4.7C12.5212 7.376 13.6757 9.4 15 9.4C16.3243 9.4 17.4788 7.376 17.4788 4.7C17.4788 2.024 16.3243 0 15 0ZM11.4309 5.8045C9.44422 6.6605 8.4286 9.2063 7.4918 11.9495C6.39134 15.2087 5.7042 19.0547 5.19795 22.2H4.38559V16.7H3.24153V22.2H2.22458V18.3H1.08051V22.2H0V24H1.08051V27.9H2.22458V24H3.24153V29.5H4.38559V24H9.7622C10.1071 25.3 10.5191 26.6 10.9322 27.9L7.88136 28.5V30H12.5078L11.7229 24H18.2771L17.4922 30H22.1186V28.5L19.0678 27.9C19.4809 26.6 19.8928 25.3 20.2378 24H25.6144V29.5H26.7585V24H27.7754V27.9H28.9195V24H30V22.2H28.9195V18.3H27.7754V22.2H26.7585V16.7H25.6144V22.2H24.8021C24.2957 19.0537 23.6061 15.1983 22.4595 11.9273C21.505 9.2043 20.5758 6.7747 18.5623 5.873C18.257 8.8506 16.813 11.2 15 11.2C13.1731 11.2 11.7208 8.8144 11.4309 5.8045ZM11.2016 10.643L11.8397 15.667C9.91525 16.7 8.8983 16.7 8.8983 18.3C8.8983 19.6 9.0661 20.9 9.33369 22.2H7.29775C7.78055 19.3055 8.41875 16.0246 9.2878 13.4506C9.86034 11.998 10.402 11.5722 11.2016 10.643ZM18.7842 10.778C19.5037 11.6033 20.117 11.871 20.6785 13.4727C21.577 16.0359 22.2188 19.3077 22.702 22.2H20.6663C20.9339 20.9 21.1017 19.6 21.1017 18.3C21.1017 16.7 20.0847 16.7 18.1602 15.667L18.7842 10.778ZM15 18.3C16.4587 18.3 18.8136 19.9 18.8136 19.9L18.5127 22.2H11.4873L11.1864 19.9C11.1864 19.9 13.5413 18.3 15 18.3Z" fill="black"/>
                 </svg>
                 <span class="game-name">WEIGHT-LIFTING</span>
-            </div>
+            </div> -->
 
             <div class="game-list" onclick="slidepage(this)">
                 <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -371,6 +416,70 @@
             }
            
         }
+
+
+        // Theme management for this page
+            function initializeTheme() {
+                // Check for saved theme preference or use system preference
+                const currentTheme = localStorage.getItem('theme') || 
+                                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                
+                // Set the initial theme
+                if (currentTheme === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+                
+                // Listen for theme changes from other tabs/pages
+                window.addEventListener('storage', function(e) {
+                    if (e.key === 'theme') {
+                        if (e.newValue === 'dark') {
+                            document.body.setAttribute('data-theme', 'dark');
+                        } else {
+                            document.body.removeAttribute('data-theme');
+                        }
+                    }
+                });
+                
+                // Optional: Also listen for custom events if your dashboard dispatches them
+                window.addEventListener('themeChanged', function(e) {
+                    if (e.detail === 'dark') {
+                        document.body.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.body.removeAttribute('data-theme');
+                    }
+                });
+            }
+
+            // Initialize theme when DOM is loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeTheme();
+                
+                // Additional theme-related functionality can be added here
+                // For example, if you have any dynamic elements that need theme updates
+            });
+
+            // If you need to programmatically change the theme from this page
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                // Dispatch event for other components to listen to
+                window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+            }
+
+            // Optional: Function to get current theme
+            function getCurrentTheme() {
+                return document.body.getAttribute('data-theme') || 'light';
+            }
+
+
 
         window.addEventListener("message", (event) => {
             if (event.data === "closeIframe") {
