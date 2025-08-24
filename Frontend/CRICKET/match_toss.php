@@ -376,6 +376,9 @@
     .rule:first-child{
         box-shadow: none;
     }
+    .rule:first-child{
+        box-shadow: none;
+    }
     
     @media (min-width: 601px) {
         

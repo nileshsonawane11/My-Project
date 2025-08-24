@@ -438,7 +438,7 @@
                     <h4>Contact Info</h4>
                     <div class="input-fields"><input type="text" name="" id="email" class="data" required><label for="email">Email<sup class="astrick">*</sup></label></div>
                     <div id="error-email" class="error"></div>
-                    <div class="input-fields"><input type="text" name="" maxlength="10" id="phone" class="data" required><label for="phone">Contact No.<sup class="astrick">*</sup></label></div>
+                    <div class="input-fields"><input type="text" name="" maxlength="10" id="phone" class="data" required><label for="phone">Contact No.(optional)</label></div>
                     <div id="error-phone" class="error"></div>
                 </div>
                 <div id="error-info_empty" class="error"></div>

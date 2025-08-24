@@ -256,7 +256,7 @@
             border-radius: 50%;
             border: 3px solid var(--primary-light);
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             color: var(--primary-color);
             font-weight: bold;
@@ -846,7 +846,7 @@
             border-radius: 50%;
             background-color: var(--background);
             display: flex;
-            justify-content: center;
+            justify-content: flex-end;
             align-items: center;
             color: var(--primary-color);
             font-weight: bold;
@@ -1677,12 +1677,6 @@
                 raider = el.innerText;
             }
 
-            let serveresult = (el) => {
-                points = el.innerText;
-                setTimeout(() => {
-                    get_score();
-                }, 600);
-            }
             
             // Drag to dismiss
             let startY = 0;

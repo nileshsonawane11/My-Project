@@ -140,8 +140,13 @@
         },
         {
             "name": "google/apiclient-services",
+<<<<<<< HEAD
             "version": "v0.408.0",
             "version_normalized": "0.408.0.0",
+=======
+            "version": "v0.405.0",
+            "version_normalized": "0.405.0.0",
+>>>>>>> df0f18b939110829ae48356306c3fec4e552adb7
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
@@ -181,7 +186,11 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.408.0"
+=======
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.405.0"
+>>>>>>> df0f18b939110829ae48356306c3fec4e552adb7
             },
             "install-path": "../google/apiclient-services"
         },

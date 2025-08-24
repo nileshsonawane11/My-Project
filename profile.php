@@ -323,102 +323,7 @@
         text-decoration: underline;
     }
 
-    .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        backdrop-filter: blur(3px);
-    }
-
-    .popup-box {
-        background: var(--background);
-        padding: 30px;
-        border-radius: var(--border-radius);
-        width: 100%;
-        max-width: 400px;
-        box-shadow: var(--card-shadow);
-        animation: popIn 0.3s ease-out;
-        transition: background 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    @keyframes popIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .popup-message {
-        margin-bottom: 20px;
-        font-size: 1.1rem;
-        line-height: 1.5;
-        color: var(--text-color);
-        transition: color 0.3s ease;
-    }
-
-    .popup-input {
-        width: 100%;
-        padding: 12px 15px;
-        margin: 8px 0 15px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: var(--transition);
-        background-color: var(--light-bg);
-        color: var(--text-color);
-    }
-
-    .popup-input:focus {
-        border-color: var(--primary-color);
-        outline: none;
-        box-shadow: 0 0 0 3px var(--primary-transparent);
-    }
-
-    .popup-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-    }
-
-    .popup-btn {
-        padding: 10px 20px;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-
-    .popup-btn.cancel {
-        background-color: var(--light-bg);
-        color: var(--text-color);
-        border: none;
-    }
-
-    .popup-btn.cancel:hover {
-        background-color: var(--border-color);
-    }
-
-    .popup-btn.confirm {
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-    }
-
-    .popup-btn.confirm:hover {
-        background-color: var(--primary-dark);
-    }
+    
 
     /* Edit mode styles */
     .edit-mode .form-input,
@@ -672,21 +577,10 @@
             
             <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column;">
                 <button class="save-btn">SAVE CHANGES</button>
-                <button class="logout-btn">LOGOUT</button>
-                <a class="delete-account" onclick="">DELETE ACCOUNT</a>
             </div>
         </div>
     </div>
-    
-    <div class="popup-overlay" id="popupOverlay">
-        <div class="popup-box" id="popupBox">
-            <p class="popup-message" id="popupMessage"></p>
-            <div class="popup-actions">
-                <button class="popup-btn cancel" id="cancelBtn">Cancel</button>
-                <button class="popup-btn confirm" id="confirmBtn">Confirm</button>
-            </div>
-        </div>
-    </div>
+
 
     <script>
         let user_id = <?php echo json_encode($user_id) ?>;
@@ -750,7 +644,6 @@
         const popupOverlay = document.getElementById("popupOverlay");
         const popupMessage = document.getElementById("popupMessage");
         const confirmBtn = document.getElementById("confirmBtn");
-        const cancelBtn = document.getElementById("cancelBtn");
 
         // Messages for logout and delete
         const messages = {
@@ -758,93 +651,6 @@
         "del": "Are you sure you want to delete your account?"
         };
 
-        // Add event listeners to each action button
-        document.querySelectorAll(".action-btn, .logout-btn, .delete-account").forEach(element => {
-            element.addEventListener("click", () => {
-                popupMessage.innerHTML = ""; // Reset dialog content
-                let className = element.classList.contains('logout-btn') ? 'logout' : 
-                              element.classList.contains('delete-account') ? 'del' : 
-                              element.textContent.trim().toLowerCase().replace(' ', '-');
-
-                if (className === "change-password") {
-                    // Show form for change password
-                    popupMessage.innerHTML = `
-                    <label for="currentPass">Current Password</label><br>
-                    <input type="password" id="currentPass" class="popup-input"><br><br>
-
-                    <label for="newPass">New Password</label><br>
-                    <input type="password" id="newPass" class="popup-input"><br><br>
-
-                    <label for="confirmPass">Confirm Password</label><br>
-                    <input type="password" id="confirmPass" class="popup-input"><br>
-
-                    <div id="error-empty" class="error"></div>
-                    `;
-                } else {
-                    // Show message for logout or delete
-                    popupMessage.textContent = messages[className] || "Are you sure you want to proceed?";
-                }
-
-                // Show popup
-                popupOverlay.style.display = "flex";
-
-                // Handle Confirm
-                confirmBtn.onclick = (e) => {
-                    e.preventDefault();
-                    if (className === "change-password") {
-                        const current = document.getElementById("currentPass").value;
-                        const newPass = document.getElementById("newPass").value;
-                        const confirm = document.getElementById("confirmPass").value;
-                        console.log(current, newPass, confirm);
-
-                        let formData = new FormData();
-                        formData.append('user_id', user_id);
-                        formData.append('current', current);
-                        formData.append('newPass', newPass);
-                        formData.append('confirm', confirm);
-                        
-                        fetch('./Backend/change-password.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            console.log(data);
-                            document.querySelectorAll('[id^="error-"]').forEach((el) => {
-                                el.innerHTML = '';
-                                el.style.display = 'none';
-                            });
-
-                            if(data.status !== 200){
-                                let el = document.getElementById(`error-${data.field}`);
-                                el.innerHTML = data.message;
-                                el.style.display = 'block';
-                            }else if(data.status == 200){
-                                popupOverlay.style.display = "none";
-                            }
-                        })
-                        .catch(err => console.error('Error:', err));
-
-                    } else {
-                    // alert(`${className} confirmed.`);
-                        if(className === "logout"){
-                            logout();
-                        }
-
-                        if(className === "del"){
-                            deleteAccount();
-                        }
-                    }
-
-                    // popupOverlay.style.display = "none"; // Hide popup
-                };
-            });
-        });
-
-        // Cancel button hides popup
-        cancelBtn.addEventListener("click", () => {
-        popupOverlay.style.display = "none";
-        });
 
         //log out
         function logout(){

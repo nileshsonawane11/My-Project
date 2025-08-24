@@ -89,6 +89,16 @@
             user-select: none;
             scrollbar-width: none;
         }
+        :root {
+            --primary-light: #FAC01F;
+            --primary-dark: #F83900;
+            --background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --text-light: #f8f8f8;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
         :root {
             --primary-color: rgba(209, 34, 31, 1);
@@ -876,6 +886,29 @@
             transition: var(--transition);
             border: 1px solid var(--border-color);
         }
+        #match_completed,
+        #start_second,
+        #half_completed,
+        #undo{
+            position: fixed;
+            transform: translateX(-50%) translateY(-50%);
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            border: none;
+            height: max-content;
+            background: var(--card-bg);
+            transition: all 0.5s ease-in-out;
+            align-items: flex-start;
+            padding: 20px;
+            z-index: 99;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            scrollbar-width: none;
+        }
 
         .player-replace.selected {
             border: 2px solid var(--primary-color);
@@ -1001,7 +1034,6 @@
             75%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
             100% { transform: translateX(-50%) translateY(-50%) translateX(0); }
         }
-
         .shake {
             animation: shake 0.4s;
         }

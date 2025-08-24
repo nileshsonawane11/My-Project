@@ -78,13 +78,10 @@
     $team2_role = ($attacking_team === $team2) ? 'Chasing Team' : 'Running Team';
 
     $is_empty = false;
-    
-    if (empty($score_log['innings'][$current_inning]['current_runners'])) {
+    if(empty($score_log['innings'][$current_inning]['current_runners'])) {
         $is_empty = true;
-        //  print_r($score_log['innings'][$current_inning]['current_runners']) ;
     } else {
         $is_empty = false;
-        
     }
 ?>
 <!DOCTYPE html>
@@ -1947,7 +1944,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
    // Disable right-click
-  //document.addEventListener('contextmenu', event => event.preventDefault());
+  document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

@@ -13,6 +13,7 @@
         }
 
         :root {
+            --primary-color: rgba(209, 34, 31, 1);
             --primary-red: rgba(209, 34, 31, 1);
             --primary-red-light: rgba(209, 34, 31, 0.8);
             --primary-red-dark: rgba(160, 25, 23, 1);
@@ -20,6 +21,10 @@
             --card-bg: #1e1e1e;
             --text-dark: #e0e0e0;
             --text-light: #a0a0a0;
+            --border-color: #333333;
+            --text-color: #ffffff;
+            --light-bg: #1e1e1e;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             --border-color: #333333;
             --accent-color: #1c0003ff;
             --svg-fill: white;
@@ -32,6 +37,10 @@
         [data-theme="light"] {
             --background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
             --card-bg: #ffffff;
+            --text-color: #000000;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
             --text-dark: #212529;
             --text-light: #495057;
             --border-color: #dee2e6;
@@ -190,6 +199,103 @@
         input:checked + .slider:before {
             transform: translateX(30px);
         }
+
+        .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(3px);
+    }
+
+    .popup-box {
+        background: var(--background);
+        padding: 30px;
+        border-radius: var(--border-radius);
+        width: 100%;
+        max-width: 400px;
+        box-shadow: var(--card-shadow);
+        animation: popIn 0.3s ease-out;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    @keyframes popIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .popup-message {
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+        line-height: 1.5;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+
+    .popup-input {
+        width: 100%;
+        padding: 12px 15px;
+        margin: 8px 0 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: var(--transition);
+        background-color: var(--light-bg);
+        color: var(--text-color);
+    }
+
+    .popup-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px var(--primary-transparent);
+    }
+
+    .popup-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .popup-btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .popup-btn.cancel {
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        border: none;
+    }
+
+    .popup-btn.cancel:hover {
+        background-color: var(--border-color);
+    }
+
+    .popup-btn.confirm {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+    }
+
+    .popup-btn.confirm:hover {
+        background-color: var(--primary-dark);
+    }
 
         .select-style {
             width: 100%;
@@ -383,7 +489,7 @@
                     </div>
                 </div>
                 
-                <div class="setting-item">
+                <!-- <div class="setting-item">
                     <label for="font-size">Font Size</label>
                     <select class="select-style" id="font-size">
                         <option value="small">Small</option>
@@ -399,11 +505,11 @@
                         <option value="normal" selected>Normal</option>
                         <option value="comfortable">Comfortable</option>
                     </select>
-                </div>
+                </div> -->
             </div>
 
             <!-- Notification Settings -->
-            <div class="settings-card">
+            <!-- <div class="settings-card">
                 <div class="card-header">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                         <path d="M20 17h2v2H2v-2h2v-7a8 8 0 1116 0v7zm-2 0v-7a6 6 0 10-12 0v7h12zm-9 4h6v2H9v-2z"/>
@@ -442,7 +548,7 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Sports Preferences -->
             <!-- <div class="settings-card">
@@ -531,8 +637,6 @@
                     <span class="detail-value">Premium</span>
                 </div>
                 
-                <button class="button-secondary">Change Password</button>
-                <button class="button-secondary">Update Email</button>
             </div>
 
             <!-- Data & Privacy -->
@@ -544,7 +648,7 @@
                     <h2>Data & Privacy</h2>
                 </div>
                 
-                <div class="setting-item">
+                <!-- <div class="setting-item">
                     <label>Data Saving Mode</label>
                     <label class="toggle-switch">
                         <input type="checkbox">
@@ -566,10 +670,10 @@
                         <input type="checkbox">
                         <span class="slider"></span>
                     </label>
-                </div>
+                </div> -->
                 
-                <button class="button-secondary">Download My Data</button>
-                <button class="button-secondary">Privacy Policy</button>
+                <!-- <button class="button-secondary">Download My Data</button> -->
+                <button class="button-secondary" onclick = "window.location.href = './privacy-policy.php'">Privacy Policy</button>
             </div>
 
             <!-- Language & Region -->
@@ -699,9 +803,21 @@
                 Danger Zone
             </h3>
             <p>Once you delete your account, there is no going back. Please be certain.</p>
-            <button class="button-secondary" style="color: var(--primary-red); border-color: var(--primary-red);">
+            <button class="delete-account button-secondary" style="color: var(--primary-red); border-color: var(--primary-red);">
                 Delete Account
             </button>
+            <button class="logout-btn button-secondary" style="color: var(--primary-red); border-color: var(--primary-red);">
+                Log Out
+            </button>
+        </div>
+    </div>
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup-box" id="popupBox">
+            <p class="popup-message" id="popupMessage"></p>
+            <div class="popup-actions">
+                <button class="popup-btn cancel" id="cancelBtn">Cancel</button>
+                <button class="popup-btn confirm" id="confirmBtn">Confirm</button>
+            </div>
         </div>
     </div>
 
@@ -709,6 +825,46 @@
 
         let back =document.querySelector(".back-button");
         let theme_label = document.querySelector(".theme-text");
+        const popupOverlay = document.getElementById("popupOverlay");
+        const popupMessage = document.getElementById("popupMessage");
+        const confirmBtn = document.getElementById("confirmBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        const messages = {
+        "logout": "Are you sure you want to log out?",
+        "del": "Are you sure you want to delete your account?"
+        };
+
+        // Cancel button hides popup
+        cancelBtn.addEventListener("click", () => {
+        popupOverlay.style.display = "none";
+        });
+
+
+        //log out
+        function logout(){
+            fetch('logout.php')
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 200){
+                    window.location.href = 'front-page.php';
+                    alert ('You have been logged out!')
+                }
+                console.log(data)})
+            .catch(error => console.error(error));
+        }
+
+        function deleteAccount(){
+            fetch('./Backend/delete_account.php')
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 200){
+                    // window.location.href = 'front-page.php';
+                    alert ('Account will deactivate in 24 hrs.!')
+                }
+                console.log(data)})
+            .catch(error => console.error(error));
+        }
 
         back.addEventListener("click" ,() => {
             window.history.back();
@@ -771,16 +927,16 @@
                     this.apiKey = 'YOUR_GOOGLE_TRANSLATE_API_KEY'; // Replace with your actual API key
                     this.translateEndpoint = 'https://translation.googleapis.com/language/translate/v2';
                     
-                    this.init();
+                    // this.init();
                 }
 
-                init() {
-                    // Load saved preferences
-                    this.loadPreferences();
+                // init() {
+                //     // Load saved preferences
+                //     this.loadPreferences();
                     
-                    // Set up event listeners
-                    this.setupEventListeners();
-                }
+                //     // Set up event listeners
+                //     this.setupEventListeners();
+                // }
 
                 loadPreferences() {
                     // Load language preference
@@ -954,6 +1110,89 @@
             document.addEventListener('DOMContentLoaded', () => {
                 window.liveStrikeTranslator = new LiveStrikeTranslator();
             });
+
+            // Add event listeners to each action button
+        document.querySelectorAll(".action-btn, .logout-btn, .delete-account").forEach(element => {
+            element.addEventListener("click", () => {
+                popupMessage.innerHTML = ""; // Reset dialog content
+                let className = element.classList.contains('logout-btn') ? 'logout' : 
+                              element.classList.contains('delete-account') ? 'del' : 
+                              element.textContent.trim().toLowerCase().replace(' ', '-');
+
+                if (className === "change-password") {
+                    // Show form for change password
+                    popupMessage.innerHTML = `
+                    <label for="currentPass">Current Password</label><br>
+                    <input type="password" id="currentPass" class="popup-input"><br><br>
+
+                    <label for="newPass">New Password</label><br>
+                    <input type="password" id="newPass" class="popup-input"><br><br>
+
+                    <label for="confirmPass">Confirm Password</label><br>
+                    <input type="password" id="confirmPass" class="popup-input"><br>
+
+                    <div id="error-empty" class="error"></div>
+                    `;
+                } else {
+                    // Show message for logout or delete
+                    popupMessage.textContent = messages[className] || "Are you sure you want to proceed?";
+                }
+
+                // Show popup
+                popupOverlay.style.display = "flex";
+
+                // Handle Confirm
+                confirmBtn.onclick = (e) => {
+                    e.preventDefault();
+                    if (className === "change-password") {
+                        const current = document.getElementById("currentPass").value;
+                        const newPass = document.getElementById("newPass").value;
+                        const confirm = document.getElementById("confirmPass").value;
+                        console.log(current, newPass, confirm);
+
+                        let formData = new FormData();
+                        formData.append('user_id', user_id);
+                        formData.append('current', current);
+                        formData.append('newPass', newPass);
+                        formData.append('confirm', confirm);
+                        
+                        fetch('./Backend/change-password.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log(data);
+                            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                                el.innerHTML = '';
+                                el.style.display = 'none';
+                            });
+
+                            if(data.status !== 200){
+                                let el = document.getElementById(`error-${data.field}`);
+                                el.innerHTML = data.message;
+                                el.style.display = 'block';
+                            }else if(data.status == 200){
+                                popupOverlay.style.display = "none";
+                            }
+                        })
+                        .catch(err => console.error('Error:', err));
+
+                    } else {
+                    // alert(`${className} confirmed.`);
+                        if(className === "logout"){
+                            logout();
+                        }
+
+                        if(className === "del"){
+                            deleteAccount();
+                        }
+                    }
+
+                    // popupOverlay.style.display = "none"; // Hide popup
+                };
+            });
+        });
     </script>
 </body>
 </html>
