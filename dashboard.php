@@ -70,7 +70,8 @@
         --accent-color: #1c0003ff;
         --svg-fill : white;
         --nav-fill: #2d2d2d;
-    }
+        --invert: invert(1);
+       }
 
     [data-theme="light"] {
         --background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
@@ -80,6 +81,7 @@
         --border-color: #dee2e6;
         --svg-fill : black;
         --nav-fill: #ffffffff;
+        --invert: invert(0);
     }
     body {
         background-color: var(--card-bg); /* Dark background */
