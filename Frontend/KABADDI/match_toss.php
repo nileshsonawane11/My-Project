@@ -40,16 +40,18 @@
         scrollbar-width: none;
     }
     
+    /* Theme Variables */
     :root {
-        --primary-light: #FAC01F;
-        --primary-dark: #F83900;
-        --primary-light-10: rgba(250, 192, 31, 0.1);
-        --primary-dark-10: rgba(248, 57, 0, 0.1);
-        --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --primary-light-10: rgba(209, 34, 31, 0.1);
+        --primary-dark-10: rgba(160, 25, 23, 0.1);
+        --background: #ffffff;
+        --card-bg: #ffffff;
         --text-dark: #2d3748;
         --text-light: #4a5568;
         --bg-light: #f8fafc;
-        --card-bg: #ffffff;
         --border-light: #e2e8f0;
         --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
         --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -58,8 +60,28 @@
         --radius-md: 12px;
         --radius-lg: 16px;
         --transition: all 0.2s ease-in-out;
+        --svg-fill: #2d3748;
+    }
+
+    /* Dark theme variables */
+    [data-theme="dark"] {
+        --background: #121212;
+        --card-bg: #1e1e1e;
+        --text-dark: #ffffff;
+        --text-light: #a0aec0;
+        --bg-light: #2d3748;
+        --border-light: #4a5568;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+        --svg-fill: #ffffff;
+        --primary-light-10: rgba(209, 34, 31, 0.2);
+        --primary-dark-10: rgba(160, 25, 23, 0.2);
     }
     
+    svg path {
+        fill: var(--text-dark);
+    }
     body {
         height: max-content;
         display: flex;
@@ -73,7 +95,6 @@
     }
     
     .container {
-        height: 100vh;
         display: flex;
         background-color: var(--card-bg);
         box-shadow: var(--shadow-lg);
@@ -106,13 +127,13 @@
     
     .return svg {
         cursor: pointer;
-        fill: var(--primary-dark);
+        fill: var(--svg-fill);
         transition: var(--transition);
     }
     
     .return svg:hover {
         transform: scale(1.1);
-        fill: var(--primary-light);
+        fill: var(--primary-color);
     }
     
     .container2 {
@@ -150,7 +171,7 @@
     .input-fields input:focus ~ label {
         transform: translateX(-5px) translateY(-28px);
         font-size: 14px;
-        color: var(--primary-dark);
+        color: var(--primary-color);
         font-weight: 600;
     }
     
@@ -173,6 +194,7 @@
         height: 48px;
         background: transparent;
         transition: var(--transition);
+        color: var(--text-dark);
     }
     
     .container input[type="text"]:focus,
@@ -184,7 +206,7 @@
     .container input[type="time"]:focus,
     .container input[type="date"]:focus,
     .container select:focus {
-        border-bottom-color: var(--primary-dark);
+        border-bottom-color: var(--primary-color);
         box-shadow: 0 2px 0 0 var(--primary-light-10);
     }
     
@@ -207,14 +229,14 @@
     
     .error {
         display: none;
-        color: #dc2626;
+        color: var(--primary-color);
         width: 100%;
         font-size: 14px;
         margin: 5px 0;
         padding: 8px 12px;
-        background-color: rgba(220, 38, 38, 0.1);
+        background-color: var(--primary-light-10);
         border-radius: var(--radius-sm);
-        border-left: 3px solid #dc2626;
+        border-left: 3px solid var(--primary-color);
     }
     
     .teams,
@@ -242,7 +264,7 @@
     
     .teams.active,
     .options.active {
-        border-color: var(--primary-light);
+        border-color: var(--primary-color);
         box-shadow: 0 0 0 4px var(--primary-light-10);
     }
     
@@ -309,12 +331,12 @@
         height: 48px;
         width: 300px;
         transition: var(--transition);
-        box-shadow: 0 4px 6px rgba(248, 57, 0, 0.2);
+        box-shadow: 0 4px 6px rgba(209, 34, 31, 0.2);
     }
     
     .add-btn button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(248, 57, 0, 0.3);
+        box-shadow: 0 6px 12px rgba(209, 34, 31, 0.3);
     }
     
     .add-btn button:active {
@@ -334,7 +356,7 @@
     .form-check-input:focus {
         border-color: var(--primary-dark);
         outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(248, 57, 0, 0.25);
+        box-shadow: 0 0 0 0.25rem rgba(209, 34, 31, 0.25);
     }
     
     .form-check-input {
@@ -366,6 +388,7 @@
         border-radius: var(--radius-md);
         box-shadow: var(--shadow-sm);
         transition: var(--transition);
+        color: var(--text-dark);
     }
     
     .rule:hover {
@@ -559,6 +582,71 @@
             .catch(error => console.log(error));
 
         }
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

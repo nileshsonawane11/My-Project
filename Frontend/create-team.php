@@ -16,7 +16,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <title>select team</title>
   <style>
     * {
@@ -315,7 +315,6 @@
 
     <div class="container2">
         <div class="txt">
-            <label for="">Create New Team</label>
             <h4>SELECT SPORT TYPE</h4>
         </div>
         <div class="list">
@@ -494,6 +493,17 @@
                 window.location.href = "./manage-teams.php";
             }
         });
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 </html>

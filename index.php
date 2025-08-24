@@ -1,9 +1,27 @@
 <?php
     session_start();
+    include './config.php';
     if(isset($_COOKIE['user'])){
       $_SESSION['user']=$_COOKIE['user'];
     }
     $isloggedin = isset($_COOKIE['user']);
+
+    $current_time = date('Y-m-d H:i:s');
+
+    // Prepare and execute delete query
+    $query = "DELETE FROM users WHERE delete_on IS NOT NULL AND TIMESTAMPDIFF(HOUR, delete_on, ?) >= 24";
+
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $current_time);
+
+    if ($stmt->execute()) {
+        // echo (['status' => 'success', 'message' => 'Accounts older than 24 hours deleted']);
+    } else {
+        // echo (['status' => 'error', 'message' => 'Deletion failed: ' . $stmt->error]);
+    }
+
+    $stmt->close();
+    $conn->close();
 ?> 
 
 <!DOCTYPE html>
@@ -11,7 +29,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <title>LiveStrike</title>
     <style>
         * {
@@ -157,7 +175,7 @@
 
     <div class="container">
         <div class="logo-container">
-            <a href="https://ibb.co/Zp9j6TBS"><img class="logo" src="https://i.ibb.co/gLY2MgSd/logo.png" alt="logo" border="0"></a>         
+            <img class="logo" src="./assets/images/logo.png" alt="logo" border="0">         
             <p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p>   
         </div>
         <div class="mask">
@@ -197,5 +215,16 @@
     }
 
 }, 6000);
+
+// Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
 </script>
 </html>

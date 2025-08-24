@@ -20,80 +20,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <title>Schedule Match</title>
     <style>
-        *{
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
-            user-select : none;
+            user-select: none;
             scrollbar-width: none;
         }
+
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --primary-transparent: rgba(212, 53, 50, 0.15);
+            --background: #ffffff;
+            --text-color: #000000;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --border-color: #dddddd;
+            --special-color: #e3e3e3;
+            --invert: invert(0);
         }
-        body{
+
+        [data-theme="dark"] {
+            --background: #121212;
+            --text-color: #ffffff;
+            --light-bg: #1e1e1e;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --border-color: #333333;
+            --primary-transparent: rgba(210, 31, 28, 0.29);
+            --special-color: #3f3f3f;
+            --invert: invert(1);
+        }
+
+        svg path {
+            fill: var(--text-color);
+        }
+
+        
+        body {
             height: max-content;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
             flex-direction: column;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            transition: var(--transition);
         }
-        .part{
+
+        .part {
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             gap: 70px;
         }
-        .return{
+
+        .return {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-direction: row;
         }
-        .return svg{
+
+        .return svg {
             cursor: pointer;
-            
+            fill: var(--primary-color);
+            transition: var(--transition);
         }
-        .container2{
+
+        .container {
+            display: flex;
+            background-color: var(--background);
+            box-shadow: var(--card-shadow);
+            position: relative;
+            width: 90%;
+            max-width: 100%;
+            min-height: 480px;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: column;
+            gap: 30px;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .container2 {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
             flex-wrap: wrap;
             width: 100%;
-            gap: 80px
+            gap: 80px;
         }
-        .txt{
+
+        .txt {
             line-height: 20px;
+            color: var(--text-color);
+            transition: var(--transition);
         }
-        
-        .input-fields{
+
+        .input-fields {
             width: 100%;
             position: relative;
         }
-        .input-fields label{
+
+        .input-fields label {
             position: absolute;
             bottom: 22px;
             left: 14px;
             text-align: center;
             font-size: 16px;
-            transition: 0.3s ease-in-out;
+            transition: var(--transition);
+            color: var(--text-color);
         }
+
         .input-fields input:valid ~ label,
-        .input-fields input:focus ~ label {
+        .input-fields input:focus ~ label,
+        .input-fields textarea:valid + label,
+        .input-fields textarea:focus + label {
             transform: translateX(-5px) translateY(-24px);
             font-size: 14px;
-            color: black;
+            color: var(--primary-color);
+            opacity: 1;
         }
-        .container3{
+
+        .container3 {
             width: 100%;
             display: flex;
             align-items: center;
@@ -101,14 +164,16 @@
             flex-direction: column;
             gap: 40px;
         }
-        .logo-img{
+
+        .logo-img {
             height: 110px;
             width: 110px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .img-container{
+
+        .img-container {
             height: 100%;
             width: 100%;
             display: flex;
@@ -117,40 +182,47 @@
             flex-direction: column;
             position: relative;
         }
-        .image{
+
+        .image {
             height: 100%;
             width: 100%;
-            border: solid 1px black;
+            border: solid 1px var(--border-color);
             border-radius: 50%;
+            transition: var(--transition);
         }
-        .select-img{
+
+        .select-img {
             position: absolute;
             bottom: 0;
             right: 0;
-            background: white;
+            background: var(--background);
             height: 40px;
             width: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            cursor : pointer;
+            cursor: pointer;
+            transition: var(--transition);
         }
-        .info{
+
+        .info {
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 25px
+            gap: 25px;
         }
-        .name{
+
+        .name {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-direction: row;
             gap: 20px;
         }
-        .history-staff{
+
+        .history-staff {
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -158,7 +230,8 @@
             align-items: flex-start;
             gap: 20px;
         }
-        .team{
+
+        .team {
             width: 100%;
             display: flex;
             flex-direction: row;
@@ -166,16 +239,18 @@
             justify-content: space-evenly;
             align-items: center;
             gap: 10px;
-            color: black;
+            color: var(--text-color);
             padding: 10px;
             border-radius: 20px;
             text-wrap: auto;
-            background: #eeeeeeab;
+            background: var(--light-bg);
             cursor: pointer;
-            box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--card-shadow);
             flex-wrap: wrap;
+            transition: var(--transition);
         }
-        .other-info{
+
+        .other-info {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -183,7 +258,8 @@
             margin-left: 15px;
             cursor: pointer;
         }
-        .team-info{
+
+        .team-info {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -192,35 +268,43 @@
             cursor: pointer;
             justify-content: center;
         }
-        .team-info label{
+
+        .team-info label {
             display: flex;
             align-items: center;
             justify-content: flex-start;
             flex-direction: row;
             gap: 5px;
+            color: var(--text-color);
+            transition: var(--transition);
         }
-        .logo{
+
+        .logo {
             min-height: 75px;
             min-width: 75px;
-            background: #e8e8e8;
+            background: var(--light-bg);
             margin: 10px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            transition: var(--transition);
         }
-        .part.or{
+
+        .part.or {
             text-align: center;
         }
-        .add-btn{
+
+        .add-btn {
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-top: 20px;
         }
-        .schedule{
+
+        .schedule {
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -228,50 +312,51 @@
             width: 100%;
             gap: 15px;
         }
+
         .input-fields #date,
         .input-fields #time {
             position: absolute;
             bottom: 22px;
             left: 14px;
-            background: white;
+            background: var(--background);
             width: 100px;
             height: 20px;
             text-align: left;
             font-size: 16px;
-            transition: 0.3s ease-in-out;
+            transition: var(--transition);
+            color: var(--text-color);
         }
-        .info-input{
+
+        .info-input {
             gap: 40px;
         }
-        .prize-container{
+
+        .prize-container {
             display: flex;
             gap: 10px;
             width: 100%;
             justify-content: space-around;
             align-items: center;
             flex-direction: row;
-            
         }
-        .option,.option1 {
+
+        .option, .option1 {
             padding: 7px 16px;
             border-radius: 13px;
             cursor: pointer;
             user-select: none;
-            background:#D9D9D9;
-            transition:all 0.2s ease-in-out;
+            background: var(--light-bg);
+            transition: var(--transition);
+            color: var(--text-color);
         }
+
         .option.active,
         .option1.active {
-            background: #ff47000a;
-            border: 1px solid #ff5e00;
+            background: var(--primary-transparent);
+            border: 1px solid var(--primary-color);
         }
-        .input-fields textarea:valid + label,
-        .input-fields textarea:focus + label {
-            transform: translateX(-5px) translateY(-24px);
-            font-size: 14px;
-            color: black;
-        }
-        textarea{
+
+        textarea {
             overflow: hidden;
             resize: none;
             min-height: 30px;
@@ -279,16 +364,19 @@
             font-size: 14px;
             width: 100%;
             border: none;
-            border-bottom: solid 1px black;
+            border-bottom: solid 1px var(--border-color);
             margin: 8px 0;
             padding: 10px 15px;
             font-size: 15px;
             width: 100%;
             outline: none;
             height: 45px;
-            background: white;
+            background: var(--background);
+            color: var(--text-color);
+            transition: var(--transition);
         }
-        .container4{
+
+        .container4 {
             width: 100%;
             display: flex;
             justify-content: center;
@@ -296,84 +384,97 @@
             flex-direction: column;
             gap: 20px;
         }
-        .text{
+
+        .text {
             height: 50px;
             width: 130px;
             border-radius: 17px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background:var(--background);
-            color:white;
+            background: var(--primary-color);
+            color: white;
+            transition: var(--transition);
         }
-        .img-container{
+
+        .img-container {
             height: 100px;
             width: 100px;
-            background: #73737330;
+            background: var(--light-bg);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            transition: var(--transition);
         }
-        .img-container img{
+
+        .img-container img {
             height: 100%;
             width: 100%;
             object-fit: cover;
         }
-        .vs{
+
+        .vs {
             font-size: 25px;
             font-weight: bold;
             transform: translate(0,20rem);
             transition: all 0.5s ease-in-out;
             opacity: 0;
+            color: var(--text-color);
         }
-        .teams{
+
+        .teams {
             width: 100%;
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
         }
-        .officials{
+
+        
+        .officials {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
         }
-        .officials-container{
+
+        .officials-container {
             width: 100%;
             gap: 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        .person{
+
+        .person {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .right-side{
+
+        .right-side {
             transform: translateX(-200%) translateY(0);
             transition: all 0.5s ease-in-out;
         }
-        .left-side{
+
+        .left-side {
             transform: translateX(200%) translateY(0);
             transition: all 0.5s ease-in-out;
         }
-        .show{
+
+        .show {
             opacity: 1;
             transform: translate(0,0);
         }
-<<<<<<< HEAD
 
-=======
->>>>>>> 1707ca4e091edd07b456ac8f89e8295804f894c2
-        #s-type{
+        #s-type {
             cursor: pointer;
         }
-        .officials-frame{
+
+        .officials-frame {
             position: fixed;
             bottom: -100%;
             left: 0;
@@ -382,85 +483,93 @@
             border: none;
             transition: bottom 0.8s ease;
             z-index: 999;
+            background: var(--background);
         }
-        .officials-frame.active{
+
+        .officials-frame.active {
             bottom: 0;
         }
-        .error{
+
+        .error {
             display: none;
-            color:red; 
-            width:100%;
-            font-size:14px;
+            color: var(--primary-color);
+            width: 100%;
+            font-size: 14px;
             margin: 5px;
+            transition: var(--transition);
         }
 
-        @media (min-width:601px) {
-             .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 90%;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-                padding: 40px;
-            }
-            .container2{
-                gap: 100px;
-                width: 70%;
-            }
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
-                border: none;
-                border-bottom: solid 1px black;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 16px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                background: white;
-            }
-            .staff-container{
-                width: 100%;
-                display: grid;
-                justify-items: center;
-                align-items: center;
-                gap: 30px;
-                justify-content: space-around;
-                grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-            }
-            .add-btn button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                height: 40px;
-                width: 300px;
-            }
-            .teams{
-                justify-content: space-evenly;
-            }
-            .officials{
-                justify-content: space-evenly;
-            }
+        .container input[type="text"],
+        .container input[type="email"],
+        .container input[type="password"],
+        .container input[type="number"],
+        .container input[type="tel"],
+        .container input[type="datetime"],
+        .container input[type="time"],
+        .container input[type="date"],
+        .container select {
+            border: none;
+            border-bottom: solid 1px var(--border-color);
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+            height: 45px;
+            background: var(--background);
+            color: var(--text-color);
+            transition: var(--transition);
+            
+        }
+        /* For <input type="date"> */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: var(--invert);    /* makes it white */
+        cursor: pointer;
         }
 
-        @media(max-width: 601px) {
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
+        /* For <input type="time"> */
+        input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: var(--invert);    /* makes it white */
+        cursor: pointer;
+        }
+
+        .staff-container {
+            width: 100%;
+            display: grid;
+            justify-items: center;
+            align-items: center;
+            gap: 30px;
+            justify-content: space-around;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        }
+
+        .add-btn button {
+            background: var(--primary-color);
+            color: #fff;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            height: 40px;
+            width: 300px;
+            transition: var(--transition);
+        }
+
+        .teams {
+            justify-content: space-evenly;
+        }
+
+        .officials {
+            justify-content: space-evenly;
+        }
+        
+
+        @media (max-width: 601px) {
+            .container {
                 width: 768px;
                 z-index: 0;
                 max-width: 100%;
@@ -469,21 +578,31 @@
                 align-items: flex-start;
                 justify-content: flex-start;
                 flex-direction: column;
-                gap: 30px
+                gap: 30px;
             }
             
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
+            .container input[type="text"],
+            .container input[type="email"],
+            .container input[type="password"],
+            .container input[type="number"],
+            .container input[type="tel"],
+            .container input[type="datetime"],
+            .container input[type="time"],
+            .container input[type="date"],
+            .container select {
                 border: none;
-                border-bottom: solid 1px black;
+                border-bottom: solid 1px var(--border-color);
                 margin: 8px 0;
                 padding: 10px 15px;
                 font-size: 15px;
                 width: 100%;
                 outline: none;
                 height: 45px;
-                background: white;
+                background: var(--background);
+                color: var(--text-color);
             }
-            .staff-container{
+            
+            .staff-container {
                 width: 100%;
                 display: flex;
                 flex-direction: column;
@@ -491,12 +610,14 @@
                 align-items: center;
                 gap: 20px;
             }
-            .team{
+            
+            .team {
                 height: 90px;
                 width: 100%;
             }
-            .add-btn button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            
+            .add-btn button {
+                background: var(--primary-color);
                 color: #fff;
                 font-size: 12px;
                 padding: 10px 45px;
@@ -580,19 +701,19 @@
                             <div class="input-fields event-time"><input type="time" id="timeInput" placeholder="Select Time" required><label for="timeInput" id="time">Time</label></div>
                         </div>
                         
-                         <div class="info">
+                        <!-- <div class="info">
                             <h4>Overs</h4>
                             <select name="" id="over">
                                 <option value='Null' disabled selected>Select Overs</option>
                                 <?php
-                                    for ($i = 1; $i <= 20; $i++) {
-                                        echo "<option value='$i'>$i</option>";
-                                    }
+                                    //for ($i = 1; $i <= 20; $i++) {
+                                        //echo "<option value='$i'>$i</option>";
+                                    //}
                                 ?>
                                 <option value='50'>50</option>
                                 <option value='-'>Unlimited</option>
                             </select>
-                        </div>
+                        </div> -->
 
                         <div id="error-empty" class="error"></div>
                         <div id="error-datetime" class="error"></div>
@@ -606,7 +727,7 @@
                                 "KABADDI" => "Team Sport",
                                 "KHO-KHO" => "Team Sport",
                                 "FOOTBALL" => "Team Sport",
-                                "TENNIS" => "Individual Sport",
+                                "BADMINTON" => "Individual Sport",
                                 "TABLE-TENNIS" => "Individual Sport",
                                 "CHESS" => "Mind Sport",
                                 "WEIGHT-LIFTING" => "Individual Sport",
@@ -691,6 +812,9 @@
         };
 
         let schedule_match = (e) => {
+            let match_btn = document.querySelector('#schedule_match');
+            match_btn.innerText = 'Proccessing...';
+            match_btn.disabled = true;
             e.preventDefault();
 
             let city = document.getElementById('city').value;
@@ -698,7 +822,6 @@
             let timeInput = document.getElementById('timeInput').value;
             let dateInput = document.getElementById('dateInput').value;
             let s_type = document.getElementById('s-type').value;
-            let over = document.getElementById('over').value;
             let password = '';
 
             if (Commentators.length === 0) {
@@ -722,7 +845,6 @@
             formdata.append('timeInput', timeInput);
             formdata.append('dateInput', dateInput);
             formdata.append('s_type', s_type);
-            formdata.append('over', over);
             formdata.append('Umpires[]', Umpires);
             formdata.append('Scorers[]', Scorers);
             formdata.append('Commentators[]', Commentators);
@@ -749,6 +871,8 @@
                     let el = document.getElementById(`error-${data.field}`);
                     el.innerHTML = data.message;
                     el.style.display = 'block';
+                    match_btn.innerText = 'Make Match';
+                    match_btn.disabled = false;
                 } else if (data.status == 200) {
                     password = data.pass;
 
@@ -820,6 +944,72 @@
             next_page.src = `./select-officials.php?p=${text}`;
             next_page.classList.add('active');
         }
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

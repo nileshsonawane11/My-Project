@@ -44,7 +44,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title><?php echo $username;?>'s Dashboard</title>
 <style>
@@ -92,12 +92,15 @@
         color: #212529;
     }
     
+    .bx {
+        color: var(--text-dark);
+    }
     .nav-bar {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 20px;
+        padding: 10px 20px 10px 0px;
         position: fixed;
         top: 0;
         width: 100%;
@@ -362,7 +365,6 @@
         position: relative;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
         z-index: 1;
-        margin-bottom: 20px;
         border-bottom: 1px solid var(--border-color);
     }
     
@@ -499,6 +501,10 @@
         font-size: 18px;
         font-weight: 700;
         color: var(--text-dark);
+        font-size: clamp(8px, 15px, 18px);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
     
     .team {
@@ -727,9 +733,7 @@
         transition: all 0.2s ease;
     }
     
-    .game:hover {
-        background: rgba(209, 34, 31, 0.15);
-    }
+    
     
     .game p {
         font-size: 12px;
@@ -826,6 +830,18 @@
         transform: translateY(0);
     }
     
+    .ad2{
+            height: 80px;
+            width: 100%;
+            background: rgb(20 20 20 / 12%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(248, 57, 0, 0.1);
+            margin-bottom: 20px;
+        }
     .close-container {
         width: 100%;
         height: 70px;
@@ -864,7 +880,7 @@
         color: var(--text-dark);
     }
 
-    /* Toggle Switch */
+    /* Toggle Switch
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -908,7 +924,7 @@
 
         input:checked + .slider:before {
             transform: translateX(30px);
-        }
+        } */
 
         .btn {
             display: inline-block;
@@ -958,6 +974,9 @@
         .logo-img img {
             height: 100%;
             width: 100%;
+        }
+        .game:hover {
+            background: rgba(209, 34, 31, 0.15);
         }
         .pls {
             justify-content: flex-end;
@@ -1110,7 +1129,7 @@
             <div id="close-sidebar">&times;</div>
             <div class="menu-list">
                 <div class="menu-part">
-                    <div class="menu-items"><div><p class="username"><?php echo $_SESSION['name']." (".$_SESSION['role'].") "; ?></p>
+                    <div class="menu-items"><div onclick="window.location.href=`./profile.php`"><p class="username"><?php echo $_SESSION['name']." (".$_SESSION['role'].") "; ?></p>
                         <?php
                             $query = mysqli_query($conn,"SELECT * FROM `users` WHERE user_id = '$_SESSION[user]'");
                             $row = mysqli_fetch_assoc($query);
@@ -1126,10 +1145,10 @@
                         ?></div>
                     </div><hr>
 
-                    <div class="menu-items"><div><p>Setting</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="menu-items"><div onclick="window.location.href='settings.php'"><p>Setting</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M15.76 4.0375C16.3267 4.2125 16.8683 4.4375 17.385 4.7125L19.6763 3.3375C19.9152 3.1942 20.1951 3.13482 20.4716 3.16879C20.7481 3.20276 21.0054 3.32814 21.2025 3.525L22.475 4.7975C22.6719 4.99463 22.7972 5.25187 22.8312 5.52838C22.8652 5.8049 22.8058 6.08484 22.6625 6.32375L21.2875 8.615C21.5625 9.13167 21.7875 9.67333 21.9625 10.24L24.5537 10.8888C24.8241 10.9565 25.064 11.1126 25.2354 11.3322C25.4069 11.5519 25.5 11.8226 25.5 12.1012V13.8988C25.5 14.1774 25.4069 14.4481 25.2354 14.6678C25.064 14.8874 24.8241 15.0435 24.5537 15.1112L21.9625 15.76C21.7875 16.3267 21.5625 16.8683 21.2875 17.385L22.6625 19.6763C22.8058 19.9152 22.8652 20.1951 22.8312 20.4716C22.7972 20.7481 22.6719 21.0054 22.475 21.2025L21.2025 22.475C21.0054 22.6719 20.7481 22.7972 20.4716 22.8312C20.1951 22.8652 19.9152 22.8058 19.6763 22.6625L17.385 21.2875C16.8683 21.5625 16.3267 21.7875 15.76 21.9625L15.1112 24.5537C15.0435 24.8241 14.8874 25.064 14.6678 25.2354C14.4481 25.4069 14.1774 25.5 13.8988 25.5H12.1012C11.8226 25.5 11.5519 25.4069 11.3322 25.2354C11.1126 25.064 10.9565 24.8241 10.8888 24.5537L10.24 21.9625C9.67837 21.7889 9.13431 21.5629 8.615 21.2875L6.32375 22.6625C6.08484 22.8058 5.8049 22.8652 5.52838 22.8312C5.25187 22.7972 4.99463 22.6719 4.7975 22.475L3.525 21.2025C3.32814 21.0054 3.20276 20.7481 3.16879 20.4716C3.13482 20.1951 3.1942 19.9152 3.3375 19.6763L4.7125 17.385C4.43705 16.8657 4.21106 16.3216 4.0375 15.76L1.44625 15.1112C1.17615 15.0436 0.936373 14.8877 0.764953 14.6683C0.593534 14.4488 0.500286 14.1784 0.5 13.9V12.1025C0.500007 11.8238 0.593128 11.5532 0.764569 11.3335C0.936011 11.1138 1.17594 10.9577 1.44625 10.89L4.0375 10.2413C4.2125 9.67458 4.4375 9.13292 4.7125 8.61625L3.3375 6.325C3.1942 6.08609 3.13482 5.80615 3.16879 5.52963C3.20276 5.25312 3.32814 4.99588 3.525 4.79875L4.7975 3.525C4.99463 3.32814 5.25187 3.20276 5.52838 3.16879C5.8049 3.13482 6.08484 3.1942 6.32375 3.3375L8.615 4.7125C9.13167 4.4375 9.67333 4.2125 10.24 4.0375L10.8888 1.44625C10.9564 1.17615 11.1123 0.936373 11.3317 0.764953C11.5512 0.593534 11.8216 0.500286 12.1 0.5H13.8975C14.1762 0.500007 14.4468 0.593128 14.6665 0.764569C14.8862 0.936011 15.0423 1.17594 15.11 1.44625L15.76 4.0375ZM13 18C14.3261 18 15.5979 17.4732 16.5355 16.5355C17.4732 15.5979 18 14.3261 18 13C18 11.6739 17.4732 10.4021 16.5355 9.46447C15.5979 8.52678 14.3261 8 13 8C11.6739 8 10.4021 8.52678 9.46447 9.46447C8.52678 10.4021 8 11.6739 8 13C8 14.3261 8.52678 15.5979 9.46447 16.5355C10.4021 17.4732 11.6739 18 13 18Z" fill="white"/>
                         </svg></div>
-                    </div>
+                    </div> 
 
                     <?php
                     if($_SESSION['role'] == 'Admin'){
@@ -1151,34 +1170,34 @@
                     }
                     ?>
 
-                    <div class="menu-items"><div><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M23.25 9L14.5 0.25V5.25C5.75 6.5 2 12.75 0.75 19C3.875 14.625 8.25 12.625 14.5 12.625V17.75L23.25 9Z" fill="white"/>
+                    <div class="menu-items"><div onclick="shareContent()"><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M23.25 9L14.5 0.25V5.25C5.75 6.5 2 12.75 0.75 19C3.875 14.625 8.25 12.625 14.5 12.625V17.75L23.25 9Z" fill="black"/>
                         </svg></div>
                     </div>
 
-                    <div class="menu-items"><div class= "pp"><p>Privacy Policy</p><svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 14V6.18625C21.0001 6.08758 20.9807 5.98987 20.9429 5.8987C20.9052 5.80754 20.8498 5.72473 20.78 5.655L16.845 1.72C16.7045 1.57931 16.5138 1.50018 16.315 1.5H1.75C1.55109 1.5 1.36032 1.57902 1.21967 1.71967C1.07902 1.86032 1 2.05109 1 2.25V25.75C1 25.9489 1.07902 26.1397 1.21967 26.2803C1.36032 26.421 1.55109 26.5 1.75 26.5H12.25M6 11.5H16M6 6.5H11M6 16.5H9.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <div class="menu-items pp"><div onclick="window.location.href=`./privacy-policy.php`"><p>Privacy Policy</p><svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 14V6.18625C21.0001 6.08758 20.9807 5.98987 20.9429 5.8987C20.9052 5.80754 20.8498 5.72473 20.78 5.655L16.845 1.72C16.7045 1.57931 16.5138 1.50018 16.315 1.5H1.75C1.55109 1.5 1.36032 1.57902 1.21967 1.71967C1.07902 1.86032 1 2.05109 1 2.25V25.75C1 25.9489 1.07902 26.1397 1.21967 26.2803C1.36032 26.421 1.55109 26.5 1.75 26.5H12.25M6 11.5H16M6 6.5H11M6 16.5H9.75" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg></div>
                     </div>
 
                     <div class="menu-items"><div><p>Follow Us</p><svg width="25" height="26" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21.375 1.75C20.5462 1.75 19.7513 2.07924 19.1653 2.66529C18.5792 3.25134 18.25 4.0462 18.25 4.875C18.25 5.32125 18.3475 5.745 18.5175 6.13125L16.0738 8.88C15.2428 8.30862 14.2585 8.00186 13.25 8C12.325 8 11.47 8.27 10.7263 8.7075L7.88375 5.86625L7.855 5.895C8.1 5.3975 8.25 4.84375 8.25 4.25C8.25 3.50832 8.03007 2.7833 7.61801 2.16661C7.20596 1.54993 6.62029 1.06928 5.93506 0.785453C5.24984 0.501625 4.49584 0.427362 3.76841 0.572057C3.04098 0.716751 2.3728 1.0739 1.84835 1.59835C1.3239 2.1228 0.966751 2.79098 0.822057 3.51841C0.677362 4.24584 0.751625 4.99984 1.03545 5.68506C1.31928 6.37029 1.79993 6.95596 2.41661 7.36801C3.0333 7.78007 3.75832 8 4.5 8C5.09375 8 5.64625 7.85 6.145 7.605L6.11625 7.63375L8.95875 10.475C8.49978 11.2376 8.25494 12.1099 8.25 13C8.25 14.2463 8.725 15.3738 9.48125 16.2513L6.26 19.4713C5.89873 19.3275 5.5138 19.2525 5.125 19.25C3.4025 19.25 2 20.6513 2 22.375C2 24.0988 3.4025 25.5 5.125 25.5C6.8475 25.5 8.25 24.0988 8.25 22.375C8.25 21.9738 8.1675 21.5925 8.02875 21.2388L11.5763 17.6913C12.1025 17.8788 12.66 18 13.25 18C16.0075 18 18.25 15.7575 18.25 13C18.25 12.205 18.0463 11.4638 17.715 10.795L20.3612 7.81625C20.6812 7.92625 21.0188 8 21.375 8C23.0988 8 24.5 6.59875 24.5 4.875C24.5 3.15125 23.0988 1.75 21.375 1.75ZM13.25 15.5C11.8713 15.5 10.75 14.3788 10.75 13C10.75 11.6213 11.8713 10.5 13.25 10.5C14.6288 10.5 15.75 11.6213 15.75 13C15.75 14.3788 14.6288 15.5 13.25 15.5Z" fill="white"/>
+                        <path d="M21.375 1.75C20.5462 1.75 19.7513 2.07924 19.1653 2.66529C18.5792 3.25134 18.25 4.0462 18.25 4.875C18.25 5.32125 18.3475 5.745 18.5175 6.13125L16.0738 8.88C15.2428 8.30862 14.2585 8.00186 13.25 8C12.325 8 11.47 8.27 10.7263 8.7075L7.88375 5.86625L7.855 5.895C8.1 5.3975 8.25 4.84375 8.25 4.25C8.25 3.50832 8.03007 2.7833 7.61801 2.16661C7.20596 1.54993 6.62029 1.06928 5.93506 0.785453C5.24984 0.501625 4.49584 0.427362 3.76841 0.572057C3.04098 0.716751 2.3728 1.0739 1.84835 1.59835C1.3239 2.1228 0.966751 2.79098 0.822057 3.51841C0.677362 4.24584 0.751625 4.99984 1.03545 5.68506C1.31928 6.37029 1.79993 6.95596 2.41661 7.36801C3.0333 7.78007 3.75832 8 4.5 8C5.09375 8 5.64625 7.85 6.145 7.605L6.11625 7.63375L8.95875 10.475C8.49978 11.2376 8.25494 12.1099 8.25 13C8.25 14.2463 8.725 15.3738 9.48125 16.2513L6.26 19.4713C5.89873 19.3275 5.5138 19.2525 5.125 19.25C3.4025 19.25 2 20.6513 2 22.375C2 24.0988 3.4025 25.5 5.125 25.5C6.8475 25.5 8.25 24.0988 8.25 22.375C8.25 21.9738 8.1675 21.5925 8.02875 21.2388L11.5763 17.6913C12.1025 17.8788 12.66 18 13.25 18C16.0075 18 18.25 15.7575 18.25 13C18.25 12.205 18.0463 11.4638 17.715 10.795L20.3612 7.81625C20.6812 7.92625 21.0188 8 21.375 8C23.0988 8 24.5 6.59875 24.5 4.875C24.5 3.15125 23.0988 1.75 21.375 1.75ZM13.25 15.5C11.8713 15.5 10.75 14.3788 10.75 13C10.75 11.6213 11.8713 10.5 13.25 10.5C14.6288 10.5 15.75 11.6213 15.75 13C15.75 14.3788 14.6288 15.5 13.25 15.5Z" fill="black"/>
                         </svg></div>
                     </div>
                 </div>
                 <div class="menu-part">
-                    <div class="menu-items"><div><p>Feedback</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 16.75C13.3542 16.75 13.6513 16.63 13.8913 16.39C14.1313 16.15 14.2508 15.8533 14.25 15.5C14.2492 15.1467 14.1292 14.85 13.89 14.61C13.6508 14.37 13.3542 14.25 13 14.25C12.6458 14.25 12.3492 14.37 12.11 14.61C11.8708 14.85 11.7508 15.1467 11.75 15.5C11.7492 15.8533 11.8692 16.1504 12.11 16.3913C12.3508 16.6321 12.6475 16.7517 13 16.75ZM11.75 11.75H14.25V4.25H11.75V11.75ZM0.5 25.5V3C0.5 2.3125 0.745 1.72417 1.235 1.235C1.725 0.745833 2.31333 0.500833 3 0.5H23C23.6875 0.5 24.2763 0.745 24.7663 1.235C25.2563 1.725 25.5008 2.31333 25.5 3V18C25.5 18.6875 25.2554 19.2763 24.7663 19.7663C24.2771 20.2563 23.6883 20.5008 23 20.5H5.5L0.5 25.5ZM4.4375 18H23V3H3V19.4062L4.4375 18Z" fill="white"/>
+                    <div class="menu-items"><div onclick="window.location.href=`./feedback.php`"><p>Feedback</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 16.75C13.3542 16.75 13.6513 16.63 13.8913 16.39C14.1313 16.15 14.2508 15.8533 14.25 15.5C14.2492 15.1467 14.1292 14.85 13.89 14.61C13.6508 14.37 13.3542 14.25 13 14.25C12.6458 14.25 12.3492 14.37 12.11 14.61C11.8708 14.85 11.7508 15.1467 11.75 15.5C11.7492 15.8533 11.8692 16.1504 12.11 16.3913C12.3508 16.6321 12.6475 16.7517 13 16.75ZM11.75 11.75H14.25V4.25H11.75V11.75ZM0.5 25.5V3C0.5 2.3125 0.745 1.72417 1.235 1.235C1.725 0.745833 2.31333 0.500833 3 0.5H23C23.6875 0.5 24.2763 0.745 24.7663 1.235C25.2563 1.725 25.5008 2.31333 25.5 3V18C25.5 18.6875 25.2554 19.2763 24.7663 19.7663C24.2771 20.2563 23.6883 20.5008 23 20.5H5.5L0.5 25.5ZM4.4375 18H23V3H3V19.4062L4.4375 18Z" fill="black"/>
                         </svg></div>
                     </div>
 
-                    <div class="menu-items"><div><p>About Us</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13 0.5C6.09647 0.5 0.5 6.09641 0.5 13C0.5 19.9035 6.09647 25.5 13 25.5C19.9036 25.5 25.5 19.9036 25.5 13C25.5 6.09641 19.9036 0.5 13 0.5ZM13 23C7.48602 23 3.00002 18.514 3.00002 13C3.00002 7.48596 7.48596 3.00002 13 3.00002C18.5141 3.00002 23 7.48596 23 13C23 18.514 18.5141 23 13 23ZM14.5653 8C14.5653 8.90633 13.9054 9.56252 13.0127 9.56252C12.0839 9.56252 11.4402 8.90627 11.4402 7.98266C11.4402 7.09496 12.1013 6.43754 13.0127 6.43754C13.9054 6.43754 14.5653 7.09496 14.5653 8ZM11.7528 11.75H14.2527V19.25H11.7528V11.75Z" fill="white"/>
+                    <div class="menu-items"><div onclick="window.location.href=`./about-us.php`"><p>About Us</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13 0.5C6.09647 0.5 0.5 6.09641 0.5 13C0.5 19.9035 6.09647 25.5 13 25.5C19.9036 25.5 25.5 19.9036 25.5 13C25.5 6.09641 19.9036 0.5 13 0.5ZM13 23C7.48602 23 3.00002 18.514 3.00002 13C3.00002 7.48596 7.48596 3.00002 13 3.00002C18.5141 3.00002 23 7.48596 23 13C23 18.514 18.5141 23 13 23ZM14.5653 8C14.5653 8.90633 13.9054 9.56252 13.0127 9.56252C12.0839 9.56252 11.4402 8.90627 11.4402 7.98266C11.4402 7.09496 12.1013 6.43754 13.0127 6.43754C13.9054 6.43754 14.5653 7.09496 14.5653 8ZM11.7528 11.75H14.2527V19.25H11.7528V11.75Z" fill="black"/>
                         </svg></div>
                     </div>
 
-                    <div class="menu-items"><div><p>Support</p><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 16.375C20.4375 16.375 18.9375 16.125 17.5375 15.6625C17.4125 15.625 17.275 15.6 17.15 15.6C16.825 15.6 16.5125 15.725 16.2625 15.9625L13.5125 18.7125C9.96717 16.9093 7.08361 14.0301 5.275 10.4875L8.025 7.725C8.375 7.3875 8.475 6.9 8.3375 6.4625C7.86415 5.02237 7.62363 3.51593 7.625 2C7.625 1.3125 7.0625 0.75 6.375 0.75H2C1.3125 0.75 0.75 1.3125 0.75 2C0.75 13.7375 10.2625 23.25 22 23.25C22.6875 23.25 23.25 22.6875 23.25 22V17.625C23.25 16.9375 22.6875 16.375 22 16.375ZM3.2875 3.25H5.1625C5.25 4.35 5.4375 5.4375 5.7375 6.4875L4.2375 8C3.725 6.4875 3.4 4.9 3.2875 3.25ZM20.75 20.7125C19.1 20.6 17.5 20.275 16 19.7625L17.5 18.2625C18.5625 18.5625 19.65 18.75 20.75 18.825V20.7125ZM12 0.75V13.25L15.75 9.5H23.25V0.75H12ZM20.75 7H14.5V3.25H20.75V7Z" fill="white"/>
+                    <div class="menu-items"><div onclick="window.location.href=`./support.php`"><p>Support</p><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22 16.375C20.4375 16.375 18.9375 16.125 17.5375 15.6625C17.4125 15.625 17.275 15.6 17.15 15.6C16.825 15.6 16.5125 15.725 16.2625 15.9625L13.5125 18.7125C9.96717 16.9093 7.08361 14.0301 5.275 10.4875L8.025 7.725C8.375 7.3875 8.475 6.9 8.3375 6.4625C7.86415 5.02237 7.62363 3.51593 7.625 2C7.625 1.3125 7.0625 0.75 6.375 0.75H2C1.3125 0.75 0.75 1.3125 0.75 2C0.75 13.7375 10.2625 23.25 22 23.25C22.6875 23.25 23.25 22.6875 23.25 22V17.625C23.25 16.9375 22.6875 16.375 22 16.375ZM3.2875 3.25H5.1625C5.25 4.35 5.4375 5.4375 5.7375 6.4875L4.2375 8C3.725 6.4875 3.4 4.9 3.2875 3.25ZM20.75 20.7125C19.1 20.6 17.5 20.275 16 19.7625L17.5 18.2625C18.5625 18.5625 19.65 18.75 20.75 18.825V20.7125ZM12 0.75V13.25L15.75 9.5H23.25V0.75H12ZM20.75 7H14.5V3.25H20.75V7Z" fill="black"/>
                         </svg></div>
                     </div>
 
@@ -1255,14 +1274,14 @@
             <nav class="nav-bar">
                 <div class="nav-content">
                     <div class="items">
-                        <div class="logo-img"><img src="https://i.ibb.co/Gvh3STdb/new-logo-removebg-preview.png" alt=""></div>
+                        <div class="logo-img"><img src="./assets/images/logo.png" alt=""></div>
                     </div>
                     <div class="items list">
 
-                    Light<label class="toggle-switch">
+                    <!-- L<label class="toggle-switch">
                         <input type="checkbox" id="theme-toggle">
                         <span class="slider"></span>
-                    </label>Dark
+                    </label>D -->
 
                     <form class="d-flex" role="search" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="Get">
                         <!-- retain existing GET parameters as hidden fields -->
@@ -1346,6 +1365,7 @@
                 <div class="update-container completed">Completed</div>
             </div>
             
+            <div class="ad2">Advertisement (412px x 80px)</div>
             <div class="info-container">
 
             </div>
@@ -1363,6 +1383,31 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
     <script>
+       function resizeText(className) {
+    const elements = document.querySelectorAll(className);
+
+    elements.forEach(element => {
+        let fontSize = 20;
+        element.style.fontSize = fontSize + "px";
+
+        // Temporarily allow wrapping to check overflow
+        element.style.whiteSpace = 'nowrap';
+
+        // Stop shrinking too small
+        while (
+            element.scrollWidth > element.clientWidth &&
+            fontSize > 12 // Set your preferred minimum size here
+        ) {
+            fontSize--;
+            element.style.fontSize = fontSize + "px";
+        }
+
+        // Optional: revert wrapping
+        element.style.whiteSpace = ''; // or 'normal' if your design allows wrapping
+    });
+}
+
+resizeText(".team-score");
 
         //display content as per user's selection(Status & Sport)
         function loadgames(update, sport) {
@@ -1375,7 +1420,8 @@
             let data = {
                 update: update,
                 sport: sport,
-                for : 'dashboard'
+                for : 'dashboard',
+                search : params.get('search') || null
             }
 
             displayContent(data);
@@ -1507,7 +1553,8 @@
 
 
         // Open dialog for password
-        function openDialog(button) {
+        function openDialog(button, event) {
+            if (event) event.stopPropagation();
             const dialog = document.getElementById("startMatchDialog");
             dialog.showModal();
 
@@ -1624,13 +1671,16 @@
         //open option container
         let add_container = document.querySelector('.add-container');
         let plus_sign = document.querySelector('.plus');
-        plus_sign.addEventListener('click', function () {
-            console.log("clicked")
-            //add_container.style.display = "flex";
-            add_container.classList.add('active');
-            opacity.style.display = 'block';
-            plus_sign.style.display = 'none';
-        });
+        if(plus_sign){
+            plus_sign.addEventListener('click', function () {
+                console.log("clicked")
+                //add_container.style.display = "flex";
+                add_container.classList.add('active');
+                opacity.style.display = 'block';
+                plus_sign.style.display = 'none';
+            });
+        }
+        
 
         //close option container
         let close_container = document.querySelector('.close-icon');
@@ -1649,6 +1699,18 @@
                 if(data.status === 200){
                     window.location.href = 'front-page.php';
                     alert ('You have been logged out!')
+                }
+                console.log(data)})
+            .catch(error => console.error(error));
+        }
+
+        function deleteAccount(){
+            fetch('./Backend/delete_account.php')
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 200){
+                    // window.location.href = 'front-page.php';
+                    alert ('Account will deactivate in 24 hrs.!')
                 }
                 console.log(data)})
             .catch(error => console.error(error));
@@ -1678,7 +1740,39 @@
             opacity.style.display = 'none';
             plus_sign.style.display = 'block';
         }
+        
 
+        let open_scoreboard = (el) => {
+            let match = el.getAttribute('data-match_id');
+            console.log(match);
+            console.log(SportName);
+            window.location.href = `./Frontend/${SportName}/scoreboard.php?match_id=${match}`;
+        }
+
+        function shareContent() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'LiveStrike',
+                    text: 'Check out this awesome real-time score tracking!',
+                    url: window.location.href
+                })
+                .then(() => console.log('Successfully shared'))
+                .catch((error) => console.error('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+
+        // Disable right-click
+  //document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 </html>

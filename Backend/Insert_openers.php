@@ -27,6 +27,23 @@ include '../config.php';
     $score_log['innings'][$current_innings]['openers']['current_striker']['style'] = $striker[1];
     $score_log['innings'][$current_innings]['openers']['current_non_striker']['style'] = $non_striker[1];
 
+    // Insert into batmans array if not already present
+    foreach (['current_striker', 'current_non_striker'] as $role) {
+        $batsman = $score_log['innings'][$current_innings]['openers'][$role];
+        $already_present = false;
+
+        foreach ($score_log['innings'][$current_innings]['batmans'] as $b) {
+            if ($b['id'] === $batsman['id']) {
+                $already_present = true;
+                break;
+            }
+        }
+
+        if (!$already_present) {
+            $score_log['innings'][$current_innings]['batmans'][] = $batsman;
+        }
+    }
+
     $score_log['innings'][$current_innings]['current_bowler']['id'] = $bowler[0];
     $score_log['innings'][$current_innings]['current_bowler']['style'] = $bowler[1];
 

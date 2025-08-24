@@ -72,10 +72,12 @@
         }
     }
 
-    if ($current_innings) {
-        $batting_team = $score_logs['innings'][$current_innings]['batting_team'];
-        $bowling_team = $score_logs['innings'][$current_innings]['bowling_team'];
-    }
+    // if ($current_innings) {
+    //     $batting_team = $score_logs['innings'][$current_innings]['batting_team'];
+    //     $bowling_team = $score_logs['innings'][$current_innings]['bowling_team'];
+    // }
+
+    echo $match;
 
         $team1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT `t_name` FROM `teams` WHERE `t_id` = '$batting_team'"));
         $decision_bat_team = $team1['t_name'];
@@ -531,6 +533,16 @@
             }
         }
 
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 </html>

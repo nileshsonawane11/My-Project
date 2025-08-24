@@ -71,15 +71,15 @@ if($method == 'email'){
     exit();
 
 }else if($method == 'info'){
-    $fname = $_POST['fname'] ?? '';
-    $lname = $_POST['lname'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $phone = $_POST['phone'] ?? '';
-    $jno = $_POST['jno'] ?? NULL;
+    $fname = mysqli_real_escape_string($conn, $_POST['fname'] ?? '');
+    $lname = mysqli_real_escape_string($conn, $_POST['lname'] ?? '');
+    $email = mysqli_real_escape_string($conn, $_POST['email'] ?? '');
+    $phone = mysqli_real_escape_string($conn, $_POST['phone'] ?? NULL);
+    $jno   = isset($_POST['jno']) ? mysqli_real_escape_string($conn, $_POST['jno']) : NULL;
     $image = $_FILES['image'] ?? '';
 
 
-    if(empty($fname) || empty($lname) || empty($email) || empty($phone)){
+    if(empty($fname) || empty($lname) || empty($email)){
         echo json_encode(array('status' => 409, 'message' => 'All (*) marked fields are required','field'=>'info_empty'));
         exit();
     }
@@ -124,7 +124,7 @@ if($method == 'email'){
             exit();
         }
 
-        if (!preg_match('/^[0-9]{10}$/', $phone)) {
+        if (!preg_match('/^[0-9]{10}$/', $phone) && !empty($phone)) {
             echo json_encode(['status' => 409, 'message' => 'Enter Valid Phone Number', 'field' => 'phone']);
             exit();
         }

@@ -7,6 +7,7 @@ $selecteddecision = $_POST['selecteddecision'];
 $isfreehit = $_POST['isfreehit'];
 $iswide = $_POST['iswide'];
 $issuperover = $_POST['issuperover'];
+$overs = $_POST['overs'];
 
 $match_id = $_POST['match_id'];
 $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE `match_id` = '$match_id'"));
@@ -29,7 +30,7 @@ $score_log = [
   "team2_score" => null,
   "team1_Wickets" => null,
   "team2_Wickets" => null,
-  "overs" => $row['overs'],
+  "overs" => $overs,
   "freehit" => $isfreehit,
   "wide" => $iswide,
   'issuperallow' => $issuperover,
@@ -64,13 +65,25 @@ $score_log = [
         "overs_bowled"=> "0.0",
         "runs_conceded"=> 0,
         "wickets"=> 0,
-        "maidens" => 0
+        "maidens" => 0,
+        "Extras" => [
+          "NB" => 0,
+          "W" => 0,
+          "total_extras" => 0
+        ]
       ],
       "balls" => [],
       "batmans" => [],
       "bowlers" => [],
       "total_runs" => 0,
       "wickets" => 0,
+      "Extras" => [
+        "B" => 0,
+        "NB" => 0,
+        "LB" => 0,
+        "W" => 0,
+        "total_extras" => 0
+      ],
       "overs_completed" => "0.0",
       "completed" => false   
     ],
@@ -102,13 +115,25 @@ $score_log = [
         "style"=> null,
         "overs_bowled"=> "0.0",
         "runs_conceded"=> 0,
-        "wickets"=> 0
+        "wickets"=> 0,
+        "Extras" => [
+          "NB" => 0,
+          "W" => 0,
+          "total_extras" => 0
+        ]
       ],
       "balls" => [],
       "batmans" => [],
       "bowlers" => [],
       "total_runs" => 0,
       "wickets" => 0,
+      "Extras" => [
+        "B" => 0,
+        "NB" => 0,
+        "LB" => 0,
+        "W" => 0,
+        "total_extras" => 0
+      ],
       "overs_completed" => "0.0",
       "completed" => false,
     ]
@@ -136,6 +161,11 @@ if(empty($selectedteam)){
 
 if (empty($bat) || empty($bowl)) {
     echo json_encode(['status'=>409,'message'=>'Bat And Bowl Empty','field'=>'empty']);
+    exit();
+}
+
+if (empty($overs) || $overs == 'Null') {
+    echo json_encode(['status'=>409,'message'=>'please Select Overs','field'=>'over']);
     exit();
 }
 

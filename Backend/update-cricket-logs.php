@@ -75,7 +75,7 @@ $run_type = $data['Run Type'] ?? null;
 if (isset($iscomplete) && $iscomplete == true) {
     // User confirmed they want to end the match
     $score_log['match_completed'] = true;
-    $score_log['innings']['2nd']['completed'] = true;
+    $score_log[$Inning_type]['2nd']['completed'] = true;
     
     // Update database
     $json = json_encode($score_log);
@@ -188,6 +188,19 @@ if (($Ball_Type == null && $undo == true)) {
     exit();
 }
 
+function calculateRR($runs, $overs_string) {
+    // Convert "10.3" to decimal (e.g., 10.3 -> 10 + 3/6 = 10.5 overs)
+    $parts = explode('.', $overs_string);
+    $overs = (int)$parts[0];
+    $balls = isset($parts[1]) ? (int)$parts[1] : 0;
+
+    $decimal_overs = $overs + ($balls / 6);
+
+    if ($decimal_overs == 0) return 0;
+
+    return round($runs / $decimal_overs, 2);
+}
+
 
 handleMatchProgress($score_log);
 
@@ -221,28 +234,37 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     $run_type = $data['Run Type'] ?? null;
 
     // Add current ball to log
-    $score_log[$Inning_type][$Inning]['balls'][] = $data;
     $score_log[$Inning_type][$Inning]['total_runs'] += ($Run + $Extra);
 
     // Update batsman stats
-    if(!str_starts_with($Ball_Type, 'Wide')) {
-        if(str_starts_with($Ball_Type, 'No')) {
-            $score_log[$Inning_type][$Inning]['openers']['current_striker']['runs'] += $Run;
-            $score_log[$Inning_type][$Inning]['openers']['current_striker']['balls_faced']++;
-            
+    $current_striker = &$score_log[$Inning_type][$Inning]['openers']['current_striker'];
+
+    if (!str_starts_with($Ball_Type, 'Wide')) {
+        if (str_starts_with($Ball_Type, 'No')) {
+            $current_striker['runs'] += $Run;
+            $current_striker['balls_faced']++;
+
             if ($Run == 4) {
-                $score_log[$Inning_type][$Inning]['openers']['current_striker']['fours']++;
+                $current_striker['fours']++;
             } elseif ($Run == 6) {
-                $score_log[$Inning_type][$Inning]['openers']['current_striker']['sixes']++;
+                $current_striker['sixes']++;
             }
         } else {
-            $score_log[$Inning_type][$Inning]['openers']['current_striker']['balls_faced']++;
-            $score_log[$Inning_type][$Inning]['openers']['current_striker']['runs'] += $Run;
-            
-            if ($Run == 4) { 
-                $score_log[$Inning_type][$Inning]['openers']['current_striker']['fours']++;
+            $current_striker['balls_faced']++;
+            $current_striker['runs'] += $Run;
+
+            if ($Run == 4) {
+                $current_striker['fours']++;
             } elseif ($Run == 6) {
-                $score_log[$Inning_type][$Inning]['openers']['current_striker']['sixes']++;
+                $current_striker['sixes']++;
+            }
+        }
+
+        // 🔁 Now sync striker data with batsman list by ID
+        foreach ($score_log[$Inning_type][$Inning]['batmans'] as $index => $batsman) {
+            if ($batsman['id'] === $current_striker['id']) {
+                $score_log[$Inning_type][$Inning]['batmans'][$index] = $current_striker;
+                break;
             }
         }
     }
@@ -303,6 +325,9 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
         
         // Increment wickets
         $score_log[$Inning_type][$Inning]['wickets']++;
+        if (!strpos($Wicket_Type, "Run out")) {
+            $score_log[$Inning_type][$Inning]['current_bowler']['wickets']++;
+        }
 
         $is_non_striker = (strpos($Wicket_Type, '(Non-Striker End)') !== false || 
                          strpos($Wicket_Type, '(Mankaded)') !== false ||
@@ -315,8 +340,16 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
         $out_player['out_status'] = "out";
         $out_player['wicket_type'] = $Wicket_Type;
         $out_player['wicket_by'] = $Wicket_By;
+        $out_player['bowler'] = $Bowler;
+        $data['Out Player'] = $out_player['id'];
         
-        $score_log[$Inning_type][$Inning]['batmans'][] = $out_player;
+        // Update existing batsman in the batmans array by matching ID
+        foreach ($score_log[$Inning_type][$Inning]['batmans'] as $index => $batsman) {
+            if ($batsman['id'] === $out_player['id']) {
+                $score_log[$Inning_type][$Inning]['batmans'][$index] = $out_player;
+                break;
+            }
+        }
         
         if ($score_log[$Inning_type][$Inning]['wickets'] < $wicket_limit) {
             $score_log[$Inning_type][$Inning]['openers'][$player_key] = [
@@ -377,6 +410,7 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
                     $pastBall['Freehit'] = false;
                 }
             }
+            unset($pastBall);
 
             // Check if maiden over
             $runs_in_over = 0;
@@ -431,11 +465,17 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
                 "overs_bowled" => "0.0",
                 "runs_conceded" => 0,
                 "wickets" => 0,
-                "maidens" => 0
+                "maidens" => 0,
+                "Extras" => [
+                    "NB" => 0,
+                    "W" => 0,
+                    "total_extras" => 0
+                ]
             ];
         } else {
             $score_log[$Inning_type][$Inning]['current_bowler']['overs_bowled'] = "$over.$ball";
         }
+
 
         // Check if innings over complete
         if ($inning_ball >= 6) {
@@ -445,6 +485,35 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
 
         // Update innings overs completed
         $score_log[$Inning_type][$Inning]['overs_completed'] = "$inning_over.$inning_ball";
+    }
+
+    if (str_contains($Ball_Type, 'No')) {
+        $score_log[$Inning_type][$Inning]['Extras']['NB'] += (intval($Extra) + intval($Run));
+        $score_log[$Inning_type][$Inning]['Extras']['total_extras'] += (intval($Extra) + intval($Run));
+
+        $score_log[$Inning_type][$Inning]['current_bowler']['Extras']['NB'] += (intval($Extra) + intval($Run));
+        $score_log[$Inning_type][$Inning]['current_bowler']['Extras']['total_extras'] += (intval($Extra) + intval($Run));
+    }
+
+    // Wide Ball
+    if (str_contains($Ball_Type, 'Wide')) {
+        $score_log[$Inning_type][$Inning]['Extras']['W'] += (intval($Extra) + intval($Run));
+        $score_log[$Inning_type][$Inning]['Extras']['total_extras'] += (intval($Extra) + intval($Run));
+
+        $score_log[$Inning_type][$Inning]['current_bowler']['Extras']['NB'] += (intval($Extra) + intval($Run));
+        $score_log[$Inning_type][$Inning]['current_bowler']['Extras']['total_extras'] += (intval($Extra) + intval($Run));
+    }
+
+    // Bye
+    if (str_contains($Ball_Type, 'Bye')) {
+        $score_log[$Inning_type][$Inning]['Extras']['B'] += (intval($Extra) + intval($Run));
+        $score_log[$Inning_type][$Inning]['Extras']['total_extras'] += (intval($Extra) + intval($Run));
+    }
+
+    // Leg Bye
+    if (str_contains($Ball_Type, 'Leg Bye') || str_contains($Ball_Type, 'LB')) {
+        $score_log[$Inning_type][$Inning]['Extras']['LB'] += (intval($Extra) + intval($Run));
+        $score_log[$Inning_type][$Inning]['Extras']['total_extras'] += (intval($Extra) + intval($Run));
     }
 
     // Check for innings completion conditions
@@ -470,20 +539,34 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     }
 
     // Prepare score string for database
-    $team_over = $score_log[$Inning_type][$Inning]['overs_completed'];
-    $team_runs = $score_log[$Inning_type][$Inning]['total_runs'];
-    $team_wickets = $score_log[$Inning_type][$Inning]['wickets'];
-    $score = $team_runs.'/'.$team_wickets.' ('.$team_over.'ov)';
+    if($Inning_type == 'super_over_innings'){
+        $team_over = $score_log['super_over_innings'][$Inning]['overs_completed'];
+        $team_runs1 = $score_log['super_over_innings'][$Inning]['total_runs'];
+        $team_wickets1 = $score_log['super_over_innings'][$Inning]['wickets'];
+
+        $team_over1 = $score_log['innings'][$Inning]['overs_completed'];
+        $team_runs = $score_log['innings'][$Inning]['total_runs'];
+        $team_wickets = $score_log['innings'][$Inning]['wickets'];
+        $score = $team_runs1.'/'.$team_wickets1.' - '.$team_runs.'/'.$team_wickets.' ('.$team_over1.'ov)';
+    }else{
+        $team_over = $score_log['innings'][$Inning]['overs_completed'];
+        $team_runs = $score_log['innings'][$Inning]['total_runs'];
+        $team_wickets = $score_log['innings'][$Inning]['wickets'];
+        $score = $team_runs.'/'.$team_wickets.' ('.$team_over.'ov)';
+    }
+    
 
     $battingTeamId = $score_log[$Inning_type][$Inning]['batting_team'];
     $score_field = ($battingTeamId == $score_log['team1']) ? 'score_team_1' : 'score_team_2';
 
+    $data['RR'] = calculateRR($team_runs, $team_over);
+    $data['overs_completed'] = $team_over;
+    $score_log[$Inning_type][$Inning]['balls'][] = $data;
     saveHistorySnapshot($conn, $match_id, $score_log);
     // Update database - single transaction for all updates
     $conn->begin_transaction();
     
     try {
-        
         
         // Update team score
         $stmt = $conn->prepare("UPDATE matches SET $score_field = ? WHERE match_id = ?");
@@ -669,7 +752,7 @@ function handleMatchProgress(&$score_log) {
             $team2Runs = (int)($score_log['super_over_innings']['2nd']['total_runs'] ?? 0);
             
             if ($team2Runs > $team1Runs) {
-                $score_log['super_over_innings']['2nd']['completed'] = true;
+                // $score_log['super_over_innings']['2nd']['completed'] = true;
                 $score_log['winner'] = $score_log['super_over_innings']['2nd']['batting_team'];
                 saveHistorySnapshot($conn, $match_id, $score_log);
 
@@ -689,7 +772,7 @@ function handleMatchProgress(&$score_log) {
             
             // Check if team2 is all out before reaching target
             if (($score_log['super_over_innings']['2nd']['wickets'] ?? 0) >= MAX_SUPER_OVER_WICKETS) {
-                $score_log['super_over_innings']['2nd']['completed'] = true;
+                // $score_log['super_over_innings']['2nd']['completed'] = true;
                 $score_log['winner'] = ($team1Runs > $team2Runs) ? $score_log['super_over_innings']['1st']['batting_team'] : $score_log['super_over_innings']['2nd']['batting_team'];
                 saveHistorySnapshot($conn, $match_id, $score_log);
 
@@ -785,20 +868,33 @@ function makeNewInnings($battingTeam, $bowlingTeam) {
                 'out_status' => 'not out'
             ]
         ],
-        'current_bowler' => [
-            'id' => null,
-            'style' => null,
-            'overs_bowled' => '0.0',
-            'runs_conceded' => 0,
-            'wickets' => 0
+        "current_bowler" => [
+        "id"=> null,
+        "style"=> null,
+        "overs_bowled"=> "0.0",
+        "runs_conceded"=> 0,
+        "wickets"=> 0,
+        "maidens" => 0,
+        "Extras" => [
+            "NB" => 0,
+            "W" => 0,
+            "total_extras" => 0
+            ]
         ],
-        'balls' => [],
-        'batmans' => [],
-        'bowlers' => [],
-        'total_runs' => 0,
-        'wickets' => 0,
-        'overs_completed' => '0.0',
-        'completed' => false,
+        "balls" => [],
+        "batmans" => [],
+        "bowlers" => [],
+        "total_runs" => 0,
+        "wickets" => 0,
+        "Extras" => [
+            "B" => 0,
+            "NB" => 0,
+            "LB" => 0,
+            "W" => 0,
+            "total_extras" => 0
+        ],
+        "overs_completed" => "0.0",
+        "completed" => false,
         'is_super_over' => true
     ];
 }

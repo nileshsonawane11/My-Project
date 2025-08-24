@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <title>LiveStrike</title>
 <style>
@@ -32,6 +32,7 @@
         --transition: all 0.3s ease;
         --gray-bg: #f0f0f0;
         --border-color: #e0e0e0;
+        --img-color: invert(0);
     }
 
     [data-theme="dark"] {
@@ -42,6 +43,7 @@
         --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         --gray-bg: #2d2d2d;
         --border-color: #333333;
+        --img-color: invert(1);
     }
     
     body{
@@ -65,6 +67,10 @@
         transition: var(--transition);
     }
     
+
+    svg path {
+        fill : var(--text-dark);
+    }
     .items,.list{
         display: flex;
         justify-content: center;
@@ -251,6 +257,9 @@
         margin-top: 20px;
     }
     
+    #topBtn img, svg {
+        filter: var(--img-color);
+    }
     .mem-img {
         position: relative;
         width: 150px;
@@ -701,25 +710,25 @@
         <div class="sidebar">
             <div id="close-sidebar">&times;</div>
             <div class="menu-list">
-                <div class="list1">About</div>
-                <div class="list1">Contact</div>
-                <div class="list1">Feedback</div>
+                <div class="list1" onclick="window.location.href=`./about-us.php`">About</div>
+                <div class="list1" onclick="window.location.href=`./support.php`">Contact</div>
+                <div class="list1" onclick="window.location.href=`./feedback.php`">Feedback</div>
             </div>
         </div>
         <div>
             <nav class="nav-bar">
                 <div class="nav-content">
                     <div class="items">
-                        <div class="logo-img"><img src="https://i.ibb.co/gLY2MgSd/logo.png" alt=""></div>
+                        <div class="logo-img"><img src="./assets/images/logo.png" alt=""></div>
                         <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
                     </div>
                     <div class="items">
                         <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
                     </div>
                     <div class="items list">
-                        <div class="list-items">About</div>
-                        <div class="list-items">Contact</div>
-                        <div class="list-items">Feedback</div>
+                        <div class="list-items" onclick="window.location.href=`./about-us.php`">About</div>
+                        <div class="list-items" onclick="window.location.href=`./support.php`">Contact</div>
+                        <div class="list-items" onclick="window.location.href=`./feedback.php`">Feedback</div>
                     </div>
                 </div>
             </nav>
@@ -856,8 +865,8 @@
                             </div>
             
                         </div>
-                    </div><hr>
-                    <h4 style="text-align: center;">Team :</h4>
+                    </div>
+                    <!-- <hr><h4 style="text-align: center;">Team :</h4>
                     <div class="team">
                         <div class="teammates">
                             <div class="img-border">
@@ -889,7 +898,7 @@
                             </div>
                             <p class="mem-name">Chavan Pranav</p>  
                         </div>
-                    
+                     -->
                 </div>
                 <div class="footer-legal">
                     <div class="container">
@@ -1042,6 +1051,17 @@
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 </html>

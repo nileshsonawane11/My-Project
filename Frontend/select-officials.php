@@ -30,11 +30,36 @@
             user-select : none;
             scrollbar-width: none;
         }
+        
+        /* Theme Variables */
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --background: #ffffff;
+            --card-bg: #ffffff;
+            --text-dark: #000000;
+            --text-light: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --svg-fill: #000000;
+            --hover-bg: rgba(209, 34, 31, 0.08);
+            --input-bg: #ffffff;
         }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text-dark: #ffffff;
+            --text-light: #e0e0e0;
+            --border-color: #333333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --svg-fill: #ffffff;
+            --hover-bg: rgba(209, 34, 31, 0.15);
+            --input-bg: #2a2a2a;
+        }
+        
         body{
             height: max-content;
             display: flex;
@@ -43,6 +68,8 @@
             flex-wrap: wrap;
             flex-direction: column;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            background-color: var(--background);
+            color: var(--text-dark);
         }
         .part{
             width: 100%;
@@ -60,7 +87,7 @@
         }
         .return svg{
             cursor: pointer;
-            
+            fill: var(--svg-fill);
         }
         .container2{
             display: flex;
@@ -73,6 +100,7 @@
         }
         .txt{
             line-height: 20px;
+            color: var(--text-dark);
         }
         
         .input-fields{
@@ -86,12 +114,13 @@
             text-align: center;
             font-size: 16px;
             transition: 0.3s ease-in-out;
+            color: var(--text-light);
         }
         .input-fields input:valid ~ label,
         .input-fields input:focus ~ label {
             transform: translateX(-5px) translateY(-24px);
             font-size: 14px;
-            color: black;
+            color: var(--primary-color);
         }
         .container3{
             width: 100%;
@@ -120,14 +149,14 @@
         .image{
             height: 100%;
             width: 100%;
-            border: solid 1px black;
+            border: solid 1px var(--border-color);
             border-radius: 50%;
         }
         .select-img{
             position: absolute;
             bottom: 0;
             right: 0;
-            background: white;
+            background: var(--card-bg);
             height: 40px;
             width: 40px;
             display: flex;
@@ -135,6 +164,10 @@
             justify-content: center;
             border-radius: 50%;
             cursor : pointer;
+            box-shadow: var(--shadow);
+        }
+        .select-img svg {
+            fill: var(--svg-fill);
         }
         .info{
             width: 100%;
@@ -157,6 +190,7 @@
             justify-content: center;
             align-items: flex-start;
             gap: 20px;
+            color: var(--text-dark);
         }
         .team{
             width: 100%;
@@ -166,13 +200,13 @@
             justify-content: space-evenly;
             align-items: center;
             gap: 10px;
-            color: black;
+            color: var(--text-dark);
             padding: 10px;
             border-radius: 20px;
             text-wrap: auto;
-            background: #eeeeeeab;
+            background: var(--card-bg);
             cursor: pointer;
-            box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--shadow);
             flex-wrap: wrap;
         }
         .other-info{
@@ -182,6 +216,7 @@
             line-height: 20px;
             margin-left: 15px;
             cursor: pointer;
+            color: var(--text-dark);
         }
         .team-info{
             display: flex;
@@ -191,6 +226,7 @@
             height: 100%;
             cursor: pointer;
             justify-content: center;
+            color: var(--text-dark);
         }
         .team-info label{
             display: flex;
@@ -198,11 +234,16 @@
             justify-content: flex-start;
             flex-direction: row;
             gap: 5px;
+            color: var(--text-dark);
+        }
+
+        svg path {
+            fill: var(--text-color);
         }
         .logo{
             height: 75px;
             width: 75px;
-            background: #e8e8e8;
+            background: var(--hover-bg);
             margin: 10px;
             border-radius: 50%;
             display: flex;
@@ -239,12 +280,13 @@
             position: absolute;
             bottom: 22px;
             left: 14px;
-            background: white;
+            background: var(--input-bg);
             width: 100px;
             height: 20px;
             text-align: left;
             font-size: 16px;
             transition: 0.3s ease-in-out;
+            color: var(--text-dark);
         }
         .info-input{
             gap: 40px;
@@ -263,19 +305,21 @@
             border-radius: 13px;
             cursor: pointer;
             user-select: none;
-            background:#D9D9D9;
+            background: var(--hover-bg);
             transition:all 0.2s ease-in-out;
+            color: var(--text-dark);
         }
         .option.active,
         .option1.active {
-            background: #ff47000a;
-            border: 1px solid #ff5e00;
+            background: rgba(209, 34, 31, 0.1);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
         }
         .input-fields textarea:valid + label,
         .input-fields textarea:focus + label {
             transform: translateX(-5px) translateY(-24px);
             font-size: 14px;
-            color: black;
+            color: var(--primary-color);
         }
         textarea{
             overflow: hidden;
@@ -285,14 +329,15 @@
             font-size: 14px;
             width: 100%;
             border: none;
-            border-bottom: solid 1px black;
+            border-bottom: solid 1px var(--border-color);
             margin: 8px 0;
             padding: 10px 15px;
             font-size: 15px;
             width: 100%;
             outline: none;
             height: 45px;
-            background: white;
+            background: var(--input-bg);
+            color: var(--text-dark);
         }
         .container4{
             width: 100%;
@@ -309,7 +354,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background:var(--background);
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
             color:white;
         }
         .img-container{
@@ -333,6 +378,7 @@
             transform: translate(0,20rem);
             transition: all 0.5s ease-in-out;
             opacity: 0;
+            color: var(--text-dark);
         }
         .teams{
             width: 100%;
@@ -394,14 +440,14 @@
             align-items: flex-start;
         }
         .person_container h4{
-            color: #0059da;
+            color: var(--primary-light);
         }
         .saved_staff{
             width: 100%;
         }
         .error{
             display: none;
-            color:red; 
+            color: var(--primary-color); 
             width:100%;
             font-size:14px;
             margin: 5px;
@@ -410,8 +456,8 @@
         @media (min-width:601px) {
              .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--card-bg);
+                box-shadow: var(--shadow);
                 position: relative;
                 width: 90%;
                 max-width: 100%;
@@ -428,14 +474,15 @@
             }
             .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
                 border: none;
-                border-bottom: solid 1px black;
+                border-bottom: solid 1px var(--border-color);
                 margin: 8px 0;
                 padding: 10px 15px;
                 font-size: 16px;
                 width: 100%;
                 outline: none;
                 height: 45px;
-                background: white;
+                background: var(--input-bg);
+                color: var(--text-dark);
             }
             .staff-container{
                 width: 100%;
@@ -447,7 +494,7 @@
                 grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
             }
             .add-btn button{
-                background:var(--background);
+                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
                 color: #fff;
                 font-size: 12px;
                 border: 1px solid transparent;
@@ -470,8 +517,8 @@
         @media(max-width: 601px) {
             .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--card-bg);
+                box-shadow: var(--shadow);
                 position: relative;
                 width: 768px;
                 z-index: 0;
@@ -486,14 +533,15 @@
             
             .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
                 border: none;
-                border-bottom: solid 1px black;
+                border-bottom: solid 1px var(--border-color);
                 margin: 8px 0;
                 padding: 10px 15px;
                 font-size: 15px;
                 width: 100%;
                 outline: none;
                 height: 45px;
-                background: white;
+                background: var(--input-bg);
+                color: var(--text-dark);
             }
             .staff-container{
                 width: 100%;
@@ -508,7 +556,7 @@
                 width: 100%;
             }
             .add-btn button{
-                background:var(--background);
+                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
                 color: #fff;
                 font-size: 12px;
                 border: 1px solid transparent;
@@ -520,6 +568,11 @@
                 height: 40px;
                 width: 96px;
             }
+        }
+
+        /* Focus states for accessibility */
+        input:focus, textarea:focus, select:focus {
+            border-bottom-color: var(--primary-color) !important;
         }
     </style>
 </head>
@@ -977,6 +1030,72 @@
             window.parent.postMessage(lists, "*");
             window.parent.postMessage("closeIframe", "*");
         }
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

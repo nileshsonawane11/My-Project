@@ -32,10 +32,37 @@ function formatMatchTime($matchDate, $startTime) {
 
 if($for == "dashboard"){
 
-    
+    $search = isset($data['search']) ? trim(mysqli_real_escape_string($conn, $data['search'])) : '';
 
     if ($data['update'] != "All") {
-        $sql = "SELECT * FROM `matches` LEFT join `sports` ON sports.sport_id = matches.sport_id WHERE sports.sport_name = '$sport' AND matches.status = '$status'";
+        $sql = "SELECT matches.*, 
+                   sports.sport_name,
+                   t1.t_name AS team1_name,
+                   t2.t_name AS team2_name 
+            FROM matches 
+            LEFT JOIN sports ON sports.sport_id = matches.sport_id 
+            LEFT JOIN teams AS t1 ON matches.team_1 = t1.t_id 
+            LEFT JOIN teams AS t2 ON matches.team_2 = t2.t_id 
+            WHERE sports.sport_name = '$sport'";
+
+    if (empty($search)) {
+        $sql .= " AND matches.status = '$status'";
+    }
+
+    if (!empty($search)) {
+        $sql .= " AND (
+            matches.match_name LIKE '%$search%' OR 
+            matches.status LIKE '%$search%' OR 
+            matches.match_id LIKE '%$search%' OR 
+            matches.team_1 LIKE '%$search%' OR 
+            matches.team_2 LIKE '%$search%' OR 
+            t1.t_name LIKE '%$search%' OR 
+            t2.t_name LIKE '%$search%' OR 
+            matches.match_date LIKE '%$search%' OR 
+            matches.start_time LIKE '%$search%' OR 
+            matches.venue LIKE '%$search%'
+        )";
+    }
         $result = mysqli_query($conn, $sql);
 
         if (mysqli_num_rows($result) > 0) { // Check if there are rows in the result
@@ -47,8 +74,10 @@ if($for == "dashboard"){
                 $sql3 = "SELECT * FROM `teams` WHERE t_id = '{$row['team_2']}'";
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
+                
+                $score_log = json_decode($row['score_log'], true);
 
-                echo "<div class='game-info' data-match_id='{$row['match_id']}'>";
+                echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='open_scoreboard(this)'>";
                 echo "<div class='match-data'>";
 
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
@@ -79,7 +108,8 @@ if($for == "dashboard"){
 
                     if(empty($row['toss_winner'])){
                         echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
-                    }else{
+                    }else if($row['status'] == 'Live'){
+                        
 
                         $team = '';
                         if($row['toss_winner'] == $team1['t_id']){
@@ -89,25 +119,68 @@ if($for == "dashboard"){
                         }
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
+                    }else if($row['status'] == 'Completed'){
+                        $winner = $score_log['winner'];
+                        $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                        // If match is not completed and no winner is declared
+                        if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
+                            echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                        }else{
+                            echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
+                        }
+                        
                     }
 
                 echo "</div>";
 
                     echo "<div class='strt-btn'>";
                     
-                    $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    $scorer_emails = explode(",", $scorers[0]);
+                    $scorers = [];
+
+                    if (!empty($row['scorers'])) {
+                        $decoded = json_decode($row['scorers'], true); // decode as array
+                        if (is_array($decoded)) {
+                            $scorers = $decoded;
+                        }
+                    }
+
+                    $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
                     $session_email = $_SESSION['email'];
 
                     if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
-                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this)'>Start</button></div>";
+                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
                 echo "</div>";
             }
         }
     } else {
-        $sql = "SELECT * FROM `matches` LEFT join `sports` ON sports.sport_id = matches.sport_id WHERE sports.sport_name = '$sport'";
+        $search = isset($data['search']) ? trim(mysqli_real_escape_string($conn, $data['search'])) : '';
+
+        $sql = "SELECT matches.*, 
+               sports.sport_name, 
+               t1.t_name AS team1_name, 
+               t2.t_name AS team2_name 
+        FROM matches 
+        LEFT JOIN sports ON sports.sport_id = matches.sport_id 
+        LEFT JOIN teams AS t1 ON matches.team_1 = t1.t_id 
+        LEFT JOIN teams AS t2 ON matches.team_2 = t2.t_id 
+        WHERE sports.sport_name = '$sport'";
+
+        if (!empty($search)) {
+            $sql .= " AND (
+                matches.match_name LIKE '%$search%' OR 
+                matches.status LIKE '%$search%' OR 
+                matches.match_id LIKE '%$search%' OR 
+                matches.team_1 LIKE '%$search%' OR 
+                matches.team_2 LIKE '%$search%' OR 
+                t1.t_name LIKE '%$search%' OR 
+                t2.t_name LIKE '%$search%' OR 
+                matches.match_date LIKE '%$search%' OR 
+                matches.start_time LIKE '%$search%' OR 
+                matches.venue LIKE '%$search%'
+            )";
+        }
         $result = mysqli_query($conn, $sql) or die("Error: ");
 
         if (mysqli_num_rows($result) > 0) { // Check if there are rows in the result
@@ -120,7 +193,9 @@ if($for == "dashboard"){
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
 
-                echo "<div class='game-info' data-match_id='{$row['match_id']}'>";
+                $score_log = json_decode($row['score_log'], true);
+
+                echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='open_scoreboard(this)'>";
                 echo "<div class='match-data'>";
 
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
@@ -151,7 +226,8 @@ if($for == "dashboard"){
 
                     if(empty($row['toss_winner'])){
                         echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
-                    }else{
+                    }else if($row['status'] == 'Live'){
+                        
 
                         $team = '';
                         if($row['toss_winner'] == $team1['t_id']){
@@ -161,6 +237,16 @@ if($for == "dashboard"){
                         }
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
+                    }else if($row['status'] == 'Completed'){
+                        $winner = $score_log['winner'];
+                        $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                        // If match is not completed and no winner is declared
+                        if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
+                            echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                        }else{
+                            echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
+                        }
+                        
                     }
                     
                 echo "</div>";
@@ -172,7 +258,7 @@ if($for == "dashboard"){
                     $session_email = $_SESSION['email'];
 
                     if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
-                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this)'>Start</button></div>";
+                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
 
@@ -277,7 +363,7 @@ if($for == "manage_matches"){
                 $query3 = mysqli_query($conn, $sql3) or die("Error: ");
                 $team2 = mysqli_fetch_assoc($query3);
 
-                echo "<div class='game-info'>";
+                echo "<div class='game-info' data-match_id='{$row['match_id']}' onclick='edit_match(this)'>";
                 echo "<div class='match-data'>";
 
                     echo "<div class='info'><p>" . (!empty($row['match_name']) ? $row['match_name'] : "Match 1 | No Tournament") . "</p></div>";
@@ -312,11 +398,16 @@ if($for == "manage_matches"){
                     echo "<div class='strt-btn'>";
                     
                     $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    $scorer_emails = explode(",", $scorers[0]);
+                    $scorer_emails = [];
+
+                    if (!empty($scorers) && isset($scorers[0])) {
+                        $scorer_emails = explode(",", $scorers[0]);
+                    }
+                    
                     $session_email = $_SESSION['email'];
 
                     if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
-                        echo "<div class='info'><button class='start-btn'>Start</button></div>";
+                        echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
                 echo "</div>";

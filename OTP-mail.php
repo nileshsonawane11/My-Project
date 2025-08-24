@@ -243,6 +243,16 @@ if($for == "registration"){
             $mail->Port = 587;
 
             $mail->setFrom('livestrike.in@gmail.com', 'LiveStrike'); // Sender
+
+            // $mail->isSMTP();
+            // $mail->Host = 'smtp.hostinger.com';
+            // $mail->SMTPAuth = true;
+            // $mail->Username = 'admin@livestrike.in'; // Change to your email
+            // $mail->Password = 'Livestrike@123'; // Use App Password if required
+            // $mail->SMTPSecure = 'ssl';
+            // $mail->Port = 465;
+
+            // $mail->setFrom('admin@livestrike.in', 'LiveStrike'); // Sender
             $mail->addAddress($recipient_email); // Recipient
             $mail->Subject = 'LiveStrike OTP Verification';
             $mail->isHTML(true);                                                                    
@@ -462,6 +472,16 @@ if($for == "registration"){
                     $mail->Port = 587;
 
                     $mail->setFrom('livestrike.in@gmail.com', 'LiveStrike'); // Sender
+
+                    // $mail->isSMTP();
+                    // $mail->Host = 'smtp.hostinger.com';
+                    // $mail->SMTPAuth = true;
+                    // $mail->Username = 'admin@livestrike.in'; // Change to your email
+                    // $mail->Password = 'Livestrike@123'; // Use App Password if required
+                    // $mail->SMTPSecure = 'ssl';
+                    // $mail->Port = 465;
+
+                    // $mail->setFrom('admin@livestrike.in', 'LiveStrike'); // Sender
                     $mail->addAddress($recipient_email); // Recipient
                     $mail->Subject = 'LiveStrike OTP Verification';
                     $mail->isHTML(true);                                                                    

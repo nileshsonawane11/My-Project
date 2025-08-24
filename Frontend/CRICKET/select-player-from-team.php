@@ -11,9 +11,44 @@
         exit();
     }
 
+    $current_inning = null;
     $for = $_GET['for'] ?? '';
     $team = $_GET['team'] ?? '';
+    $match = $_GET['match'] ?? '';
 
+    $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM matches WHERE match_id = '$match'"));
+    $score_log = json_decode($row['score_log'],true) ?? '';
+
+    if (!empty($score_log['innings'])) {
+        if (!empty($score_log['innings']['2nd']['balls'])) {
+            $current_inning = '2nd';
+        } elseif (!empty($score_log['innings']['1st']['balls'])) {
+            $current_inning = '1st';
+        } else {
+            $current_inning = null; // No valid innings yet
+        }
+    }
+
+    // Check if current innings data exists
+if (isset($score_log['innings'][$current_inning])) {
+    $out_batsmen = [];
+
+    foreach ($score_log['innings'][$current_inning]['batmans'] as $batsman) {
+        if (
+            $score_log['innings'][$current_inning]['batting_team'] == $team &&
+            isset($batsman['out_status']) &&
+            strtolower($batsman['out_status']) !== 'not out'
+        ) {
+            $out_batsmen[] = $batsman['id'];
+        }
+    }
+
+    // Output or return the filtered list
+    // echo json_encode($out_batsmen);
+    if($for =='Bowler'){
+        $out_batsmen = [];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -700,7 +735,7 @@
         const person = urlParams.get('for');
         const strikerParam = urlParams.get('striker');
         const nonStrikerParam = urlParams.get('non-striker');
-        let out_players = [];                                
+        let out_players = <?php echo json_encode($out_batsmen ?? []); ?>;                               
         const striker = strikerParam ? strikerParam.split(",")[0] : null;
         const non_striker = nonStrikerParam ? nonStrikerParam.split(",")[0] : null;
 
@@ -749,7 +784,7 @@
         if(out_players.includes(block)){
             option.removeEventListener('click', handleSelect);
             option.style.background = '#fff';
-            option.style.border = '#000000 1px solid';
+            option.style.border = '#ff0000ff 2px solid';
             option.querySelector('.reason').innerHTML = 'Out';
         }
         });
@@ -810,6 +845,16 @@
             }
         }
 
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 </html>
