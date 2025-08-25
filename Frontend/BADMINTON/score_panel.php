@@ -42,13 +42,12 @@
     }
 
     // Detect current set
-    $current_set = null;
+    $current_set = $score_log['current_set'];
     $last_rally = null;
 
     if (isset($score_log['sets']) && is_array($score_log['sets'])) {
         foreach ($score_log['sets'] as $set_number => $set_data) {
             if (isset($set_data['set_completed']) && $set_data['set_completed'] === false) {
-                $current_set = $set_number;
                 $set_team1 = $score_log['team1'];
                 $set_team2 = $score_log['team2'];
                 if (!empty($set_data['rallies'])) {
@@ -64,7 +63,6 @@
     if ($current_set === null && isset($score_log['sets']) && is_array($score_log['sets'])) {
         $last_set_number = array_key_last($score_log['sets']);
         if (is_array($score_log['sets'][$last_set_number])) {
-            $current_set = $last_set_number;
             $set_team1 = $score_log['team1'];
             $set_team2 = $score_log['team2'];
             $last_rally = end($score_log['sets'][$last_set_number]['rallies'] ?? []);
@@ -962,10 +960,10 @@
     <dialog id="half_completed">
             <div class="undo-container">
                 <div class="undo-seyup">
-                    <p class="undo-warn undo-txt">You really want to End the Game?</p>
+                    <p class="undo-warn undo-txt">You really want to End the Set?</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="undo-btn" onclick="proceed_end_set()">End Game</button>
+                    <button class="undo-btn" onclick="proceed_end_set()">End Set</button>
                 </div>
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="
@@ -997,13 +995,11 @@
                     <p class="undo-warn undo-txt">Match tied! A winner is required. Please continue scoring.</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="start-next-btn undo-btn" onclick='complete_match()'>Complete Match</button>
-                </div>
-                <div class="undo-seyup">
-                    <p class="continue-match-btn complete_match" onclick="document.querySelector('#start_second').close();
+                    <button class="start-next-btn undo-btn" onclick="document.querySelector('#start_second').close();
                     is_complete = false;window.removeEventListener('beforeunload', preventReload);
-                        location.reload();">Continue Scoring</p>
+                        location.reload();">Continue Scoring</button>
                 </div>
+                
             </div>
         </dialog>
 
@@ -1027,6 +1023,7 @@
                 </div>
                 <div class="undo-seyup"><p class="undo-txt">UNDO ?</p></div>
                 <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
+                <div class="error" id="error-empty"></div>
                 <div class="undo-seyup"><button class="undo-btn" id='undo-btn' onclick="process_undo()">Yes I’m certain</button></div>
                 <div class="undo-seyup"><p class="undo-cancel" onclick="document.querySelector('#undo').close();">Cancel</p></div>
             </div>
@@ -1048,7 +1045,7 @@
                         <path d="M6.36196 6.62029L11.672 1.04729C11.7606 0.954302 11.8101 0.830761 11.8101 0.70229C11.8101 0.573819 11.7606 0.450279 11.672 0.357291L11.666 0.35129C11.623 0.306055 11.5713 0.270036 11.5139 0.245422C11.4566 0.220808 11.3949 0.208115 11.3325 0.208115C11.2701 0.208115 11.2083 0.220808 11.151 0.245422C11.0937 0.270036 11.0419 0.306055 10.999 0.35129L5.99896 5.59929L1.00096 0.35129C0.95799 0.306055 0.906263 0.270036 0.84893 0.245422C0.791597 0.220808 0.729857 0.208115 0.667463 0.208115C0.60507 0.208115 0.543329 0.220808 0.485996 0.245422C0.428663 0.270036 0.376937 0.306055 0.333963 0.35129L0.327963 0.357291C0.239318 0.450279 0.189867 0.573819 0.189867 0.70229C0.189867 0.830761 0.239318 0.954302 0.327963 1.04729L5.63796 6.62029C5.68466 6.6693 5.74082 6.70832 5.80305 6.73498C5.86528 6.76164 5.93227 6.77539 5.99996 6.77539C6.06766 6.77539 6.13465 6.76164 6.19688 6.73498C6.2591 6.70832 6.31527 6.6693 6.36196 6.62029Z" fill="black"/>
                     </svg>
                 </div>
-                <div class="exit-text">End Game <?php echo $current_set; ?></div>
+                <div class="exit-text">End Set <?php echo $current_set; ?></div>
             </div>
         </div>
 
@@ -1078,7 +1075,7 @@
                                     echo $t_name1['t_name'];
                                 ?>
                             </label>
-                            <label class="set">Games : <?php echo $score_log['sets_won']['team1']; ?></label>
+                            <label class="set">Sets : <?php echo $score_log['sets_won']['team1']; ?></label>
                         </div>
                     </div>
                 </div>
@@ -1102,7 +1099,7 @@
                                     echo $t_name2['t_name'];
                                 ?>
                             </label>
-                            <label class="set">Games : <?php echo $score_log['sets_won']['team2']; ?></label>
+                            <label class="set">Sets : <?php echo $score_log['sets_won']['team2']; ?></label>
                         </div>
                     </div>
                 </div>
@@ -1114,7 +1111,7 @@
 
     <div class="container2">
         <div class="image"></div>
-        <div class="current-set">Game <?php echo $current_set; ?></div>
+        <div class="current-set">Set <?php echo $current_set; ?></div>
         <div class="blur-container"></div>
 
         <div class="buttons">
@@ -1193,8 +1190,8 @@
         <div class="slide-container">
             <div class="container3">
                     <div class="current-server">
-                        <label class="curr-ser">Current Server</label>
-                        <label class="tap">Tap to choose the Serving player</label>
+                        <label class="curr-ser">Current Raider</label>
+                        <label class="tap">Tap to choose the raiding player</label>
                     </div>
                     <?php
                         $query = "SELECT * FROM `players` WHERE `team_id` = '$current_serve_team'";
@@ -1318,7 +1315,7 @@
 
         console.log(data);
 
-        fetch('./Backend/update-volleyball-logs.php',{
+        fetch('./Backend/update-badminton-logs.php',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1397,7 +1394,7 @@
         start_dialogue.classList.add('shake');
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
+
     // DOM Elements
     const serveBtn = document.querySelector('.serve');
     // Get existing containers
@@ -1417,7 +1414,7 @@
         console.warn("One or more containers not found in the DOM.");
     }
     
-    const playerNames = document.querySelectorAll('.player-name');
+    const playerNames = document.querySelectorAll('.player-replace');
     const inButton = document.querySelector('.in');
     const aceButton = document.querySelector('.ace');
     const errorButton = document.querySelector('.error');
@@ -1447,13 +1444,14 @@
     // Event listeners
     playerNames.forEach(player => {
         player.addEventListener('click', () => {
+            console.log(player.innerText);
             goToSlide(1);
             getplayername (player);
         })
     });
     
     let getplayername = (el) => {
-        serve_player = el.innerText;
+        serve_player = el.getAttribute('data-player-id');
     }
 
     let serveresult = (el) => {
@@ -1534,7 +1532,7 @@
         undo_container.classList.add('shake');
     });
 
-});
+
 
  const back_decision = '<?php echo $back_decision; ?>';
 
@@ -1562,6 +1560,16 @@
         }
     }
 
+    // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
 </script>
 </body>
 

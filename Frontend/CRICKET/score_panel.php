@@ -1323,9 +1323,34 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
     <iframe src="./select-player-from-team.php" frameborder="0" class="player-frame"></iframe>
     
+    <script type="module">
+import { host, port } from "../../config.js";
+
+window.socket = new WebSocket(`ws://${host}:${port}`);
+
+  window.socket.onopen = () => {
+    console.log("Connected to server");
+
+    // Trigger score update
+    window.socket.send(JSON.stringify({
+        type: "updateScore",
+        team: "Team A",
+        runs: 120,
+        wickets: 3,
+        overs: "15.2"
+        }));
+    };
+
+  window.socket.onmessage = (event) => {
+    let data = JSON.parse(event.data);
+    if (data.type === "fullLog") {
+      console.log("Updated Score Log:", data.log);
+    }
+  };
+</script>
+
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const back_decision = '<?php echo $back_decision; ?>';
         const current_inning = '<?php echo $current_innings; ?>'
         let data = urlParams.get('data') || '';
         console.log(data);
@@ -1462,11 +1487,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
         //go to prevoius page
         let goBack = () => {
-            if(back_decision){
                 window.location.href = '../../dashboard.php?update=Live&sport=CRICKET';
-            }else{
-                window.history.back();
-            }
         }
 
         function verifyPlayers() {
@@ -2432,7 +2453,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 let strikerName = document.querySelector('.batsman-type').getAttribute('data-striker');
                 let bowler_id = document.querySelector('.bowler-name').getAttribute('data-bowler');
                 ball_data = {
-                    'Run' : run_per_ball,
+                    'Run' : parseInt(run_per_ball),
                     'Shot Type' : Shot_type,
                     'Shot Side' : Shot_side,
                     'Wicket Type': out_type,
@@ -2484,7 +2505,8 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         setTimeout(() => {
                             //Bypass reload
                             window.removeEventListener("beforeunload", preventReload);
-                            location.reload();
+                            // location.reload();
+                            window.socket.send(JSON.stringify(ball_data));
                         }, 300); 
                     }else if(data.field == 'undo'){
                         let warn = document.querySelector('.undo-warn');
@@ -2533,7 +2555,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             }
 
             // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+//   document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {
@@ -2542,6 +2564,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
     </script>
 </body>
 </html>

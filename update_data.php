@@ -120,11 +120,17 @@ if($for == "dashboard"){
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
                     }else if($row['status'] == 'Completed'){
-                        $winner = $score_log['winner'];
-                        $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+
+                        if($score_log['completed'] != 'Draw'){
+                            $winner = $score_log['winner'];
+                            $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                        }
                         // If match is not completed and no winner is declared
                         if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
+
                             echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                        }else if($score_log['completed'] == "Draw"){
+                            echo "<div class='info update'><p>Match Tied</p></div>";
                         }else{
                             echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
                         }

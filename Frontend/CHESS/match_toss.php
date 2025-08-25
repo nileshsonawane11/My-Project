@@ -1,4 +1,27 @@
+<?php
+    session_start();
 
+    if(!isset($_SESSION['user'])){
+        header('location: ./front-page.php');
+        exit();
+    }
+    if($_SESSION['role'] == "User"){
+        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    include '../../config.php';
+    $match = $_GET['match_id'] ?? '';
+
+    $query1 = mysqli_query($conn, "SELECT * FROM `matches` WHERE `match_id` = '$match'");
+    $row = mysqli_fetch_assoc($query1);
+
+    if(!empty($row['toss_winner'])){
+        header("Location: ./score_panel.php?match_id=$match");
+        exit();
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -396,16 +419,34 @@
                     <h4>Toss</h4>
                 </div>
                 <div class="container3">
+                    <?php
+                        $query = mysqli_query($conn,"SELECT m.*, t1.t_id AS team1, t2.t_id AS team2, t1.t_logo AS team1_logo, t1.t_name AS team1_name, t2.t_logo AS team2_logo , t2.t_name AS team2_name FROM `matches` m JOIN `teams` t1 ON m.team_1 = t1.t_id JOIN `teams` t2 ON m.team_2 = t2.t_id WHERE m.match_id = '$match' ");
+                        $row = mysqli_fetch_assoc($query);
+                    ?>
                     <div class="info">
                         <label for="">Who won the toss?</label>
                         <div class="sector team">
-                            <div class="teams" data-value="">
-                               
-                                <div class="tname">Team1</div>
+                            <div class="teams" data-value="<?php echo $row['team_1']; ?>">
+                                <?php
+                                    if (empty($row['team1_logo'])) {
+                                        echo '<div class="logo"></div>';
+                                    } else {
+                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team1_logo']}\" alt=\"\"></div>";
+                                    }
+
+                                ?>
+                                <div class="tname"><?php echo $row['team1_name']; ?></div>
                             </div>
-                            <div class="teams" data-value="">
-                                
-                                <div class="tname">Team2</div>
+                            <div class="teams" data-value="<?php echo $row['team_2']; ?>">
+                                <?php
+                                    if (empty($row['team2_logo'])) {
+                                        echo '<div class="logo"></div>';
+                                    } else {
+                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team2_logo']}\" alt=\"\"></div>";
+                                    }
+
+                                ?>
+                                <div class="tname"><?php echo $row['team2_name'] ?></div>
                             </div>
                         </div>
                         <div class="error" id="error-team"></div>
@@ -414,7 +455,7 @@
                     <div class="info">
                         <label for="">Toss winner chose to</label>
                         <div class="sector types">
-                            <div class="options" data-value="RAID">
+                            <div class="options" data-value="WHITE">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/nqSzLLht/Pngtree-black-and-white-chess-board-5983389.png">
 
@@ -422,7 +463,7 @@
                                 <div class="tname">WHITE</div>
                             </div>
 
-                            <div class="options" data-value="DEFENCE">
+                            <div class="options" data-value="BLACK">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/MkmNjvWh/Pngtree-black-and-white-chess-board-5983391.png">
 
@@ -444,7 +485,8 @@
         </div>
     </div>
     <script>
-
+        const params = new URLSearchParams(window.location.search);
+        let matchId = params.get("match_id");
         const teams = document.querySelectorAll('.teams');
         const options = document.querySelectorAll('.options');
         let selecteddecision = '';
@@ -488,7 +530,7 @@
             e.preventDefault();
 
             let formdata = new FormData();
-            formdata.append('match_id', '');
+            formdata.append('match_id', matchId);
             formdata.append('selectedteam', selectedteam);
             formdata.append('selecteddecision', selecteddecision);
 
@@ -509,7 +551,7 @@
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }else{
-                    window.location.href = './score_panel.php?match_id=';
+                    window.location.href = './score_panel.php?match_id='+matchId;
                 }
             })
             .catch(error => console.log(error));
