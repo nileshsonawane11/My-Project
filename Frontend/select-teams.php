@@ -30,11 +30,34 @@
             user-select : none;
         }
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            --primary-color: rgb(255 5 0);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --primary-transparent: rgba(212, 53, 50, 0.15);
+            --background: #ffffff;
+            --text-color: #000000;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --border-color: #dddddd;
+            --special-color: #e3e3e3;
+            --hover-bg: rgba(209, 34, 31, 0.08);
+
+        }
+
+        [data-theme="dark"] {
+            --background: #121212;
+            --text-color: #ffffff;
+            --light-bg: #1e1e1e;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --border-color: #333333;
+            --primary-transparent: rgba(210, 31, 28, 0.29);
+            --special-color: #3f3f3f;
+            --hover-bg: rgba(209, 34, 31, 0.8);
         }
         body{
+            background-color: var(--background);
             height: max-content;
             display: flex;
             align-items: center;
@@ -56,6 +79,10 @@
             align-items: center;
             flex-direction: row;
         }
+
+        svg path {
+            fill : var(--text-color);
+        }
         .return svg{
             cursor: pointer;
             
@@ -69,7 +96,12 @@
             width: 100%;
             gap: 80px
         }
+
+        .team-name {
+            color: var(--text-color);
+        }
         .txt{
+            color: var(--text-color);
             line-height: 20px;
         }
         
@@ -96,13 +128,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background:var(--background);
-            color:white;
+            background:transparent;
+            color:var(--text-color);
         }
         .img-container{
             height: 100px;
             width: 100px;
-            background: #ffffff;
+            background: var(--hover-bg);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -137,8 +169,7 @@
         @media (min-width:601px) {
              .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--background);
                 position: relative;
                 width: 90%;
                 max-width: 100%;
@@ -159,8 +190,7 @@
         @media(max-width: 601px) {
             .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--background);
                 position: relative;
                 width: 768px;
                 z-index: 0;
@@ -216,7 +246,7 @@
                     ?>
 
                     <div class="container4">
-                        <label for="" class="vs">VS</label>
+                        <label for="" class="vs txt">VS</label>
                     </div>
 
                     <?php
@@ -326,6 +356,60 @@
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

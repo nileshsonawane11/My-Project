@@ -23,497 +23,441 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Profile</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            user-select: none;
-            scrollbar-width: none;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        user-select: none;
+        scrollbar-width: none;
+    }
 
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --primary-light-transparent: rgba(250, 192, 31, 0.1);
-            --primary-dark-transparent: rgba(248, 57, 0, 0.1);
-            --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-            --text-color: #333333;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
-        }
+    :root {
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --primary-transparent: rgba(209, 34, 31, 0.1);
+        --background: #ffffff;
+        --text-color: #000000;
+        --light-bg: #f8f9fa;
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        --border-radius: 12px;
+        --transition: all 0.3s ease;
+        --border-color: #dddddd;
+    }
 
-        body {
-            min-height: 100vh;
-            background-color: var(--light-bg);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-        }
+    [data-theme="dark"] {
+        --background: #121212;
+        --text-color: #ffffff;
+        --light-bg: #1e1e1e;
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        --border-color: #333333;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: white;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
+    body {
+        min-height: 100vh;
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-        .header {
-            background: var(--background);
-            padding: 20px;
-            color: white;
-            position: relative;
-        }
+    .container {
+        width: 100%;
+        max-width: 800px;
+        background: var(--background);
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
 
-        .return {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    .header {
+        background: var(--primary-color);
+        padding: 20px;
+        color: white;
+        position: relative;
+    }
 
-        .return svg {
-            cursor: pointer;
-            transition: var(--transition);
-            fill: white;
-        }
+    .return {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-        .return svg:hover {
-            transform: translateX(-3px);
-        }
+    .return svg {
+        cursor: pointer;
+        transition: var(--transition);
+        fill: white;
+    }
 
-        .edit-toggle svg {
-            fill: none;
-            stroke: white;
-            transition: var(--transition);
-        }
+    .return svg:hover {
+        transform: translateX(-3px);
+        opacity: 0.8;
+    }
 
-        .edit-toggle:hover svg {
-            stroke: rgba(255,255,255,0.8);
-        }
+    .edit-toggle svg {
+        fill: none;
+        stroke: white;
+        transition: var(--transition);
+    }
 
-        .profile-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 20px 0;
-        }
+    .edit-toggle:hover svg {
+        stroke: rgba(255,255,255,0.8);
+    }
 
-        .img-container {
-            position: relative;
-            width: 100px;
-            height: 100px;
-        }
+    .profile-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 0;
+    }
 
-        .profile-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+    .img-container {
+        position: relative;
+        width: 100px;
+        height: 100px;
+    }
 
-        .select-img {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: white;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: var(--transition);
-        }
+    .profile-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--background);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        background: var(--background);
+        transition: border-color 0.3s ease, background 0.3s ease;
+    }
 
-        .select-img:hover {
-            background: #f0f0f0;
-        }
+    option {
+        color: black;
+    }
+    .select-img {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--background);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        transition: var(--transition);
+    }
 
-        .select-img svg {
-            width: 20px;
-            height: 20px;
-        }
+    .select-img:hover {
+        background: var(--light-bg);
+    }
 
-        .profile-info {
-            flex: 1;
-        }
+    .select-img svg {
+        width: 20px;
+        height: 20px;
+        fill: var(--text-color);
+        transition: fill 0.3s ease;
+    }
 
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: white;
-        }
+    .profile-info {
+        flex: 1;
+    }
 
-        .profile-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: white;
+    }
 
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
+    .profile-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
 
-        .meta-item svg {
-            width: 16px;
-            height: 16px;
-            fill: white;
-        }
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+    }
 
-        .form-section {
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
+    .meta-item svg {
+        width: 16px;
+        height: 16px;
+        fill: rgba(255, 255, 255, 0.9);
+    }
 
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
+    .form-section {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        background: var(--background);
+        transition: background 0.3s ease;
+    }
 
-        .form-group {
-            flex: 1;
-        }
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
 
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--primary-dark);
-            font-size: 0.9rem;
-        }
+    .form-group {
+        flex: 1;
+    }
 
-        .form-input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-            background-color: #f9f9f9;
-        }
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
 
-        .form-input:focus {
-            border-color: var(--primary-light);
-            outline: none;
-            box-shadow: 0 0 0 3px var(--primary-light-transparent);
-        }
+    .form-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: var(--transition);
+        background-color: var(--light-bg);
+        color: var(--text-color);
+    }
 
-        .form-select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            background-color: #f9f9f9;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
-        }
+    .form-input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px var(--primary-transparent);
+    }
 
-        .actions-section {
-            padding: 0 30px 30px;
-        }
+    .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
 
-        .action-btn,
-        .action-btn1 {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: white;
-            border: none;
-            width: 100%;
-            text-align: left;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+    .actions-section {
+        padding: 0 30px 30px;
+        background: var(--background);
+        transition: background 0.3s ease;
+    }
 
-        .action-btn:hover,
-        .action-btn1:hover {
-            background-color: #f5f5f5;
-            transform: translateY(-2px);
-        }
+    .action-btn,
+    .action-btn1 {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: var(--background);
+        border: 1px solid var(--border-color);
+        width: 100%;
+        text-align: left;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        color: var(--text-color);
+    }
 
-        .logout-btn,
-        .save-btn {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px 30px;
-            background-color: var(--primary-dark);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            margin-top: 20px;
-            box-shadow: 0 4px 12px rgba(248, 57, 0, 0.2);
-        }
+    .action-btn:hover,
+    .action-btn1:hover {
+        background-color: var(--light-bg);
+        transform: translateY(-2px);
+        border-color: var(--primary-color);
+    }
 
-        .logout-btn:hover {
-            background-color: #e03400;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(248, 57, 0, 0.3);
-        }
+    .logout-btn,
+    .save-btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 30px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-top: 20px;
+        box-shadow: 0 4px 12px rgba(209, 34, 31, 0.2);
+    }
 
-        .delete-account {
-            display: inline-block;
-            margin-top: 15px;
-            color: var(--primary-dark);
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-        }
+    .logout-btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(209, 34, 31, 0.3);
+    }
 
-        .delete-account:hover {
-            color: #e03400;
-            text-decoration: underline;
-        }
+    .delete-account {
+        display: inline-block;
+        margin-top: 15px;
+        color: var(--primary-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+    }
 
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(3px);
-        }
+    .delete-account:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
 
-        .popup-box {
-            background: #fff;
-            padding: 30px;
-            border-radius: var(--border-radius);
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            animation: popIn 0.3s ease-out;
-        }
+    
 
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    /* Edit mode styles */
+    .edit-mode .form-input,
+    .edit-mode .form-select {
+        background-color: var(--background);
+        border-color: var(--border-color);
+    }
 
-        .popup-message {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-            line-height: 1.5;
-        }
+    .edit-mode .form-input:focus,
+    .edit-mode .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px var(--primary-transparent);
+    }
 
-        .popup-input {
-            width: 100%;
-            padding: 12px 15px;
-            margin: 8px 0 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
+    /* Custom Select Box Styles */
+    .select-wrapper {
+        position: relative;
+        width: 100%;
+        margin-bottom: 20px;
+    }
 
-        .popup-input:focus {
-            border-color: var(--primary-light);
-            outline: none;
-            box-shadow: 0 0 0 3px var(--primary-light-transparent);
-        }
+    .error{
+        display: none;
+        color: var(--primary-color);
+        width: 100%;
+        font-size: 15px;
+        margin: 5px;
+        transition: color 0.3s ease;
+    }
 
-        .popup-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
+    .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        background-color: var(--light-bg);
+        appearance: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text-color);
+    }
 
-        .popup-btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
+    .form-select:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px var(--primary-transparent);
+    }
 
-        .popup-btn.cancel {
-            background-color: #f0f0f0;
-            color: #333;
-            border: none;
-        }
+    .select-wrapper::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: center;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
 
-        .popup-btn.cancel:hover {
-            background-color: #e0e0e0;
-        }
+    /* Custom Dropdown Options */
+    .custom-options {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background: var(--background);
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        z-index: 100;
+        margin-top: 5px;
+        border: 1px solid var(--border-color);
+        animation: fadeIn 0.2s ease-out;
+    }
 
-        .popup-btn.confirm {
-            background-color: var(--primary-dark);
-            color: white;
-            border: none;
-        }
+    .custom-options.show {
+        display: block;
+    }
 
-        .popup-btn.confirm:hover {
-            background-color: #e03400;
-        }
+    .custom-option {
+        padding: 12px 15px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: var(--text-color);
+    }
 
-        /* Edit mode styles */
-        .edit-mode .form-input,
-        .edit-mode .form-select {
-            background-color: white;
-            border-color: #ccc;
-        }
+    .custom-option:hover {
+        background-color: var(--primary-transparent);
+        color: var(--primary-color);
+    }
 
-        .edit-mode .form-input:focus,
-        .edit-mode .form-select:focus {
-            border-color: var(--primary-dark);
-            box-shadow: 0 0 0 3px var(--primary-dark-transparent);
-        }
+    .custom-option.selected {
+        background-color: var(--primary-transparent);
+        color: var(--primary-color);
+        font-weight: 500;
+    }
 
-        /* Custom Select Box Styles */
-        .select-wrapper {
-            position: relative;
-            width: 100%;
-            margin-bottom: 20px;
-        }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-        .error{
-            display: none;
-            color:red; 
-            width:100%;
-            font-size:15px;
-            margin: 5px;
-        }
+    /* Scrollbar styling */
+    .custom-options::-webkit-scrollbar {
+        width: 6px;
+    }
 
-        .form-select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            background-color: #f9f9f9;
-            appearance: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #333;
-        }
+    .custom-options::-webkit-scrollbar-track {
+        background: var(--light-bg);
+        border-radius: 0 8px 8px 0;
+    }
 
-        .form-select:focus {
-            border-color: #FAC01F;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
-        }
+    .custom-options::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
 
-        .select-wrapper::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F83900' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: center;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        /* Custom Dropdown Options */
-        .custom-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            z-index: 100;
-            margin-top: 5px;
-            border: 1px solid #eee;
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        .custom-options.show {
-            display: block;
-        }
-
-        .custom-option {
-            padding: 12px 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .custom-option:hover {
-            background-color: rgba(250, 192, 31, 0.1);
-            color: #F83900;
-        }
-
-        .custom-option.selected {
-            background-color: rgba(248, 57, 0, 0.1);
-            color: #F83900;
-            font-weight: 500;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Scrollbar styling */
-        .custom-options::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .custom-options::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .custom-options::-webkit-scrollbar-thumb {
-            background: #FAC01F;
-            border-radius: 3px;
-        }
-
-        .custom-options::-webkit-scrollbar-thumb:hover {
-            background: #F83900;
-        }
-        .notice{
-            color: red;
-            font-weight: 600;
-        }
-    </style>
+    .custom-options::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+    
+    .notice{
+        color: var(--primary-color);
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -633,21 +577,10 @@
             
             <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column;">
                 <button class="save-btn">SAVE CHANGES</button>
-                <button class="logout-btn">LOGOUT</button>
-                <a class="delete-account" onclick="">DELETE ACCOUNT</a>
             </div>
         </div>
     </div>
-    
-    <div class="popup-overlay" id="popupOverlay">
-        <div class="popup-box" id="popupBox">
-            <p class="popup-message" id="popupMessage"></p>
-            <div class="popup-actions">
-                <button class="popup-btn cancel" id="cancelBtn">Cancel</button>
-                <button class="popup-btn confirm" id="confirmBtn">Confirm</button>
-            </div>
-        </div>
-    </div>
+
 
     <script>
         let user_id = <?php echo json_encode($user_id) ?>;
@@ -711,7 +644,6 @@
         const popupOverlay = document.getElementById("popupOverlay");
         const popupMessage = document.getElementById("popupMessage");
         const confirmBtn = document.getElementById("confirmBtn");
-        const cancelBtn = document.getElementById("cancelBtn");
 
         // Messages for logout and delete
         const messages = {
@@ -719,93 +651,6 @@
         "del": "Are you sure you want to delete your account?"
         };
 
-        // Add event listeners to each action button
-        document.querySelectorAll(".action-btn, .logout-btn, .delete-account").forEach(element => {
-            element.addEventListener("click", () => {
-                popupMessage.innerHTML = ""; // Reset dialog content
-                let className = element.classList.contains('logout-btn') ? 'logout' : 
-                              element.classList.contains('delete-account') ? 'del' : 
-                              element.textContent.trim().toLowerCase().replace(' ', '-');
-
-                if (className === "change-password") {
-                    // Show form for change password
-                    popupMessage.innerHTML = `
-                    <label for="currentPass">Current Password</label><br>
-                    <input type="password" id="currentPass" class="popup-input"><br><br>
-
-                    <label for="newPass">New Password</label><br>
-                    <input type="password" id="newPass" class="popup-input"><br><br>
-
-                    <label for="confirmPass">Confirm Password</label><br>
-                    <input type="password" id="confirmPass" class="popup-input"><br>
-
-                    <div id="error-empty" class="error"></div>
-                    `;
-                } else {
-                    // Show message for logout or delete
-                    popupMessage.textContent = messages[className] || "Are you sure you want to proceed?";
-                }
-
-                // Show popup
-                popupOverlay.style.display = "flex";
-
-                // Handle Confirm
-                confirmBtn.onclick = (e) => {
-                    e.preventDefault();
-                    if (className === "change-password") {
-                        const current = document.getElementById("currentPass").value;
-                        const newPass = document.getElementById("newPass").value;
-                        const confirm = document.getElementById("confirmPass").value;
-                        console.log(current, newPass, confirm);
-
-                        let formData = new FormData();
-                        formData.append('user_id', user_id);
-                        formData.append('current', current);
-                        formData.append('newPass', newPass);
-                        formData.append('confirm', confirm);
-                        
-                        fetch('./Backend/change-password.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            console.log(data);
-                            document.querySelectorAll('[id^="error-"]').forEach((el) => {
-                                el.innerHTML = '';
-                                el.style.display = 'none';
-                            });
-
-                            if(data.status !== 200){
-                                let el = document.getElementById(`error-${data.field}`);
-                                el.innerHTML = data.message;
-                                el.style.display = 'block';
-                            }else if(data.status == 200){
-                                popupOverlay.style.display = "none";
-                            }
-                        })
-                        .catch(err => console.error('Error:', err));
-
-                    } else {
-                    // alert(`${className} confirmed.`);
-                        if(className === "logout"){
-                            logout();
-                        }
-
-                        if(className === "del"){
-                            deleteAccount();
-                        }
-                    }
-
-                    // popupOverlay.style.display = "none"; // Hide popup
-                };
-            });
-        });
-
-        // Cancel button hides popup
-        cancelBtn.addEventListener("click", () => {
-        popupOverlay.style.display = "none";
-        });
 
         //log out
         function logout(){
@@ -889,6 +734,62 @@
         if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
         if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
         if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+    }
+
+
+    // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
     }
     </script>
 </body>

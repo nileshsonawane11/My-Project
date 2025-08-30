@@ -4,95 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            -webkit-user-drag: none;
-            user-select: none;
-            scrollbar-width: none;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        -webkit-user-drag: none;
+        user-select: none;
+        scrollbar-width: none;
+    }
 
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --primary-light-transparent: rgba(250, 192, 31, 0.1);
-            --primary-dark-transparent: rgba(248, 57, 0, 0.1);
-            --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-            --text-color: #333333;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
-        }
+    :root {
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --primary-transparent: rgba(209, 34, 31, 0.1);
+        --background: #ffffff;
+        --text-color: #000000;
+        --light-bg: #f8f9fa;
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        --border-radius: 12px;
+        --transition: all 0.3s ease;
+    }
 
-        body {
-            min-height: 100vh;
-            background-color: var(--light-bg);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
+    [data-theme="dark"] {
+        --background: #121212;
+        --text-color: #ffffff;
+        --light-bg: #1e1e1e;
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
 
-        .header {
-            background: var(--background);
-            padding: 20px;
-            color: white;
-            height: 220px;
-            width: 100%;
-            max-width: 800px;
-        }
+    body {
+        min-height: 100vh;
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 800px;
+        background: var(--background);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
 
-        .return {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    .header {
+        background: var(--primary-color);
+        padding: 20px;
+        color: white;
+        height: 220px;
+        width: 100%;
+        max-width: 800px;
+    }
 
-        .return svg {
-            cursor: pointer;
-            transition: var(--transition);
-            fill: white;
-        }
+    .return {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-        .return svg:hover {
-            transform: translateX(-3px);
-        }
+    .return svg {
+        cursor: pointer;
+        transition: var(--transition);
+        fill: white;
+    }
 
-        .header-txt {
-            display: flex;
-            gap: 25px;
-            flex-direction: column;
-        }
-        .container2 {
-            margin-top: 20px;
-            padding: 20px;
-            line-height: 27px;
-            font-size: 18px;
-        }
-        .para {
-            position: relative;
-        }
+    .return svg:hover {
+        transform: translateX(-3px);
+        opacity: 0.8;
+    }
 
-        .info {
-            margin-top: 20px;
-        }
+    .header-txt {
+        display: flex;
+        gap: 25px;
+        flex-direction: column;
+    }
+    
+    .container2 {
+        margin-top: 20px;
+        padding: 20px;
+        line-height: 27px;
+        font-size: 18px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .para {
+        position: relative;
+    }
 
-        h3 {
-            margin-bottom: 10px;
-        }
-    </style>
+    .info {
+        margin-top: 20px;
+    }
+
+    h3 {
+        margin-bottom: 10px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -167,7 +184,7 @@
 
             <div class="info">
                 <h3>Contact us</h3>
-                If you have any <b>questions, concerns, or feedback</b> about this Privacy Policy or our data practices, please contact us at [Insert Official Email Address or Contact Form URL].
+                If you have any <b>questions, concerns, or feedback</b> about this Privacy Policy or our data practices, please contact us at admin@livestrike.in .
             </div>
         </div>
     </div>
@@ -187,5 +204,61 @@
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
 </script>
 </html>

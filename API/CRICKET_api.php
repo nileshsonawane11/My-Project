@@ -22,6 +22,7 @@ $allBalls = $score_log['innings'][$current_innings]['balls'];
 $playerIds = [];
 $bowlerIds = [];
 $fielderIds = [];
+$players = [];
 
 foreach ($allBalls as $ball) {
     if (!empty($ball['Striker'])) {
@@ -69,8 +70,42 @@ $score_log['player_map'] = $player_map;
 $score_log['bowler_map'] = $bowler_map;
 $score_log['fielder_map'] = $fielder_map;
 
+function get_match_players($conn, $match_id) {
+    // Step 1: Get team IDs from matches table
+    $query_match = "SELECT team_1, team_2 FROM matches WHERE match_id = ?";
+    $stmt = $conn->prepare($query_match);
+    $stmt->bind_param("s", $match_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $row = $res->fetch_assoc();
+
+    if (!$row) {
+        return []; // no match found
+    }
+
+    $team1_id = $row['team_1'];
+    $team2_id = $row['team_2'];
+
+    // Step 2: Fetch players from both teams
+    $query_players = "SELECT user_id, player_name FROM players WHERE team_id IN (?, ?)";
+    $stmt2 = $conn->prepare($query_players);
+    $stmt2->bind_param("ss", $team1_id, $team2_id);
+    $stmt2->execute();
+    $res2 = $stmt2->get_result();
+
+    $players = [];
+    while ($row2 = $res2->fetch_assoc()) {
+        $players[$row2['user_id']] = $row2['player_name'];
+    }
+
+    return $players;
+}
+
+// Usage
+$players = get_match_players($conn, $match_id);
+$score_log['Players_map'] = $players;
+$score_log['current_innings']=$current_innings;
 // Return as JSON
 echo json_encode($score_log);
-exit();
 
 ?>

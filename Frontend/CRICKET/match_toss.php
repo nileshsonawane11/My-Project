@@ -39,15 +39,43 @@
         scrollbar-width: none;
     }
     
+    /* Theme Variables */
     :root {
-        --primary-light: #FAC01F;
-        --primary-dark: #F83900;
-        --primary-light-transparent: rgba(250, 192, 31, 0.1);
-        --primary-dark-transparent: rgba(248, 57, 0, 0.1);
-        --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-        --text-color: #333333;
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --primary-light-transparent: rgba(209, 34, 31, 0.1);
+        --primary-dark-transparent: rgba(160, 25, 23, 0.1);
+        --background: #ffffff;
+        --card-bg: #ffffff;
+        --text-dark: #333333;
+        --text-light: #666666;
+        --border-color: #e0e0e0;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --svg-fill: #333333;
+        --hover-bg: rgba(209, 34, 31, 0.08);
+        --input-bg: #ffffff;
         --light-bg: #f8f9fa;
-        --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Dark theme variables */
+    [data-theme="dark"] {
+        --background: #121212;
+        --card-bg: #1e1e1e;
+        --text-dark: #ffffff;
+        --text-light: #b0b0b0;
+        --border-color: #333333;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        --svg-fill: #ffffff;
+        --hover-bg: rgba(209, 34, 31, 0.15);
+        --input-bg: #2a2a2a;
+        --light-bg: #2d2d2d;
+        --primary-light-transparent: rgba(209, 34, 31, 0.2);
+        --primary-dark-transparent: rgba(160, 25, 23, 0.2);
+    }
+
+    svg path {
+        fill: var(--text-dark);
     }
     
     body {
@@ -58,7 +86,7 @@
         flex-wrap: wrap;
         flex-direction: column;
         background-color: var(--light-bg);
-        color: var(--text-color);
+        color: var(--text-dark);
     }
     
     .part {
@@ -79,7 +107,7 @@
     
     .return svg {
         cursor: pointer;
-        fill: var(--primary-dark);
+        fill: var(--svg-fill);
         transition: transform 0.2s;
     }
     
@@ -89,8 +117,8 @@
     
     .container {
         display: flex;
-        background-color: #fff;
-        box-shadow: var(--card-shadow);
+        background-color: var(--card-bg);
+        box-shadow: var(--shadow);
         position: relative;
         border-radius: 16px;
         width: 100%;
@@ -101,7 +129,7 @@
         justify-content: flex-start;
         flex-direction: column;
         gap: 30px;
-        border: 1px solid rgba(248, 57, 0, 0.1);
+        border: 1px solid var(--border-color);
     }
     
     .container2 {
@@ -116,7 +144,7 @@
     
     .txt {
         line-height: 20px;
-        color: var(--text-color);
+        color: var(--text-dark);
     }
     
     .input-fields {
@@ -131,14 +159,14 @@
         text-align: center;
         font-size: 16px;
         transition: 0.3s ease-in-out;
-        color: #666;
+        color: var(--text-light);
     }
     
     .input-fields input:valid~label,
     .input-fields input:focus~label {
         transform: translateX(-5px) translateY(-24px);
         font-size: 14px;
-        color: var(--primary-dark);
+        color: var(--primary-color);
     }
     
     .container input[type="text"],
@@ -151,15 +179,16 @@
     .container input[type="date"],
     .container select {
         border: none;
-        border-bottom: solid 2px #ddd;
+        border-bottom: solid 2px var(--border-color);
         margin: 8px 0;
         padding: 10px 15px;
         font-size: 16px;
         width: 100%;
         outline: none;
         height: 45px;
-        background: white;
+        background: var(--input-bg);
         transition: all 0.3s;
+        color: var(--text-dark);
     }
     
     .container input[type="text"]:focus,
@@ -171,7 +200,7 @@
     .container input[type="time"]:focus,
     .container input[type="date"]:focus,
     .container select:focus {
-        border-bottom-color: var(--primary-dark);
+        border-bottom-color: var(--primary-color);
         box-shadow: 0 2px 0 0 var(--primary-light-transparent);
     }
     
@@ -194,12 +223,12 @@
     
     .error {
         display: none;
-        color: #d32f2f;
+        color: var(--primary-color);
         width: 100%;
         font-size: 14px;
         margin: 5px;
         padding: 8px 12px;
-        background-color: rgba(211, 47, 47, 0.1);
+        background-color: var(--primary-light-transparent);
         border-radius: 4px;
     }
     
@@ -212,8 +241,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-around;
-        background: #fff;
-        box-shadow: var(--card-shadow);
+        background: var(--card-bg);
+        box-shadow: var(--shadow);
         cursor: pointer;
         transition: all 0.3s ease;
         border: 2px solid transparent;
@@ -227,14 +256,14 @@
     
     .teams.active,
     .options.active {
-        border: 2px solid var(--primary-dark);
+        border: 2px solid var(--primary-color);
         box-shadow: 0 0 0 4px var(--primary-light-transparent);
     }
     
     .logo {
         height: 75px;
         width: 75px;
-        background: #f5f5f5;
+        background: var(--hover-bg);
         border-radius: 50%;
         overflow: hidden;
         display: flex;
@@ -257,7 +286,7 @@
         text-wrap: auto;
         text-align: center;
         font-weight: 600;
-        color: var(--text-color);
+        color: var(--text-dark);
     }
     
     .sector {
@@ -292,12 +321,12 @@
         width: 300px;
         max-width: 100%;
         transition: all 0.3s;
-        box-shadow: 0 4px 8px rgba(248, 57, 0, 0.2);
+        box-shadow: 0 4px 8px rgba(209, 34, 31, 0.2);
     }
     
     .add-btn button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(248, 57, 0, 0.3);
+        box-shadow: 0 6px 12px rgba(209, 34, 31, 0.3);
     }
     
     .add-btn button:active {
@@ -317,7 +346,7 @@
     .form-check-input:focus {
         border-color: var(--primary-dark);
         outline: 0;
-        box-shadow: 0 0 0 .25rem rgba(248, 57, 0, 0.22);
+        box-shadow: 0 0 0 .25rem rgba(209, 34, 31, 0.22);
     }
     
     .form-check-input {
@@ -339,9 +368,12 @@
         width: 100%;
         position: relative;
         padding: 15px;
-        background-color: #fff;
+        background-color: var(--card-bg);
         border-radius: 12px;
-        box-shadow: var(--card-shadow);
+        box-shadow: var(--shadow);
+    }
+    .rule:first-child{
+        box-shadow: none;
     }
     .rule:first-child{
         box-shadow: none;
@@ -583,6 +615,61 @@
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

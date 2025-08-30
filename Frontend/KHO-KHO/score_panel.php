@@ -78,7 +78,7 @@
     $team2_role = ($attacking_team === $team2) ? 'Chasing Team' : 'Running Team';
 
     $is_empty = false;
-    if (empty($score_log['innings'][$current_inning]['current_runners'])) {
+    if(empty($score_log['innings'][$current_inning]['current_runners'])) {
         $is_empty = true;
     } else {
         $is_empty = false;
@@ -101,26 +101,72 @@
         }
 
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-            --card-bg: #ffffff;
-            --text-dark: #333333;
-            --text-light: #f8f8f8;
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --primary-transparent: rgba(212, 53, 50, 0.15);
+            --background: #ffffff;
+            --text-color: #000000;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             --border-radius: 12px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --border-color: #dddddd;
+            --special-color: #e3e3e3;
+        }
+
+        [data-theme="dark"] {
+            --background: #121212;
+            --text-color: #ffffff;
+            --light-bg: #1e1e1e;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --border-color: #333333;
+            --primary-transparent: rgba(210, 31, 28, 0.29);
+            --special-color: #3f3f3f;
         }
 
         body {
-            margin: 0;
-            background: #f8f8f8;
             min-height: 100vh;
-            color: #333;
-            position: relative;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: var(--transition);
         }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        svg path {
+            fill: var(--text-color);
+        }
+
+        #commentaryIcon svg {
+            stroke: var(--text-color);
+        }
+
         .container0 {
             position: relative;
             height: max-content;
+            width: 100%;
+            max-width: 800px;
+            background: var(--background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
         }
 
         .return {
@@ -130,28 +176,35 @@
             align-items: center;
             flex-direction: row;
             padding: 20px 5%;
-            background-color: white;
+            background-color: var(--background);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            background: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            z-index: 11;
         }
 
         .return svg {
             cursor: pointer;
-            fill: #F83900;
+            fill: var(--primary-color);
+            transition: var(--transition);
         }
 
         .exit {
             width: 150px;
             height: 50px;
-            background-color: white;
+            background-color: var(--background);
             border-radius: 85px;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #F83900;
-            border: 2px solid #F83900;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+        }
+
+        .exit:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .exit-text {
@@ -168,10 +221,10 @@
             flex-direction: column;
             padding: 0 5%;
             align-items: center;
-            height: 100%;
             justify-content: space-between;
-            background-color: white;
-            background: rgba(255, 255, 255, 0.1);
+            background-color: var(--background);
+            transition: var(--transition);
+            z-index: 1;
         }
 
         .right {
@@ -205,25 +258,26 @@
         .team-logo {
             height: 80px;
             width: 80px;
-            background-color: white;
+            background-color: var(--background);
             border-radius: 50%;
-            border: 3px solid #FAC01F;
+            border: 3px solid var(--primary-light);
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
-            color: #F83900;
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 1.5rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
+            transition: var(--transition);
         }
 
         .score1, .score2 {
-            color: #F83900;
+            color: var(--primary-color);
             font-size: 4.5rem;
             font-weight: bold;
             margin-bottom: 30px;
-            -webkit-text-stroke: 1px #ffffff;
+            transition: var(--transition);
         }
 
         .score1 {
@@ -248,38 +302,54 @@
             font-size: 1.4rem;
             font-weight: bold;
             text-align: center;
-            color: #ffffff;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .set {
             font-size: 1rem;
-            color: #ffffff;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .container2 {
             position: relative;
             width: 100%;
             height: 80vh;
-            background: rgba(255, 255, 255, 0.65);
+            background: var(--background);
+            transition: var(--transition);
+            overflow: auto;
+        }
+
+        #error-empty {
+            display: none;
         }
 
         .blur-container {
-                top: 0;
-                position: absolute;
-                height: 100%;
-                width: 100%;
-                background-color: transparent;
-                filter: blur(3px);
-                z-index: -1;
-                background-position: center;
-                background-image: url("https://i.ibb.co/SDvv2YTd/179380-auhvxpvqhb-1662286409.jpg");
-                background-size: cover;
-                    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-                mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-                -webkit-mask-size: 100% 100%;
-                mask-size: 100% 100%;
-                -webkit-mask-repeat: no-repeat;
-                mask-repeat: no-repeat;
+            top: 0;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-color: transparent;
+            filter: blur(3px);
+            z-index: 10;
+            background-position: center;
+            background-image: url("https://i.ibb.co/SDvv2YTd/179380-auhvxpvqhb-1662286409.jpg");
+            background-size: cover;
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%; 
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            opacity: 0.4;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .blur-container {
+            opacity: 0.25;
+            filter: blur(3px) brightness(0.6);
         }
 
         .scoreboard {
@@ -294,23 +364,28 @@
         }
 
         .scoring {
-            border-bottom: 3px solid #FAC01F;
+            border-bottom: 3px solid var(--primary-light);
             padding-bottom: 6px;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .current-set {
+            position: relative;
             width: 100%;
             height: 55px;
-            background-color: #FAC01F;
+            background-color: var(--primary-light);
             align-content: center;
             text-align: center;
             color: white;
             font-weight: bold;
             font-size: 22px;
-            border-bottom: 3px solid white;
+            border-bottom: 3px solid var(--background);
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: var(--transition);
+            z-index: 101;
         }
 
         .buttons {
@@ -318,6 +393,7 @@
             width: 100%;
             height: 300px;
             background-color: transparent;
+            z-index: 100;
         }
 
         .point-buttons {
@@ -337,18 +413,24 @@
             height: 60%;
         }
 
-        .team1-button,
-        .team2-button {
+        .team1-button, .team2-button {
             width: 160px;
             height: 90px;
             background-color: white;
-            color: #F83900;
+            color: var(--primary-color);
             border: none;
             border-radius: 15px;
             font-weight: bold;
             font-size: 1.5rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: var(--transition);
+        }
+
+        .team1-button:hover, .team2-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .team-button:active {
@@ -363,9 +445,10 @@
         }
 
         .team-name {
-            color: #ffffff;
+            color: var(--text-color);
             font-weight: bold;
             font-size: 1.3rem;
+            transition: var(--transition);
         }
 
         button {
@@ -380,31 +463,34 @@
             background-color: transparent;
             margin-top: 20px;
             padding: 10px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
+            transition: var(--transition);
         }
 
         .log {
             height: 125px;
             width: 100%;
             margin-top: 10px;
-            background-color: white;
-            border: 1px solid #eee;
-            color: #333;
+            background-color: var(--background);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: var(--transition);
         }
 
         .serving {
             height: 40px;
             width: 100%;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
             align-content: center;
             padding: 8px;
             font-weight: bold;
             font-size: 1.3rem;
-            color: #F83900;
-            background-color: #f9f9f9;
+            color: var(--primary-color);
+            background-color: var(--special-color);
+            transition: var(--transition);
         }
 
         .point-to {
@@ -421,18 +507,23 @@
             display: flex;
             padding: 15px;
             align-items: center;
+            background-color: var(--light-bg);
+            transition: var(--transition);
         }
 
         .point-text {
             font-weight: bold;
             font-size: 1.1rem;
-            color: #555;
+            color: var(--text-color);
+            opacity: 0.8;
+            transition: var(--transition);
         }
 
         .last-update {
             font-size: 1.8rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         /* Slide container wrapper */
@@ -446,29 +537,30 @@
             transform: translateY(600px);
             transition: transform 0.5s ease;
             z-index: 1000;
-            background: white;
+            background: var(--background);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-            border-top: 2px solid #FAC01F;
+            border-top: 2px solid var(--primary-light);
+            transition: var(--transition);
         }
 
         .container5 {
-            display: none;
+            transform: translateY(600px);
             position: fixed;
             bottom: 0;
             height: 100%;
             width: 100%;
             height: 543px;
-            transform: translateY(0);
             overflow-y: auto;
             transition: transform 0.5s ease;
             z-index: 1000;
-            background: white;
+            background: var(--background);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-            border-top: 2px solid #FAC01F;
+            border-top: 2px solid var(--primary-light);
+            transition: var(--transition);
         }
 
         .container6 {
@@ -481,11 +573,12 @@
             overflow-y: auto;
             transition: transform 0.5s ease;
             z-index: 1000;
-            background: white;
+            background: var(--background);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-            border-top: 2px solid #FAC01F;
+            border-top: 2px solid var(--primary-light);
+            transition: var(--transition);
         }
 
         /* Container parent for horizontal sliding */
@@ -497,44 +590,55 @@
         }
 
         /* Individual containers */
-        .container3,
-        .container4 {
+        .container3, .container4 {
             flex: 0 0 50%;
             width: 100%;
             height: 100%;
             overflow-y: auto;
-            background: white;
-            color: #333;
+            background: var(--background);
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .current-server {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #eee;
-            border-bottom: 1px solid #eee;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding-left: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .curr-ser {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         .tap {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .players-info {
             width: 100%;
             height: max-content;
             padding-top: 35px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
+        }
+
+        .player-replace:hover {
+            background-color: var(--light-bg);
+            transform: translateX(5px);
+            border-left: 3px solid var(--primary-color);
         }
 
         .player-cnt {
@@ -542,7 +646,8 @@
             font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 10px;
-            color: #333;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .player-rel {
@@ -553,30 +658,55 @@
             justify-content: center;
             flex-direction: column;
             gap: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
+        }
+
+        .assign-later {
+            height: 50px;
+            width: 155px;
+            border-radius: 48px;
+            background-color: var(--background);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 2px solid var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .assign-later:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .serve-result {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #eee;
-            border-bottom: 1px solid #eee;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding-left: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .ser-res {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         .outcome {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .outcomes {
@@ -586,7 +716,26 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background-color: white;
+            background: var(--background);
+            transition: var(--transition);
+        }
+
+        .in, .ace, .error {
+            width: 85%;
+            height: 100px;
+            border: 2px solid var(--primary-light);
+            margin-top: 20px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            transition: var(--transition);
+            background-color: var(--background);
+        }
+
+        .in:hover, .ace:hover, .error:hover {
+            background-color: var(--primary-transparent);
+            transform: scale(1.02);
         }
 
         .picture {
@@ -607,35 +756,42 @@
             margin-left: 7%;
             font-size: 1.2rem;
             font-weight: bold;
-            color: #333;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .extra1, .extra2, .extra3 {
             margin-left: auto;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .point-assign {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #eee;
-            border-bottom: 1px solid #eee;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding-left: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .poi-ass {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         .who {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .teams-info {
@@ -644,57 +800,71 @@
             display: flex;
             align-items: center;
             justify-content: space-evenly;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .team1-info, .team2-info {
             width: 160px;
             height: 200px;
-            border: 3px solid #FAC01F;
+            border: 3px solid var(--primary-light);
             border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
             gap: 20px;
-            background-color: white;
-            transition: all 0.3s ease;
+            background-color: var(--background);
+            transition: var(--transition);
+        }
+
+        .team1-info:hover, .team2-info:hover {
+            background-color: var(--primary-transparent);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .teams-logo {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background-color: white;
+            background-color: var(--background);
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
-            color: #F83900;
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 1.5rem;
-            border: 2px solid #FAC01F;
+            border: 2px solid var(--primary-light);
             overflow: hidden;
+            transition: var(--transition);
         }
 
-        .team-logo img,
-        .teams-logo img {
+        .team-logo img, .teams-logo img {
             height: 100%;
             width: 100%;
             object-fit: cover;
         }
 
         .undo {
-           width: 220px;
+            width: 220px;
             height: 70px;
-            background-color: #F83900;
+            background-color: var(--primary-color);
             color: white;
-            border: 2px solid #F83900;
+            border: 2px solid var(--primary-color);
             border-radius: 15px;
             position: relative;
             z-index: 4;
             font-size: 1.5rem;
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+        }
+
+        .undo:hover {
+            background-color: var(--primary-dark);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .undo-btn {
@@ -706,67 +876,76 @@
             justify-content: space-evenly;
             align-items: end;
             padding: 5%;
-            background-color: white;
-            background: rgba(255, 255, 255, 0.1);
+            background-color: var(--background);
+            transition: var(--transition);
+            z-index: 1;
         }
+
         .replace {
             font-weight: 600;
             font-size: 15px;
-            color: #f83900;
+            color: var(--primary-color);
             width: 80px;
             height: 40px;
             background-color: transparent;
             border: none;
             outline: none;
+            transition: var(--transition);
         }
+
         .player-replace {
             width: 95%;
             height: 50px;
             display: flex;
             justify-content: space-between;
-            background-color: white;
+            background-color: var(--background);
             display: flex;
             align-items: center;
             padding-left: 15px;
             font-size: 1.1rem;
             margin: 10px auto;
             border-radius: 10px;
-            transition: all 0.3s ease;
-            border: 1px solid #eee;
-        }
-
-        .player-replace.selected {
-            border: 2px solid green;
-            background-color: #eaffea;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
         }
 
         .index {
             position: relative;
             z-index: 10;
         }
+
         .tech-point {
             width: 110px;
             height: 50px;
-            background-color: white;
-            color: #F83900;
+            background-color: var(--background);
+            color: var(--primary-color);
             border-radius: 15px;
             outline: none;
-            border: 2px solid #F83900;
+            border: 2px solid var(--primary-color);
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             text-align: center;
             align-content: center;
         }
-        
+
+        .tech-point:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: var(--primary-color);
+            color: white;
+        }
+
         .teams-name {
             font-size: 1.3rem;
             font-weight: bold;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         #match_completed,
         #start_second,
         #half_completed,
-        #undo{
+        #undo {
             position: fixed;
             transform: translateX(-50%) translateY(-50%);
             top: 50%;
@@ -774,13 +953,13 @@
             width: 300px;
             border: none;
             height: max-content;
-            background: var(--card-bg);
+            background: var(--special-color);
             transition: all 0.5s ease-in-out;
             align-items: flex-start;
             padding: 20px;
             z-index: 99;
             border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            box-shadow: var(--card-shadow);
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -796,66 +975,63 @@
             background: rgba(0, 0, 0, 0.15);
         }
 
-        .undo-container{
+        .undo-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 12px;
         }
-        .undo-txt{
+
+        .undo-txt {
             font-size: 25px;
             font-weight: bold;
-            color: var(--primary-dark);
+            color: var(--primary-color);
+            transition: var(--transition);
         }
-        .undo-warn{
+
+        .undo-warn {
             font-size: 18px;
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.7;
             letter-spacing: 1px;
             text-align: center;
+            transition: var(--transition);
         }
-         .undo-btn,
-        .super-over-btn{
+
+        .undo-btn,
+        .super-over-btn {
             height: 40px;
             width: 160px;
             font-size: 16px;
             color: white;
             outline: none;
             border: none;
-            background: var(--background);
+            background: var(--primary-color);
             border-radius: var(--border-radius);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
         }
+
         .undo-btn:hover,
         .super-over-btn:hover {
-            opacity: 0.9;
+            background: var(--primary-dark);
             transform: translateY(-2px);
         }
-        .undo-cancel,.complete-cancel{
-            color: #666;
+
+        .undo-cancel, .complete-cancel {
+            color: var(--text-color);
+            opacity: 0.7;
             font-size: 15px;
             cursor: pointer;
+            transition: var(--transition);
         }
-        @keyframes shake {
-            0%   { transform: translateX(-50%) translateY(-50%) translateX(0); }
-            25%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
-            50%  { transform: translateX(-50%) translateY(-50%) translateX(10px); }
-            75%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
-            100% { transform: translateX(-50%) translateY(-50%) translateX(0); }
+
+        .player-replace.selected {
+            background: var(--primary-transparent);
         }
-        .shake {
-            animation: shake 0.4s;
-        }
-        .opacity-container{
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 5;
-            display: none;
-        }
+
 
         @media (max-width: 450px) {
             .team-logo {
@@ -868,15 +1044,10 @@
                 font-size: 3.5rem;
             }
             
-            .team-button {
+            .team1-button, .team2-button {
                 width: 140px;
                 height: 85px;
                 font-size: 1.3rem;
-            }
-            
-            .serve {
-                width: 200px;
-                height: 60px;
             }
         }
 
@@ -891,54 +1062,10 @@
                 font-size: 5rem;
             }
             
-            
-            .serve {
-                width: 250px;
-                height: 80px;
-            }
-            
             .team-logo {
                 height: 100px;
                 width: 100px;
                 font-size: 2rem;
-            }
-            .exit:hover {
-                background-color: #F83900;
-                color: white;
-            }
-            .tech-point:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-                background-color: #F83900;
-                color: white;
-            }
-            .undo:hover {
-                background-color: #F83900;
-                color: white;
-                transform: translateY(-3px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-            .team1-info:hover, .team2-info:hover {
-                background-color: #fff9f0;
-                transform: scale(1.05);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-            .player-replace:hover {
-                background-color: #f9f9f9;
-                transform: translateX(5px);
-                border-left: 3px solid #F83900;
-            }
-            .team1-button:hover,
-            .team2-button:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-                background-color: #F83900;
-                color: white;
-            }
-            .serve:hover {
-                background-color: #e03100;
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
             }
         }
 
@@ -972,18 +1099,19 @@
 </head>
 <body>
     <div class="container0">
-        <dialog id="half_completed">
+
+    <dialog id="half_completed">
             <div class="undo-container">
                 <div class="undo-seyup">
-                    <p class="undo-warn undo-txt">You really want to End the inning?</p>
+                    <p class="undo-warn undo-txt">You really want to End the Set?</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="undo-btn" onclick="proceed_end_inning()">End Inning</button>
+                    <button class="undo-btn" onclick="proceed_end_set()">End Set</button>
                 </div>
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="
                         document.querySelector('#half_completed').close();
-                        is_complete = false;exit_inn = false;
+                        is_complete = false;
                     ">Continue Scoring</p>
                 </div>
             </div>
@@ -999,8 +1127,7 @@
                 </div>
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="document.querySelector('#match_completed').close();
-                    
-                    is_complete = false;exit_inn = false;">Continue Scoring</p>
+                    is_complete = false;">Continue Scoring</p>
                 </div>
             </div>
         </dialog>
@@ -1008,17 +1135,16 @@
         <dialog id="start_second">
             <div class="undo-container">
                 <div class="undo-seyup">
-                    <p class="undo-warn undo-txt">Match tied! Do you want to continue scoring or finish the match?</p>
+                    <p class="undo-warn undo-txt">Match tied! A winner is required. Please continue scoring.</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="start-next-btn undo-btn" onclick='complete_match()'>Complete Match</button>
+                    <button class="start-next-btn undo-btn" onclick="document.querySelector('#start_second').close();
+                    is_complete = false;window.removeEventListener('beforeunload', preventReload);
+                        location.reload();">Continue Scoring</button>
                 </div>
-                <div class="undo-seyup">
-                    <p class="continue-match-btn complete_match" onclick="cancel_end();exit_inn = false;is_complete = false;">Continue Scoring</p>
-                </div>
+                
             </div>
         </dialog>
-
         <dialog id="undo">
             <div class="undo-container">
                 <div class="undo-seyup">
@@ -1041,7 +1167,7 @@
                 <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
                 <div class="error" id="error-empty"></div>
                 <div class="undo-seyup"><button class="undo-btn" id='undo-btn' onclick="process_undo()">Yes I’m certain</button></div>
-                <div class="undo-seyup"><p class="undo-cancel" onclick="exit_inn = false;document.querySelector('#undo').close();">Cancel</p></div>
+                <div class="undo-seyup"><p class="undo-cancel" onclick="document.querySelector('#undo').close();">Cancel</p></div>
             </div>
         </dialog>
     <div class="container1">
@@ -1123,7 +1249,7 @@
             
         </div>
     </div>
-    <div class="blur-container"></div>
+    
 
     <div class="container2">
         <div class="image"></div>
@@ -1206,6 +1332,7 @@
                     <?php } ?>
             </div>
         </div>
+        <div class="blur-container"></div>
     </div>
 
     <div class="slide-wrapper">
@@ -1551,7 +1678,7 @@
     });
     
     let select_runners = () => {
-        if(is_empty_runners == true){
+        if(is_empty_runners){
             container5.style.transform = 'translateY(0)';
             container5.style.display = 'block';
             return true;
@@ -1826,6 +1953,62 @@ document.addEventListener('DOMContentLoaded', () => {
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
 </script>
 </body>
 

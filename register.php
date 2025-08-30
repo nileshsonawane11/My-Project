@@ -13,7 +13,7 @@ $password = mysqli_real_escape_string($conn, $data['password']);
 $password2 = mysqli_real_escape_string($conn, $data['password2']);
 $phone = mysqli_real_escape_string($conn, $data['phone']);
 $otp = mysqli_real_escape_string($conn, $data['otp']);
-$date = date('d-m-Y / h:i:s A');
+$date = date('d-m-Y H:i:s'); // ✅ correct MySQL DATETIME format
 
 
 

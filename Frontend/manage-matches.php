@@ -30,25 +30,46 @@
     }
     
     :root {
-        --primary-light: #FAC01F;
-        --primary-dark: #F83900;
-        --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-        --card-bg: #ffffff;
-        --text-dark: #333333;
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --background: #ffffff;
+        --text-dark: #000000;
         --text-light: #666666;
         --border-color: #e0e0e0;
         --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --card-bg: #ffffff;
+        --hover-bg: rgba(209, 34, 31, 0.1);
+        --selected-bg: rgba(209, 34, 31, 0.15);
+        --nav-fill: #ffffffff;
+    }
+
+    [data-theme="dark"] {
+        --background: #121212;
+        --text-dark: #ffffff;
+        --text-light: #a0a0a0;
+        --border-color: #333333;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        --card-bg: #1e1e1e;
+        --hover-bg: rgba(209, 34, 31, 0.2);
+        --selected-bg: rgba(209, 34, 31, 0.25);
+        --nav-fill: #2d2d2d;
     }
     
     body {
         height: 100vh;
         height: -webkit-fill-available;
-        background: #f8f8f8;
+        background: var(--background);
+        color: var(--text-dark);
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: background 0.3s ease, color 0.3s ease;
     }
-    
+
+    svg path {
+        fill : var(--text-dark);
+    }
     .container {
         display: flex;
         background-color: var(--card-bg);
@@ -65,6 +86,7 @@
         border-radius: 20px;
         padding: 30px;
         overflow: hidden;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
     
     .return {
@@ -80,11 +102,13 @@
         font-size: 28px;
         color: var(--text-dark);
         transition: all 0.2s ease;
+        fill: var(--text-dark);
     }
     
     .return svg:hover {
-        color: var(--primary-dark);
+        color: var(--primary-color);
         transform: translateX(-3px);
+        fill: var(--primary-color);
     }
     
     .txt {
@@ -100,12 +124,13 @@
     }
     
     .game-container {
-            width: 100%;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            overflow: hidden;
+        width: 100%;
+        background: var(--nav-fill);
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: background 0.3s ease;
     }
     
     .game-list {
@@ -135,11 +160,11 @@
     }
     
     .game:hover {
-        background: rgba(250, 192, 31, 0.1);
+        background: var(--hover-bg);
     }
     
     .game.selected {
-        background: rgba(248, 99, 0, 0.15);
+        background: var(--selected-bg);
         border-radius: 12px;
     }
     
@@ -149,16 +174,23 @@
         color: var(--text-dark);
         text-align: center;
         text-wrap: auto;
+        transition: color 0.3s ease;
     }
     
     .game svg {
         height: 28px;
         width: 28px;
+        fill: var(--text-dark);
+        transition: fill 0.3s ease;
     }
     
     .game.selected p {
         font-weight: 600;
-        color: var(--primary-dark);
+        color: var(--primary-color);
+    }
+    
+    .game.selected svg {
+        fill: var(--primary-color);
     }
     
     .team-container {
@@ -179,7 +211,7 @@
         font-size: 14px;
         gap: 15px;
         width: 100%;
-        background: var(--card-bg);
+        background: var(--nav-fill);
         border-radius: 20px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         flex-direction: row;
@@ -193,12 +225,12 @@
     .game-info:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        border-color: var(--primary-light);
+        border-color: var(--primary-color);
     }
     
     .selected-team {
-        border: 2px solid var(--primary-dark);
-        background: rgba(248, 99, 0, 0.05);
+        border: 2px solid var(--primary-color);
+        background: var(--selected-bg);
     }
     
     .match-data {
@@ -215,6 +247,7 @@
         color: var(--text-dark);
         margin-bottom: 5px;
         width: 100%;
+        transition: color 0.3s ease;
     }
     
     .info {
@@ -229,6 +262,7 @@
         font-size: 18px;
         font-weight: 700;
         color: var(--text-dark);
+        transition: color 0.3s ease;
     }
     
     .team {
@@ -242,7 +276,7 @@
     .team img {
         height: 40px;
         width: 40px;
-        background: #f5f5f5;
+        background: var(--card-bg);
         border-radius: 50%;
         display: flex;
         overflow: hidden;
@@ -250,6 +284,7 @@
         align-items: center;
         justify-content: center;
         border: 1px solid var(--border-color);
+        transition: background 0.3s ease, border-color 0.3s ease;
     }
     
     .start-btn {
@@ -259,15 +294,16 @@
         border: none;
         color: white;
         font-weight: 600;
-        background: var(--background);
-        box-shadow: 0 4px 10px rgba(248, 57, 0, 0.2);
+        background: var(--primary-color);
+        box-shadow: 0 4px 10px rgba(209, 34, 31, 0.2);
         cursor: pointer;
         transition: all 0.2s ease;
     }
     
     .start-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(248, 57, 0, 0.3);
+        box-shadow: 0 6px 15px rgba(209, 34, 31, 0.3);
+        background: var(--primary-dark);
     }
     
     .start-btn:active {
@@ -281,6 +317,7 @@
         text-align: center;
         padding: 40px 0;
         font-size: 16px;
+        transition: color 0.3s ease;
     }
     
     .plus {
@@ -297,8 +334,8 @@
         justify-content: center;
         align-items: center;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(248, 57, 0, 0.3);
-        background: var(--background);
+        box-shadow: 0 4px 15px rgba(209, 34, 31, 0.3);
+        background: var(--primary-color);
         color: white;
         transition: all 0.2s ease;
         z-index: 10;
@@ -306,7 +343,8 @@
     
     .plus:hover {
         transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 6px 20px rgba(248, 57, 0, 0.4);
+        box-shadow: 0 6px 20px rgba(209, 34, 31, 0.4);
+        background: var(--primary-dark);
     }
     
     .plus:active {
@@ -323,8 +361,6 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
-        
-        
     }
 
     @media (max-width: 600px) {
@@ -340,8 +376,6 @@
             grid-template-columns: 1fr;
             padding: 10px 5px;
         }
-
-     
         
         .plus {
             bottom: 30px;
@@ -368,12 +402,12 @@
     }
     
     .team-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: var(--hover-bg);
         border-radius: 10px;
     }
     
     .team-container::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
+        background: var(--primary-color);
         border-radius: 10px;
     }
     
@@ -385,10 +419,20 @@
         height: 4px;
     }
     
-    .game-list::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
+    .game-list::-webkit-scrollbar-track {
+        background: var(--hover-bg);
         border-radius: 10px;
     }
+    
+    .game-list::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 10px;
+    }
+    
+    .game-list::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+    
     #startMatchDialog {
         z-index: 9999;
         position: fixed;
@@ -399,7 +443,7 @@
         max-width: 500px;
         border: none;
         height: max-content;
-        background: white;
+        background: var(--card-bg);
         flex-direction: column;
         transition: all 0.3s ease;
         justify-content: center;
@@ -407,6 +451,7 @@
         padding: 30px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--border-color);
     }
     
     #startMatchDialog::backdrop {
@@ -444,6 +489,7 @@
         line-height: 35px;
         font-weight: 500;
         color: var(--text-dark);
+        transition: color 0.3s ease;
     }
     
     .btns {
@@ -461,27 +507,30 @@
         outline: none;
         border: 1px solid var(--border-color);
         border-radius: 8px;
-        background: #f8f8f8;
+        background: var(--card-bg);
         color: var(--text-dark);
         font-size: 15px;
+        transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
     }
     
     #matchPassword:focus {
-        border-color: var(--primary-light);
-        box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(209, 34, 31, 0.2);
     }
 
     #title{
         font-size: 18px;
         font-weight: 500;
+        color: var(--text-dark);
+        transition: color 0.3s ease;
     }
     
     .btns>* {
         width: 110px;
         height: 40px;
         border-radius: 25px;
-        border: solid 1px var(--primary-light);
-        color: var(--primary-light);
+        border: solid 1px var(--primary-color);
+        color: var(--primary-color);
         background: transparent;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -489,17 +538,17 @@
     }
     
     .btns>*:last-child {
-        background: var(--background);
+        background: var(--primary-color);
         color: white;
         border: none;
     }
     
     .btns>*:last-child:hover {
-        background: linear-gradient(135deg, #fac01fdb, #f83900cc);
+        background: var(--primary-dark);
     }
     
     .btns>*:first-child:hover {
-        background: rgba(250, 192, 31, 0.1);
+        background: var(--hover-bg);
     }
 </style>
 </head>
@@ -548,8 +597,8 @@
         <div class="container2">
             <div class="txt">
                 <div>
-                    <label for="">My Teams</label>
-                    <h4>Manage Teams</h4>
+                    <label for="">My Matches</label>
+                    <h4>Manage Matches</h4>
                 </div>
                 <div>
                 
@@ -656,10 +705,11 @@
             category.addEventListener('click', () => {
                 SportName = category.querySelector('p').textContent.trim();
                 console.log(SportName);
-
+                loadgames(SportName)
+                
                 setInterval(() => {
                     loadgames(SportName)
-                }, 100);
+                }, 1500);
                 
 
                 document.querySelector('.game.selected').classList.remove('selected');
@@ -777,6 +827,70 @@
             document.getElementById("matchPasswordForm").reset();
             dialog.close();
         }
+
+
+
+
+        // Theme management for this page
+        function initializeTheme() {
+            // Check for saved theme preference or use system preference
+            const currentTheme = localStorage.getItem('theme') || 
+                                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Set the initial theme
+            if (currentTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+            
+            // Listen for theme changes from other tabs/pages
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme') {
+                    if (e.newValue === 'dark') {
+                        document.body.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.body.removeAttribute('data-theme');
+                    }
+                }
+            });
+            
+            // Listen for custom events if your dashboard dispatches them
+            window.addEventListener('themeChanged', function(e) {
+                if (e.detail === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            });
+        }
+
+        // Initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+        });
+
+        // Function to programmatically change theme if needed
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Function to get current theme
+        function getCurrentTheme() {
+            return document.body.getAttribute('data-theme') || 'light';
+        }
+
+
+
+
+
+
 
         
         // Variefy match password

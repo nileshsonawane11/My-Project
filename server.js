@@ -25,19 +25,10 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     try {
       let data = JSON.parse(message);
-
-      if (data.Run >= 0) {
-        let entry = {
-          team: data.team,
-          runs: data.runs,
-          wickets: data.wickets,
-          overs: data.overs,
-          time: new Date().toISOString()
-        };
-        scoreLog.push(entry);
-
+      console.log("📢 Received:", data);
+      if (data.for == 'Cricketpanel') {
         // Broadcast updated log
-        broadcast({ type: "fullLog", log: data });
+        broadcast({ type: data.for, log: data.score });
         console.log("📢 Update:", entry);
       }
     } catch (err) {

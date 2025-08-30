@@ -4,123 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - LiveStrike</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            -webkit-user-drag: none;
-            user-select: none;
-            scrollbar-width: none;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        -webkit-user-drag: none;
+        user-select: none;
+        scrollbar-width: none;
+    }
 
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --primary-light-transparent: rgba(250, 192, 31, 0.1);
-            --primary-dark-transparent: rgba(248, 57, 0, 0.1);
-            --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-            --text-color: #333333;
-            --light-bg: #f8f9fa;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --border-radius: 12px;
-            --transition: all 0.3s ease;
-        }
+    :root {
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --primary-transparent: rgba(209, 34, 31, 0.1);
+        --background: #ffffff;
+        --text-color: #000000;
+        --light-bg: #f8f9fa;
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        --border-radius: 12px;
+        --transition: all 0.3s ease;
+    }
 
-        body {
-            min-height: 100vh;
-            background-color: var(--light-bg);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
+    [data-theme="dark"] {
+        --background: #121212;
+        --text-color: #ffffff;
+        --light-bg: #1e1e1e;
+        --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
 
-        .header {
-            background: var(--background);
-            padding: 20px;
-            color: white;
-            height: 220px;
-            width: 100%;
-            max-width: 800px;
-        }
+    body {
+        min-height: 100vh;
+        background-color: var(--light-bg);
+        color: var(--text-color);
+        display: flex;
+        justify-content: center;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 800px;
+        background: var(--background);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
 
-        .return {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    .header {
+        background: var(--primary-color);
+        padding: 20px;
+        color: white;
+        height: 220px;
+        width: 100%;
+        max-width: 800px;
+    }
 
-        .return svg {
-            cursor: pointer;
-            transition: var(--transition);
-            fill: white;
-        }
+    .return {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-        .return svg:hover {
-            transform: translateX(-3px);
-        }
+    .return svg {
+        cursor: pointer;
+        transition: var(--transition);
+        fill: white;
+    }
 
-        .header-txt {
-            display: flex;
-            gap: 25px;
-            flex-direction: column;
-        }
-        .container2 {
-            margin-top: 20px;
-            padding: 20px;
-            line-height: 27px;
-            font-size: 18px;
-        }
-        .para {
-            position: relative;
-        }
+    .return svg:hover {
+        transform: translateX(-3px);
+        opacity: 0.8;
+    }
 
-        .info {
-            margin-top: 20px;
-        }
+    .header-txt {
+        display: flex;
+        gap: 25px;
+        flex-direction: column;
+    }
+    
+    .container2 {
+        margin-top: 20px;
+        padding: 20px;
+        line-height: 27px;
+        font-size: 18px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .para {
+        position: relative;
+    }
 
-        h3 {
-            margin-bottom: 10px;
-        }
-        
-        .team-member {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-            padding: 15px;
-            background-color: var(--primary-light-transparent);
-            border-radius: var(--border-radius);
-        }
-        
-        .team-member img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary-dark);
-        }
-        
-        .team-info h4 {
-            color: var(--primary-dark);
-            margin-bottom: 5px;
-        }
-        
-        .team-info p {
-            font-size: 16px;
-            color: var(--text-color);
-        }
-    </style>
+    .info {
+        margin-top: 20px;
+    }
+
+    h3 {
+        margin-bottom: 10px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .team-member {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 15px 0;
+        padding: 15px;
+        background-color: var(--primary-transparent);
+        border-radius: var(--border-radius);
+        transition: background-color 0.3s ease;
+    }
+    
+    .team-member img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .team-info h4 {
+        color: var(--primary-color);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .team-info p {
+        font-size: 16px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -151,7 +176,6 @@
                     <li>Automated match reporting and analytics</li>
                     <li>Player performance metrics</li>
                     <li>Live updates for fans and spectators</li>
-                    <li>Customizable scoring systems for various sports</li>
                 </ul>
             </div>
 
@@ -169,33 +193,33 @@
             <div class="info">
                 <h3>Meet the Team</h3>
                 
-                <div class="team-member">
+                <a href = "https://www.linkedin.com/in/nilesh-sonawane-152171349" target="_blank"><div class="team-member">
                     <img src="https://i.ibb.co/rGZDkQsV/IMG-20250701-192708.jpg" alt="Founder">
                     <div class="team-info">
                         <h4>Sonawane Nilesh</h4>
                     </div>
-                </div>
+                </div></a>
                 
-                <div class="team-member">
+                <a href = "https://www.linkedin.com/in/kaustubh-patil-494433376"  target="_blank"><div class="team-member">
                     <img src="https://i.ibb.co/RpR7xkpz/kp.jpg" alt="CTO">
                     <div class="team-info">
                         <h4>Patil Kaustubh</h4>
                     </div>
-                </div>
+                </div></a>
                 
-                <div class="team-member">
+                <a href = ""  target="_blank"><div class="team-member">
                     <img src="https://i.ibb.co/zWGGS3kS/prabhavati.jpg" alt="Product">
                     <div class="team-info">
                         <h4>Jadhav Prabhavati</h4>                       
                     </div>
-                </div>
+                </div> </a>
 
-                <div class="team-member">
+                <a href = ""  target="_blank"><div class="team-member">
                     <img src="https://i.ibb.co/p6MqTrx4/Ketki.jpg" alt="Product">
                     <div class="team-info">
                         <h4>Sonawane Ketki</h4>                       
                     </div>
-                </div>
+                </div> </a>
             </div>
 
             <div class="info">
@@ -213,7 +237,7 @@
             <div class="info">
                 <h3>Join Our Mission</h3>
                 <p>Whether you're an athlete, official, league organizer, or fan, we invite you to be part of the LiveStrike movement. Together, we're changing the game - one match at a time.</p>
-                <p style="margin-top: 10px;">Have questions or want to learn more? <b>Contact our team</b> at [email protected]</p>
+                <p style="margin-top: 10px;">Have questions or want to learn more? <b>Contact our team</b> at admin@livestrike.in</p>
             </div>
         </div>
     </div>
@@ -233,6 +257,61 @@
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

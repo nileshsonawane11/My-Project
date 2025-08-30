@@ -57,19 +57,42 @@
             scrollbar-width: none;
         }
 
+        /* Theme Variables */
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --primary-light-transparent: rgba(250, 192, 31, 0.1);
-            --primary-dark-transparent: rgba(248, 57, 0, 0.1);
-            --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --primary-light-transparent: rgba(209, 34, 31, 0.1);
+            --primary-dark-transparent: rgba(160, 25, 23, 0.1);
+            --background: #ffffff;
+            --card-bg: #ffffff;
             --text-color: #333333;
             --light-bg: #f8f9fa;
             --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             --border-radius: 12px;
             --transition: all 0.3s ease;
+            --svg-fill: #333333;
+            --border-color: #ddd;
+            --invert: invert(0);
         }
 
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --light-bg: #2d3748;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --svg-fill: #ffffff;
+            --border-color: #4a5568;
+            --primary-light-transparent: rgba(209, 34, 31, 0.2);
+            --primary-dark-transparent: rgba(160, 25, 23, 0.2);
+            --invert: invert(1);
+        }
+
+        svg path {
+            fill: var(--text-color);
+        }
         body {
             min-height: 100vh;
             background-color: var(--light-bg);
@@ -81,14 +104,14 @@
         .container {
             width: 100%;
             max-width: 800px;
-            background: white;
+            background: var(--card-bg);
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--card-shadow);
         }
 
         .header {
-            background: var(--background);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
             padding: 20px;
             color: white;
             position: relative;
@@ -105,6 +128,26 @@
             cursor: pointer;
             transition: var(--transition);
             fill: white;
+        }
+        .return svg path{
+            cursor: pointer;
+            transition: var(--transition);
+            fill: white;
+        }
+
+        .edit-toggle svg path {
+            fill: none;
+        }
+        /* For <input type="date"> */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: var(--invert);    /* makes it white */
+        cursor: pointer;
+        }
+
+        /* For <input type="time"> */
+        input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: var(--invert);    /* makes it white */
+        cursor: pointer;
         }
 
         .return svg:hover {
@@ -127,7 +170,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 30px;
-            background: white;
+            background: var(--card-bg);
         }
 
         .team {
@@ -149,16 +192,16 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid white;
+            border: 3px solid var(--card-bg);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            background: white;
+            background: var(--card-bg);
         }
 
         .team-logo-edit {
             position: absolute;
             bottom: -5px;
             right: -5px;
-            background: white;
+            background: var(--card-bg);
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -171,12 +214,13 @@
         }
 
         .team-logo-edit:hover {
-            background: #f0f0f0;
+            background: var(--light-bg);
         }
 
         .team-logo-edit svg {
             width: 20px;
             height: 20px;
+            fill: var(--svg-fill);
         }
 
         .team-name {
@@ -188,18 +232,20 @@
             background: transparent;
             outline: none;
             text-align: center;
+            color: var(--text-color);
         }
 
         .vs {
             font-size: 1.8rem;
             font-weight: bold;
-            color: var(--primary-dark);
+            color: var(--primary-color);
             margin: 0 20px;
         }
 
         /* Match Details Section */
         .form-section {
             padding: 30px;
+            background: var(--card-bg);
         }
 
         .form-row {
@@ -225,18 +271,19 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: var(--primary-dark);
+            color: var(--primary-color);
             font-size: 0.9rem;
         }
 
         .form-input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
-            background-color: #f9f9f9;
+            background-color: var(--light-bg);
+            color: var(--text-color);
         }
 
         .form-input:focus {
@@ -248,23 +295,24 @@
         .form-select {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
-            background-color: #f9f9f9;
+            background-color: var(--light-bg);
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 16px;
+            color: var(--text-color);
         }
 
         /* Edit mode styles */
         .edit-mode .form-input,
         .edit-mode .form-select,
         .edit-mode .team-name {
-            background-color: white;
-            border-color: #ccc;
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
         }
 
         .edit-mode .form-input:focus,
@@ -298,14 +346,14 @@
             cursor: pointer;
             transition: var(--transition);
             margin: 20px;
-            box-shadow: 0 4px 12px rgba(248, 57, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(209, 34, 31, 0.2);
         }
 
         .logout-btn:hover,
         .save-btn:hover {
-            background-color: #e03400;
+            background-color: var(--primary-color);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(248, 57, 0, 0.3);
+            box-shadow: 0 6px 16px rgba(209, 34, 31, 0.3);
         }
         .popup-overlay {
             position: fixed;
@@ -322,12 +370,12 @@
         }
 
         .popup-box {
-            background: #fff;
+            background: var(--card-bg);
             padding: 30px;
             border-radius: var(--border-radius);
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: var(--card-shadow);
             animation: popIn 0.3s ease-out;
         }
 
@@ -346,16 +394,19 @@
             margin-bottom: 20px;
             font-size: 1.1rem;
             line-height: 1.5;
+            color: var(--text-color);
         }
 
         .popup-input {
             width: 100%;
             padding: 12px 15px;
             margin: 8px 0 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
+            background-color: var(--light-bg);
+            color: var(--text-color);
         }
 
         .popup-input:focus {
@@ -380,13 +431,13 @@
         }
 
         .popup-btn.cancel {
-            background-color: #f0f0f0;
-            color: #333;
+            background-color: var(--light-bg);
+            color: var(--text-color);
             border: none;
         }
 
         .popup-btn.cancel:hover {
-            background-color: #e0e0e0;
+            background-color: var(--border-color);
         }
 
         .popup-btn.confirm {
@@ -396,7 +447,7 @@
         }
 
         .popup-btn.confirm:hover {
-            background-color: #e03400;
+            background-color: var(--primary-color);
         }
 
         .password {
@@ -418,6 +469,7 @@
             height: 100%;
             background-color: transparent;
             font-size: 20px;
+            color: var(--text-color);
         }
 
         .pass-el {
@@ -441,7 +493,7 @@
         }
         .error{
             display: none;
-            color:red; 
+            color: var(--primary-color); 
             width:100%;
             font-size:14px;
             margin: 5px;
@@ -955,6 +1007,61 @@
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

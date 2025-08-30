@@ -48,7 +48,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <title>Team Info</title>
-    <style>
+<style>
         *{
             margin: 0;
             padding: 0;
@@ -56,19 +56,51 @@
             font-family: 'Montserrat', sans-serif;
             user-select : none;
         }
+        
+        /* Theme Variables */
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --primary-color: #d1221fff;
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --background: #ffffff;
+            --card-bg: #ffffff;
+            --text-dark: #000000;
+            --text-light: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --svg-fill: #000000;
+            --hover-bg: rgba(209, 34, 31, 0.08);
+            --input-bg: #ffffff;
+            --menu-bg: #F9F9F9;
+            --event-bg: #EDEDED;
+            --inactive-text: #a4a2a2;
+            --orange: #d1221fff;
         }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text-dark: #ffffff;
+            --text-light: #e0e0e0;
+            --border-color: #333333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --svg-fill: #ffffff;
+            --hover-bg: rgba(209, 34, 31, 0.15);
+            --input-bg: #2a2a2a;
+            --menu-bg: #2d2d2d;
+            --event-bg: #3d3d3d;
+            --inactive-text: #777777;
+            --orange: #ff0000ff;
+        }
+        
         body{
             height: -webkit-fill-available;
-            background:white;
-            
+            background: var(--card-bg);
+            color: var(--text-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            
             flex-direction: column;
         }
         .return{
@@ -81,6 +113,11 @@
         }
         .return svg{
             cursor: pointer;
+            fill: var(--svg-fill);
+        }
+
+        svg path {
+            fill: var(--text-dark);
         }
         .txt{
             line-height: 20px;
@@ -90,6 +127,7 @@
             justify-content: space-between;
             flex-direction: row;
             padding-left: 40px;
+            color: var(--text-dark);
         }
         .content{
             width: 100%;
@@ -98,7 +136,6 @@
             justify-content: center;
             align-items: center;
             gap: 30px;
-            /* border-bottom: 1px solid #0000004d; */
             box-shadow: 0 6px 5px -5px rgba(0, 0, 0, 0.3);
         }
         .container2{
@@ -115,13 +152,12 @@
             justify-content: center;
             flex-direction: column;
             gap: 20px;
-
         }
         .logo-img{
             height: 120px;
             width: 120px;
             border-radius: 50%;
-            background: #D9D9D9;
+            background: var(--hover-bg);
             overflow: hidden;
         }
         .logo-img img{
@@ -135,6 +171,7 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
+            color: var(--text-dark);
         }
         .other-info{
             display: flex;
@@ -142,6 +179,7 @@
             align-items: center;
             justify-content: center;
             line-height: 25px;
+            color: var(--text-dark);
         }
         .menubar{
             width: 100%;
@@ -158,7 +196,6 @@
             flex-direction: row;
         }
         .dropdown{
-            
             width: 340px;
             display: flex;
             flex-direction: column;
@@ -166,11 +203,12 @@
             font-size: 17px;
             justify-content: flex-start;
             max-height: 60px;
-            background: #F9F9F9;
-            border: solid black 1px;
+            background: var(--menu-bg);
+            border: solid var(--border-color) 1px;
             border-radius: 15px;
             overflow: hidden;
             transition: all 0.5s ease-in-out;
+            color: var(--text-dark);
         }
         .dropdown.active{
             max-height: 200px;
@@ -209,6 +247,7 @@
             justify-content: flex-start;
             align-items: center;
             gap: 10px;
+            color: var(--text-dark);
         }
         .slider{
             height: 100%;
@@ -218,6 +257,9 @@
             transform: rotateX(180deg);
             cursor: pointer;
             transition: transform 0.4s ease-in-out;
+        }
+        .slider svg {
+            fill: var(--svg-fill);
         }
         .slider.active{
             transform: rotateX(0deg);
@@ -234,6 +276,7 @@
             justify-content: center;
             font-size: 20px;
             width: 100%;
+            color: var(--text-dark);
         }
         .Events{
             width: 100%;
@@ -267,9 +310,11 @@
             align-items: flex-start;
             gap: 5px;
             width: 100%;
+            color: var(--text-dark);
         }
         .schedule-time{
             padding-left: 30px;
+            color: var(--text-dark);
         }
         .opponent{
             font-size: 20px;
@@ -279,16 +324,18 @@
             justify-content: space-between;
             flex-direction: row;
             padding: 0 15px;
-            background: #EDEDED;
+            background: var(--event-bg);
             height: 50px;
             gap: 20px;
+            color: var(--text-dark);
         }
         .sec{
             padding-bottom: 10px;
             cursor: pointer;
+            color: var(--text-dark);
         }
         .sec.active{
-            border-bottom: solid 5px #a4a2a261;
+            border-bottom: solid 5px var(--inactive-text);
         }
         .members{
             width: 100%;
@@ -302,10 +349,10 @@
             justify-content: center;
             align-items: center;
             height: 30px;
-            border: solid 1px #FF6200;
+            border: solid 1px var(--orange);
             overflow: hidden;
             border-radius: 80px;
-            color: #FF6200;
+            color: var(--orange);
         }
         .mem-type{
             width: 120px;
@@ -316,7 +363,7 @@
             cursor: pointer;
         }
         .mem-type.active{
-            background: #FF6200;
+            background: var(--orange);
             color: white;
         }
         .mem-info{
@@ -335,25 +382,33 @@
             align-items: center;
             justify-content: flex-start;
             flex-direction: row;
-            padding: 0 15px;
-            background: #EDEDED;
+            padding: 0 30px;
             height: 50px;
             gap: 20px;
+            color: var(--orange);
+        }
+
+        .add-member svg path {
+            fill: var(--orange);
         }
         .add-icon{
             display: flex;
             align-items: center;
             justify-content: center;
         }
+        .add-icon svg {
+            fill: var(--svg-fill);
+        }
         .mem{
             display: flex;
-            width: 100%;
+            width: 90%;
+            border-radius: 20px;
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
             gap: 10px;
             height: 80px;
-            background: #EDEDED;
+            background: var(--event-bg);
             padding-left: 15px;
         }
         .mem-list{
@@ -369,7 +424,7 @@
         .mem-img{
             width: 60px;
             height: 60px;
-            background: #9797974f;
+            background: var(--hover-bg);
             border-radius: 50%;
             margin-left: 10px;
             overflow: hidden;
@@ -384,6 +439,7 @@
             width: 100%;
             text-align: left;
             margin-left : 15px;
+            color: var(--text-dark);
         }
         .list-items{
             cursor: pointer;
@@ -392,120 +448,122 @@
             justify-content: flex-start;
             align-items: center;
             gap: 10px;
+            color: var(--text-dark);
         }
         .error{
             display: none;
-            color:red; 
+            color: var(--primary-color); 
             width:100%;
             font-size:12px;
             margin: 5px;
             transition : all 0.3 ease-in-out;
         }
         #playerMenu {
-  position: absolute;
-  background: white;
-  border: 1px solid #000;
-  padding: 8px;
-  z-index: 9999;
-  display: none;
-  min-width: 120px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-#playerMenu div {
-  padding: 5px;
-  cursor: pointer;
-}
-#playerMenu div:hover {
-  background-color: #eee;
-}
+        position: absolute;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 8px;
+        z-index: 9999;
+        display: none;
+        min-width: 120px;
+        box-shadow: var(--shadow);
+        color: var(--text-dark);
+        }
+        #playerMenu div {
+        padding: 5px;
+        cursor: pointer;
+        }
+        #playerMenu div:hover {
+        background-color: var(--hover-bg);
+        }
 
         @media (min-width:601px) {
-            .container{
-                display: flex;
-                background-color: #fff;
-                position: relative;
-                width: 90%;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-                
-            }
-            .container2{
-                gap: 40px;
-                width: 70%;
-            }
-            
-            .new-btn button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                height: 40px;
-                width: 300px;
-            }
-            .Events{
-                display: grid;
-                justify-content: start;
-                align-items: center;
-                justify-items: start;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 20px;
-            }
-            .opponent{
-                border-radius: 15px;
-                box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.3);
-            }
-        }
+                    .container{
+                        display: flex;
+                        background-color: var(--card-bg);
+                        position: relative;
+                        width: 90%;
+                        max-width: 100%;
+                        min-height: 480px;
+                        align-items: center;
+                        justify-content: flex-start;
+                        flex-direction: column;
+                        gap: 30px;
+                        
+                    }
+                    .container2{
+                        gap: 40px;
+                        width: 70%;
+                    }
+                    
+                    .new-btn button{
+                        background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+                        color: #fff;
+                        font-size: 12px;
+                        padding: 10px 45px;
+                        border: 1px solid transparent;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                        cursor: pointer;
+                        height: 40px;
+                        width: 300px;
+                    }
+                    .Events{
+                        display: grid;
+                        justify-content: start;
+                        align-items: center;
+                        justify-items: start;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 20px;
+                    }
+                    .opponent{
+                        border-radius: 15px;
+                        box-shadow: var(--shadow);
+                    }
+                }
 
         @media(max-width:601px){
-            .container{
-                display: flex;
-                background-color: #fff;
-                position: relative;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                flex-wrap: wrap;
-                gap: 30px;
-                scrollbar-width: none;
-                
-            }
-            .container2{
-                width: 100%;
-                gap: 20px;
-                height: 60%;
-                justify-content: space-between;
-            }
-            
-            .new-btn button{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                width: 60%;
-                height: 45px;
-            }
-            
-        }
-    </style>
+                    .container{
+                        display: flex;
+                        background-color: var(--card-bg);
+                        position: relative;
+                        width: 768px;
+                        z-index: 0;
+                        max-width: 100%;
+                        align-items: flex-start;
+                        justify-content: flex-start;
+                        flex-direction: column;
+                        flex-wrap: wrap;
+                        gap: 30px;
+                        scrollbar-width: none;
+                        
+                    }
+                    .container2{
+                        width: 100%;
+                        gap: 20px;
+                        height: 60%;
+                        justify-content: space-between;
+                    }
+                    
+                    .new-btn button{
+                        background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+                        color: #fff;
+                        font-size: 12px;
+                        padding: 10px 45px;
+                        border: 1px solid transparent;
+                        border-radius: 8px;
+                        font-weight: 600;
+                        letter-spacing: 0.5px;
+                        text-transform: uppercase;
+                        cursor: pointer;
+                        width: 60%;
+                        height: 45px;
+                    }
+                    
+                }
+</style>
 </head>
 <body>
     <div class="container">
@@ -863,6 +921,60 @@ document.addEventListener('DOMContentLoaded', attachEditListeners);
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

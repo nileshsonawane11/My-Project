@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Scoreboard</title>
+    <title>Basketball Scoreboard</title>
     <style>
                 * {
             margin: 0;
@@ -66,12 +66,11 @@
             mask-size: 100% 100%; 
             -webkit-mask-repeat: no-repeat;
             mask-repeat: no-repeat;
-            opacity: 0.4;
+            opacity: 0.7;
             transition: var(--transition);
         }
 
         [data-theme="dark"] .blur-container {
-            opacity: 0.25;
             filter: blur(2px) brightness(0.6);
             -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 30%, transparent 100%);
             mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 30%, transparent 100%);
@@ -254,7 +253,7 @@
             filter: blur(3px);
             z-index: 10;
             background-position: center;
-            background-image: url("https://i.ibb.co/xKhndDVn/doing-sport-concept-23-2151937746.jpg");
+            background-image: url("https://iili.io/KHpBJMG.jpg");
             background-size: cover;
             -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
             mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
@@ -599,6 +598,7 @@
             flex-direction: column;
             background-color: var(--background);
             transition: var(--transition);
+            gap: 20px;
         }
 
         .picture {
@@ -938,6 +938,33 @@
             align-items: center;
         }
 
+        .score-point, .score-point2 {
+            width: 90%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--background);
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            transition: var(--transition);
+            border: 2px solid var(--primary-light);
+            color: var(--primary-color);
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .point-type {
+            color: var(--text-color);
+            opacity: 0.5;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            padding: 3px;
+            transition: var(--transition);
+        }
+
         @keyframes shake {
             0%   { transform: translateX(-50%) translateY(-50%) translateX(0); }
             25%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
@@ -1068,10 +1095,10 @@
         <dialog id="half_completed">
             <div class="undo-container">
                 <div class="undo-seyup">
-                    <p class="undo-warn undo-txt">You really want to End the half?</p>
+                    <p class="undo-warn undo-txt">You really want to End the Quarter?</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="undo-btn" onclick="proceed_end_half()">End Half</button>
+                    <button class="undo-btn" onclick="proceed_end_half()">End quarter</button>
                 </div>
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="
@@ -1117,7 +1144,7 @@
                     </svg>
                 </div>
                 <div class="undo-seyup"><p class="undo-txt">UNDO ?</p></div>
-                <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
+                <div class="undo-seyup"><p class="undo-warn">Cancel the last action ?</p></div>
                 <div class="undo-seyup"><button class="undo-btn" id='undo-btn' onclick="process_undo()">Yes I’m certain</button></div>
                 <div class="undo-seyup"><p class="undo-cancel" onclick="document.querySelector('#undo').close();">Cancel</p></div>
             </div>
@@ -1152,7 +1179,7 @@
                         <path d="M6.36196 6.62029L11.672 1.04729C11.7606 0.954302 11.8101 0.830761 11.8101 0.70229C11.8101 0.573819 11.7606 0.450279 11.672 0.357291L11.666 0.35129C11.623 0.306055 11.5713 0.270036 11.5139 0.245422C11.4566 0.220808 11.3949 0.208115 11.3325 0.208115C11.2701 0.208115 11.2083 0.220808 11.151 0.245422C11.0937 0.270036 11.0419 0.306055 10.999 0.35129L5.99896 5.59929L1.00096 0.35129C0.95799 0.306055 0.906263 0.270036 0.84893 0.245422C0.791597 0.220808 0.729857 0.208115 0.667463 0.208115C0.60507 0.208115 0.543329 0.220808 0.485996 0.245422C0.428663 0.270036 0.376937 0.306055 0.333963 0.35129L0.327963 0.357291C0.239318 0.450279 0.189867 0.573819 0.189867 0.70229C0.189867 0.830761 0.239318 0.954302 0.327963 1.04729L5.63796 6.62029C5.68466 6.6693 5.74082 6.70832 5.80305 6.73498C5.86528 6.76164 5.93227 6.77539 5.99996 6.77539C6.06766 6.77539 6.13465 6.76164 6.19688 6.73498C6.2591 6.70832 6.31527 6.6693 6.36196 6.62029Z" fill="black"/>
                     </svg>
                 </div>
-                <div class="exit-text">End 1<sup>st</sup> Half</div>
+                <div class="exit-text">End 1<sup>st</sup> quarter</div>
             </div>
         </div>
 
@@ -1195,17 +1222,17 @@
 
     <div class="container2">
         <div class="image"></div>
-        <div class="current-set"><div class="index">1<sup>st</sup> Half</div></div>
+        <div class="current-set"><div class="index">1<sup>st</sup> quarter</div></div>
 
         <div class="buttons">
             <div class="point-buttons">
                 <div class="team-btn">
                     <label class="team-name">Team1</label>
-                    <button class="team1-button team-buttons" data-team="">Goal</button>
+                    <button class="team1-button team-buttons" data-team="">Point</button>
                 </div>
                 <div class="team-btn">
                     <label class="team-name">Team2</label>
-                    <button class="team2-button team-buttons" data-team="">Goal</button>
+                    <button class="team2-button team-buttons" data-team="">Point</button>
                 </div>
             </div>
 
@@ -1236,23 +1263,35 @@
     <div class="slide-wrapper">
         <div class="slide-container">
             <div class="container3">
-                    <div class="current-server">
-                        <label class="curr-ser">Who scored the Goal?</label>
-                        <label class="tap">Select a Player who scored</label>
-                    </div>
+                <div class="current-server">
+                    <label class="curr-ser">Who scored the point?</label>
+                    <label class="tap">Select a Player who scored</label>
+                </div>
 
-                    <div class="players-info">
-                        <label class="player-cnt">Players()</label>
+                <div class="players-info">
+                    <label class="player-cnt">Players()</label>
 
-                        <div class="player-replace" data-player-id =''>
-                            <div class="player1-name">Mahatma Gandhi</div>
-                        </div>
-                       </div>
+                    <div class="player-replace" data-player-id =''>
+                        <div class="player1-name">Mahatma Gandhi</div>
                     </div>
                 </div>
-            
-        </div>
+            </div>
+
+            <div class="container4">
+                    <div class="serve-result">
+                        <label class="ser-res">Points Scored</label>
+                        <label class="outcome">Total Points from Play</label>
+                    </div>
+                    <div class="outcomes">
+                        <div class="score-point" onclick="deftakepoint(this)">1 <label for="" class="point-type">Free Throw</label></div>
+                        <div class="score-point" onclick="deftakepoint(this)">2 <label for="" class="point-type">Field Goal</label></div>
+                        <div class="score-point" onclick="deftakepoint(this)">3 <label for="" class="point-type">Three-pointer</label></div>
+                    </div>
+                </div>
+        </div>      
     </div>
+
+
 
     <div class="container6">
             <div class="current-server">
@@ -1312,6 +1351,7 @@
             'Isend_half' : end_half,
             'chaser_player': chaser,
             'out_player' : out_player,
+            'def_tech_point': def_tech_point,
             ...(exit_inn == true ? {'exit' : exit_inn} : {}),
             ...(undo == true ? {'undo' : undo} : {}),
             ...(is_complete == true ? {'complete' : is_complete} : {})
@@ -1396,7 +1436,6 @@
             
         }
 
-    document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const point1 = document.querySelector('.team1-button');
     const point2 = document.querySelector('.team2-button');
@@ -1405,6 +1444,7 @@
 
     // Get existing containers
     const container3 = document.querySelector('.container3');
+    const container4 = document.querySelector('.container4');
     const container6 = document.querySelector('.container6');
     const slideContainer = document.querySelector('.slide-container');
     const slideWrapper = document.querySelector('.slide-wrapper');
@@ -1412,13 +1452,16 @@
     const undo_logs = document.querySelector('.undo');
     
     // Wrap containers in sliding parent
-    if (slideContainer && container3  ) {
+    if (slideContainer && container3 && container4  ) {
     slideContainer.appendChild(container3);
+    slideContainer.appendChild(container4);
+
     } else {
         console.warn("One or more containers not found in the DOM.");
     }
     
     const player1Names = document.querySelectorAll('.container3 .player-replace');
+    const scorepoint = document.querySelectorAll('.score-point');
     const inButton = document.querySelector('.in');
     const aceButton = document.querySelector('.ace');
     const errorButton = document.querySelector('.error');
@@ -1451,11 +1494,7 @@
         get_score();
     });
 
-    let cancel_end = () => {
-        let cancel = document.querySelector('#start_second');
-        cancel.close();
-        end_half = false;
-    }
+
 
     // Open modal
     team_btns.forEach(selector => {
@@ -1471,10 +1510,60 @@
     player1Names.forEach(player => {
         player.addEventListener('click', (el) => {
             console.log(player.innerText);
-            slideWrapper.style.transform = 'translateY(600px)';  
+            updateSlidePosition();  
             chaser = player.getAttribute('data-player-id');
         })
     });
+
+    function updateSlidePosition() {
+                slideContainer.style.transform = `translateX(-${currentSlide * 50}%)`;
+            }
+
+     function goToSlide(slideIndex) {
+                currentSlide = slideIndex;
+                updateSlidePosition();
+            }
+
+            // Event listeners
+            player1Names.forEach(player => {
+                player.addEventListener('click', (el) => {
+                    goToSlide(1);
+                    getplayername(player);
+                    player.style.backgroundColor = "var(--text-color)";
+                    raider=player.innerText;
+                })
+            });
+    
+    let getplayername = (el) => {
+                raider = el.innerText;
+            }
+
+            let serveresult = (el) => {
+                points = el.innerText;
+                setTimeout(() => {
+                    get_score();
+                }, 600);
+            }
+
+    let deftakepoint = (el) => {
+                    setTimeout(() => {
+                        if (el && el.textContent) {
+                            
+                            slideWrapper.style.transform = 'translateY(600px)';
+
+                        } else {
+                            console.warn("Invalid element passed to getraidtechpoint:", el);
+                        }
+                    }, 300);
+                    def_tech_point = parseInt(el.textContent);
+                            el.style.border = "2px solid var(--text-color)";
+                            el.style.backgroundColor = "var(--text-color)";
+                            el.style.color = "var(--background)";
+
+                    get_score();
+                    
+                }
+            
 
 
     
@@ -1505,7 +1594,7 @@
         }
     });
        
-});
+
 
  // Disable F5 and Ctrl+R keyboard shortcuts
         window.addEventListener("keydown", function (e) {
