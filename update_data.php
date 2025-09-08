@@ -121,7 +121,7 @@ if($for == "dashboard"){
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
                     }else if($row['status'] == 'Completed'){
 
-                        if($score_log['completed'] != 'Draw'){
+                        if($score_log['winner'] != 'Draw'){
                             $winner = $score_log['winner'];
                             $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
                         }

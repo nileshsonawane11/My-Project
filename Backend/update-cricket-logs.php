@@ -83,11 +83,13 @@ if (isset($iscomplete) && $iscomplete == true) {
     $winner_team_id = ($score_log['winner'] == $score_log['team1']) ? $score_log['team1'] : $score_log['team2'];
     $stmt->bind_param("ss", $json, $match_id);
     $stmt->execute();
+    $update = json_decode(get_data($match_id, $Inning),true);
     
     echo json_encode([
         'status' => 200,
         'message' => 'Match officially completed',
-        'winner' => $winner_team_id
+        'winner' => $winner_team_id,
+        'Data' => $update
     ]);
     exit();
 }

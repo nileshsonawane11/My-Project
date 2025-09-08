@@ -57,17 +57,17 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        position: fixed;
+        position: sticky;
         top: 0;
         width: 100%;
-        background-color: var(--card-bg);
+        background-color: var(--nav-fill);
         z-index: 999;
+        box-shadow: var(--shadow-sm);
+        border-bottom: 1px solid var(--primary-transparent);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        height: 61px;
         transition: var(--transition);
     }
-    
-
     svg path {
         fill : var(--text-dark);
     }
@@ -75,7 +75,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
     }
     
     .nav-content{
@@ -84,8 +84,7 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding-left: 20px;
-        padding-right: 50px;
+        padding: 10px 20px 10px 0px;
     }
     
     .img-container{
@@ -334,6 +333,9 @@
         font-weight: 600;
         color: var(--primary-color);
     }
+    .logo-img img {
+        height: 90px;
+    }
     
     @keyframes spin{
         to{
@@ -344,10 +346,6 @@
     @media(min-width: 601px) {
         .menu-bar{
             display: none;
-        }
-        
-        .logo-img img{
-            height: 45px;
         }
         
         .txt-strike{
@@ -473,17 +471,6 @@
     }
     
     @media(max-width: 600px) {
-        .logo-img img{
-            height: 40px;
-        }
-        
-        .nav-content{
-            padding-right: 20px;
-            display: flex;
-            justify-content:space-between ;
-            align-items: center;
-            width: 100%;
-        }
         
         .sidebar {
             position: fixed;
@@ -720,7 +707,7 @@
                 <div class="nav-content">
                     <div class="items">
                         <div class="logo-img"><img src="./assets/images/logo.png" alt=""></div>
-                        <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
+                        <!-- <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div> -->
                     </div>
                     <div class="items">
                         <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>

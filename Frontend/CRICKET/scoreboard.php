@@ -3782,11 +3782,11 @@ function initShowMoreButton() {
 }
 
 
- function smoothReload() {
-    //   document.body.classList.add("fade-out");
-      setTimeout(() => {
-        location.replace(location.href); // reload after fade out
-      }, 800);
+    function smoothReload() {
+        //   document.body.classList.add("fade-out");
+        setTimeout(() => {
+            location.replace(location.href); // reload after fade out
+        }, 800);
     }
 
     window.addEventListener("pageshow", function () {
@@ -3794,7 +3794,7 @@ function initShowMoreButton() {
     });
 
     // Open dialog for password
-        function openDialog(button, event) {
+        window.openDialog = function(button, event) {
             if (event) event.stopPropagation();
             const dialog = document.getElementById("startMatchDialog");
             dialog.showModal();
@@ -3806,7 +3806,7 @@ function initShowMoreButton() {
         }
 
         // Close dialog of password
-        function closeDialog() {
+        window.closeDialog = function() {
             const dialog = document.getElementById("startMatchDialog");
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';
@@ -3820,8 +3820,8 @@ function initShowMoreButton() {
         // Variefy match password
         document.getElementById("matchPasswordForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            password = document.getElementById("matchPassword").value;
-            match_id = document.getElementById("match_id").value;
+            let password = document.getElementById("matchPassword").value;
+            let match_id = document.getElementById("match_id").value;
 
             let formdata = new FormData();
             formdata.append('password', password.trim());
@@ -3851,7 +3851,7 @@ function initShowMoreButton() {
             .catch();
         });
 
-        function shareContent() {
+        window.shareContent = function() {
             if (navigator.share) {
                 navigator.share({
                     title: 'LiveStrike',

@@ -1246,12 +1246,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         
             <div class="container2">
                 <div class="txt">
-                    <h4>
+                    <h4><span class="team_name">
                         <?php
                             $t_id = $score_log[$inning_type][$current_innings]['batting_team'];
                             $t_name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id'"));
                             echo $t_name['t_name'];
-                        ?>
+                        ?></span>
                         (Batting Team)
                     </h4>
                 </div>
@@ -1479,134 +1479,10 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
 
     <iframe src="./select-player-from-team.php" frameborder="0" class="player-frame"></iframe>
-    
-    <script type="module">
-        import { host, port } from "../../config.js";
-
-        window.socket = new WebSocket(`ws://${host}:${port}`);
-
-        window.socket.onopen = () => {
-            console.log("Connected to server");
-
-            // Trigger score update
-            window.socket.send(JSON.stringify({
-                type: "updateScore",
-                team: "Team A",
-                runs: 120,
-                wickets: 3,
-                overs: "15.2"
-                }));
-        };
-
-        window.socket.onmessage = (event) => {
-            let data = JSON.parse(event.data);
-            // console.log(data)
-
-            if (data.type == "Cricketpanel") {
-                let log = data.log;
-                    
-
-                // If it's still a string, parse again
-                if (typeof log === "string") {
-                    try {
-                        log = JSON.parse(log);
-                    } catch (e) {
-                        console.error("❌ Could not parse log JSON:", log);
-                        return;
-                    }
-                }
-
-                console.log("Updated Score Log:", log);
-                update_score_log(log);
-            }
-        };
-
-function update_score_log(log){
-    let current_inning = log.current_innings;
-    let players_page = document.querySelector('.player-frame');
-    let score = document.querySelector('.score');
-    let batsmans = document.querySelectorAll('.batsman-score');
-    let striker_name = document.querySelector('.striker-text');
-    let non_striker_name = document.querySelector('.non-striker-text');
-    let bowlername = document.querySelector('.bowler-text');
-    let bowls = document.querySelector('.bowls');
-
-    score.innerHTML = `${log.innings[current_inning].total_runs}/${log.innings[current_inning].wickets}<p class="overs">(${log.innings[current_inning].overs_completed}/
-                        ${log.overs})</p>`;
-
-    let striker_id = log.innings[current_inning].openers.current_striker.id;
-    let non_striker_id = log.innings[current_inning].openers.current_non_striker.id;
-    let bowler_id = log.innings[current_inning].current_bowler.id;
-    let bowler = log.innings[current_inning].current_bowler;
-
-    batsmans[0].innerText = `${log.innings[current_inning].openers.current_striker.runs}(${log.innings[current_inning].openers.current_striker.balls_faced})`;
-    striker_name.innerText = log.Players_map[striker_id] || '';
-
-    batsmans[1].innerText = `${log.innings[current_inning].openers.current_non_striker.runs}(${log.innings[current_inning].openers.current_non_striker.balls_faced})`;
-    non_striker_name.innerText = log.Players_map[non_striker_id] || '';
-
-    bowlername.innerText = log.Players_map[bowler_id] || '';
-    bowls.innerText = `${bowler.overs_bowled}-${bowler.wickets}-${bowler.runs_conceded}-${bowler.maidens}`;
-
-    let openers = log.innings[current_inning].openers;
-    let current_bowler = log.innings[current_inning].current_bowler;
-
-    let strikerEl = document.querySelectorAll('.batsman-type')[0];
-    let nonStrikerEl = document.querySelectorAll('.batsman-type')[1];
-    let bowlerEl = document.querySelector('.bowler-name');
-
-    strikerEl.setAttribute('data-striker',openers.current_striker.id || '');
-    nonStrikerEl.setAttribute('data-non-striker',openers.current_non_striker.id || '');
-    bowlerEl.setAttribute('data-bowler',current_bowler.id || '');
-
-    let striker = strikerEl.getAttribute('data-striker') || '';
-    let non_striker = nonStrikerEl.getAttribute('data-non-striker') || '';
-    let bowlers = bowlerEl.getAttribute('data-bowler') || '';
-
-    if (!openers 
-        || !openers.current_striker.id 
-        || !openers.current_non_striker.id
-        || !current_bowler.id) {
-
-        console.warn("Openers data is missing or incomplete");
-        if(!openers.current_striker.id){
-            strikerEl.setAttribute('data-striker','');
-            navigator.vibrate([100,50,100,50,100]);
-            strikerEl.closest('.batmans').style.borderColor = 'red';
-            players_page.classList.add('active');
-            players_page.src = `./select-player-from-team.php?for=Striker&match=${match}&team=${bat_team}&striker=&non-striker=${non_striker}`;
-            return false;
-        }
-        if(!openers.current_non_striker.id){
-            nonStrikerEl.setAttribute('data-non-striker','');
-            navigator.vibrate([100,50,100,50,100]);
-            nonStrikerEl.closest('.batmans').style.borderColor = 'red';
-            players_page.classList.add('active');
-            players_page.src = `./select-player-from-team.php?for=Non-Striker&match=${match}&team=${bat_team}&striker=${striker}&non-striker=`;
-            return false;
-        }
-
-        if(!current_bowler.id){
-            bowlerEl.setAttribute('data-bowler','');
-            navigator.vibrate([100,50,100,50,100]);
-            bowlerEl.closest('.bowler-container').style.borderColor = 'red';
-            players_page.classList.add('active');
-            players_page.src = `./select-player-from-team.php?for=Bowler&match=${match}&team=${bowl_team}`;
-            return false;
-        }
-
-    } else {
-        strikerEl.setAttribute('data-striker',openers.current_striker.id);
-        nonStrikerEl.setAttribute('data-non-striker',openers.current_non_striker.id);
-        bowlerEl.setAttribute('data-bowler',current_bowler.id);
-    }
-}
-
-    </script>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const current_inning = '<?php echo $current_innings; ?>'
+        window.current_inning = "<?php echo $current_innings; ?>";
         let data = urlParams.get('data') || '';
         console.log(data);
         const match = '<?php echo $match_id; ?>';
@@ -1814,7 +1690,7 @@ function update_score_log(log){
                     person : event.data.person,
                     ...(event.data.person == 'Fielder'?{wicket_by : wicket_by} : {data : new_player}),
                     match_id : match,
-                    Inning : current_inning,
+                    Inning : window.current_inning,
                     'Inning Type' : '<?php echo $inning_type; ?>',
                 }
 
@@ -2392,7 +2268,7 @@ function update_score_log(log){
                             //display_content();
                         }else{
                             players_page.classList.add('active');
-                            players_page.src = `./select-player-from-team.php?for=Fielder&team=${bowl_team}`;
+                            players_page.src = `./select-player-from-team.php?for=Fielder&team=${bowl_team}&match=${match}`;
                             setTimeout(() => {
                                 shot.close();
                             }, 100);
@@ -2722,7 +2598,7 @@ function update_score_log(log){
                     ...(ball_type == 'Wicket' || no_balltype == 'Wicket' ? { 'Out Player': dismissedPlayerid ,'New Player':new_player} : { 'Striker': strikerName }),
                     'TotalScore': scoreText[0],
                     'Wickets': scoreText[1],
-                    'Inning' : current_inning,
+                    'Inning' : window.current_inning,
                     'Commentary': commentary,
                     'Match id': match,
                     ...(is_match_complete == true ? {'Is Match Complete': is_match_complete} : null),
@@ -2793,6 +2669,9 @@ function update_score_log(log){
                         let warn = document.querySelector('.undo-warn');
                         warn.innerText = data.message;
                         warn.style.color = 'red';
+                    }else if(data.winner != null){
+                        window.removeEventListener("beforeunload", preventReload);
+                        location.reload();
                     }
                 })
                 .catch(error => console.log(error));
@@ -2811,6 +2690,7 @@ function update_score_log(log){
             }
 
             let add_player = (info) => {
+                console.log(info);
                 fetch('../../Backend/change_player.php', {
                     method: 'post',
                     headers: {
@@ -2906,5 +2786,132 @@ function update_score_log(log){
         return document.body.getAttribute('data-theme') || 'light';
     }
     </script>
+    <script type="module">
+        import { host, port } from "../../config.js";
+        
+        window.socket = new WebSocket(`ws://${host}:${port}`);
+
+        window.socket.onopen = () => {
+            console.log("Connected to server");
+
+            // Trigger score update
+            window.socket.send(JSON.stringify({
+                type: "updateScore",
+                team: "Team A",
+                runs: 120,
+                wickets: 3,
+                overs: "15.2"
+                }));
+        };
+
+        window.socket.onmessage = (event) => {
+            let data = JSON.parse(event.data);
+            // console.log(data)
+
+            if (data.type == "Cricketpanel") {
+                let log = data.log;
+                    
+
+                // If it's still a string, parse again
+                if (typeof log === "string") {
+                    try {
+                        log = JSON.parse(log);
+                    } catch (e) {
+                        console.error("❌ Could not parse log JSON:", log);
+                        return;
+                    }
+                }
+
+                console.log("Updated Score Log:", log);
+                window.current_inning = log.current_innings;
+                update_score_log(log);
+            }
+        };
+
+    function update_score_log(log){
+        let current_inning = log.current_innings;
+        let inning_type = log.inning_type;
+        let players_page = document.querySelector('.player-frame');
+        let score = document.querySelector('.score');
+        let batsmans = document.querySelectorAll('.batsman-score');
+        let striker_name = document.querySelector('.striker-text');
+        let non_striker_name = document.querySelector('.non-striker-text');
+        let bowlername = document.querySelector('.bowler-text');
+        let bowls = document.querySelector('.bowls');
+        let batting_team_name = document.querySelector('.team_name');
+
+        score.innerHTML = `${log[inning_type][current_inning].total_runs}/${log[inning_type][current_inning].wickets}<p class="overs">(${log[inning_type][current_inning].overs_completed}/
+                            ${log.overs})</p>`;
+
+        batting_team_name.innerText = `${log.bat_team}`;
+
+        let striker_id = log[inning_type][current_inning].openers.current_striker.id;
+        let non_striker_id = log[inning_type][current_inning].openers.current_non_striker.id;
+        let bowler_id = log[inning_type][current_inning].current_bowler.id;
+        let bowler = log[inning_type][current_inning].current_bowler;
+
+        batsmans[0].innerText = `${log[inning_type][current_inning].openers.current_striker.runs}(${log[inning_type][current_inning].openers.current_striker.balls_faced})`;
+        striker_name.innerText = log.Players_map[striker_id] || '';
+
+        batsmans[1].innerText = `${log[inning_type][current_inning].openers.current_non_striker.runs}(${log[inning_type][current_inning].openers.current_non_striker.balls_faced})`;
+        non_striker_name.innerText = log.Players_map[non_striker_id] || '';
+
+        bowlername.innerText = log.Players_map[bowler_id] || '';
+        bowls.innerText = `${bowler.overs_bowled}-${bowler.wickets}-${bowler.runs_conceded}-${bowler.maidens}`;
+
+        let openers = log[inning_type][current_inning].openers;
+        let current_bowler = log[inning_type][current_inning].current_bowler;
+
+        let strikerEl = document.querySelectorAll('.batsman-type')[0];
+        let nonStrikerEl = document.querySelectorAll('.batsman-type')[1];
+        let bowlerEl = document.querySelector('.bowler-name');
+
+        strikerEl.setAttribute('data-striker',openers.current_striker.id || '');
+        nonStrikerEl.setAttribute('data-non-striker',openers.current_non_striker.id || '');
+        bowlerEl.setAttribute('data-bowler',current_bowler.id || '');
+
+        let striker = strikerEl.getAttribute('data-striker') || '';
+        let non_striker = nonStrikerEl.getAttribute('data-non-striker') || '';
+        let bowlers = bowlerEl.getAttribute('data-bowler') || '';
+
+        if (!openers 
+            || !openers.current_striker.id 
+            || !openers.current_non_striker.id
+            || !current_bowler.id) {
+
+            console.warn("Openers data is missing or incomplete");
+            if(!openers.current_striker.id){
+                strikerEl.setAttribute('data-striker','');
+                navigator.vibrate([100,50,100,50,100]);
+                strikerEl.closest('.batmans').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Striker&match=${match}&team=${log.bat}&striker=&non-striker=${non_striker}`;
+                return false;
+            }
+            if(!openers.current_non_striker.id){
+                nonStrikerEl.setAttribute('data-non-striker','');
+                navigator.vibrate([100,50,100,50,100]);
+                nonStrikerEl.closest('.batmans').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Non-Striker&match=${match}&team=${log.bat}&striker=${striker}&non-striker=`;
+                return false;
+            }
+
+            if(!current_bowler.id){
+                bowlerEl.setAttribute('data-bowler','');
+                navigator.vibrate([100,50,100,50,100]);
+                bowlerEl.closest('.bowler-container').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Bowler&match=${match}&team=${log.bowl}`;
+                return false;
+            }
+
+        } else {
+            strikerEl.setAttribute('data-striker',openers.current_striker.id);
+            nonStrikerEl.setAttribute('data-non-striker',openers.current_non_striker.id);
+            bowlerEl.setAttribute('data-bowler',current_bowler.id);
+        }
+    }
+</script>
 </body>
 </html>
