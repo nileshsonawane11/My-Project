@@ -1,3 +1,16 @@
+<?php
+    session_start();
+    include './config.php';
+
+    if(!isset($_SESSION['user'])){
+        header('location: ../../front-page.php');
+        exit();
+    }
+
+    $user = $_SESSION['user'];
+    $result = mysqli_query($conn,"SELECT * FROM users WHERE user_id = '$user'");
+    $row = mysqli_fetch_assoc($result);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,6 +78,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 30px;
             margin-bottom: 30px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
@@ -397,7 +411,11 @@
 
         .account-detail {
             display: flex;
+            white-space: normal;
+            overflow-wrap: break-word;
+            gap: 50px;
             justify-content: space-between;
+            text-wrap: auto;
             padding: 15px 0;
             border-bottom: 1px solid var(--border-color);
         }
@@ -412,6 +430,12 @@
 
         .detail-value {
             font-weight: 500;
+            flex: 1 1 0;
+            min-width: 0;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            text-align: right;
         }
 
         .danger-zone {
@@ -618,23 +642,23 @@
                 </div>
                 
                 <div class="account-detail">
-                    <span class="detail-label">Username</span>
-                    <span class="detail-value">sports_fan_92</span>
+                    <span class="detail-label">Name</span>
+                    <span class="detail-value"><?php echo $row['fname'].' '.$row['lname']; ?></span>
                 </div>
                 
                 <div class="account-detail">
                     <span class="detail-label">Email</span>
-                    <span class="detail-value">user@example.com</span>
+                    <span class="detail-value"><?php echo $row['email']; ?></span>
                 </div>
                 
                 <div class="account-detail">
                     <span class="detail-label">Member since</span>
-                    <span class="detail-value">Jan 2023</span>
+                    <span class="detail-value"><?php echo date("F Y", strtotime($row['date'])); ?></span>
                 </div>
                 
                 <div class="account-detail">
                     <span class="detail-label">Subscription</span>
-                    <span class="detail-value">Premium</span>
+                    <span class="detail-value">Free</span>
                 </div>
                 
             </div>

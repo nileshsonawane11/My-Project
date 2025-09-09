@@ -1189,12 +1189,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                             </svg>
                             <p>Change Squad</p>
                         </div>
-                        <div class="menu">
+                        <a href="./scoreboard.php?match_id=<?php echo $match_id; ?>"><div class="menu">
                             <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7 18V12M10 18V13M13 18V10M15 3H19V23H1V3H5M5 1H15V5H5V1Z" stroke="black" stroke-width="2"/>
                             </svg>
                             <p>Full Scoreboard</p>
-                        </div>
+                        </div></a>
                     </div>
                     <div class="menu-columns">
                         <div class="menu">
@@ -2669,24 +2669,29 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         let warn = document.querySelector('.undo-warn');
                         warn.innerText = data.message;
                         warn.style.color = 'red';
-                    }else if(data.winner != null){
+                    }else if(data.completed == true){
                         window.removeEventListener("beforeunload", preventReload);
                         location.reload();
                     }
                 })
                 .catch(error => console.log(error));
 
-                
-
-                run_per_ball =null;
-                Shot_type = null;
+                dismissedPlayerid = null;
+                run_per_ball = null;
                 Shot_side = null;
-                out_type = null;
+                Shot_type = null;
                 extras = null;
+                run_type = null;
                 ball_type = null;
+                out_type = null;
+                new_player = '';
+                wicket_by = '';
+                is_match_complete = false;
+                match_complete = false;
+                undo_operation = false;
                 dismissedPlayer = '';
                 no_balltype = '';
-                wicket_by = '';
+
             }
 
             let add_player = (info) => {
@@ -2790,18 +2795,10 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         import { host, port } from "../../config.js";
         
         window.socket = new WebSocket(`ws://${host}:${port}`);
+        // window.socket = new WebSocket(`wss://my-project-pk19.onrender.com`);
 
         window.socket.onopen = () => {
             console.log("Connected to server");
-
-            // Trigger score update
-            window.socket.send(JSON.stringify({
-                type: "updateScore",
-                team: "Team A",
-                runs: 120,
-                wickets: 3,
-                overs: "15.2"
-                }));
         };
 
         window.socket.onmessage = (event) => {

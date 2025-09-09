@@ -204,10 +204,8 @@ if($for == "registration"){
             <div class='container'>
                 <div class='head'>Welcome to LiveStrike</div>
                 <div class='image-header'>
-                    <img src='https://i.ibb.co/gLY2MgSd/logo.png' alt='Livestrike'>
-                    <div class='logo-name'>
-                        <span class='txt-live'><b>Live</b></span><span class='txt-strike'>Strike</span>
-                    </div>
+                    <img src='assets/images/logo.png' alt='Livestrike'>
+                    
                 </div>
                 <div class='para'>Prove your Signer Identity</div>
                 <div class='content'>
@@ -219,12 +217,12 @@ if($for == "registration"){
                 <hr>
                 <div class='footer'>
                     <p>If this wasn't you, please ignore this email or contact our customer service:</p>
-                    <p><a href='#'>support@livestrikesupport.com</a></p>
+                    <p><a href='admin@livestrike.in'>admin@livestrike.in</a></p>
                     <br>
                     <p>© 2025 LiveStrike. All rights reserved.</p>
                     <p>Maharashtra, Nashik City, India</p>
                     <br>
-                    <p><a href='#'>About LiveStrike</a> | <a href='#'>Contact Us</a></p>
+                    <p><a href='./about-us.php'>About LiveStrike</a> | <a href='./support.php'>Contact Us</a></p>
                 </div>
             </div>
         </body>
@@ -433,10 +431,8 @@ if($for == "registration"){
                     <div class='container'>
                         <div class='head'>Welcome to LiveStrike</div>
                         <div class='image-header'>
-                            <img src='https://i.ibb.co/gLY2MgSd/logo.png' alt='Livestrike'>
-                            <div class='logo-name'>
-                                <span class='txt-live'><b>Live</b></span><span class='txt-strike'>Strike</span>
-                            </div>
+                            <img src='assets/images/logo.png' alt='Livestrike'>
+                            
                         </div>
                         <div class='para'>Prove your Signer Identity</div>
                         <div class='content'>
@@ -448,12 +444,12 @@ if($for == "registration"){
                         <hr>
                         <div class='footer'>
                             <p>If this wasn't you, please ignore this email or contact our customer service:</p>
-                            <p><a href='#'>support@livestrikesupport.com</a></p>
+                            <p><a href='admin@livestrike.in'>admin@livestrike.in</a></p>
                             <br>
                             <p>© 2025 LiveStrike. All rights reserved.</p>
                             <p>Maharashtra, Nashik City, India</p>
                             <br>
-                            <p><a href='#'>About LiveStrike</a> | <a href='#'>Contact Us</a></p>
+                            <p><a href='./about-us.php'>About LiveStrike</a> | <a href='./support.php'>Contact Us</a></p>
                         </div>
                     </div>
                 </body>

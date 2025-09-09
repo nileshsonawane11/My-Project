@@ -86,16 +86,18 @@ body {
 /* Individual logo z-index and animation */
 .logo1 {
   z-index: 1;
-  animation: logo-right 0.6s ease-out forwards;
+  animation: logo-right 0.3s ease-out 0.6s forwards;
   height: 75px;
-  transform: translate(-50%, -100%);
+  transform: translate(200%, -91%);
+  opacity: 0;
 }
 
 .logo2 {
   z-index: 0;
   height: 170px;
-  transform: translate(-50%, -40%);
-  animation: logo-left 0.6s ease-out forwards;
+  transform: translate(-200%, -40%);
+  opacity: 0;
+  animation: logo-left 0.3s ease-out 0.6s forwards;
 }
 
 /* Animations adjusted to center */
@@ -112,7 +114,7 @@ body {
 
 @keyframes logo-right {
   from {
-    transform: translate(200%, -100%);
+    transform: translate(200%, -91%);
     opacity: 0;
   }
   to {
@@ -123,25 +125,26 @@ body {
 
 /* Loader */
 #loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: white;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border-top: 3px solid #EECF4F;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--card-bg);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+  
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--gray-bg);
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
 
 @keyframes spin {
   to {

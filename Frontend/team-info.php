@@ -12,33 +12,33 @@
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id']) && isset($_GET['mem'])) {
-    $id = $_POST['delete_id'];
-    $type = $_GET['mem']; // 'Player' or 'Staff'
+        $id = $_POST['delete_id'];
+        $type = $_GET['mem']; // 'Player' or 'Staff'
 
-    // Determine table and column
-    if ($type === 'Player') {
-        $table = 'players';
-        $column = 'user_id';
-    } elseif ($type === 'Staff') {
-        $table = 'staff';
-        $column = 'staff_id';
-    } else {
-        echo 'invalid_type';
+        // Determine table and column
+        if ($type === 'Players') {
+            $table = 'players';
+            $column = 'user_id';
+        } elseif ($type === 'Staff') {
+            $table = 'staff';
+            $column = 'staff_id';
+        } else {
+            echo 'invalid_type';
+            exit;
+        }
+
+        // Prepare and execute delete query
+        $stmt = $conn->prepare("DELETE FROM `$table` WHERE `$column` = ?");
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+
         exit;
     }
-
-    // Prepare and execute delete query
-    $stmt = $conn->prepare("DELETE FROM `$table` WHERE `$column` = ?");
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-        echo 'success';
-    } else {
-        echo 'error';
-    }
-
-    exit;
-}
 
 ?>
 <!DOCTYPE html>
@@ -472,6 +472,7 @@
         #playerMenu div {
         padding: 5px;
         cursor: pointer;
+        color: var(--text-dark);
         }
         #playerMenu div:hover {
         background-color: var(--hover-bg);
@@ -677,7 +678,7 @@
     </div>
 
 
-    <div id="playerMenu" style="display:none; position:absolute; background:#fff; border:1px solid #000; padding:10px; z-index:1000;">
+    <div id="playerMenu">
         <div id="editBtn">✏️ Edit</div>
         <div id="deleteBtn">🗑️ Delete</div>
     </div>
@@ -871,7 +872,7 @@ document.getElementById('deleteBtn').addEventListener('click', function () {
   const name = menu.dataset.player;
 
   // Send to same file using fetch
-  fetch(window.location.href, {
+  fetch('', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `delete_id=${encodeURIComponent(id)}`
@@ -901,10 +902,6 @@ document.addEventListener('click', (e) => {
 
 // Menu actions
 document.getElementById('editBtn').addEventListener('click', function() {
-  const name = document.getElementById('playerMenu').dataset.player;
-});
-
-document.getElementById('deleteBtn').addEventListener('click', function() {
   const name = document.getElementById('playerMenu').dataset.player;
 });
 

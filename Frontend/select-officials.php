@@ -112,6 +112,7 @@
             bottom: 22px;
             left: 14px;
             text-align: center;
+            pointer-events: auto;
             font-size: 16px;
             transition: 0.3s ease-in-out;
             color: var(--text-light);
@@ -207,7 +208,7 @@
             background: var(--card-bg);
             cursor: pointer;
             box-shadow: var(--shadow);
-            flex-wrap: wrap;
+            flex: 1 1;
         }
         .other-info{
             display: flex;
@@ -238,7 +239,7 @@
         }
 
         svg path {
-            fill: var(--text-color);
+            fill: var(--text-dark);
         }
         .logo{
             height: 75px;
@@ -1025,7 +1026,7 @@
             }
             
             lists[`${person}`] = Array.from(new Set(lists[`${person}`]))
-            //console.log(lists[`${person}`])
+            console.log(lists)
             lists['type'] = "emailList";
             window.parent.postMessage(lists, "*");
             window.parent.postMessage("closeIframe", "*");

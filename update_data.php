@@ -482,7 +482,7 @@ if($for == "add_staff"){
 }
 
 if($for == "add_player"){
-    $sql = "SELECT * FROM users u WHERE u.user_id AND u.email LIKE '%$status%' AND u.place IS NOT NULL";
+    $sql = "SELECT * FROM users u WHERE u.user_id IS NOT NULL AND u.email LIKE '%$status%' AND u.place IS NOT NULL";
     $query = mysqli_query($conn, $sql);
 
     if(mysqli_num_rows($query) > 0){

@@ -593,7 +593,7 @@ function getWicketBallDetails($balls, $player_id) {
         transform: skew(-15deg, 0deg);
         transform-origin: top left;
         background: linear-gradient(90deg, var(--primary-transparent), rgba(209, 34, 31, 0.05));
-        z-index: -1;
+        z-index: 1;
     }
     
     .weather{
@@ -2067,30 +2067,31 @@ function getWicketBallDetails($balls, $player_id) {
                             $scorers = [];
                             $commentators = [];
 
-                            if (!empty($row['umpires'])) {
-                                $decoded = json_decode($row['umpires'], true);
+                            // Helper: safely decode either JSON or CSV
+                            function decodeEmails($value) {
+                                if (empty($value)) return [];
+
+                                $decoded = json_decode($value, true);
+
                                 if (is_array($decoded)) {
-                                    $umpires = $decoded;
+                                    return $decoded; // proper JSON array
                                 }
+
+                                // fallback: comma separated
+                                return array_map('trim', explode(',', $value));
                             }
 
-                            if (!empty($row['scorers'])) {
-                                $decoded = json_decode($row['scorers'], true);
-                                if (is_array($decoded)) {
-                                    $scorers = $decoded;
-                                }
-                            }
-
-                            if (!empty($row['commentators'])) {
-                                $decoded = json_decode($row['commentators'], true);
-                                if (is_array($decoded)) {
-                                    $commentators = $decoded;
-                                }
-                            }
+                            // Decode roles
+                            $umpires = decodeEmails($row['umpires']);
+                            $scorers = decodeEmails($row['scorers']);
+                            $commentators = decodeEmails($row['commentators']);
 
                             // Combine all for querying
                             $all_emails = array_merge($umpires, $scorers, $commentators);
 
+                            $umpire_users = [];
+                            $scorer_users = [];
+                            $commentator_users = [];
                             // Prepare and execute query if emails are present
                             if (!empty($all_emails)) {
                                 $placeholders = implode(',', array_fill(0, count($all_emails), '?'));
@@ -2109,21 +2110,18 @@ function getWicketBallDetails($balls, $player_id) {
                                 }
 
                                 // Group by role
-                                $umpire_users = [];
                                 foreach ($umpires as $email) {
                                     if (isset($user_map[$email])) {
                                         $umpire_users[] = $user_map[$email];
                                     }
                                 }
 
-                                $scorer_users = [];
                                 foreach ($scorers as $email) {
                                     if (isset($user_map[$email])) {
                                         $scorer_users[] = $user_map[$email];
                                     }
                                 }
 
-                                $commentator_users = [];
                                 foreach ($commentators as $email) {
                                     if (isset($user_map[$email])) {
                                         $commentator_users[] = $user_map[$email];
@@ -2876,6 +2874,7 @@ function getWicketBallDetails($balls, $player_id) {
     <script type="module">
     import { host, port } from "../../config.js";
     window.socket = new WebSocket(`ws://${host}:${port}`);
+    // window.socket = new WebSocket(`wss://my-project-pk19.onrender.com`);
     const menuItems = document.querySelectorAll('.menu-items');
     const indicator = document.querySelector('.menu-line-indicator');
     const close_fed_container = document.querySelector('.exit');
@@ -3878,5 +3877,46 @@ function initShowMoreButton() {
 
   
     </script>
+    <script>
+  // Make function globally accessible
+  window.openDialog = function(button, event) {
+      if (event) event.stopPropagation();
+      const dialog = document.getElementById("startMatchDialog");
+      dialog.showModal();
+
+      const match_to_start = button.closest('.game-info').getAttribute('data-match_id');
+      console.log("Match : " + match_to_start);
+
+      document.getElementById("match_id").value = match_to_start;
+  }
+
+  // Close dialog of password
+        window.closeDialog = function() {
+            const dialog = document.getElementById("startMatchDialog");
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                el.innerHTML = '';
+                el.style.display = 'none';
+            });
+            document.getElementById("matchPasswordForm").reset();
+            dialog.close();
+        }
+
+         window.shareContent = function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'LiveStrike',
+                    text: 'Check out this awesome real-time score tracking!',
+                    url: window.location.href
+                })
+                .then(() => console.log('Successfully shared'))
+                .catch((error) => console.error('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+
+        
+</script>
+
 </body>
 </html>

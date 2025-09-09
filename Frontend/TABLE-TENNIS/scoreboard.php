@@ -453,7 +453,7 @@
             transform: skew(-15deg, 0deg);
             transform-origin: top left;
             background: linear-gradient(90deg, rgba(250,192,31,0.05), rgba(248,57,0,0.05));
-            z-index: -1;
+            z-index: 1;
         }
         .weather{
             width: 100%;

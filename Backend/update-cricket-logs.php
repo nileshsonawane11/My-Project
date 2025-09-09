@@ -89,7 +89,8 @@ if (isset($iscomplete) && $iscomplete == true) {
         'status' => 200,
         'message' => 'Match officially completed',
         'winner' => $winner_team_id,
-        'Data' => $update
+        'Data' => $update,
+        'completed' => true
     ]);
     exit();
 }
@@ -163,10 +164,16 @@ if (($Ball_Type == null && $undo == true)) {
             $team_over = $score_log['super_over_innings'][$Inning]['overs_completed'];
             $team_runs1 = $score_log['super_over_innings'][$Inning]['total_runs'];
             $team_wickets1 = $score_log['super_over_innings'][$Inning]['wickets'];
+            $bat_team1 = $score_log['super_over_innings'][$Inning]['batting_team'];
 
-            $team_over1 = $score_log['innings'][$Inning]['overs_completed'];
-            $team_runs = $score_log['innings'][$Inning]['total_runs'];
-            $team_wickets = $score_log['innings'][$Inning]['wickets'];
+            foreach (['1st', '2nd'] as $inning_no) {
+                $bat_team2 = $score_log['innings'][$inning_no]['batting_team'];
+                if($bat_team2 == $bat_team1){
+                    $team_over1 = $score_log['innings'][$inning_no]['overs_completed'];
+                    $team_runs = $score_log['innings'][$inning_no]['total_runs'];
+                    $team_wickets = $score_log['innings'][$inning_no]['wickets'];
+                }
+            }
             $score = $team_runs1.'/'.$team_wickets1.' - '.$team_runs.'/'.$team_wickets.' ('.$team_over1.'ov)';
         }else{
             $team_over = $score_log['innings'][$Inning]['overs_completed'];

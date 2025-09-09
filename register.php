@@ -80,8 +80,8 @@ $input = uniqid(microtime(true) . bin2hex(random_bytes(5)). $email . $date, true
 $id = hash('sha256', $input);
 
 
-$sql = "INSERT INTO users (user_id,role, fname, lname, phone, date, password, email)
-        VALUES ('$id','$role', '$fname', '$lname', '$phone', '$date', '$password', '$email')";
+$sql = "INSERT INTO users (user_id,role, fname, lname, phone, password, email)
+        VALUES ('$id','$role', '$fname', '$lname', '$phone', '$password', '$email')";
 
 if (mysqli_query($conn, $sql)) {
     $_SESSION['user_id'] = $id;

@@ -97,17 +97,38 @@ if (!empty($team2_id)) {
 $update_fields = [];
 
 if (!empty($Umpires)) {
-    $umpires_json = mysqli_real_escape_string($conn, json_encode(array_values($Umpires)));
+    // explode into array if only one element with commas
+    if (count($Umpires) === 1 && strpos($Umpires[0], ',') !== false) {
+        $Umpires = explode(',', $Umpires[0]);
+    }
+
+    // clean spaces
+    $Umpires = array_map('trim', $Umpires);
+    $umpires_json = json_encode(array_values($Umpires));
     $update_fields[] = "umpires = '$umpires_json'";
 }
 
 if (!empty($Scorers)) {
-    $scorers_json = mysqli_real_escape_string($conn, json_encode(array_values($Scorers)));
+    // explode into array if only one element with commas
+    if (count($Scorers) === 1 && strpos($Scorers[0], ',') !== false) {
+        $Scorers = explode(',', $Scorers[0]);
+    }
+
+    // clean spaces
+    $Scorers = array_map('trim', $Scorers);
+    $scorers_json = json_encode(array_values($Scorers));
     $update_fields[] = "scorers = '$scorers_json'";
 }
 
 if (!empty($Commentators)) {
-    $commentators_json = mysqli_real_escape_string($conn, json_encode(array_values($Commentators)));
+    // explode into array if only one element with commas
+    if (count($Commentators) === 1 && strpos($Commentators[0], ',') !== false) {
+        $Commentators = explode(',', $Commentators[0]);
+    }
+
+    // clean spaces
+    $Commentators = array_map('trim', $Commentators);
+    $commentators_json = json_encode(array_values($Commentators));
     $update_fields[] = "commentators = '$commentators_json'";
 }
 
