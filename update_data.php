@@ -150,10 +150,10 @@ if($for == "dashboard"){
                         }
                     }
 
-                    $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
+                    // $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
                     $session_email = $_SESSION['email'];
 
-                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                    if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                         echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
@@ -260,10 +260,10 @@ if($for == "dashboard"){
                     echo "<div class='strt-btn'>";
                     
                     $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    $scorer_emails = explode(",", $scorers[0]);
+                    // $scorer_emails = explode(",", $scorers[0]);
                     $session_email = $_SESSION['email'];
 
-                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                    if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                         echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
@@ -406,13 +406,13 @@ if($for == "manage_matches"){
                     $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
                     $scorer_emails = [];
 
-                    if (!empty($scorers) && isset($scorers[0])) {
-                        $scorer_emails = explode(",", $scorers[0]);
-                    }
+                    // if (!empty($scorers) && isset($scorers[0])) {
+                    //     $scorer_emails = explode(",", $scorers[0]);
+                    // }
                     
                     $session_email = $_SESSION['email'];
 
-                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                    if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                         echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";

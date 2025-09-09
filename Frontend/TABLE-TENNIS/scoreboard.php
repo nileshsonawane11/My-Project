@@ -1653,10 +1653,10 @@
                             }
                         }
 
-                        $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
+                        // $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
                         $session_email = $_SESSION['email'] ?? '';
 
-                        if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                        if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                             echo "<div class='info'>";
                             if(empty($score_log)){
                                 echo "<span class='date-time'>".formatMatchTime($row['match_date'], $row['start_time'])."</span>";
