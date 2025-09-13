@@ -1,4 +1,72 @@
+<?php
+    session_start();
+    include '../../config.php';
 
+    if(!isset($_SESSION['user'])){
+        header('location: ../../front-page.php');
+        exit();
+    }
+    if($_SESSION['role'] == "User"){
+        header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    $match_id = '';
+    $half_team1 = '';
+    $half_team2 = '';
+
+    $for = $_GET['for'] ?? '';
+    $data = json_decode($_GET['data'] ?? '', true);
+
+    $match_id = $_GET['match_id'];
+
+    $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
+    $score_log = json_decode($row['score_log'], true);
+
+    // Redirect if no toss winner
+    if (empty($row['toss_winner'])) {
+        header('Location: ./match_toss.php?match_id=' . $match_id);
+        exit();
+    }
+
+    // Redirect if match is completed
+    if (!empty($score_log['completed'])) {
+        header('Location: ../../dashboard.php?update=live&sport=VOLLEYBALL');
+        exit();
+    }
+
+   // Detect current half
+    $current_half = null;
+    $last_event = null;
+
+    if (isset($score_log['halves']) && is_array($score_log['halves'])) {
+        foreach ($score_log['halves'] as $half_number => $half_data) {
+            if (isset($half_data['half_completed']) && $half_data['half_completed'] === false) {
+                $current_half = $half_number;
+                $half_team1 = $score_log['team1'];
+                $half_team2 = $score_log['team2'];
+
+                if (!empty($half_data['events'])) {
+                    $last_event = end($half_data['events']);
+                    reset($half_data['events']);
+                }
+                break;
+            }
+        }
+    }
+
+    // If no active half, fallback to last one (even if completed)
+    if ($current_half === null && isset($score_log['halves']) && is_array($score_log['halves'])) {
+        $last_half_number = array_key_last($score_log['halves']);
+        if (is_array($score_log['halves'][$last_half_number])) {
+            $current_half = $last_half_number;
+            $half_team1 = $score_log['team1'];
+            $half_team2 = $score_log['team2'];
+            $last_event = end($score_log['halves'][$last_half_number]['events'] ?? []);
+        }
+    }
+    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -497,7 +565,18 @@
 
         /* Individual containers */
         .container3,
-        .container4 {
+        .container7 {
+            display: none;
+            flex: 0 0 50%;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background: var(--background);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .container4{
             flex: 0 0 50%;
             width: 100%;
             height: 100%;
@@ -1076,7 +1155,6 @@
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="
                         document.querySelector('#half_completed').close();
-                        document.querySelector('.opacity-container').style.display = 'none';
                         is_complete = false;
                     ">Continue Scoring</p>
                 </div>
@@ -1093,7 +1171,6 @@
                 </div>
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="document.querySelector('#match_completed').close();
-                    document.querySelector('.opacity-container').style.display = 'none';
                     is_complete = false;">Continue Scoring</p>
                 </div>
             </div>
@@ -1152,37 +1229,68 @@
                         <path d="M6.36196 6.62029L11.672 1.04729C11.7606 0.954302 11.8101 0.830761 11.8101 0.70229C11.8101 0.573819 11.7606 0.450279 11.672 0.357291L11.666 0.35129C11.623 0.306055 11.5713 0.270036 11.5139 0.245422C11.4566 0.220808 11.3949 0.208115 11.3325 0.208115C11.2701 0.208115 11.2083 0.220808 11.151 0.245422C11.0937 0.270036 11.0419 0.306055 10.999 0.35129L5.99896 5.59929L1.00096 0.35129C0.95799 0.306055 0.906263 0.270036 0.84893 0.245422C0.791597 0.220808 0.729857 0.208115 0.667463 0.208115C0.60507 0.208115 0.543329 0.220808 0.485996 0.245422C0.428663 0.270036 0.376937 0.306055 0.333963 0.35129L0.327963 0.357291C0.239318 0.450279 0.189867 0.573819 0.189867 0.70229C0.189867 0.830761 0.239318 0.954302 0.327963 1.04729L5.63796 6.62029C5.68466 6.6693 5.74082 6.70832 5.80305 6.73498C5.86528 6.76164 5.93227 6.77539 5.99996 6.77539C6.06766 6.77539 6.13465 6.76164 6.19688 6.73498C6.2591 6.70832 6.31527 6.6693 6.36196 6.62029Z" fill="black"/>
                     </svg>
                 </div>
-                <div class="exit-text">End 1<sup>st</sup> Half</div>
+                <div class="exit-text">End 
+                    <?php if($current_half == 1){
+                        echo '1<sup>st</sup>';
+                    }else if($current_half == 2){
+                        echo '2<sup>nd</sup>';
+                    }else if($current_half == 3){
+                        echo '3<sup>rd</sup>';
+                    }else{
+                        echo $current_half.'<sup>th</sup>';
+                    } ?> Half</div>
             </div>
         </div>
 
         <div class="score-teamlogo">
-                    <div class="score2">0</div>
-                    <div class="score1">0</div>
+                    <div class="score2"><?php echo $score_log['team1_score']; ?></div>
+                    <div class="score1"><?php echo $score_log['team2_score']; ?></div>
         </div>
 
         <div class="main-scoreboard">
             <div class="scoreboard">
+                <?php
+                    $t_id1 = $score_log['team1'];
+                    $t_name1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id1'"));
+                ?>
                 <div class="right">       
                     <div class="score-team-data">
                         <div class="team-logo">
+                            <?php if($t_name1['t_logo']) { ?>
+                                <img src="../../assets/images/teams/<?php echo $t_name1['t_logo']; ?>" alt="">
+                            <?php }else{ ?>
                                 <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                            <?php } ?>
                         </div>
                         <div class="team-data">
-                            <label class="team1_name">Team1</label>
+                            <label class="team1_name">
+                                <?php
+                                    echo $t_name1['t_name'];
+                                ?>
+                            </label>
                         </div>
                     </div>
                 </div>
 
                 <div class="left">
                     <div class="score-team-data">
-
+                        <?php
+                            $t_id2 = $score_log['team2'];
+                            $t_name2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id2'"));  
+                        ?>
                         <div class="team-logo">
+                            <?php if($t_name2['t_logo']) { ?>
+                                <img src="../../assets/images/teams/<?php echo $t_name2['t_logo']; ?>" alt="">
+                            <?php }else{ ?>
                                 <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
-                    </div>
+                            <?php } ?>
+                        </div>
                         <div class="team-data">
-                            <label class="team2_name">Team2</label>
-                            <label class="set"></label>
+                            <label class="team2_name">
+                                <?php
+                                    echo $t_name2['t_name'];
+                                ?>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -1195,17 +1303,25 @@
 
     <div class="container2">
         <div class="image"></div>
-        <div class="current-set"><div class="index">1<sup>st</sup> Half</div></div>
+        <div class="current-set"><div class="index"><?php if($current_half == 1){
+                        echo '1<sup>st</sup>';
+                    }else if($current_half == 2){
+                        echo '2<sup>nd</sup>';
+                    }else if($current_half == 3){
+                        echo '3<sup>rd</sup>';
+                    }else{
+                        echo $current_half.'<sup>th</sup>';
+                    } ?> Half</div></div>
 
         <div class="buttons">
             <div class="point-buttons">
                 <div class="team-btn">
-                    <label class="team-name">Team1</label>
-                    <button class="team1-button team-buttons" data-team="">Goal</button>
+                    <label class="team-name"><?php echo $t_name1['t_name']; ?></label>
+                    <button class="team1-button team-buttons" data-team="<?php echo $score_log['team1']; ?>">Goal</button>
                 </div>
                 <div class="team-btn">
-                    <label class="team-name">Team2</label>
-                    <button class="team2-button team-buttons" data-team="">Goal</button>
+                    <label class="team-name"><?php echo $t_name2['t_name']; ?></label>
+                    <button class="team2-button team-buttons" data-team="<?php echo $score_log['team2']; ?>">Goal</button>
                 </div>
             </div>
 
@@ -1218,16 +1334,42 @@
             </div>
 
             <div class="history">
+                <?php
+                        $result2 = mysqli_query($conn, "SELECT score_log FROM matches WHERE match_id = '$match_id'");
+                        $row2 = mysqli_fetch_assoc($result2);
+                        $score_log = json_decode($row2['score_log'], true);
 
+                        $events = $score_log['halves'][$current_half]['events'];
+                        $last_three_events = array_reverse(array_slice($events, -3));
+
+                        // Print them nicely
+                        foreach ($last_three_events as $events) {
+
+                            $team1_id = $events['point_taken_by'];
+
+                            // Prepare query with IN (?, ?)
+                            $stmt = $conn->prepare("SELECT * FROM teams WHERE t_id IN (?)");
+                            $stmt->bind_param("s", $team1_id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+
+                            // Store names in associative array
+                            $team_names = [];
+                            while ($row = $result->fetch_assoc()) {
+                                $team_names[$row['t_id']] = $row['t_name'];
+                            }
+                        
+                    ?>
                 <div class="log">
                         <div class="point-to-update">
                             <div class="point-to">
-                                <label class="point-text">Point - </label>
-                                <label class="to_team-name">to Team1</label>
+                                <label class="point-text">Point - <?php echo $events['point']; ?></label>
+                                <label class="to_team-name">to <?php echo $team_names[$team1_id]; ?></label>
                             </div>
-                            <div class="last-update">0-0</div>
+                            <div class="last-update"><?php echo $events['last score']; ?></div>
                         </div>
                     </div>
+                <?php } ?>
             </div>
         </div>
         <div class="blur-container"></div>
@@ -1236,20 +1378,64 @@
     <div class="slide-wrapper">
         <div class="slide-container">
             <div class="container3">
-                    <div class="current-server">
-                        <label class="curr-ser">Who scored the Goal?</label>
-                        <label class="tap">Select a Player who scored</label>
-                    </div>
-
-                    <div class="players-info">
-                        <label class="player-cnt">Players()</label>
-
-                        <div class="player-replace" data-player-id =''>
-                            <div class="player1-name">Mahatma Gandhi</div>
-                        </div>
-                       </div>
-                    </div>
+                <div class="current-server">
+                    <label class="curr-ser">Who scored the point?</label>
+                    <label class="tap">Select a Player who scored</label>
                 </div>
+                <?php
+                        $query = "SELECT * FROM `players` WHERE `team_id` = '$half_team1'";
+                        $result = mysqli_query($conn, $query);
+                        $count = mysqli_num_rows($result);
+                ?>
+                <div class="players-info">
+                    <label class="player-cnt">Players(<?php echo $count; ?>)</label>
+                    <?php
+                        if($count > 0){
+                            $index = 1;
+                            while($row = mysqli_fetch_assoc($result)){
+                    ?>
+                    <div class="player-replace" data-player-id ='<?php echo $row['user_id']; ?>'>
+                        <div class="player1-name"><?php echo $index.'. '. $row['player_name']; ?></div>
+                    </div>
+                    <?php
+                                $index++;
+                            }
+                        }else{
+
+                        }
+                    ?>
+                </div>
+            </div>
+
+            <div class="container7">
+                <div class="current-server">
+                    <label class="curr-ser">Who scored the point?</label>
+                    <label class="tap">Select a Player who scored</label>
+                </div>
+                <?php
+                        $query = "SELECT * FROM `players` WHERE `team_id` = '$half_team2'";
+                        $result = mysqli_query($conn, $query);
+                        $count = mysqli_num_rows($result);
+                ?>
+                <div class="players-info">
+                    <label class="player-cnt">Players(<?php echo $count; ?>)</label>
+                    <?php
+                        if($count > 0){
+                            $index = 1;
+                            while($row = mysqli_fetch_assoc($result)){
+                    ?>
+                    <div class="player-replace" data-player-id ='<?php echo $row['user_id']; ?>'>
+                        <div class="player1-name"><?php echo $index.'. '. $row['player_name']; ?></div>
+                    </div>
+                    <?php
+                                $index++;
+                            }
+                        }else{
+
+                        }
+                    ?>
+                </div>
+            </div>
             
         </div>
     </div>
@@ -1295,23 +1481,22 @@
     let opacity = document.querySelector('.opacity-container');
     let start_next_btn = document.querySelector('.start-next-btn');
     let complete_btn = document.querySelector('.complete-match-btn');
-    let chaser = null;
+    let half_container = document.querySelector('#half_completed');
     let point_taken_by = null;
-    let out_player = null;
+    let player_id = null;
     let exit_inn = false;
     let undo = false;
     let back_decision = null;
-    let match = null;
+    let match = '<?php echo $match_id ?>';
     let end_half = false;
-    is_complete = false;
+    let is_complete = false;
     
     let get_score = () => {
         let data = {
             'match_id': match,
             'point_taken_by': point_taken_by,
             'Isend_half' : end_half,
-            'chaser_player': chaser,
-            'out_player' : out_player,
+            'player':player_id,
             ...(exit_inn == true ? {'exit' : exit_inn} : {}),
             ...(undo == true ? {'undo' : undo} : {}),
             ...(is_complete == true ? {'complete' : is_complete} : {})
@@ -1319,7 +1504,7 @@
 
         console.log(data);
 
-        // fetch('./Backend/update-kho-kho-logs.php',{
+        // fetch('./Backend/update-football-logs.php',{
         //     method: 'POST',
         //     headers: {
         //         'Content-Type': 'application/json'
@@ -1368,6 +1553,14 @@
         // .catch(error => {
         //     console.log(error);
         // })
+
+        chaser = null;
+        point_taken_by = null;
+        player_id = null;
+        exit_inn = false;
+        undo = false;
+        end_half = false;
+        is_complete = false;
     }
 
     let cancel_end = () => {
@@ -1378,6 +1571,7 @@
 
         let proceed_end_half = () => {
             end_half = true;
+            half_container.close();
             raider = null;
             get_score();
         }
@@ -1388,7 +1582,7 @@
             //     raider = null;
             //     get_score();
             // }else{
-                let half_container = document.querySelector('#half_completed');
+                
                 half_container.showModal();
                 half_container.classList.add('shake');
                 navigator.vibrate([1000,50,100,50,100]);
@@ -1406,9 +1600,9 @@
     // Get existing containers
     const container3 = document.querySelector('.container3');
     const container6 = document.querySelector('.container6');
+    const container7 = document.querySelector('.container7');
     const slideContainer = document.querySelector('.slide-container');
     const slideWrapper = document.querySelector('.slide-wrapper');
-    const exit_inning = document.querySelector('.exit');
     const undo_logs = document.querySelector('.undo');
     
     // Wrap containers in sliding parent
@@ -1418,7 +1612,7 @@
         console.warn("One or more containers not found in the DOM.");
     }
     
-    const player1Names = document.querySelectorAll('.container3 .player-replace');
+    const player1Names = document.querySelectorAll('.player-replace');
     const inButton = document.querySelector('.in');
     const aceButton = document.querySelector('.ace');
     const errorButton = document.querySelector('.error');
@@ -1426,12 +1620,6 @@
 
     // Current slide position (0=container3, 1=container4)
     let currentSlide = 0;
-
-
-    exit_inning.addEventListener('click',()=>{
-        exit_inn = true;
-        get_score();
-    })
 
     undo_logs.addEventListener('click',()=>{
         console.log('undo..');
@@ -1461,9 +1649,16 @@
     team_btns.forEach(selector => {
         selector.addEventListener('click', (event) => {
                 const team = event.currentTarget.getAttribute('data-team');
+                if (selector.classList.contains('team1-button')) {
+                    container3.style.display = 'block';
+                    container7.style.display = 'none';
+                } else if (selector.classList.contains('team2-button')) {
+                    container7.style.display = 'block';
+                    container3.style.display = 'none';
+                }
                 point_taken_by = team;
-                    currentSlide = 0;
-                    slideWrapper.style.transform = 'translateY(0)';        
+                currentSlide = 0;
+                slideWrapper.style.transform = 'translateY(0)';        
         });
     });
     
@@ -1472,7 +1667,8 @@
         player.addEventListener('click', (el) => {
             console.log(player.innerText);
             slideWrapper.style.transform = 'translateY(600px)';  
-            chaser = player.getAttribute('data-player-id');
+            player_id = player.getAttribute('data-player-id');
+            get_score();
         })
     });
 

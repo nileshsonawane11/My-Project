@@ -1,25 +1,26 @@
 <?php
-    session_start();
+session_start();
 
-    if(!isset($_SESSION['user'])){
-        header('location: ./front-page.php');
-        exit();
-    }
-    if($_SESSION['role'] == "User"){
-        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
-        exit();
-    }
+if(!isset($_SESSION['user'])){
+    header('location: ./front-page.php');
+    exit();
+}
+if($_SESSION['role'] == "User"){
+    header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+    exit();
+}
 
-    include '../../config.php';
-    $match = $_GET['match_id'] ?? '';
+include '../../config.php';
+$match = $_GET['match_id'] ?? '';
 
-    $query1 = mysqli_query($conn, "SELECT * FROM `matches` WHERE `match_id` = '$match'");
-    $row = mysqli_fetch_assoc($query1);
+$query1 = mysqli_query($conn, "SELECT * FROM `matches` WHERE `match_id` = '$match'");
+$row = mysqli_fetch_assoc($query1);
 
-    if(!empty($row['toss_winner'])){
-        header("Location: ./score_panel.php?match_id=$match");
-        exit();
-    }
+// If toss already done → go to score panel
+if(!empty($row['toss_winner'])){
+    header("Location: ./score_panel.php?match_id=$match");
+    exit();
+} 
 
 ?>
 <!DOCTYPE html>
@@ -45,22 +46,22 @@
         --primary-color: rgba(209, 34, 31, 1);
         --primary-light: rgba(209, 34, 31, 0.8);
         --primary-dark: rgba(160, 25, 23, 1);
-        --primary-light-10: rgba(209, 34, 31, 0.1);
+        --primary-light-20: rgba(209, 34, 31, 0.2);
         --primary-dark-10: rgba(160, 25, 23, 0.1);
         --background: #ffffff;
         --card-bg: #ffffff;
-        --text-dark: #2d3748;
-        --text-light: #4a5568;
-        --bg-light: #f8fafc;
-        --border-light: #e2e8f0;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --text-dark: #2D3748;
+        --text-muted: #718096;
+        --bg-light: #F8FAFC;
+        --border-light: #E2E8F0;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
         --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
         --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-        --radius-sm: 8px;
+        --radius-sm: 6px;
         --radius-md: 12px;
         --radius-lg: 16px;
-        --transition: all 0.2s ease-in-out;
-        --svg-fill: #2d3748;
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --svg-fill: #2D3748;
     }
 
     /* Dark theme variables */
@@ -68,14 +69,14 @@
         --background: #121212;
         --card-bg: #1e1e1e;
         --text-dark: #ffffff;
-        --text-light: #a0aec0;
+        --text-muted: #a0aec0;
         --bg-light: #2d3748;
         --border-light: #4a5568;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
         --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
         --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
         --svg-fill: #ffffff;
-        --primary-light-10: rgba(209, 34, 31, 0.2);
+        --primary-light-20: rgba(209, 34, 31, 0.3);
         --primary-dark-10: rgba(160, 25, 23, 0.2);
     }
     
@@ -87,11 +88,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-wrap: wrap;
         flex-direction: column;
         background-color: var(--bg-light);
         color: var(--text-dark);
-        line-height: 1.5;
     }
     
     .container {
@@ -103,6 +102,7 @@
         max-width: 1200px;
         min-height: 480px;
         align-items: center;
+        height: 100vh;
         justify-content: flex-start;
         flex-direction: column;
         gap: 30px;
@@ -148,7 +148,7 @@
     
     .txt {
         line-height: 1.6;
-        color: var(--text-light);
+        color: var(--text-muted);
     }
     
     .input-fields {
@@ -163,7 +163,7 @@
         left: 14px;
         font-size: 16px;
         transition: var(--transition);
-        color: var(--text-light);
+        color: var(--text-muted);
         pointer-events: none;
     }
     
@@ -207,7 +207,7 @@
     .container input[type="date"]:focus,
     .container select:focus {
         border-bottom-color: var(--primary-color);
-        box-shadow: 0 2px 0 0 var(--primary-light-10);
+        box-shadow: 0 2px 0 0 var(--primary-light-20);
     }
     
     .container3 {
@@ -234,7 +234,7 @@
         font-size: 14px;
         margin: 5px 0;
         padding: 8px 12px;
-        background-color: var(--primary-light-10);
+        background-color: var(--primary-light-20);
         border-radius: var(--radius-sm);
         border-left: 3px solid var(--primary-color);
     }
@@ -247,7 +247,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: space-around;
+        justify-content: center;
         background: var(--card-bg);
         box-shadow: var(--shadow-md);
         cursor: pointer;
@@ -265,7 +265,8 @@
     .teams.active,
     .options.active {
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 4px var(--primary-light-10);
+        box-shadow: 0 0 0 4px var(--primary-light-20);
+        background-color: var(--primary-light-20);
     }
     
     .logo {
@@ -279,6 +280,7 @@
         justify-content: center;
         padding: 8px;
         transition: var(--transition);
+        margin-bottom: 12px;
     }
     
     .types .logo {
@@ -288,8 +290,9 @@
     .logo img {
         height: 100%;
         width: 100%;
-        object-fit: contain;
-        filter: contrast(104%);
+        object-fit: cover;
+        filter: contrast(1.1);
+        border-radius: 50%;
     }
     
     .tname {
@@ -297,7 +300,6 @@
         text-align: center;
         font-weight: 600;
         color: var(--text-dark);
-        margin-top: 8px;
     }
     
     .sector {
@@ -315,6 +317,7 @@
         align-items: center;
         justify-content: center;
         width: 100%;
+        margin-top: 20px;
     }
     
     .add-btn button {
@@ -337,6 +340,7 @@
     .add-btn button:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(209, 34, 31, 0.3);
+        opacity: 0.9;
     }
     
     .add-btn button:active {
@@ -377,17 +381,15 @@
         gap: 20px;
     }
     
-    .rule {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .rule { 
         width: 100%;
-        position: relative;
         padding: 16px;
         background-color: var(--card-bg);
+        transition: var(--transition);
         color: var(--text-dark);
     }
     
+
     @media (min-width: 601px) {
         .container2 {
             gap: 70px;
@@ -401,17 +403,11 @@
     }
     
     @media (max-width: 600px) {
-           
         
         .container2 {
             gap: 40px;
         }
-
         
-        .logo {
-            height: 70px;
-            width: 70px;
-        }
         
         .add-btn button {
             width: 100%;
@@ -420,6 +416,18 @@
         
         .part {
             gap: 40px;
+        }
+        
+        .container input[type="text"],
+        .container input[type="email"],
+        .container input[type="password"],
+        .container input[type="number"],
+        .container input[type="tel"],
+        .container input[type="datetime"],
+        .container input[type="time"],
+        .container input[type="date"],
+        .container select {
+            font-size: 15px;
         }
     }
 </style>
@@ -437,72 +445,15 @@
             <div class="part">
                 <div class="txt">
                     <label for="">Scoring</label>
-                    <h4>Toss</h4>
                 </div>
                 <div class="container3">
-                    <?php
-                        $query = mysqli_query($conn,"SELECT m.*, t1.t_id AS team1, t2.t_id AS team2, t1.t_logo AS team1_logo, t1.t_name AS team1_name, t2.t_logo AS team2_logo , t2.t_name AS team2_name FROM `matches` m JOIN `teams` t1 ON m.team_1 = t1.t_id JOIN `teams` t2 ON m.team_2 = t2.t_id WHERE m.match_id = '$match' ");
-                        $row = mysqli_fetch_assoc($query);
-                    ?>
-                    <div class="info">
-                        <label for="">Who won the toss?</label>
-                        <div class="sector team">
-                            <div class="teams" data-value="<?php echo $row['team1']; ?>">
-                                <?php
-                                    if (empty($row['team1_logo'])) {
-                                        echo '<div class="logo"></div>';
-                                    } else {
-                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team1_logo']}\" alt=\"\"></div>";
-                                    }
 
-                                ?>
-                                <div class="tname"><?php echo $row['team1_name']; ?></div>
-                            </div>
-                            <div class="teams" data-value="<?php echo $row['team2']; ?>">
-                                 <?php
-                                    if (empty($row['team2_logo'])) {
-                                        echo '<div class="logo"></div>';
-                                    } else {
-                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team2_logo']}\" alt=\"\"></div>";
-                                    }
-
-                                ?>
-                                <div class="tname"><?php echo $row['team2_name'] ?></div>
-                            </div>
-                        </div>
-                        <div class="error" id="error-team"></div>
-                    </div>
-
-                    <div class="info">
-                        <label for="">Toss winner chose to</label>
-                        <div class="sector types">
-                            <div class="options" data-value="KICKOFF">
-                                <div class="logo">
-                                    <img src="https://i.ibb.co/m5qrQzV5/Pngtree-cartoon-football-player-picture-4360062.png">
-
-                                </div>
-                                <div class="tname">KICKOFF</div>
-                            </div>
-
-                            <div class="options" data-value="SIDE">
-                                <div class="logo">
-                                    <img src="https://i.ibb.co/FkT3kcyR/vecteezy-ai-generated-soccer-field-with-gate-isolated-on-transparent-41858242.png">
-
-                                    </div>
-                                    <div class="tname">SIDE</div>
-                                </div>
-                            </div>
-                            <div class="error" id="error-decision"></div>
-                            <div class="error" id="error-empty"></div> 
-                        </div>
-                    </div>
                     <div class="info">
                         <label for="">Enter match format</label>
                         <div class="sector rules">
-
                             <div class="rule">
                                  <div class="input-fields event-time">
-                                    <input type="number" id="points"  required><label for="points" id="time">Enter Total halves</label></div>
+                                    <input type="number" id="points"  required><label for="points" id="time">Enter Number of Quarters</label></div>
                             </div>
                         </div>
                         <div class="error" id="error-data_empty"></div>
@@ -516,56 +467,19 @@
     </div>
     <script>
 
-        const teams = document.querySelectorAll('.teams');
-        const options = document.querySelectorAll('.options');
-        const match_id = "<?php echo $match; ?>";
-        let selecteddecision = '';
-        let selectedteam = '';
 
         let goBack = ()=>{
             window.history.back();
         }
-
-        options.forEach(option => {
-            option.addEventListener('click', () => {
-                if(option.classList.contains('active')) {
-                option.classList.remove('active');
-                selecteddecision = '';
-                console.log("Selection Option", selecteddecision);
-                } else {
-                options.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                selecteddecision = option.getAttribute('data-value');
-                console.log("Selected Option:", selecteddecision);
-                }
-            });
-        });
-
-        teams.forEach(option => {
-            option.addEventListener('click', () => {
-                if(option.classList.contains('active')) {
-                option.classList.remove('active');
-                selectedteam = '';
-                console.log("Selection Team", selectedteam);
-                } else {
-                teams.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                selectedteam = option.getAttribute('data-value');
-                console.log("Selected Team:", selectedteam);
-                }
-            });
-        });
+        
 
         let start_match = (e) => {
             e.preventDefault();
-            let halves = document.querySelector('#points');
+            const quarters = document.getElementById('points').value;
 
             let formdata = new FormData();
-            formdata.append('match_id', match_id);
-            formdata.append('selectedteam', selectedteam);
-            formdata.append('selecteddecision', selecteddecision);
-            formdata.append('halves', halves.value);
-
+            formdata.append('match_id', '<?php echo $match; ?>');
+            formdata.append('quarters',quarters);
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';
@@ -584,14 +498,25 @@
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }else{
-                    window.location.href = './score_panel.php?match_id='+match_id;
+                    window.location.href = './score_panel.php?match_id=<?php echo $match; ?>';
                 }
             })
             .catch(error => console.log(error));
 
         }
 
-        // Theme management for this page
+        // Disable right-click
+//   document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+
+  // Theme management for this page
     function initializeTheme() {
         // Check for saved theme preference or use system preference
         const currentTheme = localStorage.getItem('theme') || 
