@@ -16,9 +16,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <title>select team</title>
-   <style>
+  <style>
     * {
         margin: 0;
         padding: 0;
@@ -28,14 +28,28 @@
     }
     
     :root {
-        --primary-light: #FAC01F;
-        --primary-dark: #F83900;
-        --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --background: #ffffff;
         --card-bg: #ffffff;
-        --text-dark: #333333;
-        --text-light: #666666;
+        --text-dark: #000000;
+        --text-light: #333333;
         --border-color: #e0e0e0;
         --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        --svg-fill: #000000;
+        --hover-bg: rgba(209, 34, 31, 0.08);
+    }
+
+    /* Dark theme variables */
+    [data-theme="dark"] {
+        --background: #121212;
+        --card-bg: #1e1e1e;
+        --text-dark: #ffffff;
+        --text-light: #e0e0e0;
+        --border-color: #333333;
+        --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        --svg-fill: #ffffff;
+        --hover-bg: rgba(209, 34, 31, 0.8);
     }
     
     body {
@@ -44,7 +58,9 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        background-color: #f8f8f8;
+        background: var(--background);
+        color: var(--text-dark);
+        transition: background 0.3s ease, color 0.3s ease;
     }
     
     .return {
@@ -55,9 +71,11 @@
         padding: 20px;
     }
     
-    .return svg {
+    .return svg path,
+    .game-list svg path{
         cursor: pointer;
         transition: transform 0.2s ease;
+        fill: var(--svg-fill);
     }
     
     .return svg:hover {
@@ -80,6 +98,8 @@
         box-shadow: var(--shadow);
         padding: 30px;
         overflow: hidden;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--border-color);
     }
     
     .container2 {
@@ -98,23 +118,27 @@
         flex-direction: row;
         gap: 15px;
         width: 100%;
-        background: rgba(250, 192, 31, 0.08);
+        background: var(--hover-bg);
         padding: 15px 20px;
         border-radius: 15px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         transition: all 0.2s ease;
         cursor: pointer;
+        border: 1px solid var(--border-color);
     }
     
     .game-list:hover {
-        background: rgba(250, 192, 31, 0.15);
+        background: rgba(209, 34, 31, 0.2);
         transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(209, 34, 31, 0.1);
     }
     
     .game-list svg {
         margin-left: 10px;
         width: 24px;
         height: 24px;
+        fill: var(--svg-fill);
+        transition: fill 0.3s ease;
     }
     
     .list {
@@ -136,6 +160,7 @@
         font-size: 16px;
         color: var(--text-dark);
         font-weight: 500;
+        transition: color 0.3s ease;
     }
     
     .team-frame {
@@ -147,9 +172,10 @@
         border: none;
         transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
         z-index: 999;
-        background: white;
+        background: var(--card-bg);
         border-radius: 25px 25px 0 0;
         box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.15);
+        border-top: 1px solid var(--border-color);
     }
     
     .team-frame.active {
@@ -162,12 +188,12 @@
     }
     
     .list::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: var(--hover-bg);
         border-radius: 10px;
     }
     
     .list::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
+        background: var(--primary-color);
         border-radius: 10px;
     }
     
@@ -214,6 +240,7 @@
             margin: 0;
             padding: 25px;
             box-shadow: none;
+            border: none;
         }
         
         .container2 {
@@ -255,6 +282,24 @@
     .game-list:nth-child(8) { animation-delay: 0.8s; }
     .game-list:nth-child(9) { animation-delay: 0.9s; }
     .game-list:nth-child(10) { animation-delay: 1.0s; }
+
+    /* Focus states for accessibility */
+    .game-list:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+
+    /* Selection color */
+    ::selection {
+        background-color: var(--primary-light);
+        color: white;
+    }
+
+    /* Placeholder text color */
+    ::placeholder {
+        color: var(--text-light);
+        opacity: 0.7;
+    }
 </style>
 </head>
 <body>
@@ -270,7 +315,6 @@
 
     <div class="container2">
         <div class="txt">
-            <label for="">Create New Team</label>
             <h4>SELECT SPORT TYPE</h4>
         </div>
         <div class="list">
@@ -372,6 +416,70 @@
            
         }
 
+
+        // Theme management for this page
+            function initializeTheme() {
+                // Check for saved theme preference or use system preference
+                const currentTheme = localStorage.getItem('theme') || 
+                                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                
+                // Set the initial theme
+                if (currentTheme === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+                
+                // Listen for theme changes from other tabs/pages
+                window.addEventListener('storage', function(e) {
+                    if (e.key === 'theme') {
+                        if (e.newValue === 'dark') {
+                            document.body.setAttribute('data-theme', 'dark');
+                        } else {
+                            document.body.removeAttribute('data-theme');
+                        }
+                    }
+                });
+                
+                // Optional: Also listen for custom events if your dashboard dispatches them
+                window.addEventListener('themeChanged', function(e) {
+                    if (e.detail === 'dark') {
+                        document.body.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.body.removeAttribute('data-theme');
+                    }
+                });
+            }
+
+            // Initialize theme when DOM is loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeTheme();
+                
+                // Additional theme-related functionality can be added here
+                // For example, if you have any dynamic elements that need theme updates
+            });
+
+            // If you need to programmatically change the theme from this page
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                // Dispatch event for other components to listen to
+                window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+            }
+
+            // Optional: Function to get current theme
+            function getCurrentTheme() {
+                return document.body.getAttribute('data-theme') || 'light';
+            }
+
+
+
         window.addEventListener("message", (event) => {
             if (event.data === "closeIframe") {
                 next_page.classList.remove('active');  
@@ -385,6 +493,17 @@
                 window.location.href = "./manage-teams.php";
             }
         });
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 </html>

@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Scoreboard</title>
+    <title>Basketball Scoreboard</title>
     <style>
-        * {
+                * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -16,43 +16,83 @@
         }
 
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-            --card-bg: #ffffff;
-            --text-dark: #333333;
-            --text-light: #f8f8f8;
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --primary-transparent: rgba(212, 53, 50, 0.15);
+            --background: #ffffff;
+            --text-color: #000000;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             --border-radius: 12px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --primary-light-10: rgba(250, 192, 31, 0.1);
-            --primary-dark-10: rgba(248, 57, 0, 0.1);
-            --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-            --text-dark: #2d3748;
-            --text-light: #4a5568;
-            --bg-light: #f8fafc;
-            --card-bg: #ffffff;
-            --border-light: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --transition: all 0.2s ease-in-out;
+            --transition: all 0.3s ease;
+            --border-color: #dddddd;
+        }
+
+        [data-theme="dark"] {
+            --background: #121212;
+            --text-color: #ffffff;
+            --light-bg: #1e1e1e;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --border-color: #333333;
+            --primary-transparent: rgba(210, 31, 28, 0.29);
         }
 
         body {
-            margin: 0;
-            background: #f8f8f8;
             min-height: 100vh;
-            color: #333;
-            position: relative;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: var(--transition);
         }
+
+        .blur-container {
+            top: 0;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background-color: transparent;
+            filter: blur(2px);
+            z-index: -1;
+            background-position: center;
+            background-image: url("https://i.ibb.co/xKhndDVn/doing-sport-concept-23-2151937746.jpg");
+            background-size: cover;
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 30%, transparent 100%);
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 30%, transparent 100%);
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%; 
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .blur-container {
+            filter: blur(2px) brightness(0.6);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 30%, transparent 100%);
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 30%, transparent 100%);
+        }
+        svg path {
+            fill: var(--text-color);
+        }
+
+        #commentaryIcon svg {
+            stroke: var(--text-color);
+        }
+
         .container0 {
             position: relative;
             height: max-content;
+            width: 100%;
+            max-width: 800px;
+            background: var(--background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
         }
 
         .return {
@@ -62,28 +102,30 @@
             align-items: center;
             flex-direction: row;
             padding: 20px 5%;
-            background-color: white;
+            background-color: var(--background);
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            background: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            z-index: 11;
         }
 
         .return svg {
             cursor: pointer;
-            fill: #F83900;
+            fill: var(--primary-color);
+            transition: var(--transition);
         }
 
         .exit {
             width: 150px;
             height: 50px;
-            background-color: white;
+            background-color: var(--background);
             border-radius: 85px;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #F83900;
-            border: 2px solid #F83900;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .exit-text {
@@ -102,8 +144,9 @@
             align-items: center;
             height: 100%;
             justify-content: space-between;
-            background-color: white;
-            background: rgba(255, 255, 255, 0.1);
+            background-color: var(--background);
+            transition: var(--transition);
+            z-index: 1;
         }
 
         .right {
@@ -137,25 +180,26 @@
         .team-logo {
             height: 80px;
             width: 80px;
-            background-color: white;
+            background-color: var(--background);
             border-radius: 50%;
-            border: 3px solid #FAC01F;
+            border: 3px solid var(--primary-light);
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            color: #F83900;
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 1.5rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
+            transition: var(--transition);
         }
 
         .score1, .score2 {
-            color: #ffffff;
+            color: var(--text-color);
             font-size: 4.5rem;
             font-weight: bold;
             margin-bottom: 30px;
-            -webkit-text-stroke: 1px #ffa400;
+            transition: var(--transition);
         }
 
         .score1 {
@@ -180,19 +224,24 @@
             font-size: 1.4rem;
             font-weight: bold;
             text-align: center;
-            color: #ffffff;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .set {
             font-size: 1rem;
-            color: #ffffff;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .container2 {
             position: relative;
             width: 100%;
             height: 80vh;
-            background: rgba(255, 255, 255, 0.65);
+            background: var(--background);
+            transition: var(--transition);
+            overflow: hidden;
         }
 
         .blur-container {
@@ -202,9 +251,9 @@
             width: 100%;
             background-color: transparent;
             filter: blur(3px);
-            z-index: -1;
+            z-index: 10;
             background-position: center;
-            background-image: url("https://i.ibb.co/LDKBzsf4/cool-basketball-wallpaper-41592-42568-hd-wallpapers.jpg");
+            background-image: url("https://iili.io/KHpBJMG.jpg");
             background-size: cover;
             -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
             mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
@@ -226,23 +275,28 @@
         }
 
         .scoring {
-            border-bottom: 3px solid #FAC01F;
+            border-bottom: 3px solid var(--primary-light);
             padding-bottom: 6px;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .current-set {
+            position: relative;
             width: 100%;
             height: 55px;
-            background-color: #FAC01F;
+            background-color: var(--primary-light);
             align-content: center;
             text-align: center;
             color: white;
             font-weight: bold;
             font-size: 22px;
-            border-bottom: 3px solid white;
+            border-bottom: 3px solid var(--background);
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: var(--transition);
+            z-index : 101;
         }
 
         .buttons {
@@ -250,6 +304,7 @@
             width: 100%;
             height: 300px;
             background-color: transparent;
+            z-index: 100;
         }
 
         .point-buttons {
@@ -273,14 +328,14 @@
         .team2-button {
             width: 160px;
             height: 90px;
-            background-color: white;
-            color: #F83900;
+            background-color:white;
+            color: var(--primary-color);
             border: none;
             border-radius: 15px;
             font-weight: bold;
             font-size: 1.5rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .team-button:active {
@@ -295,9 +350,10 @@
         }
 
         .team-name {
-            color: #ffffff;
+            color: var(--text-color);
             font-weight: bold;
             font-size: 1.3rem;
+            transition: var(--transition);
         }
 
         button {
@@ -318,26 +374,28 @@
             height: 90px;
             width: 100%;
             margin-top: 10px;
-            background-color: white;
-            border: 1px solid #eee;
-            color: #333;
+            background-color: var(--background);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             display: flex;
             align-items: center;
+            transition: var(--transition);
         }
 
         .serving {
             height: 40px;
             width: 100%;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
             align-content: center;
             padding: 8px;
             font-weight: bold;
             font-size: 1.3rem;
-            color: #F83900;
-            background-color: #f9f9f9;
+            color: var(--primary-color);
+            background-color: var(--light-bg);
+            transition: var(--transition);
         }
 
         .point-to {
@@ -354,18 +412,22 @@
             display: flex;
             padding: 15px;
             align-items: center;
+            background-color: var(--border-color);
         }
 
         .point-text {
             font-weight: bold;
             font-size: 1.1rem;
-            color: #555;
+            color: var(--text-color);
+            opacity: 0.8;
+            transition: var(--transition);
         }
 
         .last-update {
             font-size: 1.8rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         /* Slide container wrapper */
@@ -379,11 +441,12 @@
             transform: translateY(600px);
             transition: transform 0.5s ease;
             z-index: 1000;
-            background: white;
+            background: var(--background);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-            border-top: 2px solid #FAC01F;
+            border-top: 2px solid var(--primary-light);
+            transition: var(--transition);
         }
 
         .container5 {
@@ -397,11 +460,12 @@
             overflow-y: auto;
             transition: transform 0.5s ease;
             z-index: 1000;
-            background: white;
+            background: var(--background);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-            border-top: 2px solid #FAC01F;
+            border-top: 2px solid var(--primary-light);
+            transition: var(--transition);
         }
 
         .container6 {
@@ -414,11 +478,12 @@
             overflow-y: auto;
             transition: transform 0.5s ease;
             z-index: 1000;
-            background: white;
+            background: var(--background);
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-            border-top: 2px solid #FAC01F;
+            border-top: 2px solid var(--primary-light);
+            transition: var(--transition);
         }
 
         /* Container parent for horizontal sliding */
@@ -436,38 +501,44 @@
             width: 100%;
             height: 100%;
             overflow-y: auto;
-            background: white;
-            color: #333;
+            background: var(--background);
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .current-server {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #eee;
-            border-bottom: 1px solid #eee;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding-left: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .curr-ser {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         .tap {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .players-info {
             width: 100%;
             height: max-content;
             padding-top: 35px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .player-cnt {
@@ -475,7 +546,8 @@
             font-size: 1.2rem;
             font-weight: bold;
             margin-bottom: 10px;
-            color: #333;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .player-rel {
@@ -486,30 +558,35 @@
             justify-content: center;
             flex-direction: column;
             gap: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .serve-result {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #eee;
-            border-bottom: 1px solid #eee;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding-left: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .ser-res {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         .outcome {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .outcomes {
@@ -519,7 +596,9 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
+            gap: 20px;
         }
 
         .picture {
@@ -540,35 +619,42 @@
             margin-left: 7%;
             font-size: 1.2rem;
             font-weight: bold;
-            color: #333;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         .extra1, .extra2, .extra3 {
             margin-left: auto;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .point-assign {
             width: 100%;
             height: 48px;
-            border-top: 2px solid #eee;
-            border-bottom: 1px solid #eee;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding-left: 15px;
-            background-color: white;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .poi-ass {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #F83900;
+            color: var(--primary-color);
+            transition: var(--transition);
         }
 
         .who {
             font-size: 0.8rem;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
         .teams-info {
@@ -577,37 +663,39 @@
             display: flex;
             align-items: center;
             justify-content: space-evenly;
-            background-color: white;
+            background-color: var(--background);
             margin-top: 25px;
+            transition: var(--transition);
         }
 
         .team1-info, .team2-info {
             width: 160px;
             height: 200px;
-            border: 3px solid #FAC01F;
+            border: 3px solid var(--primary-light);
             border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
             gap: 20px;
-            background-color: white;
-            transition: all 0.3s ease;
+            background-color: var(--background);
+            transition: var(--transition);
         }
 
         .teams-logo {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background-color: white;
+            background-color: var(--background);
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            color: #F83900;
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 1.5rem;
-            border: 2px solid #FAC01F;
+            border: 2px solid var(--primary-light);
             overflow: hidden;
+            transition: var(--transition);
         }
 
         .team-logo img,
@@ -618,17 +706,17 @@
         }
 
         .undo {
-           width: 220px;
+        width: 220px;
             height: 70px;
-            background-color: #F83900;
+            background-color: var(--primary-color);
             color: white;
-            border: 2px solid #F83900;
+            border: 2px solid var(--primary-color);
             border-radius: 15px;
             position: relative;
             z-index: 4;
             font-size: 1.5rem;
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
 
         .undo-btn {
@@ -640,66 +728,73 @@
             justify-content: space-evenly;
             align-items: end;
             padding: 5%;
-            background-color: white;
-            background: rgba(255, 255, 255, 0.1);
+            background-color: var(--background);
+            transition: var(--transition);
+            z-index: 1;
         }
+
         .replace {
             font-weight: 600;
             font-size: 15px;
-            color: #f83900;
+            color: var(--primary-color);
             width: 80px;
             height: 40px;
             background-color: transparent;
             border: none;
             outline: none;
+            transition: var(--transition);
         }
+
         .player-replace {
             width: 95%;
             height: 50px;
             display: flex;
             justify-content: space-between;
-            background-color: white;
+            background-color: var(--background);
             display: flex;
             align-items: center;
             padding-left: 15px;
             font-size: 1.1rem;
             margin: 10px auto;
             border-radius: 10px;
-            transition: all 0.3s ease;
-            border: 1px solid #eee;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
         }
 
         .player-replace.selected {
-            border: 2px solid green;
-            background-color: #eaffea;
+            border: 2px solid var(--primary-color);
+            background-color: var(--primary-transparent);
         }
 
         .index {
             position: relative;
             z-index: 10;
         }
+
         .tech-point {
             width: 110px;
             height: 50px;
-            background-color: white;
-            color: #F83900;
+            background-color: var(--background);
+            color: var(--primary-color);
             border-radius: 15px;
             outline: none;
-            border: 2px solid #F83900;
+            border: 2px solid var(--primary-color);
             font-weight: bold;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             text-align: center;
             align-content: center;
         }
-        
+
         .teams-name {
             font-size: 1.3rem;
             font-weight: bold;
+            color: var(--text-color);
+            transition: var(--transition);
         }
 
         #match_completed,
         #start_second,
-        #half_completed{
+        #half_completed {
             position: fixed;
             transform: translateX(-50%) translateY(-50%);
             top: 50%;
@@ -707,13 +802,13 @@
             width: 300px;
             border: none;
             height: max-content;
-            background: var(--card-bg);
+            background: var(--border-color);
             transition: all 0.5s ease-in-out;
             align-items: flex-start;
             padding: 20px;
             z-index: 99;
             border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            box-shadow: var(--card-shadow);
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -728,106 +823,148 @@
             background: rgba(0, 0, 0, 0.15);
         }
 
-        .undo-container{
+        .undo-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 12px;
         }
-        .undo-txt{
+
+        .undo-txt {
             font-size: 25px;
             font-weight: bold;
-            color: var(--primary-dark);
+            color: var(--primary-color);
+            transition: var(--transition);
         }
-        .undo-warn{
+
+        .undo-warn {
             font-size: 18px;
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.7;
             letter-spacing: 1px;
             text-align: center;
+            transition: var(--transition);
         }
-         .undo-btn,
-        .super-over-btn{
+
+        .undo-btn,
+        .super-over-btn {
             height: 40px;
             width: 160px;
             font-size: 16px;
             color: white;
             outline: none;
             border: none;
-            background: var(--background);
+            background: var(--primary-color);
             border-radius: var(--border-radius);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
         }
+
         .undo-btn:hover,
         .super-over-btn:hover {
-            opacity: 0.9;
+            background: var(--primary-dark);
             transform: translateY(-2px);
         }
-        .undo-cancel,.complete-cancel{
-            color: #666;
+
+        .undo-cancel, .complete-cancel {
+            color: var(--text-color);
+            opacity: 0.7;
             font-size: 15px;
             cursor: pointer;
+            transition: var(--transition);
         }
 
         .rule { 
             width: 80%;
             padding: 16px;
-            background-color: var(--card-bg);
+            background-color: var(--background);
             transition: var(--transition);
         }
 
         .input-fields {
-        width: 100%;
-        position: relative;
-        margin-bottom: 24px;
-    }
-    
-    .input-fields label {
-        position: absolute;
-        bottom: 22px;
-        left: 14px;
-        font-size: 16px;
-        transition: var(--transition);
-        color: var(--text-muted);
-        pointer-events: none;
-    }
-    
-    .input-fields input:valid ~ label,
-    .input-fields input:focus ~ label {
-        transform: translateY(-28px);
-        font-size: 14px;
-        color: var(--primary-dark);
-        font-weight: 600;
-    }
-    .container6 input[type="text"],
-    .container6 input[type="email"],
-    .container6 input[type="password"],
-    .container6 input[type="number"],
-    .container6 input[type="tel"],
-    .container6 input[type="datetime"],
-    .container6 input[type="time"],
-    .container6 input[type="date"],
-    .container6 select {
-        border: none;
-        border-bottom: 2px solid var(--border-light);
-        margin: 8px 0;
-        padding: 10px 15px;
-        font-size: 16px;
-        width: 100%;
-        outline: none;
-        height: 48px;
-        background: transparent;
-        transition: var(--transition);
-    }
-    
-    .team1-poi,
-    .team2-poi {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+            width: 100%;
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .input-fields label {
+            position: absolute;
+            bottom: 22px;
+            left: 14px;
+            font-size: 16px;
+            transition: var(--transition);
+            color: var(--text-color);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .input-fields input:valid ~ label,
+        .input-fields input:focus ~ label {
+            transform: translateY(-28px);
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        .container6 input[type="text"],
+        .container6 input[type="email"],
+        .container6 input[type="password"],
+        .container6 input[type="number"],
+        .container6 input[type="tel"],
+        .container6 input[type="datetime"],
+        .container6 input[type="time"],
+        .container6 input[type="date"],
+        .container6 select {
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+            height: 48px;
+            background: transparent;
+            transition: var(--transition);
+            color: var(--text-color);
+        }
+
+        .team1-poi,
+        .team2-poi {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-point, .score-point2 {
+            width: 90%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--background);
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            transition: var(--transition);
+            border: 2px solid var(--primary-light);
+            color: var(--primary-color);
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .point-type {
+            color: var(--text-color);
+            opacity: 0.5;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            padding: 3px;
+            transition: var(--transition);
+        }
+
         @keyframes shake {
             0%   { transform: translateX(-50%) translateY(-50%) translateX(0); }
             25%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
@@ -835,10 +972,12 @@
             75%  { transform: translateX(-50%) translateY(-50%) translateX(-10px); }
             100% { transform: translateX(-50%) translateY(-50%) translateX(0); }
         }
+
         .shake {
             animation: shake 0.4s;
         }
-        .opacity-container{
+
+        .opacity-container {
             height: 100%;
             width: 100%;
             position: absolute;
@@ -858,15 +997,11 @@
                 font-size: 3.5rem;
             }
             
-            .team-button {
+            .team1-button,
+            .team2-button {
                 width: 140px;
                 height: 85px;
                 font-size: 1.3rem;
-            }
-            
-            .serve {
-                width: 200px;
-                height: 60px;
             }
         }
 
@@ -881,54 +1016,49 @@
                 font-size: 5rem;
             }
             
-            
-            .serve {
-                width: 250px;
-                height: 80px;
-            }
-            
             .team-logo {
                 height: 100px;
                 width: 100px;
                 font-size: 2rem;
             }
+            
             .exit:hover {
-                background-color: #F83900;
+                background-color: var(--primary-color);
                 color: white;
             }
+            
             .tech-point:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-                background-color: #F83900;
+                background-color: var(--primary-color);
                 color: white;
             }
+            
             .undo:hover {
-                background-color: #F83900;
+                background-color: var(--primary-dark);
                 color: white;
                 transform: translateY(-3px);
                 box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             }
+            
             .team1-info:hover, .team2-info:hover {
-                background-color: #fff9f0;
+                background-color: var(--primary-transparent);
                 transform: scale(1.05);
                 box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             }
+            
             .player-replace:hover {
-                background-color: #f9f9f9;
+                background-color: var(--light-bg);
                 transform: translateX(5px);
-                border-left: 3px solid #F83900;
+                border-left: 3px solid var(--primary-color);
             }
+            
             .team1-button:hover,
             .team2-button:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-                background-color: #F83900;
+                background-color: var(--primary-color);
                 color: white;
-            }
-            .serve:hover {
-                background-color: #e03100;
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
             }
         }
 
@@ -961,15 +1091,14 @@
     </style>
 </head>
 <body>
-    <div class="blur-container"></div>
     <div class="container0">
         <dialog id="half_completed">
             <div class="undo-container">
                 <div class="undo-seyup">
-                    <p class="undo-warn undo-txt">You really want to End the half?</p>
+                    <p class="undo-warn undo-txt">You really want to End the Quarter?</p>
                 </div>
                 <div class="undo-seyup">
-                    <button class="undo-btn" onclick="proceed_end_half()">End Half</button>
+                    <button class="undo-btn" onclick="proceed_end_half()">End quarter</button>
                 </div>
                 <div class="undo-seyup">
                     <p class="continue-match-btn complete-cancel" onclick="
@@ -1015,7 +1144,7 @@
                     </svg>
                 </div>
                 <div class="undo-seyup"><p class="undo-txt">UNDO ?</p></div>
-                <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
+                <div class="undo-seyup"><p class="undo-warn">Cancel the last action ?</p></div>
                 <div class="undo-seyup"><button class="undo-btn" id='undo-btn' onclick="process_undo()">Yes I’m certain</button></div>
                 <div class="undo-seyup"><p class="undo-cancel" onclick="document.querySelector('#undo').close();">Cancel</p></div>
             </div>
@@ -1094,7 +1223,6 @@
     <div class="container2">
         <div class="image"></div>
         <div class="current-set"><div class="index">1<sup>st</sup> quarter</div></div>
-        <div class="blur-container"></div>
 
         <div class="buttons">
             <div class="point-buttons">
@@ -1129,13 +1257,14 @@
                     </div>
             </div>
         </div>
+        <div class="blur-container"></div>
     </div>
 
     <div class="slide-wrapper">
         <div class="slide-container">
             <div class="container3">
                 <div class="current-server">
-                    <label class="curr-ser">Who scored the Goal?</label>
+                    <label class="curr-ser">Who scored the point?</label>
                     <label class="tap">Select a Player who scored</label>
                 </div>
 
@@ -1146,9 +1275,23 @@
                         <div class="player1-name">Mahatma Gandhi</div>
                     </div>
                 </div>
-            </div>         
-        </div>
+            </div>
+
+            <div class="container4">
+                    <div class="serve-result">
+                        <label class="ser-res">Points Scored</label>
+                        <label class="outcome">Total Points from Play</label>
+                    </div>
+                    <div class="outcomes">
+                        <div class="score-point" onclick="deftakepoint(this)">1 <label for="" class="point-type">Free Throw</label></div>
+                        <div class="score-point" onclick="deftakepoint(this)">2 <label for="" class="point-type">Field Goal</label></div>
+                        <div class="score-point" onclick="deftakepoint(this)">3 <label for="" class="point-type">Three-pointer</label></div>
+                    </div>
+                </div>
+        </div>      
     </div>
+
+
 
     <div class="container6">
             <div class="current-server">
@@ -1208,6 +1351,7 @@
             'Isend_half' : end_half,
             'chaser_player': chaser,
             'out_player' : out_player,
+            'def_tech_point': def_tech_point,
             ...(exit_inn == true ? {'exit' : exit_inn} : {}),
             ...(undo == true ? {'undo' : undo} : {}),
             ...(is_complete == true ? {'complete' : is_complete} : {})
@@ -1292,7 +1436,6 @@
             
         }
 
-    document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const point1 = document.querySelector('.team1-button');
     const point2 = document.querySelector('.team2-button');
@@ -1301,6 +1444,7 @@
 
     // Get existing containers
     const container3 = document.querySelector('.container3');
+    const container4 = document.querySelector('.container4');
     const container6 = document.querySelector('.container6');
     const slideContainer = document.querySelector('.slide-container');
     const slideWrapper = document.querySelector('.slide-wrapper');
@@ -1308,13 +1452,16 @@
     const undo_logs = document.querySelector('.undo');
     
     // Wrap containers in sliding parent
-    if (slideContainer && container3  ) {
+    if (slideContainer && container3 && container4  ) {
     slideContainer.appendChild(container3);
+    slideContainer.appendChild(container4);
+
     } else {
         console.warn("One or more containers not found in the DOM.");
     }
     
     const player1Names = document.querySelectorAll('.container3 .player-replace');
+    const scorepoint = document.querySelectorAll('.score-point');
     const inButton = document.querySelector('.in');
     const aceButton = document.querySelector('.ace');
     const errorButton = document.querySelector('.error');
@@ -1347,11 +1494,6 @@
         get_score();
     });
 
-    let cancel_end = () => {
-        let cancel = document.querySelector('#start_second');
-        cancel.close();
-        end_half = false;
-    }
 
     // Open modal
     team_btns.forEach(selector => {
@@ -1367,10 +1509,60 @@
     player1Names.forEach(player => {
         player.addEventListener('click', (el) => {
             console.log(player.innerText);
-            slideWrapper.style.transform = 'translateY(600px)';  
+            updateSlidePosition();  
             chaser = player.getAttribute('data-player-id');
         })
     });
+
+    function updateSlidePosition() {
+                slideContainer.style.transform = `translateX(-${currentSlide * 50}%)`;
+            }
+
+     function goToSlide(slideIndex) {
+                currentSlide = slideIndex;
+                updateSlidePosition();
+            }
+
+            // Event listeners
+            player1Names.forEach(player => {
+                player.addEventListener('click', (el) => {
+                    goToSlide(1);
+                    getplayername(player);
+                    player.style.backgroundColor = "var(--text-color)";
+                    raider=player.innerText;
+                })
+            });
+    
+    let getplayername = (el) => {
+                raider = el.innerText;
+            }
+
+            let serveresult = (el) => {
+                points = el.innerText;
+                setTimeout(() => {
+                    get_score();
+                }, 600);
+            }
+
+    let deftakepoint = (el) => {
+                    setTimeout(() => {
+                        if (el && el.textContent) {
+                            
+                            slideWrapper.style.transform = 'translateY(600px)';
+
+                        } else {
+                            console.warn("Invalid element passed to getraidtechpoint:", el);
+                        }
+                    }, 300);
+                    def_tech_point = parseInt(el.textContent);
+                            el.style.border = "2px solid var(--text-color)";
+                            el.style.backgroundColor = "var(--text-color)";
+                            el.style.color = "var(--background)";
+
+                    get_score();
+                    
+                }
+            
 
 
     
@@ -1401,7 +1593,6 @@
         }
     });
        
-});
 
  // Disable F5 and Ctrl+R keyboard shortcuts
         window.addEventListener("keydown", function (e) {
@@ -1427,7 +1618,60 @@
         }
     }
 
-   
+     // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
 </script>
 </body>
 

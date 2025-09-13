@@ -93,265 +93,406 @@
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <title>Scoring</title>
     <style>
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            user-select : none;
-            scrollbar-width: none;
-        }
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-        }
-        body{
-            height: max-content;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+        user-select: none;
+        scrollbar-width: none;
+    }
+    
+    :root {
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --primary-light-20: rgba(209, 34, 31, 0.2);
+        --primary-dark-10: rgba(160, 25, 23, 0.1);
+        --background: #ffffff;
+        --card-bg: #ffffff;
+        --text-dark: #000000;
+        --text-muted: #666666;
+        --bg-light: #f5f5f5;
+        --border-light: #e0e0e0;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        --radius-sm: 6px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --svg-fill: #000000;
+        --hover-bg: rgba(209, 34, 31, 0.08);
+        --input-bg: #ffffff;
+        --input-border: #000000;
+    }
+    
+    /* Dark theme variables */
+    [data-theme="dark"] {
+        --background: #121212;
+        --card-bg: #1e1e1e;
+        --text-dark: #ffffff;
+        --text-muted: #a0a0a0;
+        --bg-light: #2d2d2d;
+        --border-light: #333333;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+        --svg-fill: #ffffff;
+        --hover-bg: rgba(209, 34, 31, 0.15);
+        --input-bg: #2d2d2d;
+        --input-border: #ffffff;
+    }
+    
+    svg path {
+        fill: var(--text-dark);
+    }
+    body {
+        height: max-content;
+        background: var(--background);
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex-direction: column;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .part {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 70px;
+    }
+    
+    .return {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+    }
+    
+    .return svg {
+        cursor: pointer;
+        fill: var(--svg-fill);
+        transition: var(--transition);
+    }
+    
+    .return svg:hover {
+        transform: scale(1.1);
+        fill: var(--primary-light);
+    }
+    
+    .container2 {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 80px;
+    }
+    
+    .txt {
+        line-height: 20px;
+        color: var(--text-dark);
+    }
+    
+    .input-fields {
+        width: 100%;
+        position: relative;
+    }
+    
+    .input-fields label {
+        position: absolute;
+        bottom: 22px;
+        left: 14px;
+        text-align: center;
+        font-size: 16px;
+        transition: 0.3s ease-in-out;
+        color: var(--text-muted);
+    }
+    
+    .input-fields input:valid ~ label,
+    .input-fields input:focus ~ label {
+        transform: translateX(-5px) translateY(-24px);
+        font-size: 14px;
+        color: var(--primary-color);
+    }
+    
+    .container3 {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 100px;
+    }
+    
+    .info {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 40px;
+    }
+    
+    .error {
+        display: none;
+        color: #DC2626;
+        width: 100%;
+        font-size: 14px;
+        margin: 5px;
+        padding: 8px 12px;
+        background-color: rgba(220, 38, 38, 0.1);
+        border-radius: var(--radius-sm);
+        border-left: 3px solid #DC2626;
+    }
+    
+    .teams,
+    .options {
+        height: 147px;
+        width: 111px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        background: var(--bg-light);
+        box-shadow: var(--shadow-md);
+        cursor: pointer;
+        transition: var(--transition);
+        border-radius: var(--radius-sm);
+    }
+    
+    .teams:hover,
+    .options:hover {
+        background: var(--hover-bg);
+        transform: translateY(-3px);
+    }
+    
+    .teams.active,
+    .options.active {
+        border: 2px solid var(--primary-color);
+        box-shadow: none;
+        background-color: var(--primary-light-20);
+    }
+    
+    .logo {
+        height: 75px;
+        width: 75px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: var(--border-light);
+    }
+    
+    .types .logo {
+        background: none;
+    }
+    
+    .logo img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    .tname {
+        font-size: 17px;
+        text-wrap: auto;
+        text-align: center;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+    
+    .sector {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+    }
+    
+    .sector.types {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 20px;
+    }
+    
+    .add-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .types .options {
+        margin-left: 10%;
+    }
+    
+    .player-frame {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        transition: bottom 0.8s ease;
+        z-index: 999;
+        background: var(--background);
+    }
+    
+    .player-frame.active {
+        bottom: 0;
+    }
+
+    @media (min-width: 601px) {
+        .container {
             display: flex;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            width: 90%;
+            max-width: 100%;
+            min-height: 480px;
             align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
+            justify-content: flex-start;
             flex-direction: column;
-        }
-        .part{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 70px;
-        }
-        .return{
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-direction: row;
-        }
-        .return svg{
-            cursor: pointer;
-            
-        }
-        .container2{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            width: 100%;
-            gap: 80px
-        }
-        .txt{
-            line-height: 20px;
+            gap: 30px;
+            padding: 40px;
+            border-radius: var(--radius-lg);
         }
         
-        .input-fields{
-            width: 100%;
-            position: relative;
-        }
-        .input-fields label{
-            position: absolute;
-            bottom: 22px;
-            left: 14px;
-            text-align: center;
-            font-size: 16px;
-            transition: 0.3s ease-in-out;
-        }
-        .input-fields input:valid ~ label,
-        .input-fields input:focus ~ label {
-            transform: translateX(-5px) translateY(-24px);
-            font-size: 14px;
-            color: black;
-        }
-        .container3{
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
+        .container2 {
             gap: 100px;
+            width: 70%;
         }
-        .info{
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 40px
-        }
-        .error{
-            display: none;
-            color:red; 
-            width:100%;
-            font-size:14px;
-            margin: 5px;
-        }
-        .teams,
-        .options{
-            height: 147px;
-            width: 111px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            background: #EEEEEE;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-        }
-        .teams.active,
-        .options.active{
-            border:#ffae00 2px solid;
-            box-shadow: none;
-        }
-        .logo{
-            height: 75px;
-            width: 75px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        .types .logo{
-            background: none;
-        }
-        .logo img{
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-        }
-        .tname{
-            font-size: 17px;
-            text-wrap: auto;
-            text-align: center;
-            font-weight: 600;
-        }
-        .sector{
-            display: flex;
-            width: 100%;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-        }
-        .sector.types{
-            display: flex;
-            width: 100%;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            gap: 20px;
-        }
-        .add-btn{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .types .options{
-            margin-left:10%;
-        }
-        .player-frame{
-            position: fixed;
-            bottom: -100%;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        
+        .container input[type="text"],
+        .container input[type="email"],
+        .container input[type="password"],
+        .container input[type="number"],
+        .container input[type="tel"],
+        .container input[type="datetime"],
+        .container input[type="time"],
+        .container input[type="date"],
+        .container select {
             border: none;
-            transition: bottom 0.8s ease;
-            z-index: 999;
+            border-bottom: solid 1px var(--input-border);
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+            height: 45px;
+            background: var(--input-bg);
+            color: var(--text-dark);
+            transition: border-color 0.3s ease;
         }
-        .player-frame.active{
-            bottom: 0;
+        
+        .container input:focus {
+            border-bottom: solid 2px var(--primary-color);
         }
+        
+        .add-btn button {
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            color: #fff;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            height: 40px;
+            width: 300px;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(209, 34, 31, 0.2);
+        }
+        
+        .add-btn button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(209, 34, 31, 0.3);
+            opacity: 0.9;
+        }
+        
+        .types .options {
+            margin-left: 16%;
+        }
+    }
 
-        @media (min-width:601px) {
-             .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 90%;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px;
-                padding: 40px;
-            }
-            .container2{
-                gap: 100px;
-                width: 70%;
-            }
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
-                border: none;
-                border-bottom: solid 1px black;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 16px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                background: white;
-            }
-            .add-btn button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                height: 40px;
-                width: 300px;
-            }
-            .types .options{
-                margin-left:16%;
-            }
+    @media (max-width: 601px) {
+        .container {
+            display: flex;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            width: 90%;
+            z-index: 0;
+            max-width: 100%;
+            min-height: 480px;
+            padding: 40px 20px;
+            align-items: flex-start;
+            justify-content: flex-start;
+            flex-direction: column;
+            gap: 30px;
+            border-radius: var(--radius-lg);
         }
-
-        @media(max-width: 601px) {
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                min-height: 480px;
-                padding: 40px 40px;
-                align-items: flex-start;
-                justify-content: flex-start;
-                flex-direction: column;
-                gap: 30px
-            }
-            
-            .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],[type="datetime"],[type="time"],[type="date"],select{
-                border: none;
-                border-bottom: solid 1px black;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 15px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                background: white;
-            }
-            .add-btn button{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                cursor: pointer;
-                width: 100%;
-                height: 45px;
-            }
+        
+        .container input[type="text"],
+        .container input[type="email"],
+        .container input[type="password"],
+        .container input[type="number"],
+        .container input[type="tel"],
+        .container input[type="datetime"],
+        .container input[type="time"],
+        .container input[type="date"],
+        .container select {
+            border: none;
+            border-bottom: solid 1px var(--input-border);
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 15px;
+            width: 100%;
+            outline: none;
+            height: 45px;
+            background: var(--input-bg);
+            color: var(--text-dark);
+            transition: border-color 0.3s ease;
         }
-    </style>
+        
+        .container input:focus {
+            border-bottom: solid 2px var(--primary-color);
+        }
+        
+        .add-btn button {
+            background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+            color: #fff;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            height: 45px;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(209, 34, 31, 0.2);
+        }
+        
+        .add-btn button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(209, 34, 31, 0.3);
+            opacity: 0.9;
+        }
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -533,6 +674,71 @@
             }
         }
 
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

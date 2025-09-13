@@ -44,7 +44,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title><?php echo $username;?>'s Dashboard</title>
 <style>
@@ -56,11 +56,7 @@
         box-sizing: border-box;
     }
     
-    body {
-        background-color: #121212; /* Dark background */
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #e0e0e0; /* Light text */
-    }
+    
     
     :root {
         --primary-red: rgba(209, 34, 31, 1);
@@ -71,24 +67,72 @@
         --text-dark: #e0e0e0; /* Light text for dark background */
         --text-light: #a0a0a0; /* Muted text */
         --border-color: #333333; /* Dark borders */
+        --accent-color: #1c0003ff;
+        --svg-fill : white;
+        --nav-fill: #2d2d2d;
+        --invert: invert(1);
+       }
+
+    [data-theme="light"] {
+        --background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+        --card-bg: #ffffff;
+        --text-dark: #212529;
+        --text-light: #495057;
+        --border-color: #dee2e6;
+        --svg-fill : black;
+        --nav-fill: #ffffffff;
+        --invert: invert(0);
+    }
+    body {
+        background-color: var(--card-bg); /* Dark background */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-dark); /* Light text */
+    }
+
+    [data-theme="light"] body {
+        background-color: #f8f9fa;
+        color: #212529;
     }
     
+    .bx {
+        color: var(--text-dark);
+    }
     .nav-bar {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 20px;
+        padding: 10px 20px 10px 0px;
         position: fixed;
         top: 0;
         width: 100%;
-        background: #212121; /* Dark nav background */
+        background: var(--nav-fill); /* Dark nav background */
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         z-index: 999;
         height: 61px;
         border-bottom: 1px solid var(--border-color);
     }
     
+    .game svg path ,
+    .menu-bar svg path,
+    .close-icon svg path,
+    .menu-items svg path {
+        fill: var(--svg-fill);
+    }
+    
+    .pp svg path {
+        fill: none;
+        stroke: var(--svg-fill);
+    }
+    
+    .first svg path {
+        fill: none;
+    }
+    
+    .second svg path {
+        fill: red;
+    }
+
     .items {
         display: flex;
         justify-content: center;
@@ -143,7 +187,7 @@
         top: 0;
         width: 300px;
         height: 100%;
-        background: #1a1a1a; /* Dark sidebar */
+        background: var(--card-bg); /* Dark sidebar */
         box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
         scroll-behavior: smooth;
         overflow-y: scroll;
@@ -259,7 +303,7 @@
         font-size: 14px;
         font-weight: 500;
         color: var(--text-dark);
-        background-color: #2a2a2a; /* Dark input background */
+        background-color: var(--card-bg); /* Dark input background */
         outline: none;
         transition: all 0.3s ease;
     }
@@ -275,11 +319,11 @@
     }
     
     .btn-outline-success:focus {
-        background: #2a2a2a;
+        background: var(--card-bg);
     }
     
     .btn-outline-success:hover {
-        background: #2a2a2a;
+        background: var(--card-bg);
     }
     
     .plus-icon {
@@ -315,7 +359,7 @@
     
     .updates {
         height: 70px;
-        background: #1a1a1a;
+        background: var(--nav-fill);
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -323,7 +367,6 @@
         position: relative;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
         z-index: 1;
-        margin-bottom: 20px;
         border-bottom: 1px solid var(--border-color);
     }
     
@@ -341,7 +384,7 @@
         font-weight: 500;
         color: var(--text-light);
         transition: all 0.2s ease;
-        background: #2a2a2a;
+        background: var(--card-bg);
     }
     
     .updates .update-container:hover {
@@ -377,7 +420,7 @@
         gap: 15px;
         width: 100%;
         max-width: 450px;
-        background: var(--card-bg);
+        background: var(--nav-fill);
         border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         flex-direction: row;
@@ -386,7 +429,7 @@
         cursor: pointer;
         transition: all 0.2s ease;
         margin: 10px 0;
-        border: 1px solid #333;
+        border: 1px solid var(--border-color);
     }
     
     .game-info:hover {
@@ -453,12 +496,17 @@
         flex-direction: row;
         align-items: center;
         width: 100%;
+        color: var(--text-dark);
     }
     
     .team-score {
         font-size: 18px;
         font-weight: 700;
         color: var(--text-dark);
+        font-size: clamp(8px, 15px, 18px);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
     }
     
     .team {
@@ -472,14 +520,14 @@
     .team img {
         height: 40px;
         width: 40px;
-        background: #2a2a2a;
+        background: var(--card-bg);
         border-radius: 50%;
         display: flex;
         overflow: hidden;
         object-fit: cover;
         align-items: center;
         justify-content: center;
-        border: 1px solid #333;
+        border: 1px solid var(--border-color);
     }
     
     .container-list {
@@ -534,7 +582,7 @@
         max-width: 500px;
         border: none;
         height: max-content;
-        background: #1a1a1a;
+        background: var(--card-bg);
         flex-direction: column;
         transition: all 0.3s ease;
         justify-content: center;
@@ -542,7 +590,7 @@
         padding: 30px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        border: 1px solid #333;
+        border: 1px solid var(--border-color);
     }
     
     #startMatchDialog::backdrop {
@@ -597,7 +645,7 @@
         outline: none;
         border: 1px solid #333;
         border-radius: 8px;
-        background: #2a2a2a;
+        background: var(--card-bg);
         color: var(--text-dark);
         font-size: 15px;
     }
@@ -687,9 +735,7 @@
         transition: all 0.2s ease;
     }
     
-    .game:hover {
-        background: rgba(209, 34, 31, 0.15);
-    }
+    
     
     .game p {
         font-size: 12px;
@@ -720,11 +766,11 @@
         align-items: center;
         justify-content: space-between;
         border-radius: 15px;
-        background: #1a1a1a;
+        background: var(--nav-fill);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         transition: all 0.2s ease;
         padding: 0 20px;
-        border: 1px solid #333;
+        border: 1px solid var(--border-color);
     }
     
     .blocks:hover {
@@ -775,17 +821,29 @@
         width: 100%;
         height: 100vh;
         transform: translateY(100%);
-        background: #1a1a1a;
+        background: var(--card-bg);
         flex-direction: column;
         transition: all 0.3s ease;
         display: flex;
-        border-top: 1px solid #333;
+        border-top: 1px solid var(--border-color);
     }
     
     .add-container.active {
         transform: translateY(0);
     }
     
+    .ad2{
+            height: 80px;
+            width: 100%;
+            background: rgb(20 20 20 / 12%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(248, 57, 0, 0.1);
+            margin-bottom: 20px;
+        }
     .close-container {
         width: 100%;
         height: 70px;
@@ -823,6 +881,82 @@
         text-decoration: none;
         color: var(--text-dark);
     }
+
+    /* Toggle Switch
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        } */
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
     
     @media(max-width: 1000px) {
         .game-list {
@@ -834,12 +968,17 @@
             grid-template-columns: 1fr;
             margin: 0px 15px;
         }
+
+        
     }
     
     @media(min-width: 601px) {
         .logo-img img {
             height: 100%;
             width: 100%;
+        }
+        .game:hover {
+            background: rgba(209, 34, 31, 0.15);
         }
         .pls {
             justify-content: flex-end;
@@ -857,7 +996,7 @@
             height: 38px;
             align-items: center;
             justify-content: center;
-            background: #2a2a2a;
+            background: var(--card-bg);
             cursor: pointer;
             color: var(--text-light);
         }
@@ -877,7 +1016,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, 150%);
-            border: 1px solid #333;
+            border: 1px solid var(--border-color);
         }
         
         .add-container.active {
@@ -897,25 +1036,23 @@
             width: 44px;
             right: 0;
             border-radius: 0px 25px 25px 0px;
-            border: solid 1px #333;
+            border: solid 1px var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 17px;
-            background: #2a2a2a;
+            background: var(--card-bg);
         }
         
         .form-control{
             height: 30px;
             padding: 5px;
             width: 100%;
-            border: 1px solid #333;
+            border: 1px solid var(--border-color);
             border-radius: 25px;
             font-size: 12px;
             font-weight: 500;
             padding-right: 52px;
-            color: var(--text-dark);
-            background-color: #2a2a2a;
             outline: none;
             transition: all 0.3s ease-in-out;
         }
@@ -939,6 +1076,22 @@
             bottom: 30px;
             right: 30px;
         }
+    }
+    /* Add smooth transitions to all theme-affected elements */
+    .nav-bar,
+    .sidebar,
+    .form-control,
+    .updates,
+    .updates .update-container,
+    .game-info,
+    .team img,
+    #startMatchDialog,
+    #matchPassword,
+    .blocks,
+    .add-container,
+    .game svg path ,
+    .menu-bar svg path {
+        transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     }
 </style>
 </head>
@@ -994,15 +1147,18 @@
                         ?></div>
                     </div><hr>
 
-                    <div class="menu-items"><div><p>Setting</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="menu-items"><div onclick="window.location.href='settings.php'"><p>Setting</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M15.76 4.0375C16.3267 4.2125 16.8683 4.4375 17.385 4.7125L19.6763 3.3375C19.9152 3.1942 20.1951 3.13482 20.4716 3.16879C20.7481 3.20276 21.0054 3.32814 21.2025 3.525L22.475 4.7975C22.6719 4.99463 22.7972 5.25187 22.8312 5.52838C22.8652 5.8049 22.8058 6.08484 22.6625 6.32375L21.2875 8.615C21.5625 9.13167 21.7875 9.67333 21.9625 10.24L24.5537 10.8888C24.8241 10.9565 25.064 11.1126 25.2354 11.3322C25.4069 11.5519 25.5 11.8226 25.5 12.1012V13.8988C25.5 14.1774 25.4069 14.4481 25.2354 14.6678C25.064 14.8874 24.8241 15.0435 24.5537 15.1112L21.9625 15.76C21.7875 16.3267 21.5625 16.8683 21.2875 17.385L22.6625 19.6763C22.8058 19.9152 22.8652 20.1951 22.8312 20.4716C22.7972 20.7481 22.6719 21.0054 22.475 21.2025L21.2025 22.475C21.0054 22.6719 20.7481 22.7972 20.4716 22.8312C20.1951 22.8652 19.9152 22.8058 19.6763 22.6625L17.385 21.2875C16.8683 21.5625 16.3267 21.7875 15.76 21.9625L15.1112 24.5537C15.0435 24.8241 14.8874 25.064 14.6678 25.2354C14.4481 25.4069 14.1774 25.5 13.8988 25.5H12.1012C11.8226 25.5 11.5519 25.4069 11.3322 25.2354C11.1126 25.064 10.9565 24.8241 10.8888 24.5537L10.24 21.9625C9.67837 21.7889 9.13431 21.5629 8.615 21.2875L6.32375 22.6625C6.08484 22.8058 5.8049 22.8652 5.52838 22.8312C5.25187 22.7972 4.99463 22.6719 4.7975 22.475L3.525 21.2025C3.32814 21.0054 3.20276 20.7481 3.16879 20.4716C3.13482 20.1951 3.1942 19.9152 3.3375 19.6763L4.7125 17.385C4.43705 16.8657 4.21106 16.3216 4.0375 15.76L1.44625 15.1112C1.17615 15.0436 0.936373 14.8877 0.764953 14.6683C0.593534 14.4488 0.500286 14.1784 0.5 13.9V12.1025C0.500007 11.8238 0.593128 11.5532 0.764569 11.3335C0.936011 11.1138 1.17594 10.9577 1.44625 10.89L4.0375 10.2413C4.2125 9.67458 4.4375 9.13292 4.7125 8.61625L3.3375 6.325C3.1942 6.08609 3.13482 5.80615 3.16879 5.52963C3.20276 5.25312 3.32814 4.99588 3.525 4.79875L4.7975 3.525C4.99463 3.32814 5.25187 3.20276 5.52838 3.16879C5.8049 3.13482 6.08484 3.1942 6.32375 3.3375L8.615 4.7125C9.13167 4.4375 9.67333 4.2125 10.24 4.0375L10.8888 1.44625C10.9564 1.17615 11.1123 0.936373 11.3317 0.764953C11.5512 0.593534 11.8216 0.500286 12.1 0.5H13.8975C14.1762 0.500007 14.4468 0.593128 14.6665 0.764569C14.8862 0.936011 15.0423 1.17594 15.11 1.44625L15.76 4.0375ZM13 18C14.3261 18 15.5979 17.4732 16.5355 16.5355C17.4732 15.5979 18 14.3261 18 13C18 11.6739 17.4732 10.4021 16.5355 9.46447C15.5979 8.52678 14.3261 8 13 8C11.6739 8 10.4021 8.52678 9.46447 9.46447C8.52678 10.4021 8 11.6739 8 13C8 14.3261 8.52678 15.5979 9.46447 16.5355C10.4021 17.4732 11.6739 18 13 18Z" fill="white"/>
                         </svg></div>
-                    </div>
+                    </div> 
 
                     <?php
                     if($_SESSION['role'] == 'Admin'){
 
-                    echo '<div class="menu-items"><div onclick="window.location.href=`./Frontend/manage-matches.php`"><p>My Matches</p><img src="https://i.ibb.co/b5DfJD81/IMG-0734-removebg-preview.png" alt="" style="width:26px; filter: grayscale(1) invert(1) brightness(0.0) contrast(0);"></div></div>';
+                    echo '<div class="menu-items"><div onclick="window.location.href=`./Frontend/manage-matches.php`"><p>My Matches</p><svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">';
+                    echo '<path d="M12.5002 2.08398C13.4335 2.08398 14.3377 2.2069 15.1981 2.43711L12.9835 4.65065C12.8155 4.81933 12.6673 5.00666 12.5418 5.20898H12.5002C11.058 5.20898 9.64824 5.63663 8.44913 6.43785C7.25002 7.23907 6.31543 8.37787 5.76354 9.71025C5.21165 11.0426 5.06725 12.5087 5.3486 13.9232C5.62995 15.3376 6.32442 16.6369 7.34418 17.6566C8.36393 18.6764 9.66319 19.3709 11.0776 19.6522C12.4921 19.9336 13.9582 19.7892 15.2906 19.2373C16.6229 18.6854 17.7617 17.7508 18.563 16.5517C19.3642 15.3526 19.7918 13.9428 19.7918 12.5007V12.459C19.9932 12.334 20.179 12.1864 20.3491 12.0163L22.5637 9.80273C22.7939 10.6632 22.9168 11.5673 22.9168 12.5007C22.9168 18.2538 18.2533 22.9173 12.5002 22.9173C6.74704 22.9173 2.0835 18.2538 2.0835 12.5007C2.0835 6.74753 6.74704 2.08398 12.5002 2.08398ZM12.0689 7.31003C12.0689 8.19649 12.0252 9.09544 12.0731 9.98086L11.5106 10.5434C11.3171 10.7369 11.1636 10.9666 11.0589 11.2194C10.9542 11.4722 10.9003 11.7432 10.9003 12.0168C10.9003 12.2904 10.9542 12.5614 11.0589 12.8142C11.1636 13.067 11.3171 13.2967 11.5106 13.4902C11.7041 13.6837 11.9338 13.8372 12.1866 13.9419C12.4394 14.0467 12.7104 14.1006 12.984 14.1006C13.2577 14.1006 13.5286 14.0467 13.7814 13.9419C14.0342 13.8372 14.264 13.6837 14.4575 13.4902L15.02 12.9277C15.9054 12.9757 16.8033 12.9319 17.6908 12.9319C17.6085 13.9218 17.2448 14.8676 16.6427 15.6576C16.0405 16.4477 15.225 17.0491 14.2923 17.3908C13.3596 17.7326 12.3486 17.8005 11.3786 17.5866C10.4085 17.3726 9.51991 16.8857 8.81751 16.1833C8.1151 15.4809 7.62821 14.5923 7.41426 13.6222C7.20031 12.6522 7.26823 11.6412 7.60999 10.7085C7.95176 9.77579 8.55313 8.96027 9.34317 8.35812C10.1332 7.75598 11.079 7.39231 12.0689 7.31003ZM19.2752 2.21628C19.4653 2.29511 19.6278 2.4285 19.7422 2.59962C19.8566 2.77074 19.9177 2.97191 19.9179 3.17773V5.08398H21.8231C22.0291 5.08403 22.2304 5.14515 22.4017 5.25961C22.5729 5.37407 22.7064 5.53674 22.7852 5.72705C22.8641 5.91737 22.8847 6.12678 22.8445 6.32881C22.8043 6.53084 22.7052 6.71643 22.5595 6.86211L18.8752 10.5423C18.6799 10.7377 18.415 10.8475 18.1387 10.8475H15.6252L13.721 12.7527C13.5255 12.9482 13.2604 13.058 12.984 13.058C12.7076 13.058 12.4425 12.9482 12.247 12.7527C12.0516 12.5573 11.9418 12.2922 11.9418 12.0158C11.9418 11.7393 12.0516 11.4742 12.247 11.2788L14.1522 9.37565V6.86107C14.1521 6.72411 14.179 6.58848 14.2314 6.46193C14.2838 6.33538 14.3606 6.2204 14.4575 6.12357L18.1397 2.44128C18.2854 2.29551 18.4711 2.19623 18.6732 2.156C18.8753 2.11576 19.0848 2.13638 19.2752 2.21523" fill="white"/>';
+                    echo  '</svg>';
+                    echo  '</div></div>';
 
                     echo '<div class="menu-items"><div onclick="window.location.href=`./Frontend/manage-tournaments.php`"><p>My Tournaments</p><svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">';
                       echo  '<path d="M20.5 0.5V4.25H25.5C25.4658 7.26719 24.9918 9.39498 24.0779 10.6334L23.9375 10.8125C23.2027 11.6942 21.9485 12.3209 20.1749 12.6927C19.3552 15.3769 17.0705 17.4221 14.2527 17.8958C14.2506 17.9305 14.2497 17.9652 14.25 18C14.25 20.7614 16.4885 23 19.25 23V25.5H6.74996V23C9.51143 23 11.75 20.7614 11.75 18L11.7473 17.8958C8.92947 17.4221 6.64484 15.3769 5.82553 12.6924C4.05143 12.3209 2.79723 11.6942 2.06246 10.8125C1.05668 9.60551 0.535859 7.41801 0.5 4.25H5.49998V0.5H20.5ZM18 2.99996H8V10.5C8 13.1778 10.1049 15.3638 12.7504 15.4938L13 15.5C15.7614 15.5 18 13.2614 18 10.5V2.99996ZM13 4.25L14.2644 7.25996L17.375 7.59688L15.0431 9.78436L15.7037 13L13 11.3462L10.2962 13L10.9569 9.77996L8.62496 7.59248L11.7356 7.25562L13 4.25ZM5.49998 6.74996H3.17246L3.19965 6.92996C3.3599 7.95605 3.60588 8.68408 3.90131 9.1049L3.98305 9.21201C4.21367 9.48881 4.64721 9.74949 5.28951 9.96846L5.49998 10.035V6.74996ZM22.8275 6.74996H20.5V10.035L20.7105 9.96846C21.3528 9.74949 21.7863 9.48881 22.0169 9.21201L22.0987 9.1049C22.3941 8.68408 22.6401 7.95605 22.8004 6.92996L22.8275 6.74996Z" fill="white"/>';
@@ -1016,13 +1172,13 @@
                     }
                     ?>
 
-                    <div class="menu-items"><div><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M23.25 9L14.5 0.25V5.25C5.75 6.5 2 12.75 0.75 19C3.875 14.625 8.25 12.625 14.5 12.625V17.75L23.25 9Z" fill="white"/>
+                    <div class="menu-items"><div onclick="shareContent()"><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M23.25 9L14.5 0.25V5.25C5.75 6.5 2 12.75 0.75 19C3.875 14.625 8.25 12.625 14.5 12.625V17.75L23.25 9Z" fill="black"/>
                         </svg></div>
                     </div>
 
-                    <div class="menu-items"><div onclick="window.location.href=`./privacy-policy.php`"><p>Privacy Policy</p><svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 14V6.18625C21.0001 6.08758 20.9807 5.98987 20.9429 5.8987C20.9052 5.80754 20.8498 5.72473 20.78 5.655L16.845 1.72C16.7045 1.57931 16.5138 1.50018 16.315 1.5H1.75C1.55109 1.5 1.36032 1.57902 1.21967 1.71967C1.07902 1.86032 1 2.05109 1 2.25V25.75C1 25.9489 1.07902 26.1397 1.21967 26.2803C1.36032 26.421 1.55109 26.5 1.75 26.5H12.25M6 11.5H16M6 6.5H11M6 16.5H9.75" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <div class="menu-items pp"><div onclick="window.location.href=`./privacy-policy.php`"><p>Privacy Policy</p><svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 14V6.18625C21.0001 6.08758 20.9807 5.98987 20.9429 5.8987C20.9052 5.80754 20.8498 5.72473 20.78 5.655L16.845 1.72C16.7045 1.57931 16.5138 1.50018 16.315 1.5H1.75C1.55109 1.5 1.36032 1.57902 1.21967 1.71967C1.07902 1.86032 1 2.05109 1 2.25V25.75C1 25.9489 1.07902 26.1397 1.21967 26.2803C1.36032 26.421 1.55109 26.5 1.75 26.5H12.25M6 11.5H16M6 6.5H11M6 16.5H9.75" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg></div>
                     </div>
 
@@ -1047,7 +1203,7 @@
                         </svg></div>
                     </div>
 
-                    <div class="menu-items danger"><div onclick='deleteAccount()';><p>Delete Account</p><svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="menu-items danger first"><div><p class= "para1" style= "color: red">Delete Account</p><svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1.375 21.625V20.5C1.375 18.0137 3.38875 16 5.875 16H10.375C12.8612 16 14.875 18.0137 14.875 20.5V21.625" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M8.125 12.625C6.2575 12.625 4.75 11.1175 4.75 9.25C4.75 7.3825 6.2575 5.875 8.125 5.875C9.9925 5.875 11.5 7.3825 11.5 9.25C11.5 11.1175 9.9925 12.625 8.125 12.625Z" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M14.875 1.375L21.625 8.125" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1055,7 +1211,7 @@
                         </svg></div>
                     </div>
 
-                    <div class="menu-items danger"><div onclick='logout()';><p>Log Out</p><svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="menu-items danger second"><div onclick='logout()';><p class= "para1" style= "color: red">Log Out</p><svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15.7085 4.29167L14.2397 5.76042L16.9272 8.45833H6.3335V10.5417H16.9272L14.2397 13.2292L15.7085 14.7083L20.9168 9.5M2.16683 2.20833H10.5002V0.125H2.16683C1.021 0.125 0.0834961 1.0625 0.0834961 2.20833V16.7917C0.0834961 17.9375 1.021 18.875 2.16683 18.875H10.5002V16.7917H2.16683V2.20833Z" fill="#FF0000"/>
                         </svg></div>
                     </div>
@@ -1119,14 +1275,15 @@
         <div class="main-body">
             <nav class="nav-bar">
                 <div class="nav-content">
-                    <a href="javascript:location.reload()">
-                        <div class="items">
-                            <div class="logo-img"><img src="https://i.ibb.co/vCR3ndct/new-logo-removebg-preview.png" alt=""></div>
-                            <sup class="trade-mark">TM</sup>
-                        </div>
-                    </a>
-
+                    <div class="items">
+                        <div class="logo-img"><img src="./assets/images/logo.png" alt=""></div>
+                    </div>
                     <div class="items list">
+
+                    <!-- L<label class="toggle-switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>D -->
 
                     <form class="d-flex" role="search" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="Get">
                         <!-- retain existing GET parameters as hidden fields -->
@@ -1210,6 +1367,7 @@
                 <div class="update-container completed">Completed</div>
             </div>
             
+            <div class="ad2">Advertisement (412px x 80px)</div>
             <div class="info-container">
 
             </div>
@@ -1227,6 +1385,31 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
     <script>
+       function resizeText(className) {
+    const elements = document.querySelectorAll(className);
+
+    elements.forEach(element => {
+        let fontSize = 20;
+        element.style.fontSize = fontSize + "px";
+
+        // Temporarily allow wrapping to check overflow
+        element.style.whiteSpace = 'nowrap';
+
+        // Stop shrinking too small
+        while (
+            element.scrollWidth > element.clientWidth &&
+            fontSize > 12 // Set your preferred minimum size here
+        ) {
+            fontSize--;
+            element.style.fontSize = fontSize + "px";
+        }
+
+        // Optional: revert wrapping
+        element.style.whiteSpace = ''; // or 'normal' if your design allows wrapping
+    });
+}
+
+resizeText(".team-score");
 
         //display content as per user's selection(Status & Sport)
         function loadgames(update, sport) {
@@ -1239,7 +1422,8 @@
             let data = {
                 update: update,
                 sport: sport,
-                for : 'dashboard'
+                for : 'dashboard',
+                search : params.get('search') || null
             }
 
             displayContent(data);
@@ -1271,6 +1455,104 @@
             }
             
         }
+
+
+
+
+        // Add this JavaScript to your site
+
+        // Theme management functions
+        function initializeTheme() {
+            // Check for saved theme preference or use system preference
+            const currentTheme = localStorage.getItem('theme') || 
+                                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Set the initial theme
+            if (currentTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = true;
+                }
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = false;
+                }
+            }
+            
+            // Add event listener to theme toggle if it exists
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        document.body.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                        
+                        // Dispatch event for other components to listen to
+                        window.dispatchEvent(new CustomEvent('themeChanged', { detail: 'dark' }));
+                    } else {
+                        document.body.setAttribute('data-theme', 'light');
+                        localStorage.setItem('theme', 'light');
+                        
+                        // Dispatch event for other components to listen to
+                        window.dispatchEvent(new CustomEvent('themeChanged', { detail: 'light' }));
+                    }
+                });
+            }
+        }
+
+        // Listen for theme changes from other tabs/windows
+        function setupThemeSync() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme') {
+                    if (e.newValue === 'dark') {
+                        document.body.setAttribute('data-theme', 'dark');
+                        if (document.getElementById('theme-toggle')) {
+                            document.getElementById('theme-toggle').checked = true;
+                        }
+                    } else {
+                        document.body.setAttribute('data-theme', 'light');
+                        if (document.getElementById('theme-toggle')) {
+                            document.getElementById('theme-toggle').checked = false;
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            setupThemeSync();
+        });
+
+        // Optional: Add this if you want to programmatically change the theme from other parts of your site
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = true;
+                }
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = false;
+                }
+            }
+            
+            // Dispatch event for other components to listen to
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+        }
+
+        // Optional: Get current theme
+        function getCurrentTheme() {
+            return document.body.getAttribute('data-theme') || 'dark';
+        }
+
+
+
 
         // Open dialog for password
         function openDialog(button, event) {
@@ -1468,6 +1750,31 @@
             console.log(SportName);
             window.location.href = `./Frontend/${SportName}/scoreboard.php?match_id=${match}`;
         }
+
+        function shareContent() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'LiveStrike',
+                    text: 'Check out this awesome real-time score tracking!',
+                    url: window.location.href
+                })
+                .then(() => console.log('Successfully shared'))
+                .catch((error) => console.error('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 </html>

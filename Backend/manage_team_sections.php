@@ -71,7 +71,7 @@
 
             $count++;
             $staff_mem.= "
-                        <div class='mem'>$count
+                        <div class='mem' data-id='{$row['staff_id']}' >$count
                             <div class='mem-img'><img src='$src' alt='' class='mem-img'></div>
                             <div class='mem-name'>{$row['name']}</div>
                         </div>
@@ -126,7 +126,7 @@
 
             $count++;
             $players.= "
-                        <div class='mem'>$count
+                        <div class='mem' data-id='{$row['user_id']}' >$count
                             <div class='mem-img'><img src='$src' alt='' class='mem-img'></div>
                             <div class='mem-name'>{$row['player_name']}</div>
                         </div>

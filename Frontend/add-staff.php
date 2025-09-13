@@ -26,11 +26,42 @@
             font-family: 'Montserrat', sans-serif;
             user-select : none;
         }
+        
+        /* Theme Variables */
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --background: #ffffff;
+            --card-bg: #ffffff;
+            --text-dark: #000000;
+            --text-light: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --svg-fill: #000000;
+            --hover-bg: rgba(209, 34, 31, 0.08);
+            --input-bg: #ffffff;
+            --gradient: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --team-bg: #eeeeeeab;
+            --logo-bg: #e8e8e8;
         }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text-dark: #ffffff;
+            --text-light: #e0e0e0;
+            --border-color: #333333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --svg-fill: #ffffff;
+            --hover-bg: rgba(209, 34, 31, 0.15);
+            --input-bg: #2a2a2a;
+            --gradient: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --team-bg: #3d3d3d;
+            --logo-bg: #4d4d4d;
+        }
+        
         body{
             height: 100vh;
             display: flex;
@@ -38,6 +69,12 @@
             justify-content: center;
             flex-wrap: wrap;
             flex-direction: column;
+            background-color: var(--background);
+            color: var(--text-dark);
+        }
+
+        svg path {
+            fill: var(--text-dark);
         }
         .return{
             width: 100%;
@@ -48,7 +85,7 @@
         }
         .return svg{
             cursor: pointer;
-            
+            fill: var(--svg-fill);
         }
         .container2{
             display: flex;
@@ -61,6 +98,7 @@
         }
         .txt{
             line-height: 20px;
+            color: var(--text-dark);
         }
         .team{
             width: 100%;
@@ -69,21 +107,27 @@
             align-content: center;
             justify-content: space-evenly;
             align-items: center;
-            gap: 10px;
-            color: black;
+            gap: 7px;
+            color: var(--text-dark);
             padding: 10px;
             border-radius: 20px;
             text-wrap: auto;
-            background: #eeeeeeab;
-            box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
-            flex-wrap: wrap;
+            background: var(--team-bg);
+            box-shadow: var(--shadow);
         }
         .logo{
-            min-height: 75px;
-            min-width: 75px;
-            background: #e8e8e8;
+            height: 75px;
+            width: 75px;
+            background: var(--logo-bg);
             margin: 10px;
             border-radius: 50%;
+            overflow: hidden;
+        }
+        .logo img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+
         }
         .other-info{
             display: flex;
@@ -93,6 +137,7 @@
             margin-left: 15px;
             cursor: pointer;
             line-height: 30px;
+            color: var(--text-dark);
         }
         .team-info{
             display: flex;
@@ -101,6 +146,7 @@
             gap: 10px;
             height: 100%;
             justify-content: center;
+            color: var(--text-dark);
         }
          .input-fields{
             width: 100%;
@@ -113,12 +159,13 @@
             text-align: center;
             font-size: 16px;
             transition: 0.3s ease-in-out;
+            color: var(--text-light);
         }
         .input-fields input:valid ~ label,
         .input-fields input:focus ~ label {
             transform: translateX(-5px) translateY(-24px);
             font-size: 14px;
-            color: black;
+            color: var(--primary-color);
         }
         .history-staff{
             width: 100%;
@@ -131,6 +178,7 @@
         .team-info h4{
             overflow-wrap: break-word;
             width: 100%;
+            color: var(--text-dark);
         }
         .team-info label.data{
             display: flex;
@@ -138,11 +186,13 @@
             justify-content: flex-start;
             flex-direction: row;
             gap: 5px;
+            color: var(--text-dark);
         }
         .add-history-staff svg{
             flex-shrink: 0;
             flex-grow: 0;
             cursor: pointer;
+            fill: var(--svg-fill);
         }
         label.data .dt{
             word-wrap: break-word;
@@ -150,16 +200,17 @@
             white-space: normal;
             max-width: 200px; /* or whatever fits your layout */
             display: block;
+            color: var(--text-dark);
         }
         .no-data{
-            color:rgb(0, 0, 0);
+            color: var(--text-dark);
         }
 
         @media (min-width:601px) {
              .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--card-bg);
+                box-shadow: var(--shadow);
                 position: relative;
                 width: 90%;
                 max-width: 100%;
@@ -175,14 +226,15 @@
             }
             .container input[type="text"],[type="email"],[type="password"],[type="number"],select{
                 border: none;
-                border-bottom: solid 1px black;
+                border-bottom: solid 1px var(--border-color);
                 margin: 8px 0;
                 padding: 10px 15px;
                 font-size: 16px;
                 width: 100%;
                 outline: none;
                 height: 45px;
-                background: white;
+                background: var(--input-bg);
+                color: var(--text-dark);
             }
             .staff-container{
                 width: 100%;
@@ -198,8 +250,8 @@
         @media(max-width: 601px) {
             .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--card-bg);
+                box-shadow: var(--shadow);
                 position: relative;
                 width: 768px;
                 z-index: 0;
@@ -215,17 +267,19 @@
             .team{
                 height: 90px;
                 width: 100%;
+                flex: 1;
             }
             .container input[type="text"],[type="email"],[type="password"],[type="number"],select{
                 border: none;
-                border-bottom: solid 1px black;
+                border-bottom: solid 1px var(--border-color);
                 margin: 8px 0;
                 padding: 10px 15px;
                 font-size: 15px;
                 width: 100%;
                 outline: none;
                 height: 45px;
-                background: white;
+                background: var(--input-bg);
+                color: var(--text-dark);
             }
             .staff-container{
                 width: 100%;
@@ -445,6 +499,72 @@
                 container.innerHTML = '<p>No previously used staff found.</p>';
             }
         }
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

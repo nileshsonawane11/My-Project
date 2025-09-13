@@ -57,19 +57,42 @@
             scrollbar-width: none;
         }
 
+        /* Theme Variables */
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --primary-light-transparent: rgba(250, 192, 31, 0.1);
-            --primary-dark-transparent: rgba(248, 57, 0, 0.1);
-            --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --primary-light-transparent: rgba(209, 34, 31, 0.1);
+            --primary-dark-transparent: rgba(160, 25, 23, 0.1);
+            --background: #ffffff;
+            --card-bg: #ffffff;
             --text-color: #333333;
             --light-bg: #f8f9fa;
             --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             --border-radius: 12px;
             --transition: all 0.3s ease;
+            --svg-fill: #333333;
+            --border-color: #ddd;
+            --invert: invert(0);
         }
 
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --light-bg: #2d3748;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --svg-fill: #ffffff;
+            --border-color: #4a5568;
+            --primary-light-transparent: rgba(209, 34, 31, 0.2);
+            --primary-dark-transparent: rgba(160, 25, 23, 0.2);
+            --invert: invert(1);
+        }
+
+        svg path {
+            fill: var(--text-color);
+        }
         body {
             min-height: 100vh;
             background-color: var(--light-bg);
@@ -81,14 +104,14 @@
         .container {
             width: 100%;
             max-width: 800px;
-            background: white;
+            background: var(--card-bg);
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--card-shadow);
         }
 
         .header {
-            background: var(--background);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
             padding: 20px;
             color: white;
             position: relative;
@@ -105,6 +128,26 @@
             cursor: pointer;
             transition: var(--transition);
             fill: white;
+        }
+        .return svg path{
+            cursor: pointer;
+            transition: var(--transition);
+            fill: white;
+        }
+
+        .edit-toggle svg path {
+            fill: none;
+        }
+        /* For <input type="date"> */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: var(--invert);    /* makes it white */
+        cursor: pointer;
+        }
+
+        /* For <input type="time"> */
+        input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: var(--invert);    /* makes it white */
+        cursor: pointer;
         }
 
         .return svg:hover {
@@ -127,7 +170,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 30px;
-            background: white;
+            background: var(--card-bg);
         }
 
         .team {
@@ -149,16 +192,16 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid white;
+            border: 3px solid var(--card-bg);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            background: white;
+            background: var(--card-bg);
         }
 
         .team-logo-edit {
             position: absolute;
             bottom: -5px;
             right: -5px;
-            background: white;
+            background: var(--card-bg);
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -171,12 +214,13 @@
         }
 
         .team-logo-edit:hover {
-            background: #f0f0f0;
+            background: var(--light-bg);
         }
 
         .team-logo-edit svg {
             width: 20px;
             height: 20px;
+            fill: var(--svg-fill);
         }
 
         .team-name {
@@ -188,18 +232,20 @@
             background: transparent;
             outline: none;
             text-align: center;
+            color: var(--text-color);
         }
 
         .vs {
             font-size: 1.8rem;
             font-weight: bold;
-            color: var(--primary-dark);
+            color: var(--primary-color);
             margin: 0 20px;
         }
 
         /* Match Details Section */
         .form-section {
             padding: 30px;
+            background: var(--card-bg);
         }
 
         .form-row {
@@ -225,18 +271,19 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: var(--primary-dark);
+            color: var(--primary-color);
             font-size: 0.9rem;
         }
 
         .form-input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
-            background-color: #f9f9f9;
+            background-color: var(--light-bg);
+            color: var(--text-color);
         }
 
         .form-input:focus {
@@ -248,23 +295,24 @@
         .form-select {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
-            background-color: #f9f9f9;
+            background-color: var(--light-bg);
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 16px;
+            color: var(--text-color);
         }
 
         /* Edit mode styles */
         .edit-mode .form-input,
         .edit-mode .form-select,
         .edit-mode .team-name {
-            background-color: white;
-            border-color: #ccc;
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
         }
 
         .edit-mode .form-input:focus,
@@ -283,7 +331,8 @@
             flex-direction: column;
             gap: 40px;
         }
-        .logout-btn {
+        .logout-btn,
+        .save-btn {
             display: inline-flex;
             justify-content: center;
             align-items: center;
@@ -297,13 +346,14 @@
             cursor: pointer;
             transition: var(--transition);
             margin: 20px;
-            box-shadow: 0 4px 12px rgba(248, 57, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(209, 34, 31, 0.2);
         }
 
-        .logout-btn:hover {
-            background-color: #e03400;
+        .logout-btn:hover,
+        .save-btn:hover {
+            background-color: var(--primary-color);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(248, 57, 0, 0.3);
+            box-shadow: 0 6px 16px rgba(209, 34, 31, 0.3);
         }
         .popup-overlay {
             position: fixed;
@@ -320,12 +370,12 @@
         }
 
         .popup-box {
-            background: #fff;
+            background: var(--card-bg);
             padding: 30px;
             border-radius: var(--border-radius);
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: var(--card-shadow);
             animation: popIn 0.3s ease-out;
         }
 
@@ -344,16 +394,19 @@
             margin-bottom: 20px;
             font-size: 1.1rem;
             line-height: 1.5;
+            color: var(--text-color);
         }
 
         .popup-input {
             width: 100%;
             padding: 12px 15px;
             margin: 8px 0 15px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1rem;
             transition: var(--transition);
+            background-color: var(--light-bg);
+            color: var(--text-color);
         }
 
         .popup-input:focus {
@@ -378,13 +431,13 @@
         }
 
         .popup-btn.cancel {
-            background-color: #f0f0f0;
-            color: #333;
+            background-color: var(--light-bg);
+            color: var(--text-color);
             border: none;
         }
 
         .popup-btn.cancel:hover {
-            background-color: #e0e0e0;
+            background-color: var(--border-color);
         }
 
         .popup-btn.confirm {
@@ -394,7 +447,7 @@
         }
 
         .popup-btn.confirm:hover {
-            background-color: #e03400;
+            background-color: var(--primary-color);
         }
 
         .password {
@@ -415,15 +468,36 @@
             width: 100%;
             height: 100%;
             background-color: transparent;
-            font-size: 25px;
+            font-size: 20px;
+            color: var(--text-color);
         }
 
         .pass-el {
-        height: 35px;
-        width: 120px;
-        margin-top: 30px;
-        position: relative;
-    }
+            height: 35px;
+            width: 120px;
+            margin-top: 30px;
+            position: relative;
+        }
+        .officials-frame{
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: bottom 0.8s ease;
+            z-index: 999;
+        }
+        .officials-frame.active{
+            bottom: 0;
+        }
+        .error{
+            display: none;
+            color: var(--primary-color); 
+            width:100%;
+            font-size:14px;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -466,7 +540,9 @@
         <div class="teams-section">
             <div class="team">
                 <div class="team-logo-container">
-                    <img id="team1Logo" class="team-logo" src="https://i.ibb.co/WvW312RQ/istockphoto-1473259144-612x612.jpg" >
+                    <?php if(!($team1['t_logo'])){ echo "<img id='team1Logo' class='team-logo'  src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' alt=''>"; }else{
+                        echo "<img id='team1Logo' class='team-logo'  src='../assets/images/teams/{$team1['t_logo']}' alt=''>";
+                    } ?>
                     <div class="team-logo-edit" onclick="document.getElementById('team1LogoInput').click()">
                         <svg width="28" height="22" viewBox="0 0 31 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M26.2918 3.24984H23.8467L22.3051 1.70817C21.4125 0.815546 19.8461 0.166504 18.5835 0.166504H12.4168C11.1542 0.166504 9.58787 0.815546 8.69525 1.70817L7.15358 3.24984H4.7085C2.15858 3.24984 0.0834961 5.32492 0.0834961 7.87484V20.2082C0.0834961 22.7581 2.15858 24.8332 4.7085 24.8332H26.2918C28.8417 24.8332 30.9168 22.7581 30.9168 20.2082V7.87484C30.9168 5.32492 28.8417 3.24984 26.2918 3.24984ZM15.5002 18.6665C14.0689 18.6663 12.6963 18.0975 11.6844 17.0853C10.6725 16.0731 10.1041 14.7004 10.1043 13.2691C10.1045 11.8379 10.6733 10.4653 11.6855 9.45338C12.6977 8.44146 14.0704 7.87309 15.5017 7.87329C16.933 7.8735 18.3055 8.44227 19.3175 9.45447C20.3294 10.4667 20.8977 11.8394 20.8975 13.2707C20.8973 14.7019 20.3286 16.0745 19.3164 17.0864C18.3042 18.0983 16.9314 18.6667 15.5002 18.6665ZM24.7502 11.4191C24.487 11.4191 24.2264 11.3673 23.9832 11.2666C23.74 11.1659 23.5191 11.0182 23.333 10.8321C23.1469 10.646 22.9993 10.4251 22.8986 10.1819C22.7978 9.93877 22.746 9.67815 22.746 9.41496C22.746 9.15177 22.7978 8.89116 22.8986 8.648C22.9993 8.40484 23.1469 8.18391 23.333 7.9978C23.5191 7.8117 23.74 7.66407 23.9832 7.56335C24.2264 7.46263 24.487 7.4108 24.7502 7.4108C25.2817 7.4108 25.7915 7.62195 26.1673 7.9978C26.5432 8.37366 26.7543 8.88342 26.7543 9.41496C26.7543 9.9465 26.5432 10.4563 26.1673 10.8321C25.7915 11.208 25.2817 11.4191 24.7502 11.4191Z" fill="var(--primary-dark)"/>
@@ -481,7 +557,9 @@
             
             <div class="team">
                 <div class="team-logo-container">
-                    <img id="team2Logo" class="team-logo" src="https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Chennai_Super_Kings_Logo.svg/1200px-Chennai_Super_Kings_Logo.svg.png" >
+                    <?php if(!($team2['t_logo'])){ echo "<img id='team2Logo' class='team-logo'  src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' alt=''>"; }else{
+                        echo "<img id='team2Logo' class='team-logo'  src='../assets/images/teams/{$team2['t_logo']}' alt=''>";
+                    } ?>
                     <div class="team-logo-edit" onclick="document.getElementById('team2LogoInput').click()">
                         <svg width="28" height="22" viewBox="0 0 31 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M26.2918 3.24984H23.8467L22.3051 1.70817C21.4125 0.815546 19.8461 0.166504 18.5835 0.166504H12.4168C11.1542 0.166504 9.58787 0.815546 8.69525 1.70817L7.15358 3.24984H4.7085C2.15858 3.24984 0.0834961 5.32492 0.0834961 7.87484V20.2082C0.0834961 22.7581 2.15858 24.8332 4.7085 24.8332H26.2918C28.8417 24.8332 30.9168 22.7581 30.9168 20.2082V7.87484C30.9168 5.32492 28.8417 3.24984 26.2918 3.24984ZM15.5002 18.6665C14.0689 18.6663 12.6963 18.0975 11.6844 17.0853C10.6725 16.0731 10.1041 14.7004 10.1043 13.2691C10.1045 11.8379 10.6733 10.4653 11.6855 9.45338C12.6977 8.44146 14.0704 7.87309 15.5017 7.87329C16.933 7.8735 18.3055 8.44227 19.3175 9.45447C20.3294 10.4667 20.8977 11.8394 20.8975 13.2707C20.8973 14.7019 20.3286 16.0745 19.3164 17.0864C18.3042 18.0983 16.9314 18.6667 15.5002 18.6665ZM24.7502 11.4191C24.487 11.4191 24.2264 11.3673 23.9832 11.2666C23.74 11.1659 23.5191 11.0182 23.333 10.8321C23.1469 10.646 22.9993 10.4251 22.8986 10.1819C22.7978 9.93877 22.746 9.67815 22.746 9.41496C22.746 9.15177 22.7978 8.89116 22.8986 8.648C22.9993 8.40484 23.1469 8.18391 23.333 7.9978C23.5191 7.8117 23.74 7.66407 23.9832 7.56335C24.2264 7.46263 24.487 7.4108 24.7502 7.4108C25.2817 7.4108 25.7915 7.62195 26.1673 7.9978C26.5432 8.37366 26.7543 8.88342 26.7543 9.41496C26.7543 9.9465 26.5432 10.4563 26.1673 10.8321C25.7915 11.208 25.2817 11.4191 24.7502 11.4191Z" fill="var(--primary-dark)"/>
@@ -557,7 +635,11 @@
                         }
                     ?>
                     </p>
+<<<<<<< HEAD
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+=======
+                    <svg onclick="select_person(this)" class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+>>>>>>> origin
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
@@ -587,7 +669,11 @@
                             
                         }
                     ?>
+<<<<<<< HEAD
                     <label class="form-label">Commentators</label>
+=======
+                    <label class="form-label">Commentator</label>
+>>>>>>> origin
                     <p class="name-info">
                     <?php 
                         if (!empty($valid_emails)) {
@@ -601,7 +687,11 @@
                         }
                     ?>
                     </p>
+<<<<<<< HEAD
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+=======
+                    <svg onclick="select_person(this)" class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+>>>>>>> origin
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
@@ -645,14 +735,20 @@
                         }
                     ?>
                     </p>
+<<<<<<< HEAD
                     <svg class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+=======
+                    <svg onclick="select_person(this)" class="pencil" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+>>>>>>> origin
                     <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.621 3.25 16.863 3.15C17.105 3.05 17.359 3 17.625 3C17.891 3 18.1493 3.05 18.4 3.15C18.6507 3.25 18.8673 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.771 5.4 20.863 5.65C20.955 5.9 21.0007 6.15 21 6.4C21 6.66667 20.9543 6.921 20.863 7.163C20.7717 7.405 20.6257 7.62567 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="black"/>
                     </svg>
                 </div>
             </div>
         </div>
+        <div class="error" id="error-datetime"></div>
         <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column; align-items: center;">
-                <button class="logout-btn">DELETE MATCH</button>
+        <button class="save-btn">SAVE CHANGES</button>        
+        <button class="logout-btn">DELETE MATCH</button>
             </div>
     </div>
     <form method="post" class="popup-overlay" id="popupOverlay">
@@ -666,15 +762,57 @@
             </div>
         </div>
     </form>
+<<<<<<< HEAD
 
+=======
+    <iframe src="./select-officials.php?p=Scorers" frameborder="0" class="officials-frame"></iframe>
+>>>>>>> origin
     <script>
         // Edit Toggle Functionality
         const toggle = document.getElementById("editToggle");
+        const matchID = <?php echo json_encode($match_id); ?>;
         let edit = false;
         const inputs = document.querySelectorAll("input:not(.file-input)");
         const logoEdits = document.querySelectorAll(".team-logo-edit");
         const pencil = document.querySelectorAll(".pencil");
         const pass = document.querySelector(".pass");
+        const save_btn = document.querySelector(".save-btn");
+        save_btn.style.display = "none";
+        let Umpires = [];
+        let Scorers = [];
+        let Commentators = [];
+        let next_page = document.querySelector('.officials-frame');
+
+        let select_person = (el) => {
+            let parent = el.closest('.form-group');
+            let text = parent.querySelector('.form-label').textContent.trim();
+            next_page.src = `./select-officials.php?p=${text}`;
+            next_page.classList.add('active');
+        };
+        
+         window.addEventListener("message", (event) => {
+            if (event.data === "closeIframe") {
+                next_page.classList.remove('active');  
+
+            }
+
+            if (event.data.type === "emailList" && (event.data.Umpires)) {
+                let arr = event.data.Umpires;
+                Umpires = arr;
+            }
+
+            if (event.data.type === "emailList" && (event.data.Scorers)) {
+                let arr = event.data.Scorers;
+                Scorers = arr;
+
+            }
+
+            if (event.data.type === "emailList" && (event.data.Commentator)) {
+                let arr = event.data.Commentator;
+                Commentators = arr;
+            }
+        });
+
         let passfield = true;
         
         // Initially hide edit buttons
@@ -694,6 +832,8 @@
                 logoEdits.forEach(el => el.style.display = "flex");
 
                 pencil.forEach(el => el.style.display = "flex");
+
+                save_btn.style.display = "block";
                 
                 // Add edit mode class
                 document.querySelector('.container').classList.add('edit-mode');
@@ -708,6 +848,8 @@
                 logoEdits.forEach(el => el.style.display = "none");
 
                 pencil.forEach(el => el.style.display = "none");
+
+                save_btn.style.display = "none";
                 
                 // Remove edit mode class
                 document.querySelector('.container').classList.remove('edit-mode');
@@ -778,8 +920,168 @@
             }
         });
 
+        save_btn.addEventListener("click", function() {
+            
+            const team1Name = document.querySelectorAll(".team-name")[0].value;
+            const team2Name = document.querySelectorAll(".team-name")[1].value;
+            const team1Logo = document.getElementById("team1LogoInput").files[0];
+            const team2Logo = document.getElementById("team2LogoInput").files[0];
+            const matchVenue = document.querySelectorAll(".form-input")[0].value;
+            const matchCity = document.querySelectorAll(".form-input")[1].value;
+            const matchDate = document.querySelectorAll(".form-input")[2].value;
+            const matchTime = document.querySelectorAll(".form-input")[3].value;
+            const matchPass = document.querySelector(".pass").value;
 
+            const formdata = new FormData();
+            formdata.append("match_id", matchID);
+            formdata.append("team1Name", team1Name);
+            formdata.append("team2Name", team2Name);
+            formdata.append("team1Logo", team1Logo);
+            formdata.append("team2Logo", team2Logo);
+            formdata.append("matchVenue", matchVenue);
+            formdata.append("matchCity", matchCity);
+            formdata.append("matchDate", matchDate);
+            formdata.append("matchTime", matchTime);
+            formdata.append("matchPass", matchPass);
+            formdata.append('Umpires[]', Umpires);
+            formdata.append('Scorers[]', Scorers);
+            formdata.append('Commentators[]', Commentators);
 
+            // for (let [key, value] of formdata.entries()) {
+            //     console.log(`${key}:`, value);
+            // }
+
+             // First schedule the match via fetch()
+            fetch('../Backend/update_match.php', {
+                method: 'POST',
+                body: formdata
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+
+                if (data.status == 409) {
+                    let el = document.getElementById(`error-${data.field}`);
+                    el.innerHTML = data.message;
+                    el.style.display = 'block';
+                } else if (data.status == 200) {
+
+                    // Send mails via sendBeacon (fire-and-forget)
+                    Scorers.forEach((scorer) => {
+                        let scorerData = {
+                            for_value: 'Scorer',
+                            game: data.game,
+                            venue: matchCity,
+                            time: matchTime,
+                            password: matchPass,
+                            date: matchDate,
+                            recipient_email: scorer
+                        };
+                        const scorerBlob = new Blob([JSON.stringify(scorerData)], { type: 'application/json' });
+                        navigator.sendBeacon('../mail.php', scorerBlob);
+                    });
+
+                    Umpires.forEach((umpire) => {
+                        let umpireData = {
+                            for_value: 'Umpire',
+                            game: data.game,
+                            venue: matchCity,
+                            time: matchTime,
+                            date: matchDate,
+                            recipient_email: umpire
+                        };
+                        const umpireBlob = new Blob([JSON.stringify(umpireData)], { type: 'application/json' });
+                        navigator.sendBeacon('../mail.php', umpireBlob);
+                    });
+
+                    const totalBeacons = Scorers.length + Umpires.length;
+
+                        if (totalBeacons > 0) {
+                            console.log("Waiting 500ms before reload");
+                            setTimeout(() => {
+                                console.log("Reloading now...");
+                                window.location.reload();
+                            }, 500);
+                        } else {
+                            console.log("Reloading immediately...");
+                            window.location.reload();
+                        }
+
+                }
+            })
+            .catch(error => console.log(error));
+        });
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>

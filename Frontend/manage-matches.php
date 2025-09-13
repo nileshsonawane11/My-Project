@@ -16,9 +16,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <title>Manage Teams</title>
+    <title>Manage Matches</title>
 <style>
     * {
         margin: 0;
@@ -30,25 +30,46 @@
     }
     
     :root {
-        --primary-light: #FAC01F;
-        --primary-dark: #F83900;
-        --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-        --card-bg: #ffffff;
-        --text-dark: #333333;
+        --primary-color: rgba(209, 34, 31, 1);
+        --primary-light: rgba(209, 34, 31, 0.8);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --background: #ffffff;
+        --text-dark: #000000;
         --text-light: #666666;
         --border-color: #e0e0e0;
         --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --card-bg: #ffffff;
+        --hover-bg: rgba(209, 34, 31, 0.1);
+        --selected-bg: rgba(209, 34, 31, 0.15);
+        --nav-fill: #ffffffff;
+    }
+
+    [data-theme="dark"] {
+        --background: #121212;
+        --text-dark: #ffffff;
+        --text-light: #a0a0a0;
+        --border-color: #333333;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        --card-bg: #1e1e1e;
+        --hover-bg: rgba(209, 34, 31, 0.2);
+        --selected-bg: rgba(209, 34, 31, 0.25);
+        --nav-fill: #2d2d2d;
     }
     
     body {
         height: 100vh;
         height: -webkit-fill-available;
-        background: #f8f8f8;
+        background: var(--background);
+        color: var(--text-dark);
         display: flex;
         align-items: center;
         justify-content: center;
+        transition: background 0.3s ease, color 0.3s ease;
     }
-    
+
+    svg path {
+        fill : var(--text-dark);
+    }
     .container {
         display: flex;
         background-color: var(--card-bg);
@@ -65,6 +86,7 @@
         border-radius: 20px;
         padding: 30px;
         overflow: hidden;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
     
     .return {
@@ -80,11 +102,13 @@
         font-size: 28px;
         color: var(--text-dark);
         transition: all 0.2s ease;
+        fill: var(--text-dark);
     }
     
     .return svg:hover {
-        color: var(--primary-dark);
+        color: var(--primary-color);
         transform: translateX(-3px);
+        fill: var(--primary-color);
     }
     
     .txt {
@@ -100,12 +124,13 @@
     }
     
     .game-container {
-            width: 100%;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            overflow: hidden;
+        width: 100%;
+        background: var(--nav-fill);
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        overflow: hidden;
+        transition: background 0.3s ease;
     }
     
     .game-list {
@@ -135,11 +160,11 @@
     }
     
     .game:hover {
-        background: rgba(250, 192, 31, 0.1);
+        background: var(--hover-bg);
     }
     
     .game.selected {
-        background: rgba(248, 99, 0, 0.15);
+        background: var(--selected-bg);
         border-radius: 12px;
     }
     
@@ -149,16 +174,23 @@
         color: var(--text-dark);
         text-align: center;
         text-wrap: auto;
+        transition: color 0.3s ease;
     }
     
     .game svg {
         height: 28px;
         width: 28px;
+        fill: var(--text-dark);
+        transition: fill 0.3s ease;
     }
     
     .game.selected p {
         font-weight: 600;
-        color: var(--primary-dark);
+        color: var(--primary-color);
+    }
+    
+    .game.selected svg {
+        fill: var(--primary-color);
     }
     
     .team-container {
@@ -179,7 +211,7 @@
         font-size: 14px;
         gap: 15px;
         width: 100%;
-        background: var(--card-bg);
+        background: var(--nav-fill);
         border-radius: 20px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         flex-direction: row;
@@ -193,12 +225,12 @@
     .game-info:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        border-color: var(--primary-light);
+        border-color: var(--primary-color);
     }
     
     .selected-team {
-        border: 2px solid var(--primary-dark);
-        background: rgba(248, 99, 0, 0.05);
+        border: 2px solid var(--primary-color);
+        background: var(--selected-bg);
     }
     
     .match-data {
@@ -215,6 +247,7 @@
         color: var(--text-dark);
         margin-bottom: 5px;
         width: 100%;
+        transition: color 0.3s ease;
     }
     
     .info {
@@ -229,6 +262,7 @@
         font-size: 18px;
         font-weight: 700;
         color: var(--text-dark);
+        transition: color 0.3s ease;
     }
     
     .team {
@@ -242,7 +276,7 @@
     .team img {
         height: 40px;
         width: 40px;
-        background: #f5f5f5;
+        background: var(--card-bg);
         border-radius: 50%;
         display: flex;
         overflow: hidden;
@@ -250,6 +284,7 @@
         align-items: center;
         justify-content: center;
         border: 1px solid var(--border-color);
+        transition: background 0.3s ease, border-color 0.3s ease;
     }
     
     .start-btn {
@@ -259,15 +294,16 @@
         border: none;
         color: white;
         font-weight: 600;
-        background: var(--background);
-        box-shadow: 0 4px 10px rgba(248, 57, 0, 0.2);
+        background: var(--primary-color);
+        box-shadow: 0 4px 10px rgba(209, 34, 31, 0.2);
         cursor: pointer;
         transition: all 0.2s ease;
     }
     
     .start-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(248, 57, 0, 0.3);
+        box-shadow: 0 6px 15px rgba(209, 34, 31, 0.3);
+        background: var(--primary-dark);
     }
     
     .start-btn:active {
@@ -281,6 +317,7 @@
         text-align: center;
         padding: 40px 0;
         font-size: 16px;
+        transition: color 0.3s ease;
     }
     
     .plus {
@@ -297,8 +334,8 @@
         justify-content: center;
         align-items: center;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(248, 57, 0, 0.3);
-        background: var(--background);
+        box-shadow: 0 4px 15px rgba(209, 34, 31, 0.3);
+        background: var(--primary-color);
         color: white;
         transition: all 0.2s ease;
         z-index: 10;
@@ -306,7 +343,8 @@
     
     .plus:hover {
         transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 6px 20px rgba(248, 57, 0, 0.4);
+        box-shadow: 0 6px 20px rgba(209, 34, 31, 0.4);
+        background: var(--primary-dark);
     }
     
     .plus:active {
@@ -323,8 +361,6 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
-        
-        
     }
 
     @media (max-width: 600px) {
@@ -340,8 +376,6 @@
             grid-template-columns: 1fr;
             padding: 10px 5px;
         }
-
-     
         
         .plus {
             bottom: 30px;
@@ -368,12 +402,12 @@
     }
     
     .team-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: var(--hover-bg);
         border-radius: 10px;
     }
     
     .team-container::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
+        background: var(--primary-color);
         border-radius: 10px;
     }
     
@@ -385,10 +419,23 @@
         height: 4px;
     }
     
-    .game-list::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
+    .game-list::-webkit-scrollbar-track {
+        background: var(--hover-bg);
         border-radius: 10px;
     }
+<<<<<<< HEAD
+=======
+    
+    .game-list::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 10px;
+    }
+    
+    .game-list::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-dark);
+    }
+    
+>>>>>>> origin
     #startMatchDialog {
         z-index: 9999;
         position: fixed;
@@ -399,7 +446,11 @@
         max-width: 500px;
         border: none;
         height: max-content;
+<<<<<<< HEAD
         background: white;
+=======
+        background: var(--card-bg);
+>>>>>>> origin
         flex-direction: column;
         transition: all 0.3s ease;
         justify-content: center;
@@ -407,6 +458,10 @@
         padding: 30px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+<<<<<<< HEAD
+=======
+        border: 1px solid var(--border-color);
+>>>>>>> origin
     }
     
     #startMatchDialog::backdrop {
@@ -444,6 +499,10 @@
         line-height: 35px;
         font-weight: 500;
         color: var(--text-dark);
+<<<<<<< HEAD
+=======
+        transition: color 0.3s ease;
+>>>>>>> origin
     }
     
     .btns {
@@ -461,6 +520,7 @@
         outline: none;
         border: 1px solid var(--border-color);
         border-radius: 8px;
+<<<<<<< HEAD
         background: #f8f8f8;
         color: var(--text-dark);
         font-size: 15px;
@@ -469,19 +529,40 @@
     #matchPassword:focus {
         border-color: var(--primary-light);
         box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
+=======
+        background: var(--card-bg);
+        color: var(--text-dark);
+        font-size: 15px;
+        transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
+    }
+    
+    #matchPassword:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(209, 34, 31, 0.2);
+>>>>>>> origin
     }
 
     #title{
         font-size: 18px;
         font-weight: 500;
+<<<<<<< HEAD
+=======
+        color: var(--text-dark);
+        transition: color 0.3s ease;
+>>>>>>> origin
     }
     
     .btns>* {
         width: 110px;
         height: 40px;
         border-radius: 25px;
+<<<<<<< HEAD
         border: solid 1px var(--primary-light);
         color: var(--primary-light);
+=======
+        border: solid 1px var(--primary-color);
+        color: var(--primary-color);
+>>>>>>> origin
         background: transparent;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -489,17 +570,29 @@
     }
     
     .btns>*:last-child {
+<<<<<<< HEAD
         background: var(--background);
+=======
+        background: var(--primary-color);
+>>>>>>> origin
         color: white;
         border: none;
     }
     
     .btns>*:last-child:hover {
+<<<<<<< HEAD
         background: linear-gradient(135deg, #fac01fdb, #f83900cc);
     }
     
     .btns>*:first-child:hover {
         background: rgba(250, 192, 31, 0.1);
+=======
+        background: var(--primary-dark);
+    }
+    
+    .btns>*:first-child:hover {
+        background: var(--hover-bg);
+>>>>>>> origin
     }
 </style>
 </head>
@@ -548,8 +641,8 @@
         <div class="container2">
             <div class="txt">
                 <div>
-                    <label for="">My Teams</label>
-                    <h4>Manage Teams</h4>
+                    <label for="">My Matches</label>
+                    <h4>Manage Matches</h4>
                 </div>
                 <div>
                 
@@ -586,7 +679,7 @@
                     <div class="game tennis"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15.4507 0.00226117C13.9956 0.0472598 12.8706 1.26222 12.9156 2.70218C12.9306 3.06217 13.0056 3.40716 13.1556 3.75215L13.5906 4.71212C13.6506 4.90712 13.5456 5.11711 13.3356 5.17711C13.2006 5.25211 13.0506 5.17711 12.9456 5.05711L12.3156 4.23214C11.8205 3.60216 11.0705 3.21217 10.2755 3.19717C8.82041 3.16717 7.62035 4.32213 7.59035 5.76209C7.57535 6.39207 7.78536 6.99205 8.17537 7.50204L8.8054 8.25202H8.82041C8.94041 8.44701 8.89541 8.68701 8.7304 8.807C8.59539 8.912 8.41539 8.912 8.29538 8.807L7.50034 8.17702C6.99032 7.78703 6.37529 7.57704 5.76026 7.59204C4.3202 7.62204 3.16515 8.822 3.19515 10.277C3.21015 11.0719 3.60017 11.8219 4.23019 12.3169L5.08523 12.9769C5.25024 13.1269 5.25024 13.3669 5.07023 13.5019C5.02087 13.553 4.95691 13.5877 4.8871 13.6011C4.81729 13.6145 4.74503 13.6061 4.68021 13.5769H4.66521L3.75017 13.1569C3.40516 13.0219 3.06014 12.9319 2.70012 12.9169C1.26006 12.8719 0.0450021 14.0118 0 15.4668C0 16.5468 0.600027 17.5367 1.59007 17.9567L18.6759 25.5615L25.5612 18.6767L17.9558 1.59221C17.5358 0.587244 16.5008 -0.0427375 15.4507 0.00226117ZM16.6958 6.15208C17.3258 6.13708 17.8958 6.49707 18.1358 7.06705L22.711 17.3268L16.7858 11.4169L15.3907 8.25202C14.9407 7.30705 15.6307 6.18208 16.6958 6.15208ZM11.7755 10.277C12.1806 10.277 12.5556 10.427 12.8406 10.7269L20.0559 17.9417C20.6559 18.5117 20.6709 19.4567 20.1009 20.0567C19.5009 20.6567 18.5709 20.6717 17.9408 20.0567L10.7255 12.8419C10.5828 12.706 10.4687 12.5431 10.3898 12.3626C10.3109 12.1821 10.2688 11.9877 10.266 11.7907C10.2632 11.5938 10.2998 11.3982 10.3735 11.2155C10.4473 11.0329 10.5567 10.8668 10.6955 10.7269C10.9805 10.427 11.3705 10.277 11.7755 10.277ZM7.69535 15.2568C7.89036 15.2568 8.10037 15.3168 8.25038 15.3918L11.4455 16.8018L17.3558 22.7116L7.06532 18.1367C5.53525 17.4767 6.04528 15.2118 7.69535 15.2568ZM27.4213 21.0616L21.061 27.4215L22.336 28.6964C23.4761 29.8214 25.1262 30.2564 26.6712 29.8514C27.4323 29.6441 28.126 29.2416 28.6838 28.6839C29.2416 28.1262 29.644 27.4325 29.8514 26.6715C30.2564 25.1265 29.8214 23.4766 28.6963 22.3366L27.4213 21.0616Z" fill="black"/>
                     </svg>
-                    <p>TENNIS</p></div>
+                    <p>BADMINTON</p></div>
 
                     <div class="game table-tennis"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M29.0744 17.3699C30.9198 12.8117 30 7.39234 26.3091 3.69544C21.3938 -1.23181 13.4204 -1.23181 8.50511 3.69544L5.22434 6.98223L17.6151 19.3736C20.3159 15.7353 25.319 14.8389 29.0744 17.3699ZM16.3086 22.0393L3.39648 9.13241C1.79711 11.7864 2.12518 15.2841 4.41 17.5749L6.43119 19.6021L0.396922 24.8399C-0.106911 25.2793 -0.136203 26.0526 0.338337 26.5272L3.46678 29.6616C3.93546 30.1362 4.70879 30.1069 5.14818 29.6031L10.3798 23.5509L12.4713 25.6425C13.6254 26.7967 15.0842 27.4294 16.5899 27.5935C16.1739 26.5975 15.9454 25.5078 15.9454 24.3653C15.9396 23.5568 16.0919 22.7834 16.3086 22.0393ZM24.3758 18.7467C21.2708 18.7467 18.7516 21.266 18.7516 24.3712C18.7516 27.4763 21.2708 29.9956 24.3758 29.9956C27.4808 29.9956 30 27.4763 30 24.3712C30 21.266 27.4808 18.7467 24.3758 18.7467Z" fill="black"/>
@@ -598,10 +691,10 @@
                     </svg>
                     <p>CHESS</p></div>
 
-                    <div class="game weight-lifting"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- <div class="game weight-lifting"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 0C13.6757 0 12.5212 2.024 12.5212 4.7C12.5212 7.376 13.6757 9.4 15 9.4C16.3243 9.4 17.4788 7.376 17.4788 4.7C17.4788 2.024 16.3243 0 15 0ZM11.4309 5.8045C9.44422 6.6605 8.4286 9.2063 7.4918 11.9495C6.39134 15.2087 5.7042 19.0547 5.19795 22.2H4.38559V16.7H3.24153V22.2H2.22458V18.3H1.08051V22.2H0V24H1.08051V27.9H2.22458V24H3.24153V29.5H4.38559V24H9.7622C10.1071 25.3 10.5191 26.6 10.9322 27.9L7.88136 28.5V30H12.5078L11.7229 24H18.2771L17.4922 30H22.1186V28.5L19.0678 27.9C19.4809 26.6 19.8928 25.3 20.2378 24H25.6144V29.5H26.7585V24H27.7754V27.9H28.9195V24H30V22.2H28.9195V18.3H27.7754V22.2H26.7585V16.7H25.6144V22.2H24.8021C24.2957 19.0537 23.6061 15.1983 22.4595 11.9273C21.505 9.2043 20.5758 6.7747 18.5623 5.873C18.257 8.8506 16.813 11.2 15 11.2C13.1731 11.2 11.7208 8.8144 11.4309 5.8045ZM11.2016 10.643L11.8397 15.667C9.91525 16.7 8.8983 16.7 8.8983 18.3C8.8983 19.6 9.0661 20.9 9.33369 22.2H7.29775C7.78055 19.3055 8.41875 16.0246 9.2878 13.4506C9.86034 11.998 10.402 11.5722 11.2016 10.643ZM18.7842 10.778C19.5037 11.6033 20.117 11.871 20.6785 13.4727C21.577 16.0359 22.2188 19.3077 22.702 22.2H20.6663C20.9339 20.9 21.1017 19.6 21.1017 18.3C21.1017 16.7 20.0847 16.7 18.1602 15.667L18.7842 10.778ZM15 18.3C16.4587 18.3 18.8136 19.9 18.8136 19.9L18.5127 22.2H11.4873L11.1864 19.9C11.1864 19.9 13.5413 18.3 15 18.3Z" fill="black"/>
                     </svg>
-                    <p>WEIGHT-LIFTING</p></div>
+                    <p>WEIGHT-LIFTING</p></div> -->
 
                     <div class="game basketball"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M23.1818 12H6.81818C6.45652 12 6.10968 12.158 5.85395 12.4393C5.59821 12.7206 5.45455 13.1022 5.45455 13.5C5.45455 13.8978 5.59821 14.2794 5.85395 14.5607C6.10968 14.842 6.45652 15 6.81818 15H8.18182V28.5C8.18182 28.8978 8.32549 29.2794 8.58122 29.5607C8.83695 29.842 9.1838 30 9.54545 30C9.90711 30 10.254 29.842 10.5097 29.5607C10.7654 29.2794 10.9091 28.8978 10.9091 28.5V27H13.6364V28.5C13.6364 28.8978 13.78 29.2794 14.0358 29.5607C14.2915 29.842 14.6383 30 15 30C15.3617 30 15.7085 29.842 15.9642 29.5607C16.22 29.2794 16.3636 28.8978 16.3636 28.5V27H19.0909V28.5C19.0909 28.8978 19.2346 29.2794 19.4903 29.5607C19.746 29.842 20.0929 30 20.4545 30C20.8162 30 21.1631 29.842 21.4188 29.5607C21.6745 29.2794 21.8182 28.8978 21.8182 28.5V15H23.1818C23.5435 15 23.8903 14.842 24.1461 14.5607C24.4018 14.2794 24.5455 13.8978 24.5455 13.5C24.5455 13.1022 24.4018 12.7206 24.1461 12.4393C23.8903 12.158 23.5435 12 23.1818 12ZM13.6364 24H10.9091V21H13.6364V24ZM13.6364 18H10.9091V15H13.6364V18ZM19.0909 24H16.3636V21H19.0909V24ZM19.0909 18H16.3636V15H19.0909V18ZM25.9091 0H4.09091C3.00593 0 1.96539 0.474106 1.1982 1.31802C0.431005 2.16193 0 3.30653 0 4.5V16.5C0 17.6935 0.431005 18.8381 1.1982 19.682C1.96539 20.5259 3.00593 21 4.09091 21C4.45257 21 4.79941 20.842 5.05515 20.5607C5.31088 20.2794 5.45455 19.8978 5.45455 19.5C5.45455 19.1022 5.31088 18.7206 5.05515 18.4393C4.79941 18.158 4.45257 18 4.09091 18C3.72925 18 3.3824 17.842 3.12667 17.5607C2.87094 17.2794 2.72727 16.8978 2.72727 16.5V4.5C2.72727 4.10218 2.87094 3.72064 3.12667 3.43934C3.3824 3.15804 3.72925 3 4.09091 3H25.9091C26.2708 3 26.6176 3.15804 26.8733 3.43934C27.1291 3.72064 27.2727 4.10218 27.2727 4.5V16.5C27.2727 16.8978 27.1291 17.2794 26.8733 17.5607C26.6176 17.842 26.2708 18 25.9091 18C25.5474 18 25.2006 18.158 24.9449 18.4393C24.6891 18.7206 24.5455 19.1022 24.5455 19.5C24.5455 19.8978 24.6891 20.2794 24.9449 20.5607C25.2006 20.842 25.5474 21 25.9091 21C26.9941 21 28.0346 20.5259 28.8018 19.682C29.569 18.8381 30 17.6935 30 16.5V4.5C30 3.30653 29.569 2.16193 28.8018 1.31802C28.0346 0.474106 26.9941 0 25.9091 0ZM17.7273 9C18.0889 9 18.4358 8.84196 18.6915 8.56066C18.9472 8.27936 19.0909 7.89782 19.0909 7.5C19.0909 7.10218 18.9472 6.72064 18.6915 6.43934C18.4358 6.15804 18.0889 6 17.7273 6H12.2727C11.9111 6 11.5642 6.15804 11.3085 6.43934C11.0528 6.72064 10.9091 7.10218 10.9091 7.5C10.9091 7.89782 11.0528 8.27936 11.3085 8.56066C11.5642 8.84196 11.9111 9 12.2727 9H17.7273Z" fill="black"/>
@@ -656,10 +749,11 @@
             category.addEventListener('click', () => {
                 SportName = category.querySelector('p').textContent.trim();
                 console.log(SportName);
-
+                loadgames(SportName)
+                
                 setInterval(() => {
                     loadgames(SportName)
-                }, 100);
+                }, 1500);
                 
 
                 document.querySelector('.game.selected').classList.remove('selected');
@@ -778,6 +872,73 @@
             dialog.close();
         }
 
+<<<<<<< HEAD
+=======
+
+
+
+        // Theme management for this page
+        function initializeTheme() {
+            // Check for saved theme preference or use system preference
+            const currentTheme = localStorage.getItem('theme') || 
+                                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Set the initial theme
+            if (currentTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+            
+            // Listen for theme changes from other tabs/pages
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme') {
+                    if (e.newValue === 'dark') {
+                        document.body.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.body.removeAttribute('data-theme');
+                    }
+                }
+            });
+            
+            // Listen for custom events if your dashboard dispatches them
+            window.addEventListener('themeChanged', function(e) {
+                if (e.detail === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            });
+        }
+
+        // Initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+        });
+
+        // Function to programmatically change theme if needed
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Function to get current theme
+        function getCurrentTheme() {
+            return document.body.getAttribute('data-theme') || 'light';
+        }
+
+
+
+
+
+
+
+>>>>>>> origin
         
         // Variefy match password
         document.getElementById("matchPasswordForm").addEventListener("submit", function(e) {
@@ -819,6 +980,20 @@
             console.log(SportName);
             window.location.href = `./match-info.php?match_id=${match}`;
         }
+<<<<<<< HEAD
+=======
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+>>>>>>> origin
     </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-include 'config.php';
+include './config.php';
 $data = file_get_contents('php://input');
 $data = json_decode($data, true);
 
@@ -13,11 +13,11 @@ $password = mysqli_real_escape_string($conn, $data['password']);
 $password2 = mysqli_real_escape_string($conn, $data['password2']);
 $phone = mysqli_real_escape_string($conn, $data['phone']);
 $otp = mysqli_real_escape_string($conn, $data['otp']);
-$date = Date('d-m-Y / h:i:s A');
+$date = date('d-m-Y / h:i:s A');
 
 
 
-if($fname == '' || $lname == '' || $email == '' || $password == '' || $password2 == '' || $phone == ''||$otp == ''){
+if($fname == '' || $lname == '' || $email == '' || $password == '' || $password2 == ''  ||$otp == ''){
     echo json_encode(['status' => 400, 'message' => 'All fields are required', 'field' => 'empty']);
     exit();
 }
@@ -65,9 +65,6 @@ if (mysqli_num_rows($result1) > 0) {
     while ($row = mysqli_fetch_assoc($result1)) {
         if ($row['email'] === $email) {
             echo json_encode(['status' => 409, 'message' => 'Email already Used', 'field' => 'email']);
-            exit();
-        }elseif ($row['phone'] === $phone) {
-            echo json_encode(['status' => 409, 'message' => 'Phone already Used', 'field' => 'phone']);
             exit();
         }
     }

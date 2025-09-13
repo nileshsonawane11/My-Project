@@ -45,9 +45,6 @@
                 if ($row['email'] === $email && $row['email']) {
                     echo json_encode(['status' => 409, 'message' => 'Email already Used', 'field' => 'email']);
                     exit();
-                } elseif ($row['phone'] === $contact && $row['phone']) {
-                    echo json_encode(['status' => 409, 'message' => 'Phone already Used', 'field' => 'phone']);
-                    exit();
                 }
             }
         }
@@ -68,20 +65,34 @@
         }
 
     
-
+    $_SESSION['role'] = $role;
     // Assume $conn is your active MySQLi connection
 
-    $stmt = $conn->prepare("UPDATE users SET email=?, lname=?, fname=?, role=?, gender=?, phone=?, place=?, user_photo=? WHERE user_id=?");
+    if (!empty($image_file)) {
+
+        // If new image is uploaded
+        $stmt = $conn->prepare("UPDATE users SET email=?, lname=?, fname=?, role=?, gender=?, phone=?, place=?, user_photo=? WHERE user_id=?");
+
+        if ($stmt) {
+            $stmt->bind_param("sssssssss", $email, $lname, $fname, $role, $gender, $contact, $place, $image_file, $user_id);
+        }
+        
+    } else {
+        
+        // No new image
+        $stmt = $conn->prepare("UPDATE users SET email=?, lname=?, fname=?, role=?, gender=?, phone=?, place=? WHERE user_id=?");
+
+        if ($stmt) {
+            $stmt->bind_param("ssssssss", $email, $lname, $fname, $role, $gender, $contact, $place, $user_id);
+        }
+    }
 
     if ($stmt) {
-        $stmt->bind_param("sssssssss", $email, $lname, $fname, $role, $gender, $contact, $place, $image_file, $user_id);
-        
         if ($stmt->execute()) {
-            echo json_encode(["status" => 200, "message" => "Profile updated successfully.","field" => "success"]);
+            echo json_encode(["status" => 200, "message" => "Profile updated successfully.", "field" => "success"]);
         } else {
             echo json_encode(["status" => 400, "message" => "Execution failed: " . $stmt->error]);
         }
-
         $stmt->close();
     } else {
         echo json_encode(["status" => 400, "message" => "Statement preparation failed: " . $conn->error]);

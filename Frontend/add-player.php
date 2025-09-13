@@ -26,11 +26,46 @@
             font-family: 'Montserrat', sans-serif;
             user-select : none;
         }
+        
+        /* Theme Variables */
         :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --primary-color: rgba(209, 34, 31, 1);
+            --primary-light: rgba(209, 34, 31, 0.8);
+            --primary-dark: rgba(160, 25, 23, 1);
+            --background: #ffffff;
+            --card-bg: #ffffff;
+            --text-dark: #000000;
+            --text-light: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --svg-fill: #000000;
+            --hover-bg: rgba(209, 34, 31, 0.08);
+            --input-bg: #ffffff;
+            --gradient: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --team-bg: #eeeeeeab;
+            --logo-bg: #e8e8e8;
         }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --background: #121212;
+            --card-bg: #1e1e1e;
+            --text-dark: #ffffff;
+            --text-light: #e0e0e0;
+            --border-color: #333333;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --svg-fill: #ffffff;
+            --hover-bg: rgba(209, 34, 31, 0.15);
+            --input-bg: #2a2a2a;
+            --gradient: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+            --team-bg: #3d3d3d;
+            --logo-bg: #4d4d4d;
+        }
+
+        svg path {
+            fill : var(--text-dark);
+        }
+        
         body{
             height: max-content;
             display: flex;
@@ -38,6 +73,8 @@
             justify-content: center;
             flex-wrap: wrap;
             flex-direction: column;
+            background-color: var(--background);
+            color: var(--text-dark);
         }
         .part{
             width: 100%;
@@ -55,7 +92,7 @@
         }
         .return svg{
             cursor: pointer;
-            
+            fill: var(--svg-fill);
         }
         .container2{
             display: flex;
@@ -68,6 +105,7 @@
         }
         .txt{
             line-height: 20px;
+            color: var(--text-dark);
         }
         
         .input-fields{
@@ -81,12 +119,13 @@
             text-align: center;
             font-size: 16px;
             transition: 0.3s ease-in-out;
+            color: var(--text-light);
         }
         .input-fields input:valid ~ label,
         .input-fields input:focus ~ label {
             transform: translateX(-5px) translateY(-24px);
             font-size: 14px;
-            color: black;
+            color: var(--primary-color);
         }
         .container3{
             width: 100%;
@@ -113,7 +152,7 @@
         .image{
             height: 100%;
             width: 100%;
-            border: solid 1px black;
+            border: solid 1px var(--border-color);
             border-radius: 50%;
             overflow:hidden;
         }
@@ -121,7 +160,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            background: white;
+            background: var(--card-bg);
             height: 40px;
             width: 40px;
             display: flex;
@@ -129,6 +168,10 @@
             justify-content: center;
             border-radius: 50%;
             cursor : pointer;
+            box-shadow: var(--shadow);
+        }
+        .select-img svg {
+            fill: var(--svg-fill);
         }
         .info{
             width: 100%;
@@ -160,12 +203,12 @@
             justify-content: space-evenly;
             align-items: center;
             gap: 10px;
-            color: black;
+            color: var(--text-dark);
             padding: 10px;
             border-radius: 20px;
             text-wrap: auto;
-            background: #eeeeeeab;
-            box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
+            background: var(--team-bg);
+            box-shadow: var(--shadow);
             flex-wrap: wrap;
         }
         .other-info{
@@ -174,6 +217,7 @@
             justify-content: center;
             line-height: 20px;
             margin-left: 15px;
+            color: var(--text-dark);
         }
         .team-info{
             display: flex;
@@ -182,6 +226,7 @@
             gap: 10px;
             height: 100%;
             justify-content: center;
+            color: var(--text-dark);
         }
         .team-info label{
             display: flex;
@@ -189,11 +234,12 @@
             justify-content: flex-start;
             flex-direction: row;
             gap: 5px;
+            color: var(--text-dark);
         }
         .logo{
             height: 75px;
             width: 75px;
-            background: #e8e8e8;
+            background: var(--logo-bg);
             margin: 10px;
             border-radius: 50%;
             overflow: hidden;
@@ -205,6 +251,7 @@
         }
         .part.or{
             text-align: center;
+            color: var(--text-dark);
         }
         .add-btn{
             width: 100%;
@@ -215,9 +262,10 @@
         }
         .add-history-staff svg{
             cursor: pointer;
+            fill: var(--svg-fill);
         }
         .astrick{
-            color:red;
+            color: var(--primary-color);
             font-size:15px;
         }
         .image img{
@@ -227,7 +275,7 @@
         }
         .error{
             display: none;
-            color:red; 
+            color: var(--primary-color); 
             width:100%;
             font-size:12px;
             margin: 5px;
@@ -237,8 +285,8 @@
         @media (min-width:601px) {
              .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--card-bg);
+                box-shadow: var(--shadow);
                 position: relative;
                 width: 90%;
                 max-width: 100%;
@@ -255,14 +303,15 @@
             }
             .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],select{
                 border: none;
-                border-bottom: solid 1px black;
+                border-bottom: solid 1px var(--border-color);
                 margin: 8px 0;
                 padding: 10px 15px;
                 font-size: 16px;
                 width: 100%;
                 outline: none;
                 height: 45px;
-                background: white;
+                background: var(--input-bg);
+                color: var(--text-dark);
             }
             .staff-container{
                 width: 100%;
@@ -274,7 +323,7 @@
                 grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
             }
             .add-btn button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
                 color: #fff;
                 font-size: 12px;
                 padding: 10px 45px;
@@ -292,8 +341,8 @@
         @media(max-width: 601px) {
             .container{
                 display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
+                background-color: var(--card-bg);
+                box-shadow: var(--shadow);
                 position: relative;
                 width: 768px;
                 z-index: 0;
@@ -308,14 +357,15 @@
             
             .container input[type="text"],[type="email"],[type="password"],[type="number"],[type="tel"],select{
                 border: none;
-                border-bottom: solid 1px black;
+                border-bottom: solid 1px var(--border-color);
                 margin: 8px 0;
                 padding: 10px 15px;
                 font-size: 15px;
                 width: 100%;
                 outline: none;
                 height: 45px;
-                background: white;
+                background: var(--input-bg);
+                color: var(--text-dark);
             }
             .staff-container{
                 width: 100%;
@@ -380,7 +430,7 @@
                     
                     <div class="name">
                         <div class="input-fields"><input type="text" name="" id="fname" class="data" required><label for="fname">First Name<sup class="astrick">*</sup></label></div>
-                        <div class="input-fields"><input type="text" name="" id="lname" class="data" required><label for="fname">Last Name<sup class="astrick">*</sup></label></div>
+                        <div class="input-fields"><input type="text" name="" id="lname" class="data" required><label for="lname">Last Name<sup class="astrick">*</sup></label></div>
                     </div>
                         <div class="input-fields"><input type="number" name="" id="jno" class="data" required><label for="jno">Jersey No.(optional)</label></div>                
                 </div>
@@ -388,7 +438,7 @@
                     <h4>Contact Info</h4>
                     <div class="input-fields"><input type="text" name="" id="email" class="data" required><label for="email">Email<sup class="astrick">*</sup></label></div>
                     <div id="error-email" class="error"></div>
-                    <div class="input-fields"><input type="text" name="" maxlength="10" id="phone" class="data" required><label for="phone">Contact No.<sup class="astrick">*</sup></label></div>
+                    <div class="input-fields"><input type="text" name="" maxlength="10" id="phone" class="data" required><label for="phone">Contact No.(optional)</label></div>
                     <div id="error-phone" class="error"></div>
                 </div>
                 <div id="error-info_empty" class="error"></div>
@@ -581,6 +631,72 @@
             }
         })
         .catch(error=>console.error(error));
+    }
+
+    // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
     }
     </script>
 </body>

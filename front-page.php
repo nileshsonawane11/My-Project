@@ -3,6 +3,10 @@
     if(isset($_SESSION['user'])){
         header('location: ./dashboard.php?update="live"&sport="CRICKET"');
     }
+
+    include './config.php';
+
+    $login_url = $client->createAuthUrl();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,555 +17,501 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> 
 
-    <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
+    <link rel="icon" type="image/png" href="./assets/images/logo.png">
 
     <title>Login & Register Page</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+<style>
+       @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    /* CSS Variables for Light Theme (default) */
+    :root {
+        --primary-light: rgba(209, 34, 31, 1);
+        --primary-dark: rgba(160, 25, 23, 1);
+        --background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+        --bg-color: #ffffff;
+        --text-color: #333333;
+        --input-bg: #eeeeee;
+        --card-bg: #ffffff;
+        --border-color: #dddddd;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --social-border: #cccccc;
+        --link-color: #333333;
+        --error-color: #ff3333;
+    }
+
+    body {
+        backdrop-filter: blur(10px);
+        display: flex;
+        background-repeat: no-repeat;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-attachment: fixed;
+        background-position: center;
+        background-size: cover;
+        flex-direction: column;
+        height: 100vh;
+        user-select: none;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .remember label{
+        font-size : 10px;
+        color: var(--text-color);
+    }
+
+    .toogle-pass{
+        width: 100%;
+        gap: 9px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        color: var(--text-color);
+    }
+        
+    .password-container{
+        width: 100%;
+        position: relative;
+    }
+
+    #eyeBtn{
+        position: absolute;
+        top: 50%;
+        border-radius: 8px;
+        right: 0;
+        display: flex;
+        transform: translateY(-50%);
+        height: 44px;
+        width: 50px;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        background-color: var(--input-bg);
+        transition: background-color 0.3s;
+    }
+
+    #showPass{
+        cursor: pointer;
+    }
+
+    @keyframes animate-shape {
+        0%{
+            transform: translate3d(500px, 500px, 10px) scale(0);
+        }
+        50%{
+            transform: translate3d(0px, 0px, 10px) scale(5);
+        }
+        100%{
+            transform: translate3d(-600px, -600px, 10px) scale(0);
+        }
+    }
+
+    .animate-shape{
+        position: absolute;
+        display: block;
+        z-index: 9999;
+        animation: animate-shape forwards 2.5s ease-in;
+    }
+
+    .container{
+        background-color: var(--card-bg);
+        border-radius: 30px;
+        box-shadow: 0 5px 15px var(--shadow-color);
+        position: relative;
+        overflow: hidden;
+        width: 768px;
+        max-width: 100%;
+        min-height: 480px;
+        transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    .container p{
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: 0.3px;
+        margin: 20px 0;
+        color: var(--text-color: #333333);
+    }
+
+    .container span{
+        font-size: 12px;
+        color: var(--text-color);
+    }
+
+    .container a{
+        color: var(--link-color);
+        font-size: 13px;
+        text-decoration: none;
+        margin: 15px 0 10px;
+        transition: color 0.3s;
+    }
+
+    .container button{
+        background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+        color: #fff;
+        font-size: 12px;
+        padding: 10px 45px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .container button.hidden{
+        background-color: transparent;
+        border-color: #fff;
+    }
+
+    .container .register{
+        background-color: var(--card-bg);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+        padding: 40px 40px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        transition: background-color 0.3s;
+        scrollbar-width: none;
+    }
+
+    .container .login{
+        background-color: var(--card-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 40px 40px;
+        overflow-y: auto;
+        height: 100%;
+        transition: background-color 0.3s;
+        scrollbar-width: none;
+    }
+
+    .container input[type="text"],[type="email"],[type="password"],select{
+        background-color: var(--input-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        margin: 8px 0;
+        padding: 10px 15px;
+        font-size: 13px;
+        border-radius: 8px;
+        width: 100%;
+        outline: none;
+        height: 45px;
+        overflow: hidden;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .form-container{
+        position: absolute;
+        top: 0;
+        height: 100%;
+        transition: all 0.6s ease-in-out;
+    }
+
+    .sign-in{
+        left: 0;
+        width: 50%;
+        z-index: 2;
+    }
+
+    .container.active .sign-in{
+        transform: translateX(100%);
+    }
+
+    .sign-up{
+        left: 0;
+        width: 50%;
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .container.active .sign-up{
+        transform: translateX(100%);
+        opacity: 1;
+        z-index: 5;
+        animation: move 0.6s;
+    }
+
+    @keyframes move{
+        0%, 49.99%{
+            opacity: 0;
+            z-index: 1;
+        }
+        50%, 100%{
+            opacity: 1;
+            z-index: 5;
+        }
+    }
+
+    .social-icons{
+        margin: 20px 0;
+    }
+
+    .social-icons a{
+        border: 1px solid var(--social-border);
+        border-radius: 20%;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 3px;
+        width: 40px;
+        height: 40px;
+        transition: border-color 0.3s;
+    }
+
+    .toggle-container{
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        transition: all 0.6s ease-in-out;
+        border-radius: 20px;
+        z-index: 1000;
+    }
+
+    .container.active .toggle-container{
+        transform: translateX(-100%);
+        border-radius: 20px;
+    }
+
+    .toggle{
+        background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+        height: 100%;
+        color: #fff;
+        position: relative;
+        left: -100%;
+        height: 100%;
+        width: 200%;
+        transform: translateX(0);
+        transition: all 0.6s ease-in-out;
+    }
+
+    .container.active .toggle{
+        transform: translateX(50%);
+    }
+
+    .toggle-panel{
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 0 30px;
+        text-align: center;
+        top: 0;
+        transform: translateX(0);
+        transition: all 0.6s ease-in-out;
+    }
+
+    .toggle-left{
+        transform: translateX(-200%);
+    }
+
+    .container.active .toggle-left{
+        transform: translateX(0);
+    }
+
+    .toggle-right{
+        right: 0;
+        transform: translateX(0);
+    }
+
+    .sml-screen #sml-login, #sml-register{ 
+        font-weight: 700;    
+    }
+
+    /* Mobile Styles */
+    @media(max-width: 601px) {
+        .toggle-container{
+            display: none;
         }
 
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-          }
-
-          .login{
-            display:flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: nowrap;
-            width: 100%;
+        body {
+            backdrop-filter: none;
         }
 
-        .remember label{
-            font-size : 10px;
-        }
-
-        .toogle-pass{
-            width: 100%;
-            gap: 9px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            flex-direction: row;
-        }
-          
-        .password-container{
-            width: 100%;
+        .container{
+            display: block;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px var(--shadow-color);
             position: relative;
+            overflow: hidden;
+            width: 768px;
+            z-index: 0;
+            max-width: 100%;
+            min-height: 480px;
+            height: 100vh;
+            border-radius: 0;
         }
 
-        #eyeBtn{
-            position: absolute;
-            top: 50%;
-            border-radius: 8px;
-            right: 0;
-            display: flex;
-            transform: translateY(-50%);
-            height: 44px;
-            width: 50px;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            background-color: #eee;
-        }
-
-        #showPass{
-            cursor: pointer;
-        }
-
-          @keyframes animate-shape {
-            0%{
-                transform: translate3d(500px, 500px, 10px) scale(0);
-            }
-            50%{
-                transform: translate3d(0px, 0px, 10px) scale(5);
-            }
-            100%{
-                transform: translate3d(-600px, -600px, 10px) scale(0);
-            }
-            
-          }
-
-        @media (min-width:601px) {
-                body{
-                backdrop-filter: blur(10px);
-                display: flex;
-                background-repeat: no-repeat;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                background-attachment: fixed;
-                background-position: center;
-                background-size: cover;
-                flex-direction: column;
-                height: 100vh;
-                user-select: none;
-            }
-
-            .animate-shape{
-                position: absolute;
-                
-                display: block;
-                z-index: 9999;
-                animation: animate-shape forwards 2.5s ease-in;
-              }
-
-            .container{
-                background-color: #fff;
-                border-radius: 30px;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                overflow: hidden;
-                width: 768px;
-                max-width: 100%;
-                min-height: 480px;
-            }
-
-            .container p{
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: 0.3px;
-                margin: 20px 0;
-            }
-
-            .container span{
-                font-size: 12px;
-            }
-
-            .container a{
-                color: #333;
-                font-size: 13px;
-                text-decoration: none;
-                margin: 15px 0 10px;
-            }
-
-            .container button{
-                background:linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                margin-top: 10px;
-                cursor: pointer;
-            }
-
-            .container button.hidden{
-                background-color: transparent;
-                border-color: #fff;
-            }
-
-            .container .register{
-                background-color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                padding: 40px 40px;
-                overflow-y: auto;
-                overflow-x: hidden;
-                height: 100%;
-            }
-            .container .login{
-                background-color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-                padding: 40px 40px;
-                overflow-y: auto;
-                height: 100%;
-            }
-
-            .container input[type="text"],[type="email"],[type="password"],select{
-                background-color: #eee;
-                border:none;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 13px;
-                border-radius: 8px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                overflow: hidden;
-            }
-
-            .form-container{
-                position: absolute;
-                top: 0;
-                height: 100%;
-                transition: all 0.6s ease-in-out;
-            }
-
-            .sign-in{
-                left: 0;
-                width: 50%;
-                z-index: 2;
-            }
-
-            .container.active .sign-in{
-                transform: translateX(100%);
-            }
-
-            .sign-up{
-                left: 0;
-                width: 50%;
-                opacity: 0;
-                z-index: 1;
-            }
-
-            .container.active .sign-up{
-                transform: translateX(100%);
-                opacity: 1;
-                z-index: 5;
-                animation: move 0.6s;
-            }
-
-            @keyframes move{
-                0%, 49.99%{
-                    opacity: 0;
-                    z-index: 1;
-                }
-                50%, 100%{
-                    opacity: 1;
-                    z-index: 5;
-                }
-            }
-
-            .social-icons{
-                margin: 20px 0;
-            }
-
-            .social-icons a{
-                border: 1px solid #ccc;
-                border-radius: 20%;
-                display: inline-flex;
-                justify-content: center;
-                align-items: center;
-                margin: 0 3px;
-                width: 40px;
-                height: 40px;
-            }
-
-            .toggle-container{
-                position: absolute;
-                top: 0;
-                left: 50%;
-                width: 50%;
-                height: 100%;
-                overflow: hidden;
-                transition: all 0.6s ease-in-out;
-                border-radius: 20px;
-                z-index: 1000;
-            }
-
-            .container.active .toggle-container{
-                transform: translateX(-100%);
-                border-radius: 20px;
-            }
-
-            .toggle{
-                background: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-                height: 100%;
-                color: #fff;
-                position: relative;
-                left: -100%;
-                height: 100%;
-                width: 200%;
-                transform: translateX(0);
-                transition: all 0.6s ease-in-out;
-            }
-
-            .container.active .toggle{
-                transform: translateX(50%);
-            }
-
-            .toggle-panel{
-                position: absolute;
-                width: 50%;
-                height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-                padding: 0 30px;
-                text-align: center;
-                top: 0;
-                transform: translateX(0);
-                transition: all 0.6s ease-in-out;
-            }
-
-            .toggle-left{
-                transform: translateX(-200%);
-            }
-
-            .container.active .toggle-left{
-                transform: translateX(0);
-            }
-
-            .toggle-right{
-                right: 0;
-                transform: translateX(0);
-            }
-            .sml-screen{
-                display: none;
-            }
-        }
-        
-
-        @media(max-width: 601px) {
-            .toggle-container{
-                display: none;
-            }
-
-            body{
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-                height: 100vh;
-            }
-
-            .animate-shape{
-                position: absolute;
-                
-                display: block;
-                z-index: 1;
-                animation: animate-shape forwards 2s ease-in-out;
-              }
-
-            .container{
-                display: block;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                overflow: hidden;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                min-height: 480px;
-                height: 100vh;
-            }
-
-            .container p{
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: 0.3px;
-                margin: 20px 0;
-            }
-
-            .container span{
-                font-size: 12px;
-            }
-
-            .container a{
-                color: #333;
-                font-size: 13px;
-                text-decoration: none;
-                margin: 15px 0 10px;
-            }
-
-            .container button{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                margin-top: 10px;
-                cursor: pointer;
-                width: 100%;
-                height: 45px;
-            }
-            
-
-            .container button.hidden{
-                background-color: transparent;
-                border-color: #fff;
-            }
-
-            .container .register{
-                background-color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                flex-direction: column;
-                padding: 40px 40px;
-                height: 125%;
-            }
-            
-            .container .login{
-                background-color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-                padding: 40px 40px;
-                height: 100%;
-            }
-
-            .container input[type="text"],[type="email"],[type="password"],select{
-                background-color: #eee;
-                border:none;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 15px;
-                border-radius: 8px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                overflow: hidden;
-            }
-
-            .form-container{
-                position: absolute;
-                top: 0;
-                height: 100%;
-                transition: all 0.6s ease-in-out;
-            }
-            .sign-in{
-                transform: translateY(0%);
-                top: 0;
-                width: 100%;
-                z-index: 2;
-            }
-
-            .container.active .sign-in{
-                transform: translateY(100%);
-            }
-
-            .sign-up{
-                transform: translateY(-100%);
-                top: 0;
-                width: 100%;
-                opacity: 0;
-                z-index: 1;
-            }
-
-            .container.active .sign-up{
-                transform: translateY(0%);
-                opacity: 1;
-                z-index: 5;
-                animation: move 0.6s;
-            }
-
-            @keyframes move{
-                0%, 49.99%{
-                    opacity: 0;
-                    z-index: 1;
-                }
-                50%, 100%{
-                    opacity: 1;
-                    z-index: 5;
-                }
-            }
-
-            .social-icons{
-                margin: 20px 0;
-            }
-
-            .social-icons a{
-                border: 1px solid #ccc;
-                border-radius: 20%;
-                display: inline-flex;
-                justify-content: center;
-                align-items: center;
-                margin: 0 3px;
-                width: 40px;
-                height: 40px;
-            }
-           
-        
-            .container.active .sign-up {
-                opacity: 1;
-                z-index: 2;
-                overflow-y: scroll;
-            }
-        }
-        #remember{
-            height: 11px;
-            cursor: pointer;
-        }
-        #forget-password{
-            font-size: 11px;
-        }
-        .remember{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: nowrap;
-            
+        .container button{
             width: 100%;
+            height: 45px;
         }
-        .remember .remember-checkbox{
+
+        .container .register{
+            background-color: var(--card-bg);
             display: flex;
-            justify-content: center;
             align-items: center;
-            flex-direction: row;
-            gap: 5px;
-            flex-wrap: nowrap;
-            font-size: 11px;
+            justify-content: flex-start;
+            flex-direction: column;
+            padding: 40px 40px;
+            height: 125%;
         }
-        option {
-            font-size: 15px;    
-            color: #000;
-            padding: 5px;      
-            background: #fff;
+        
+        .container .login{
+            background-color: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 40px 40px;
+            height: 100%;
         }
-        .otp-container {
-      display: flex;
-      justify-content: space-between;
-      gap: 5px;
-      width: 100%;
+
+        .form-container{
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+        }
+        
+        .sign-in{
+            transform: translateY(0%);
+            top: 0;
+            width: 100%;
+            z-index: 2;
+        }
+
+        .container.active .sign-in{
+            transform: translateY(100%);
+        }
+
+        .sign-up{
+            transform: translateY(-100%);
+            top: 0;
+            width: 100%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.active .sign-up{
+            transform: translateY(0%);
+            opacity: 1;
+            z-index: 5;
+            animation: move 0.6s;
+        }
+
+        .container.active .sign-up {
+            opacity: 1;
+            z-index: 2;
+            overflow-y: scroll;
+        }
+    }
+
+    #remember{
+        height: 11px;
+        cursor: pointer;
+    }
+
+    #forget-password{
+        font-size: 11px;
+        color: var(--link-color);
+    }
+
+    .remember{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+    }
+
+    .remember .remember-checkbox{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 5px;
+        flex-wrap: nowrap;
+        font-size: 11px;
+        color: var(--text-color);
+    }
+
+    option {
+        font-size: 15px;    
+        color: var(--text-color);
+        padding: 5px;      
+        background: var(--input-bg);
+    }
+
+    .otp-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 5px;
+        width: 100%;
     }
 
     .otp-container input {
-      width: 60px;
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 18px;
+        width: 60px;
+        padding: 10px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        font-size: 18px;
+        background-color: var(--input-bg);
+        color: var(--text-color);
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
 
     .otp-container input:focus {
-      outline: none;
-      border-color: #4CAF50;
+        outline: none;
+        border-color: var(--primary-dark);
     }
+
     .otptxt{
         font-size : 13px;
         margin: 10px;
+        color: var(--text-color);
     }
+
     .error{
         display: none;
-        color:red; 
+        color: var(--error-color);
         width:100%;
         font-size:12px;
         margin: 5px;
     }
+
     .otp-btn{
         width: 100%;
         margin: 9px;
-        color: blue;
+        color: var(--primary-dark);
         font-size: 13px;
         cursor: pointer;
         display: none;
     }
-    </style>
+</style>
 </head>
 
 <body>
@@ -575,7 +525,7 @@
             <form action="" method="post" class="register" autocomplete="on">
                 <h1>Create Account</h1>
                 <div class="social-icons">
-                    <a href="#" class="icons"><i class='bx bxl-google'></i></a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a>
@@ -593,25 +543,25 @@
                 
                     <div id="error-phone" class="error"></div>
                 
-                <input type="email" placeholder="E-mail" required name="email" id="email">
+                <input type="email" placeholder="E-mail" required name="email" id="email" autocomplete="username">
                 
                     <div id="error-email" class="error"></div>
                 <button name="send_otp" onclick="sendotp(event)" type="button" id="sendOTP" disabled style="opacity: 0.5;">Send OTP Via Email</button>
                 <label class="otptxt" for="otp">Enter OTP : </label>
                 <div class="otp-container">
-                    <input type="text" name="otp1" maxlength="1" id="otp1" oninput="moveFocus(this, 'otp2', 'next')" onkeydown="handleBackspace(event, this, 'otp1')" />
-                    <input type="text" name="otp2" maxlength="1" id="otp2" oninput="moveFocus(this, 'otp3', 'next')" onkeydown="handleBackspace(event, this, 'otp2')" />
-                    <input type="text" name="otp3" maxlength="1" id="otp3" oninput="moveFocus(this, 'otp4', 'next')" onkeydown="handleBackspace(event, this, 'otp3')" />
-                    <input type="text" name="otp4" maxlength="1" id="otp4" onkeydown="handleBackspace(event, this, 'otp4')" />
+                    <input type="number" name="otp1" maxlength="1" id="otp1" oninput="moveFocus(this, 'otp2', 'next')" onkeydown="handleBackspace(event, this, 'otp1')" />
+                    <input type="number" name="otp2" maxlength="1" id="otp2" oninput="moveFocus(this, 'otp3', 'next')" onkeydown="handleBackspace(event, this, 'otp2')" />
+                    <input type="number" name="otp3" maxlength="1" id="otp3" oninput="moveFocus(this, 'otp4', 'next')" onkeydown="handleBackspace(event, this, 'otp3')" />
+                    <input type="number" name="otp4" maxlength="1" id="otp4" onkeydown="handleBackspace(event, this, 'otp4')" />
                 </div>
                 <div id="error-otp" class="error"></div>
                 <div class="otp-btn" id="otp-btn"></div>
                 
-                <input type="password" name="password" placeholder="Password"  id="password" class='password'>
+                <input type="password" name="password" placeholder="Password"  id="password" class='password' autocomplete="password">
                 
                     <div id="error-password" class="error"></div>
                 
-                <input type="password" name="password2" placeholder="Re-Enter Password"  id="password2" class='password'>
+                <input type="password" name="password2" placeholder="Re-Enter Password"  id="password2" class='password' autocomplete="new-password">
 
                 <div class='toogle-pass'><input type="checkbox" id="showPass" onclick="showPassword()"> Show Password</div>
                 <div id="error-empty" class="error"></div>
@@ -626,7 +576,7 @@
             <form action="" method="post" class="login" autocomplete="on">
                 <h1>Sign In</h1>
                 <div class="social-icons">
-                    <a href="#" class="icons"><i class='bx bxl-google'></i></a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a>
@@ -885,6 +835,7 @@
            },10); 
 
             async function sendotp(e) {
+                let send_btn = document.getElementById('sendOTP');
                 e.preventDefault();
 
                 var role = document.getElementById('role').value;
@@ -905,6 +856,7 @@
                     role_error.style.display = 'block';
                     role_error.innerText = 'Please fill all the required fields';
                 } else {
+                    send_btn.innerText = 'Proccessing...';
                     fetch('./OTP-mail.php', {
                         method: 'POST',
                         body: JSON.stringify(data_for_OTP),
@@ -920,13 +872,14 @@
                         });
 
                         if(data.status == "error"){
-                            let send_btn = document.getElementById('sendOTP'); 
+                             
 
                             if(!send_btn){
                                 console.error("Send OTP button not found");
                                 return;
                             }
 
+                            send_btn.innerText = 'SEND OTP VIA EMAIL';
                             send_btn.setAttribute('disabled', 'true');
                             send_btn.style.opacity = '0.5';
 
@@ -936,6 +889,7 @@
                         }else{
                             sent();
                             alert(`OTP sent successfully! on ${email}`); 
+                            send_btn.innerText = 'SEND OTP VIA EMAIL';
                         }
                         console.log(data);
                     })
@@ -976,7 +930,16 @@
                 }, 1000);
             };
 
+// Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
 
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
     </script>
 </body>
 
