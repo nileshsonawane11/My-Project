@@ -14,81 +14,73 @@
     <title>LiveStrike</title>
 
     <!-- Web App Manifest -->
-    <link rel="manifest" href="/My-Project/manifest.json">
+<link rel="manifest" href="./manifest.json">
 
-    <!-- Theme Color for Mobile Browsers -->
-    <meta name="theme-color" content="#d1221f"/>
+<!-- Theme Color for Mobile Browsers -->
+<meta name="theme-color" content="#d1221f"/>
 
-    <!-- iOS Safari Specific Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="LiveStrike">
-    <link rel="apple-touch-icon" href="/My-Project/assets/images/logo-192.png">
-    <meta name="mobile-web-app-capable" content="yes">
+<!-- iOS Safari Specific Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LiveStrike">
+<link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+<meta name="mobile-web-app-capable" content="yes">
 
-    <!-- Service Worker Registration -->
-    <script>
-    // Check if browser supports service workers
-    if ('serviceWorker' in navigator) {
-    // Wait for page load to avoid slowing down the initial render
+<!-- Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        // Register the service worker file
-        navigator.serviceWorker.register('/My-Project/service-worker.js', { scope: '/My-Project/' })
+      navigator.serviceWorker.register('./service-worker.js', { scope: './' })
         .then(function(registration) {
-            console.log('✅ Service Worker registered with scope:', registration.scope);
+          console.log('✅ Service Worker registered with scope:', registration.scope);
         })
         .catch(function(error) {
-            console.log('❌ Service Worker registration failed:', error);
+          console.log('❌ Service Worker registration failed:', error);
         });
     });
-    }
-    </script>
+  }
+</script>
 
-    <script>
-    let deferredPrompt;
+<script>
+let deferredPrompt;
 
-    // Listen for the event that says the app is installable
-    window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('✅ PWA is installable!');
-    // Prevent the automatic mini prompt
-    e.preventDefault();
-    // Save the event for later use
-    deferredPrompt = e;
-    
-    // Create your OWN install button
-    showInstallButton();
-    });
+// Listen for the event that says the app is installable
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('✅ PWA is installable!');
+  e.preventDefault(); // Prevent automatic prompt
+  deferredPrompt = e;
+  showInstallButton();
+});
 
-    function showInstallButton() {
-    // Create a custom install button
-    const installBtn = document.createElement('button');
-    installBtn.textContent = '📱 Install LiveStrike App';
-    installBtn.style = 'position: fixed; bottom: 20px; left: 20px; z-index: 9999; ' + 
+function showInstallButton() {
+  const installBtn = document.createElement('button');
+  installBtn.textContent = '📱 Install LiveStrike App';
+  installBtn.style = 'position: fixed; bottom: 20px; left: 20px; z-index: 9999; ' + 
                      'padding: 12px 20px; background: #d1221f; color: white; ' +
                      'border: none; border-radius: 8px; font-size: 16px; ' +
                      'cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3);';
-    
-    installBtn.onclick = () => {
-        if (deferredPrompt) {
-        // Show the native install prompt
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-            console.log('User installed the app');
-            }
-            deferredPrompt = null;
-        });
+  
+  installBtn.onclick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User installed the app');
         }
-    };
-    
-    document.body.appendChild(installBtn);
+        deferredPrompt = null;
+      });
     }
+  };
+  
+  document.body.appendChild(installBtn);
+}
 
-    // Also check if the app is already installable on page load
-    if (window.deferredPrompt) {
-    showInstallButton();
-    }
-    </script>
+// Also check if the app is already installable on page load
+if (window.deferredPrompt) {
+  showInstallButton();
+}
+</script>
+
 
 <style>
     *{

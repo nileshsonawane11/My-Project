@@ -48,17 +48,20 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title><?php echo $username;?>'s Dashboard</title>
 
-        <link rel="manifest" href="/My-Project/manifest.json">
+    <!-- Web App Manifest -->
+<link rel="manifest" href="./manifest.json">
 
-    <!-- Theme Color for Mobile Browsers -->
-    <meta name="theme-color" content="#d1221f"/>
+<!-- Theme Color for Mobile Browsers -->
+<meta name="theme-color" content="#d1221f"/>
 
-    <!-- iOS Safari Specific Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="LiveStrike">
-    <link rel="apple-touch-icon" href="/My-Project/assets/images/logo-192.png">
-    <meta name="mobile-web-app-capable" content="yes">
+<!-- iOS Safari Specific Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LiveStrike">
+<link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+
+
 
     
 
@@ -155,9 +158,9 @@
         }
 
         /* Mobile */
-        @media (max-width: 480px) {
+        @media (max-width: 500px) {
         #installBtn {
-            font-size: 14px;
+            font-size: 10px;
             padding: 8px 16px;
         }
     }
@@ -1830,52 +1833,54 @@ resizeText(".team-score");
 
 
 // ✅ Register Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/My-Project/service-worker.js', { scope: '/My-Project/' })
-        .then(function (registration) {
-          console.log('✅ Service Worker registered with scope:', registration.scope);
-        })
-        .catch(function (error) {
-          console.log('❌ Service Worker registration failed:', error);
-        });
-    });
-  }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+      .then(function (registration) {
+        console.log('✅ Service Worker registered with scope:', registration.scope);
+      })
+      .catch(function (error) {
+        console.log('❌ Service Worker registration failed:', error);
+      });
+  });
+}
 
-  // ✅ PWA Install Button Logic
-  let deferredPrompt;
-  const installBtn = document.getElementById("installBtn");
+// ✅ PWA Install Button Logic
+let deferredPrompt;
+const installBtn = document.getElementById("installBtn");
 
-  // Hide button until PWA is installable
+// Hide button until PWA is installable
+installBtn.style.display = "none";
+
+// Listen for installable event
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('✅ PWA is installable!');
+  e.preventDefault();       // Prevent auto prompt
+  deferredPrompt = e;       // Save event for later
+  installBtn.style.display = "inline-block"; // Show button
+});
+
+// Handle button click
+installBtn.addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+
+  console.log("📱 Install button clicked!");
+  deferredPrompt.prompt();
+
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log(`User response to install: ${outcome}`);
+
+  deferredPrompt = null;
+  installBtn.style.display = "none"; // Hide after install
+});
+
+// Detect if app was installed
+window.addEventListener("appinstalled", () => {
+  console.log("✅ PWA installed successfully!");
   installBtn.style.display = "none";
+});
 
-  // Listen for installable event
-  window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('✅ PWA is installable!');
-    e.preventDefault();       // Prevent auto prompt
-    deferredPrompt = e;       // Save event for later
-    installBtn.style.display = "inline-block"; // Show button
-  });
 
-  // Handle button click
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-
-    console.log("📱 Install button clicked!");
-    deferredPrompt.prompt();
-
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response to install: ${outcome}`);
-
-    deferredPrompt = null;
-    installBtn.style.display = "none"; // Hide after install
-  });
-
-  // Detect if app was installed
-  window.addEventListener("appinstalled", () => {
-    console.log("✅ PWA installed successfully!");
-    installBtn.style.display = "none";
-  });
 </script>
 
 </body>

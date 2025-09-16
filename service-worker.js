@@ -3,13 +3,13 @@ const CACHE_NAME = 'livestrike-cache-v3';
 
 // Core files (static only, not dynamic PHP)
 const ASSETS_TO_CACHE = [
-  '/My-Project/',
-  '/My-Project/index.php',
-  '/My-Project/landing-page.php',
-  '/My-Project/dashboard.php',
-  '/My-Project/offline.html', // ✅ Custom offline fallback page
-  '/My-Project/assets/images/logo-192.png',
-  '/My-Project/assets/images/logo-512.png',
+  './',
+  './index.php',
+  './landing-page.php',
+  './dashboard.php',
+  './offline.html', // ✅ Custom offline fallback page
+  './assets/images/logo-192.png',
+  './assets/images/logo-512.png',
 ];
 
 // INSTALL: Pre-cache static assets + offline page
@@ -51,7 +51,7 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() =>
-          caches.match(event.request).then((cached) => cached || caches.match('/My-Project/offline.html'))
+          caches.match(event.request).then((cached) => cached || caches.match('./offline.html'))
         )
     );
     return;
@@ -76,7 +76,7 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cachedResponse) => {
       return (
         cachedResponse ||
-        fetch(event.request).catch(() => caches.match('/My-Project/offline.html'))
+        fetch(event.request).catch(() => caches.match('./offline.html'))
       );
     })
   );
