@@ -120,11 +120,17 @@ if($for == "dashboard"){
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
                     }else if($row['status'] == 'Completed'){
-                        $winner = $score_log['winner'];
-                        $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+
+                        if($score_log['winner'] != 'Draw'){
+                            $winner = $score_log['winner'];
+                            $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                        }
                         // If match is not completed and no winner is declared
                         if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
+
                             echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                        }else if($score_log['completed'] == "Draw"){
+                            echo "<div class='info update'><p>Match Tied</p></div>";
                         }else{
                             echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
                         }
@@ -144,10 +150,10 @@ if($for == "dashboard"){
                         }
                     }
 
-                    $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
+                    // $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
                     $session_email = $_SESSION['email'];
 
-                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                    if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                         echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
@@ -254,10 +260,10 @@ if($for == "dashboard"){
                     echo "<div class='strt-btn'>";
                     
                     $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    $scorer_emails = explode(",", $scorers[0]);
+                    // $scorer_emails = explode(",", $scorers[0]);
                     $session_email = $_SESSION['email'];
 
-                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                    if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                         echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
@@ -400,13 +406,13 @@ if($for == "manage_matches"){
                     $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
                     $scorer_emails = [];
 
-                    if (!empty($scorers) && isset($scorers[0])) {
-                        $scorer_emails = explode(",", $scorers[0]);
-                    }
+                    // if (!empty($scorers) && isset($scorers[0])) {
+                    //     $scorer_emails = explode(",", $scorers[0]);
+                    // }
                     
                     $session_email = $_SESSION['email'];
 
-                    if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                    if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                         echo "<div class='info'><button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                     }
                     echo "</div>";
@@ -476,7 +482,7 @@ if($for == "add_staff"){
 }
 
 if($for == "add_player"){
-    $sql = "SELECT * FROM users u WHERE u.user_id AND u.email LIKE '%$status%' AND u.place IS NOT NULL";
+    $sql = "SELECT * FROM users u WHERE u.user_id IS NOT NULL AND u.email LIKE '%$status%' AND u.place IS NOT NULL";
     $query = mysqli_query($conn, $sql);
 
     if(mysqli_num_rows($query) > 0){

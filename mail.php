@@ -105,7 +105,7 @@ $email_content = "
         </div>
         <div class='footer'>
             <p>If you have any questions, please contact us.</p>
-            <a href='/contact.html' class='button'>Contact</a>
+            <a href='/support.php' class='button'>Contact</a>
         </div>
     </div>
 </body>
@@ -190,7 +190,7 @@ $email_content = "
         </div>
         <div class='footer'>
             <p>If you have any questions, please contact us.</p>
-            <a href='/contact.html' class='button'>Contact</a>
+            <a href='/support.php' class='button'>Contact</a>
         </div>
     </div>
 </body>

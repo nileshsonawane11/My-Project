@@ -18,13 +18,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<<<<<<< HEAD
-    <title>Manage Teams</title>
-<style>
-=======
     <title>Manage Tournaments</title>
     <style>
->>>>>>> origin
     * {
         margin: 0;
         padding: 0;
@@ -35,16 +30,6 @@
     }
     
     :root {
-<<<<<<< HEAD
-        --primary-light: #FAC01F;
-        --primary-dark: #F83900;
-        --background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-        --card-bg: #ffffff;
-        --text-dark: #333333;
-        --text-light: #666666;
-        --border-color: #e0e0e0;
-        --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-=======
         --primary-color: rgba(209, 34, 31, 1);
         --primary-light: rgba(209, 34, 31, 0.8);
         --primary-dark: rgba(160, 25, 23, 1);
@@ -69,19 +54,11 @@
         --hover-bg: rgba(209, 34, 31, 0.2);
         --selected-bg: rgba(209, 34, 31, 0.25);
         --nav-fill: #2d2d2d;
->>>>>>> origin
     }
     
     body {
         height: 100vh;
         height: -webkit-fill-available;
-<<<<<<< HEAD
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-=======
         background: var(--background);
         color: var(--text-dark);
         display: flex;
@@ -93,7 +70,6 @@
     svg path {
         fill : var(--text-dark);
     }
->>>>>>> origin
     .container {
         display: flex;
         background-color: var(--card-bg);
@@ -108,18 +84,9 @@
         flex-direction: column;
         gap: 20px;
         border-radius: 20px;
-<<<<<<< HEAD
-        padding: 20px;
-        overflow: hidden;
-    }
-    .container2 {
-        height: 100%;
-        width: 100%;
-=======
         padding: 30px;
         overflow: hidden;
         transition: background-color 0.3s ease, box-shadow 0.3s ease;
->>>>>>> origin
     }
     
     .return {
@@ -127,24 +94,11 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-<<<<<<< HEAD
-        padding: 0 10px 20px 10px;
-=======
         padding: 20px 20px 10px;
->>>>>>> origin
     }
     
     .return svg {
         cursor: pointer;
-<<<<<<< HEAD
-        transition: transform 0.2s ease;
-        color: var(--text-dark);
-    }
-    
-    .return svg:hover {
-        transform: translateX(-3px);
-        color: var(--primary-dark);
-=======
         font-size: 28px;
         color: var(--text-dark);
         transition: all 0.2s ease;
@@ -155,7 +109,6 @@
         color: var(--primary-color);
         transform: translateX(-3px);
         fill: var(--primary-color);
->>>>>>> origin
     }
     
     .txt {
@@ -164,11 +117,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-<<<<<<< HEAD
-        padding: 0 10px;
-=======
         padding: 5px 20px;
->>>>>>> origin
         color: var(--text-dark);
         font-size: 18px;
         margin-bottom: 10px;
@@ -176,19 +125,12 @@
     
     .game-container {
         width: 100%;
-<<<<<<< HEAD
-        background: white;
-=======
         background: var(--nav-fill);
->>>>>>> origin
         border-radius: 15px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         margin-bottom: 20px;
         overflow: hidden;
-<<<<<<< HEAD
-=======
         transition: background 0.3s ease;
->>>>>>> origin
     }
     
     .game-list {
@@ -208,29 +150,12 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-<<<<<<< HEAD
-        min-width: 86px;
-        padding: 10px;
-=======
         min-width: 90px;
         padding: 12px;
->>>>>>> origin
         gap: 8px;
         white-space: nowrap;
         cursor: pointer;
         transition: all 0.2s ease;
-<<<<<<< HEAD
-        border-radius: 10px;
-    }
-    
-    .game:hover {
-        background: rgba(250, 192, 31, 0.1);
-    }
-    
-    .game.selected {
-        background: rgba(248, 99, 0, 0.15);
-        border-radius: 10px;
-=======
         border-radius: 12px;
     }
     
@@ -241,7 +166,6 @@
     .game.selected {
         background: var(--selected-bg);
         border-radius: 12px;
->>>>>>> origin
     }
     
     .game p {
@@ -249,14 +173,6 @@
         font-weight: 500;
         color: var(--text-dark);
         text-align: center;
-<<<<<<< HEAD
-        text-wrap:auto;
-    }
-    
-    .game svg {
-        height: 24px;
-        width: 24px;
-=======
         text-wrap: auto;
         transition: color 0.3s ease;
     }
@@ -266,127 +182,19 @@
         width: 28px;
         fill: var(--text-dark);
         transition: fill 0.3s ease;
->>>>>>> origin
     }
     
     .game.selected p {
         font-weight: 600;
-<<<<<<< HEAD
-        color: var(--primary-dark);
-=======
         color: var(--primary-color);
     }
     
     .game.selected svg {
         fill: var(--primary-color);
->>>>>>> origin
     }
     
     .team-container {
         width: 100%;
-<<<<<<< HEAD
-        height: calc(100% - 150px);
-        padding-bottom: 20px;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-        overflow-y: auto;
-    }
-    
-    .team-list {
-        width: 100%;
-        height: max-content;
-        gap: 20px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        justify-content: center;
-        justify-items: center;
-        align-items: start;
-        padding: 10px;
-        margin-bottom: 20px;
-    }
-    
-    .team {
-        width: 100%;
-        max-width: 300px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 15px;
-        color: var(--text-dark);
-        border: 1px solid var(--border-color);
-        padding: 15px;
-        border-radius: 15px;
-        background: var(--card-bg);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    
-    .team:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        border-color: var(--primary-light);
-    }
-    
-    .selected-team {
-        border: 2px solid var(--primary-dark);
-        background: rgba(248, 99, 0, 0.05);
-    }
-    
-    .logo {
-        height: 70px;
-        width: 70px;
-        background: #f5f5f5;
-        border-radius: 50%;
-        overflow: hidden;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--border-color);
-    }
-    
-    .logo img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-    }
-    
-    .team-info {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        width: calc(100% - 85px);
-    }
-    
-    .team-info h4 {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--text-dark);
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    
-    .team-info label.data {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 5px;
-        font-size: 13px;
-        color: var(--text-light);
-        width: 100%;
-    }
-    
-    label.data .dt {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 180px;
-=======
         height: calc(100% - 180px);
         padding: 10px;
         display: grid;
@@ -500,7 +308,6 @@
     
     .start-btn:active {
         transform: translateY(0);
->>>>>>> origin
     }
     
     .no-data {
@@ -509,11 +316,8 @@
         grid-column: 1 / -1;
         text-align: center;
         padding: 40px 0;
-<<<<<<< HEAD
-=======
         font-size: 16px;
         transition: color 0.3s ease;
->>>>>>> origin
     }
     
     .plus {
@@ -530,13 +334,8 @@
         justify-content: center;
         align-items: center;
         overflow: hidden;
-<<<<<<< HEAD
-        box-shadow: 0 4px 15px rgba(248, 57, 0, 0.3);
-        background: var(--background);
-=======
         box-shadow: 0 4px 15px rgba(209, 34, 31, 0.3);
         background: var(--primary-color);
->>>>>>> origin
         color: white;
         transition: all 0.2s ease;
         z-index: 10;
@@ -544,52 +343,13 @@
     
     .plus:hover {
         transform: translateY(-3px) scale(1.05);
-<<<<<<< HEAD
-        box-shadow: 0 6px 20px rgba(248, 57, 0, 0.4);
-=======
         box-shadow: 0 6px 20px rgba(209, 34, 31, 0.4);
         background: var(--primary-dark);
->>>>>>> origin
     }
     
     .plus:active {
         transform: translateY(0);
     }
-<<<<<<< HEAD
-    
-    .add-btn {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 20px;
-    }
-    
-    .add-btn button {
-        background: var(--background);
-        color: white;
-        font-size: 14px;
-        padding: 12px 30px;
-        border: none;
-        border-radius: 50px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        cursor: pointer;
-        height: 45px;
-        width: 150px;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 10px rgba(248, 57, 0, 0.2);
-    }
-    
-    .add-btn button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(248, 57, 0, 0.3);
-    }
-    
-    .add-btn button:active {
-        transform: translateY(0);
-=======
 
     .container2 {
         height: 100%;
@@ -601,7 +361,6 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 20px;
         }
->>>>>>> origin
     }
 
     @media (max-width: 600px) {
@@ -613,21 +372,6 @@
             box-shadow: none;
         }
         
-<<<<<<< HEAD
-        .team-list {
-            grid-template-columns: 1fr;
-        }
-        
-        .team {
-            max-width: 100%;
-        }
-        
-        .plus {
-            bottom: 30px;
-            right: 30px;
-            height: 55px;
-            width: 55px;
-=======
         .team-container {
             grid-template-columns: 1fr;
             padding: 10px 5px;
@@ -649,7 +393,6 @@
         .game {
             min-width: 86px;
             padding: 10px;
->>>>>>> origin
         }
     }
 
@@ -659,20 +402,12 @@
     }
     
     .team-container::-webkit-scrollbar-track {
-<<<<<<< HEAD
-        background: #f1f1f1;
-=======
         background: var(--hover-bg);
->>>>>>> origin
         border-radius: 10px;
     }
     
     .team-container::-webkit-scrollbar-thumb {
-<<<<<<< HEAD
-        background: var(--primary-light);
-=======
         background: var(--primary-color);
->>>>>>> origin
         border-radius: 10px;
     }
     
@@ -684,12 +419,6 @@
         height: 4px;
     }
     
-<<<<<<< HEAD
-    .game-list::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
-        border-radius: 10px;
-    }
-=======
     .game-list::-webkit-scrollbar-track {
         background: var(--hover-bg);
         border-radius: 10px;
@@ -821,7 +550,6 @@
     .btns>*:first-child:hover {
         background: var(--hover-bg);
     }
->>>>>>> origin
 </style>
 </head>
 <body>

@@ -208,8 +208,8 @@
             border-radius: 20px;
             text-wrap: auto;
             background: var(--team-bg);
+            flex: 1 1;
             box-shadow: var(--shadow);
-            flex-wrap: wrap;
         }
         .other-info{
             display: flex;
@@ -281,7 +281,12 @@
             margin: 5px;
             transition : all 0.3 ease-in-out;
         }
-
+        .notice{
+            font-size: 12px;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
         @media (min-width:601px) {
              .container{
                 display: flex;
@@ -447,11 +452,12 @@
                 </div>
             </div>
 
-            <div class="part or"><h3>OR</h3></div>
+            <div class="part or"><h3>OR (For Registered User)</h3></div>
 
             <div class="part">
                 <div class="search-staff" style="width: 100%;">
                     <div class="input-fields"><input type="text" name="" id="email_search" required><label for="email">Email</label></div>
+                    <span class="notice">*Note : Complete your full profile to select as a Player.</span>
                 </div>
                 <div class="history-staff">
                     <h3>Select From Search</h3>

@@ -12,6 +12,84 @@
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <title>LiveStrike</title>
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/My-Project/manifest.json">
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#d1221f"/>
+
+    <!-- iOS Safari Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LiveStrike">
+    <link rel="apple-touch-icon" href="/My-Project/assets/images/logo-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Service Worker Registration -->
+    <script>
+    // Check if browser supports service workers
+    if ('serviceWorker' in navigator) {
+    // Wait for page load to avoid slowing down the initial render
+    window.addEventListener('load', function() {
+        // Register the service worker file
+        navigator.serviceWorker.register('/My-Project/service-worker.js', { scope: '/My-Project/' })
+        .then(function(registration) {
+            console.log('✅ Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function(error) {
+            console.log('❌ Service Worker registration failed:', error);
+        });
+    });
+    }
+    </script>
+
+    <script>
+    let deferredPrompt;
+
+    // Listen for the event that says the app is installable
+    window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('✅ PWA is installable!');
+    // Prevent the automatic mini prompt
+    e.preventDefault();
+    // Save the event for later use
+    deferredPrompt = e;
+    
+    // Create your OWN install button
+    showInstallButton();
+    });
+
+    function showInstallButton() {
+    // Create a custom install button
+    const installBtn = document.createElement('button');
+    installBtn.textContent = '📱 Install LiveStrike App';
+    installBtn.style = 'position: fixed; bottom: 20px; left: 20px; z-index: 9999; ' + 
+                     'padding: 12px 20px; background: #d1221f; color: white; ' +
+                     'border: none; border-radius: 8px; font-size: 16px; ' +
+                     'cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3);';
+    
+    installBtn.onclick = () => {
+        if (deferredPrompt) {
+        // Show the native install prompt
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+            console.log('User installed the app');
+            }
+            deferredPrompt = null;
+        });
+        }
+    };
+    
+    document.body.appendChild(installBtn);
+    }
+
+    // Also check if the app is already installable on page load
+    if (window.deferredPrompt) {
+    showInstallButton();
+    }
+    </script>
+
 <style>
     *{
         margin: 0px;
@@ -57,17 +135,17 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        position: fixed;
+        position: sticky;
         top: 0;
         width: 100%;
-        background-color: var(--card-bg);
+        background-color: var(--nav-fill);
         z-index: 999;
+        box-shadow: var(--shadow-sm);
+        border-bottom: 1px solid var(--primary-transparent);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        height: 61px;
         transition: var(--transition);
     }
-    
-
     svg path {
         fill : var(--text-dark);
     }
@@ -75,7 +153,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 5px;
+        gap: 8px;
     }
     
     .nav-content{
@@ -84,8 +162,7 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding-left: 20px;
-        padding-right: 50px;
+        padding: 10px 20px 10px 0px;
     }
     
     .img-container{
@@ -334,6 +411,9 @@
         font-weight: 600;
         color: var(--primary-color);
     }
+    .logo-img img {
+        height: 90px;
+    }
     
     @keyframes spin{
         to{
@@ -344,10 +424,6 @@
     @media(min-width: 601px) {
         .menu-bar{
             display: none;
-        }
-        
-        .logo-img img{
-            height: 45px;
         }
         
         .txt-strike{
@@ -473,17 +549,6 @@
     }
     
     @media(max-width: 600px) {
-        .logo-img img{
-            height: 40px;
-        }
-        
-        .nav-content{
-            padding-right: 20px;
-            display: flex;
-            justify-content:space-between ;
-            align-items: center;
-            width: 100%;
-        }
         
         .sidebar {
             position: fixed;
@@ -720,7 +785,7 @@
                 <div class="nav-content">
                     <div class="items">
                         <div class="logo-img"><img src="./assets/images/logo.png" alt=""></div>
-                        <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
+                        <!-- <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div> -->
                     </div>
                     <div class="items">
                         <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
@@ -1053,7 +1118,7 @@
         }
 
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+//   document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

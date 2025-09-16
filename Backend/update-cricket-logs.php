@@ -83,11 +83,14 @@ if (isset($iscomplete) && $iscomplete == true) {
     $winner_team_id = ($score_log['winner'] == $score_log['team1']) ? $score_log['team1'] : $score_log['team2'];
     $stmt->bind_param("ss", $json, $match_id);
     $stmt->execute();
+    $update = json_decode(get_data($match_id, $Inning),true);
     
     echo json_encode([
         'status' => 200,
         'message' => 'Match officially completed',
-        'winner' => $winner_team_id
+        'winner' => $winner_team_id,
+        'Data' => $update,
+        'completed' => true
     ]);
     exit();
 }
@@ -155,12 +158,39 @@ if (($Ball_Type == null && $undo == true)) {
                    strpos($ball['Ball Type'], 'Wide') === false;
         });
         $overs = floor(count($legalBalls) / 6) . '.' . (count($legalBalls) % 6);
+        // Prepare score string for database
+        $score_log = $previousState;
+        if($Inning_type == 'super_over_innings'){
+            $team_over = $score_log['super_over_innings'][$Inning]['overs_completed'];
+            $team_runs1 = $score_log['super_over_innings'][$Inning]['total_runs'];
+            $team_wickets1 = $score_log['super_over_innings'][$Inning]['wickets'];
+            $bat_team1 = $score_log['super_over_innings'][$Inning]['batting_team'];
+
+            foreach (['1st', '2nd'] as $inning_no) {
+                $bat_team2 = $score_log['innings'][$inning_no]['batting_team'];
+                if($bat_team2 == $bat_team1){
+                    $team_over1 = $score_log['innings'][$inning_no]['overs_completed'];
+                    $team_runs = $score_log['innings'][$inning_no]['total_runs'];
+                    $team_wickets = $score_log['innings'][$inning_no]['wickets'];
+                }
+            }
+            $score = $team_runs1.'/'.$team_wickets1.' - '.$team_runs.'/'.$team_wickets.' ('.$team_over1.'ov)';
+        }else{
+            $team_over = $score_log['innings'][$Inning]['overs_completed'];
+            $team_runs = $score_log['innings'][$Inning]['total_runs'];
+            $team_wickets = $score_log['innings'][$Inning]['wickets'];
+            $score = $team_runs.'/'.$team_wickets.' ('.$team_over.'ov)';
+        }
+
+        $battingTeamId = $score_log[$Inning_type][$Inning]['batting_team'];
+        $score_field = ($battingTeamId == $score_log['team1']) ? 'score_team_1' : 'score_team_2';
         
         // Update database
         $newHistory = array_slice($history, 0, -1);
-        $stmt = $conn->prepare("UPDATE matches SET history = ?, score_log = ?, overs = ? WHERE match_id = ?");
-        $stmt->bind_param("ssss", 
+        $stmt = $conn->prepare("UPDATE matches SET history = ?,$score_field = ?, score_log = ?, overs = ? WHERE match_id = ?");
+        $stmt->bind_param("sssss", 
             json_encode($newHistory),
+            $score,
             json_encode($previousState),
             $overs,
             $match_id
@@ -169,12 +199,13 @@ if (($Ball_Type == null && $undo == true)) {
         if (!$stmt->execute()) {
             throw new Exception("Failed to update match state");
         }
-        
         $conn->commit();
+        $update = json_decode(get_data($match_id, $Inning),true);
+        
         echo json_encode([
             "status" => 200,
             "message" => "Undo successful",
-            "overs" => $overs
+            "Data" => $update
         ]);
         
     } catch (Exception $e) {
@@ -582,10 +613,11 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
         if ($innings_completed) {
             handleMatchProgress($score_log);
         }
-        
+        $update = json_decode(get_data($match_id, $Inning),true);
         header('Content-Type: application/json');
-        echo json_encode(['status' => 200, 'message' => 'Data updated successfully']);
+        echo json_encode(['status' => 200, 'message' => 'Data updated successfully','Data'=>$update]);
         exit();
+        
     } catch (Exception $e) {
         header('Content-Type: application/json');
         echo json_encode(['status' => 500, 'message' => 'Failed to update match: ' . $e->getMessage()]);
@@ -603,6 +635,7 @@ function swap_batsmans(&$score_log, $Inning_type, $Inning) {
 function handleMatchProgress(&$score_log) {
     global $conn;
     global $match_id;
+    global $Inning;
     // First check regular innings progress
     if (isset($score_log['innings']['1st']['completed']) && $score_log['innings']['1st']['completed']) {
         $team1Runs = (int)($score_log['innings']['1st']['total_runs'] ?? 0);
@@ -615,7 +648,7 @@ function handleMatchProgress(&$score_log) {
                 $score_log['winner'] = $score_log['innings']['2nd']['batting_team'];
 
                 saveHistorySnapshot($conn, $match_id, $score_log);
-                
+                $update = json_decode(get_data($match_id, $Inning),true);
 
                 $response = [
                     'status' => 200,
@@ -624,6 +657,7 @@ function handleMatchProgress(&$score_log) {
                     'action_required' => 'confirm_match_end',
                     'team1_runs' => $team1Runs,
                     'team2_runs' => $team2Runs,
+                    'Data' => $update,
                     'wickets_remaining' => MAX_REGULAR_WICKETS - ($score_log['innings']['2nd']['wickets'] ?? 0),
                     'overs_remaining' => isset($score_log['overs']) ? $score_log['overs'] - (float)$score_log['innings']['2nd']['overs_completed'] : null
                 ];
@@ -636,6 +670,7 @@ function handleMatchProgress(&$score_log) {
                 // Update database
                 $score_log['winner'] = $score_log['innings']['1st']['batting_team'];
                 saveHistorySnapshot($conn, $match_id, $score_log);
+                $update = json_decode(get_data($match_id, $Inning),true);
 
                 $response = [
                     'status' => 200,
@@ -644,6 +679,7 @@ function handleMatchProgress(&$score_log) {
                     'action_required' => 'confirm_match_end',
                     'team1_runs' => $team1Runs,
                     'team2_runs' => $team2Runs,
+                    'Data' => $update,
                     'wickets_lost' => $score_log['innings']['2nd']['wickets'] ?? 0
                 ];
                 echo json_encode($response);
@@ -688,11 +724,13 @@ function handleMatchProgress(&$score_log) {
                     $score_log['super_over'] = true;
                     // Save to database
                     saveHistorySnapshot($conn, $match_id, $score_log);
+                    $update = json_decode(get_data($match_id, $Inning),true);
                     
                     $response = [
                         'status' => 200,
                         'message' => 'Match tied! Starting Super Over...',
                         'is_complete' => false,
+                        'Data' => $update,
                         'action_required' => 'start_super_over'
                     ];
                     echo json_encode($response);
@@ -703,12 +741,14 @@ function handleMatchProgress(&$score_log) {
                 // Super over not allowed, declare tie
                 $score_log['winner'] = 'tie';
                 saveHistorySnapshot($conn, $match_id, $score_log);
+                $update = json_decode(get_data($match_id, $Inning),true);
 
                 $response = [
                     'status' => 200,
                     'message' => 'Match Tied',
                     'is_complete' => true,
                     'action_required' => 'confirm_match_end',
+                    'Data' => $update,
                     'team1_runs' => $team1Runs,
                     'team2_runs' => $team2Runs
                 ];
@@ -727,14 +767,17 @@ function handleMatchProgress(&$score_log) {
 
             $score_log['winner'] = $winner;
             saveHistorySnapshot($conn, $match_id, $score_log);
+            $update = json_decode(get_data($match_id, $Inning),true);
 
             $response = [
                 'status' => 200,
                 'message' => $result_message,
                 'is_complete' => true,
                 'action_required' => 'confirm_match_end',
+                'Data' => $update,
                 'team1_runs' => $team1Runs,
                 'team2_runs' => $team2Runs
+                
             ];
             echo json_encode($response);
             exit();
@@ -755,6 +798,7 @@ function handleMatchProgress(&$score_log) {
                 // $score_log['super_over_innings']['2nd']['completed'] = true;
                 $score_log['winner'] = $score_log['super_over_innings']['2nd']['batting_team'];
                 saveHistorySnapshot($conn, $match_id, $score_log);
+                $update = json_decode(get_data($match_id, $Inning),true);
 
                 $response = [
                     'status' => 200,
@@ -763,6 +807,7 @@ function handleMatchProgress(&$score_log) {
                     'action_required' => 'confirm_match_end',
                     'team1_runs' => $team1Runs,
                     'team2_runs' => $team2Runs,
+                    'Data' => $update,
                     'wickets_remaining' => MAX_REGULAR_WICKETS - ($score_log['innings']['2nd']['wickets'] ?? 0),
                     'overs_remaining' => isset($score_log['overs']) ? $score_log['overs'] - (float)$score_log['innings']['2nd']['overs_completed'] : null
                 ];
@@ -775,6 +820,7 @@ function handleMatchProgress(&$score_log) {
                 // $score_log['super_over_innings']['2nd']['completed'] = true;
                 $score_log['winner'] = ($team1Runs > $team2Runs) ? $score_log['super_over_innings']['1st']['batting_team'] : $score_log['super_over_innings']['2nd']['batting_team'];
                 saveHistorySnapshot($conn, $match_id, $score_log);
+                $update = json_decode(get_data($match_id, $Inning),true);
 
                 $response = [
                     'status' => 200,
@@ -783,6 +829,7 @@ function handleMatchProgress(&$score_log) {
                     'action_required' => 'confirm_match_end',
                     'team1_runs' => $team1Runs,
                     'team2_runs' => $team2Runs,
+                    'Data' => $update,
                     'wickets_remaining' => MAX_REGULAR_WICKETS - ($score_log['innings']['2nd']['wickets'] ?? 0),
                     'overs_remaining' => isset($score_log['overs']) ? $score_log['overs'] - (float)$score_log['innings']['2nd']['overs_completed'] : null
                 ];
@@ -813,11 +860,13 @@ function handleMatchProgress(&$score_log) {
 
                 // Save to database
                 saveHistorySnapshot($conn, $match_id, $score_log);
+                $update = json_decode(get_data($match_id, $Inning),true);
                 
                 $response = [
                     'status' => 200,
                     'message' => 'Match tied! Starting New Super Over...',
                     'is_complete' => false,
+                    'Data' => $update,
                     'action_required' => 'start_super_over'
                 ];
                 echo json_encode($response);
@@ -826,6 +875,7 @@ function handleMatchProgress(&$score_log) {
             } else {
                 $score_log['winner'] = ($team1Runs > $team2Runs) ? $score_log['super_over_innings']['1st']['batting_team'] : $score_log['super_over_innings']['2nd']['batting_team'];
                 saveHistorySnapshot($conn, $match_id, $score_log);
+                $update = json_decode(get_data($match_id, $Inning),true);
 
                 $response = [
                     'status' => 200,
@@ -834,6 +884,7 @@ function handleMatchProgress(&$score_log) {
                     'action_required' => 'confirm_match_end',
                     'team1_runs' => $team1Runs,
                     'team2_runs' => $team2Runs,
+                    'Data' => $update,
                     'wickets_remaining' => MAX_REGULAR_WICKETS - ($score_log['innings']['2nd']['wickets'] ?? 0),
                     'overs_remaining' => isset($score_log['overs']) ? $score_log['overs'] - (float)$score_log['innings']['2nd']['overs_completed'] : null
                 ];
@@ -897,5 +948,16 @@ function makeNewInnings($battingTeam, $bowlingTeam) {
         "completed" => false,
         'is_super_over' => true
     ];
+}
+
+function get_data($match_id, $Inning){
+    $_GET['match_id'] = $match_id;
+    $_GET['current_innings'] = $Inning;
+
+    ob_start();
+    include '../API/CRICKET_api.php';  // executes with $_GET values
+    $response = ob_get_clean();
+
+    return $response;
 }
 ?>

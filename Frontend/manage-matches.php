@@ -423,8 +423,6 @@
         background: var(--hover-bg);
         border-radius: 10px;
     }
-<<<<<<< HEAD
-=======
     
     .game-list::-webkit-scrollbar-thumb {
         background: var(--primary-color);
@@ -435,7 +433,6 @@
         background: var(--primary-dark);
     }
     
->>>>>>> origin
     #startMatchDialog {
         z-index: 9999;
         position: fixed;
@@ -446,11 +443,7 @@
         max-width: 500px;
         border: none;
         height: max-content;
-<<<<<<< HEAD
-        background: white;
-=======
         background: var(--card-bg);
->>>>>>> origin
         flex-direction: column;
         transition: all 0.3s ease;
         justify-content: center;
@@ -458,10 +451,7 @@
         padding: 30px;
         border-radius: 15px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-<<<<<<< HEAD
-=======
         border: 1px solid var(--border-color);
->>>>>>> origin
     }
     
     #startMatchDialog::backdrop {
@@ -499,10 +489,7 @@
         line-height: 35px;
         font-weight: 500;
         color: var(--text-dark);
-<<<<<<< HEAD
-=======
         transition: color 0.3s ease;
->>>>>>> origin
     }
     
     .btns {
@@ -520,16 +507,6 @@
         outline: none;
         border: 1px solid var(--border-color);
         border-radius: 8px;
-<<<<<<< HEAD
-        background: #f8f8f8;
-        color: var(--text-dark);
-        font-size: 15px;
-    }
-    
-    #matchPassword:focus {
-        border-color: var(--primary-light);
-        box-shadow: 0 0 0 3px rgba(250, 192, 31, 0.2);
-=======
         background: var(--card-bg);
         color: var(--text-dark);
         font-size: 15px;
@@ -539,30 +516,21 @@
     #matchPassword:focus {
         border-color: var(--primary-color);
         box-shadow: 0 0 0 3px rgba(209, 34, 31, 0.2);
->>>>>>> origin
     }
 
     #title{
         font-size: 18px;
         font-weight: 500;
-<<<<<<< HEAD
-=======
         color: var(--text-dark);
         transition: color 0.3s ease;
->>>>>>> origin
     }
     
     .btns>* {
         width: 110px;
         height: 40px;
         border-radius: 25px;
-<<<<<<< HEAD
-        border: solid 1px var(--primary-light);
-        color: var(--primary-light);
-=======
         border: solid 1px var(--primary-color);
         color: var(--primary-color);
->>>>>>> origin
         background: transparent;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -570,29 +538,17 @@
     }
     
     .btns>*:last-child {
-<<<<<<< HEAD
-        background: var(--background);
-=======
         background: var(--primary-color);
->>>>>>> origin
         color: white;
         border: none;
     }
     
     .btns>*:last-child:hover {
-<<<<<<< HEAD
-        background: linear-gradient(135deg, #fac01fdb, #f83900cc);
-    }
-    
-    .btns>*:first-child:hover {
-        background: rgba(250, 192, 31, 0.1);
-=======
         background: var(--primary-dark);
     }
     
     .btns>*:first-child:hover {
         background: var(--hover-bg);
->>>>>>> origin
     }
 </style>
 </head>
@@ -872,8 +828,6 @@
             dialog.close();
         }
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -938,7 +892,6 @@
 
 
 
->>>>>>> origin
         
         // Variefy match password
         document.getElementById("matchPasswordForm").addEventListener("submit", function(e) {
@@ -980,8 +933,6 @@
             console.log(SportName);
             window.location.href = `./match-info.php?match_id=${match}`;
         }
-<<<<<<< HEAD
-=======
 
         // Disable right-click
   document.addEventListener('contextmenu', event => event.preventDefault());
@@ -993,7 +944,6 @@
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
->>>>>>> origin
     </script>
 </body>
 </html>

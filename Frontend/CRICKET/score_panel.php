@@ -1189,12 +1189,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                             </svg>
                             <p>Change Squad</p>
                         </div>
-                        <div class="menu">
+                        <a href="./scoreboard.php?match_id=<?php echo $match_id; ?>"><div class="menu">
                             <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M7 18V12M10 18V13M13 18V10M15 3H19V23H1V3H5M5 1H15V5H5V1Z" stroke="black" stroke-width="2"/>
                             </svg>
                             <p>Full Scoreboard</p>
-                        </div>
+                        </div></a>
                     </div>
                     <div class="menu-columns">
                         <div class="menu">
@@ -1246,12 +1246,12 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         
             <div class="container2">
                 <div class="txt">
-                    <h4>
+                    <h4><span class="team_name">
                         <?php
                             $t_id = $score_log[$inning_type][$current_innings]['batting_team'];
                             $t_name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id'"));
                             echo $t_name['t_name'];
-                        ?>
+                        ?></span>
                         (Batting Team)
                     </h4>
                 </div>
@@ -1307,9 +1307,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                     <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
                                     </svg>
-                                    <?php
-                                        echo $name['fname'] ?? '';
-                                    ?>
+                                    <span class="striker-text">
+                                        <?php
+                                            echo $name['fname'] ?? '';
+                                        ?>
+                                    </span>
                                 </div>
                                 <p class="batsman-score">
                                     <?php
@@ -1342,9 +1344,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                     <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M13.9641 6.85855L17.7261 10.5918C17.9948 10.8584 18.1299 11.1702 18.1312 11.5271C18.1326 11.8841 18 12.1969 17.7333 12.4656L6.40028 23.8859C6.13362 24.1546 5.83299 24.2896 5.49838 24.2909C5.16377 24.2922 4.86211 24.1595 4.5934 23.8928L0.83141 20.1596C0.562696 19.8929 0.427613 19.57 0.426158 19.1908C0.424703 18.8116 0.557304 18.4876 0.823964 18.2189L12.0903 6.86574C12.357 6.59702 12.6688 6.46198 13.0257 6.46061C13.3826 6.45924 13.6954 6.59189 13.9641 6.85855ZM23.4521 2.94063L18.7189 7.7103L16.8379 5.84368L21.5711 1.07402C21.8155 0.827697 22.1274 0.703808 22.5066 0.702353C22.8858 0.700898 23.1986 0.822391 23.4449 1.06683C23.6912 1.31127 23.8151 1.6231 23.8166 2.00232C23.818 2.38154 23.6965 2.69431 23.4521 2.94063ZM4.74339 2.14268C4.74339 2.14268 5.12042 1.47201 4.51156 2.57213C4.39223 2.78774 4.74339 2.14268 4.74339 2.14268C4.74339 2.14268 4.07831 3.21752 4.07418 2.14525C4.08373 4.62457 4.74339 2.14268 4.74339 2.14268Z" fill="black"/>
                                     </svg>
-                                    <?php
-                                        echo $name['fname'] ?? '';
-                                    ?>
+                                    <span class="non-striker-text">
+                                        <?php
+                                            echo $name['fname'] ?? '';
+                                        ?>
+                                    </span>
                                 </div>
                                 <p class="batsman-score">
                                     <?php
@@ -1382,10 +1386,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M1.67013 14.2598L2.21013 14.7898L1.59013 15.3998C1.84106 15.7909 2.12189 16.162 2.43013 16.5098L16.5101 2.4198C16.1612 2.12041 15.7938 1.8432 15.4101 1.5898L14.7901 2.1998L14.2601 1.6698L14.7401 1.1898C12.8463 0.171369 10.6746 -0.20948 8.54727 0.103742C6.41991 0.416965 4.45017 1.40757 2.93024 2.92863C1.41031 4.44968 0.421157 6.42015 0.109505 8.54774C-0.202146 10.6753 0.180306 12.8467 1.20013 14.7398L1.67013 14.2598ZM12.8601 3.0698L13.3901 3.5998L12.0001 4.9998L11.4701 4.4698L12.8601 3.0698ZM10.0701 5.8698L10.5901 6.3998L9.20013 7.7998L8.67013 7.2698L10.0701 5.8698ZM7.27013 8.6698L7.80013 9.1998L6.40013 10.5898L5.87013 10.0598L7.27013 8.6698ZM4.47013 11.4598L5.00013 11.9998L3.60013 13.3998L3.07013 12.8698L4.47013 11.4598ZM4.59013 18.4098L5.21013 17.7998L5.74013 18.3298L5.26013 18.8098C7.15396 19.8282 9.32563 20.2091 11.453 19.8959C13.5804 19.5826 15.5501 18.592 17.07 17.071C18.59 15.5499 19.5791 13.5794 19.8908 11.4519C20.2024 9.32426 19.82 7.15287 18.8001 5.2598L18.3301 5.7398L17.7901 5.2098L18.4101 4.5998C18.1592 4.20867 17.8784 3.83756 17.5701 3.4898L3.49013 17.5798C3.83909 17.8792 4.20648 18.1564 4.59013 18.4098ZM16.4001 6.6098L16.9301 7.1398L15.5301 8.5398L15.0001 7.9998L16.4001 6.6098ZM13.6001 9.4098L14.1301 9.9398L12.7301 11.3298L12.2001 10.7998L13.6001 9.4098ZM10.8001 12.1998L11.3301 12.7298L9.94013 14.1298L9.40013 13.5998L10.8001 12.1998ZM8.00013 14.9998L8.53013 15.5298L7.13013 16.9298L6.60013 16.3998L8.00013 14.9998Z" fill="black"/>
                                         </svg>
-                                        <?php
-                                            echo $name['fname'] ?? '';
-                                        ?>
-                                        (bowler)
+                                        <span class="bowler-text">
+                                            <?php
+                                                echo $name['fname'] ?? '';
+                                            ?>
+                                        </span>
                                     </div>
                                     <div class="bowls">
                                         <?php
@@ -1474,11 +1479,10 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
 
     <iframe src="./select-player-from-team.php" frameborder="0" class="player-frame"></iframe>
-    
+
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const back_decision = '<?php echo $back_decision; ?>';
-        const current_inning = '<?php echo $current_innings; ?>'
+        window.current_inning = "<?php echo $current_innings; ?>";
         let data = urlParams.get('data') || '';
         console.log(data);
         const match = '<?php echo $match_id; ?>';
@@ -1614,11 +1618,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
         //go to prevoius page
         let goBack = () => {
-            if(back_decision){
                 window.location.href = '../../dashboard.php?update=Live&sport=CRICKET';
-            }else{
-                window.history.back();
-            }
         }
 
         function verifyPlayers() {
@@ -1690,7 +1690,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     person : event.data.person,
                     ...(event.data.person == 'Fielder'?{wicket_by : wicket_by} : {data : new_player}),
                     match_id : match,
-                    Inning : current_inning,
+                    Inning : window.current_inning,
                     'Inning Type' : '<?php echo $inning_type; ?>',
                 }
 
@@ -1753,6 +1753,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
         document.getElementById('undo-btn').addEventListener('click', () => {
             undo_operation = true;
+            match_complete = false;
             display_content();
         });
 
@@ -2267,7 +2268,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                             //display_content();
                         }else{
                             players_page.classList.add('active');
-                            players_page.src = `./select-player-from-team.php?for=Fielder&team=${bowl_team}`;
+                            players_page.src = `./select-player-from-team.php?for=Fielder&team=${bowl_team}&match=${match}`;
                             setTimeout(() => {
                                 shot.close();
                             }, 100);
@@ -2584,7 +2585,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 let strikerName = document.querySelector('.batsman-type').getAttribute('data-striker');
                 let bowler_id = document.querySelector('.bowler-name').getAttribute('data-bowler');
                 ball_data = {
-                    'Run' : run_per_ball,
+                    'Run' : parseInt(run_per_ball),
                     'Shot Type' : Shot_type,
                     'Shot Side' : Shot_side,
                     'Wicket Type': out_type,
@@ -2597,7 +2598,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     ...(ball_type == 'Wicket' || no_balltype == 'Wicket' ? { 'Out Player': dismissedPlayerid ,'New Player':new_player} : { 'Striker': strikerName }),
                     'TotalScore': scoreText[0],
                     'Wickets': scoreText[1],
-                    'Inning' : current_inning,
+                    'Inning' : window.current_inning,
                     'Commentary': commentary,
                     'Match id': match,
                     ...(is_match_complete == true ? {'Is Match Complete': is_match_complete} : null),
@@ -2611,6 +2612,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
             let update_score = () => {
                 console.log(ball_data);
+                undo_operation = false;
 
                 fetch('../../Backend/update-cricket-logs.php',{
                     method : 'post',
@@ -2622,6 +2624,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 .then(res => res.json())
                 .then((data)=>{
                     console.log(data);
+                     document.querySelectorAll('.score-numpad .num').forEach(button => {
+                            if (!button.classList.contains('undo')) {
+                                button.disabled = match_complete;
+                            }
+                        });
                     if(data.status == 200 && data.is_complete == true){
                         match_completed.showModal();
                         match_complete = true;
@@ -2632,34 +2639,63 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                 button.disabled = true;
                             }
                         });
+
+                        window.socket.send(JSON.stringify({
+                            score: data.Data,
+                            for: 'Cricketpanel'
+                        }));
                     }else if(data.status == 200){
+
+                        window.socket.send(JSON.stringify({
+                            score: data.Data,
+                            for: 'Cricketpanel'
+                        }));
+
+                        if(data.action_required == "start_super_over"){
+                            window.removeEventListener("beforeunload", preventReload);
+                            location.reload();
+                        }
+
                         setTimeout(() => {
                             //Bypass reload
                             window.removeEventListener("beforeunload", preventReload);
-                            location.reload();
+                            // location.reload();
+                            
                         }, 300); 
+
+                        undo_container.close();
+                        
                     }else if(data.field == 'undo'){
                         let warn = document.querySelector('.undo-warn');
                         warn.innerText = data.message;
                         warn.style.color = 'red';
+                    }else if(data.completed == true){
+                        window.removeEventListener("beforeunload", preventReload);
+                        location.reload();
                     }
                 })
                 .catch(error => console.log(error));
 
-                
-
-                run_per_ball =null;
-                Shot_type = null;
+                dismissedPlayerid = null;
+                run_per_ball = null;
                 Shot_side = null;
-                out_type = null;
+                Shot_type = null;
                 extras = null;
+                run_type = null;
                 ball_type = null;
+                out_type = null;
+                new_player = '';
+                wicket_by = '';
+                is_match_complete = false;
+                match_complete = false;
+                undo_operation = false;
                 dismissedPlayer = '';
                 no_balltype = '';
-                wicket_by = '';
+
             }
 
             let add_player = (info) => {
+                console.log(info);
                 fetch('../../Backend/change_player.php', {
                     method: 'post',
                     headers: {
@@ -2674,8 +2710,13 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         //Bypass reload
                         setTimeout(() => {
                             window.removeEventListener("beforeunload", preventReload);
-                            location.reload(); 
+                            // location.reload(); 
                         }, 400);
+
+                        window.socket.send(JSON.stringify({
+                            score: data.Data,
+                            for: 'Cricketpanel'
+                        }));
                         
                     }
                 })
@@ -2685,7 +2726,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             }
 
             // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+//   document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {
@@ -2750,5 +2791,124 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         return document.body.getAttribute('data-theme') || 'light';
     }
     </script>
+    <script type="module">
+        import { host, port } from "../../config.js";
+        
+        window.socket = new WebSocket(`ws://${host}:${port}`);
+        // window.socket = new WebSocket(`wss://my-project-pk19.onrender.com`);
+
+        window.socket.onopen = () => {
+            console.log("Connected to server");
+        };
+
+        window.socket.onmessage = (event) => {
+            let data = JSON.parse(event.data);
+            // console.log(data)
+
+            if (data.type == "Cricketpanel") {
+                let log = data.log;
+                    
+
+                // If it's still a string, parse again
+                if (typeof log === "string") {
+                    try {
+                        log = JSON.parse(log);
+                    } catch (e) {
+                        console.error("❌ Could not parse log JSON:", log);
+                        return;
+                    }
+                }
+
+                console.log("Updated Score Log:", log);
+                window.current_inning = log.current_innings;
+                update_score_log(log);
+            }
+        };
+
+    function update_score_log(log){
+        let current_inning = log.current_innings;
+        let inning_type = log.inning_type;
+        let players_page = document.querySelector('.player-frame');
+        let score = document.querySelector('.score');
+        let batsmans = document.querySelectorAll('.batsman-score');
+        let striker_name = document.querySelector('.striker-text');
+        let non_striker_name = document.querySelector('.non-striker-text');
+        let bowlername = document.querySelector('.bowler-text');
+        let bowls = document.querySelector('.bowls');
+        let batting_team_name = document.querySelector('.team_name');
+
+        score.innerHTML = `${log[inning_type][current_inning].total_runs}/${log[inning_type][current_inning].wickets}<p class="overs">(${log[inning_type][current_inning].overs_completed}/
+                            ${log.overs})</p>`;
+
+        batting_team_name.innerText = `${log.bat_team}`;
+
+        let striker_id = log[inning_type][current_inning].openers.current_striker.id;
+        let non_striker_id = log[inning_type][current_inning].openers.current_non_striker.id;
+        let bowler_id = log[inning_type][current_inning].current_bowler.id;
+        let bowler = log[inning_type][current_inning].current_bowler;
+
+        batsmans[0].innerText = `${log[inning_type][current_inning].openers.current_striker.runs}(${log[inning_type][current_inning].openers.current_striker.balls_faced})`;
+        striker_name.innerText = log.Players_map[striker_id] || '';
+
+        batsmans[1].innerText = `${log[inning_type][current_inning].openers.current_non_striker.runs}(${log[inning_type][current_inning].openers.current_non_striker.balls_faced})`;
+        non_striker_name.innerText = log.Players_map[non_striker_id] || '';
+
+        bowlername.innerText = log.Players_map[bowler_id] || '';
+        bowls.innerText = `${bowler.overs_bowled}-${bowler.wickets}-${bowler.runs_conceded}-${bowler.maidens}`;
+
+        let openers = log[inning_type][current_inning].openers;
+        let current_bowler = log[inning_type][current_inning].current_bowler;
+
+        let strikerEl = document.querySelectorAll('.batsman-type')[0];
+        let nonStrikerEl = document.querySelectorAll('.batsman-type')[1];
+        let bowlerEl = document.querySelector('.bowler-name');
+
+        strikerEl.setAttribute('data-striker',openers.current_striker.id || '');
+        nonStrikerEl.setAttribute('data-non-striker',openers.current_non_striker.id || '');
+        bowlerEl.setAttribute('data-bowler',current_bowler.id || '');
+
+        let striker = strikerEl.getAttribute('data-striker') || '';
+        let non_striker = nonStrikerEl.getAttribute('data-non-striker') || '';
+        let bowlers = bowlerEl.getAttribute('data-bowler') || '';
+
+        if (!openers 
+            || !openers.current_striker.id 
+            || !openers.current_non_striker.id
+            || !current_bowler.id) {
+
+            console.warn("Openers data is missing or incomplete");
+            if(!openers.current_striker.id){
+                strikerEl.setAttribute('data-striker','');
+                navigator.vibrate([100,50,100,50,100]);
+                strikerEl.closest('.batmans').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Striker&match=${match}&team=${log.bat}&striker=&non-striker=${non_striker}`;
+                return false;
+            }
+            if(!openers.current_non_striker.id){
+                nonStrikerEl.setAttribute('data-non-striker','');
+                navigator.vibrate([100,50,100,50,100]);
+                nonStrikerEl.closest('.batmans').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Non-Striker&match=${match}&team=${log.bat}&striker=${striker}&non-striker=`;
+                return false;
+            }
+
+            if(!current_bowler.id){
+                bowlerEl.setAttribute('data-bowler','');
+                navigator.vibrate([100,50,100,50,100]);
+                bowlerEl.closest('.bowler-container').style.borderColor = 'red';
+                players_page.classList.add('active');
+                players_page.src = `./select-player-from-team.php?for=Bowler&match=${match}&team=${log.bowl}`;
+                return false;
+            }
+
+        } else {
+            strikerEl.setAttribute('data-striker',openers.current_striker.id);
+            nonStrikerEl.setAttribute('data-non-striker',openers.current_non_striker.id);
+            bowlerEl.setAttribute('data-bowler',current_bowler.id);
+        }
+    }
+</script>
 </body>
 </html>

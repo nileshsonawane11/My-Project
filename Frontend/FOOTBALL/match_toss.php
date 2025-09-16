@@ -101,7 +101,6 @@
         position: relative;
         width: 100%;
         max-width: 1200px;
-        height: 100vh;
         min-height: 480px;
         align-items: center;
         justify-content: flex-start;
@@ -477,7 +476,7 @@
                     <div class="info">
                         <label for="">Toss winner chose to</label>
                         <div class="sector types">
-                            <div class="options" data-value="RUN">
+                            <div class="options" data-value="KICKOFF">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/m5qrQzV5/Pngtree-cartoon-football-player-picture-4360062.png">
 
@@ -485,7 +484,7 @@
                                 <div class="tname">KICKOFF</div>
                             </div>
 
-                            <div class="options" data-value="CHASE">
+                            <div class="options" data-value="SIDE">
                                 <div class="logo">
                                     <img src="https://i.ibb.co/FkT3kcyR/vecteezy-ai-generated-soccer-field-with-gate-isolated-on-transparent-41858242.png">
 
@@ -497,7 +496,17 @@
                             <div class="error" id="error-empty"></div> 
                         </div>
                     </div>
-                    
+                    <div class="info">
+                        <label for="">Enter match format</label>
+                        <div class="sector rules">
+
+                            <div class="rule">
+                                 <div class="input-fields event-time">
+                                    <input type="number" id="points"  required><label for="points" id="time">Enter Total halves</label></div>
+                            </div>
+                        </div>
+                        <div class="error" id="error-data_empty"></div>
+                    </div>
                     <div class="add-btn">
                         <button onclick="start_match(event)" type="submit" id="start-match">Let’s Start</button>
                     </div>
@@ -549,13 +558,13 @@
 
         let start_match = (e) => {
             e.preventDefault();
-            let innings = document.querySelector('#innings');
+            let halves = document.querySelector('#points');
 
             let formdata = new FormData();
             formdata.append('match_id', match_id);
             formdata.append('selectedteam', selectedteam);
             formdata.append('selecteddecision', selecteddecision);
-            formdata.append('innings', innings.value);
+            formdata.append('halves', halves.value);
 
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {

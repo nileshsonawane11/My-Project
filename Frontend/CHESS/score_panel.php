@@ -1,3 +1,41 @@
+<?php
+    session_start();
+    include '../../config.php';
+
+    if(!isset($_SESSION['user'])){
+        header('location: ../../front-page.php');
+        exit();
+    }
+    if($_SESSION['role'] == "User"){
+        header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    $match_id = '';
+
+    if (empty($data)) {
+        $match_id = $_GET['match_id'];
+    } else {
+        $match_id = $data['match_id'];
+        $back_decision = true;
+    }
+
+    $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
+    $score_log = json_decode($row['score_log'], true);
+
+    // Redirect if no toss winner
+    if (empty($row['toss_winner'])) {
+        header('Location: ./match_toss.php?match_id=' . $match_id);
+        exit();
+    }
+
+    // Redirect if match is completed
+    if (!empty($score_log['completed'])) {
+        header('Location: ../../dashboard.php?update=live&sport=VOLLEYBALL');
+        exit();
+    }
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,13 +126,21 @@
         .sector {
             display: flex;
             width: 100%;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-evenly;
+            flex-direction: column;
+            justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 30px;
             margin-top: 100px;
+            align-items: center;
         }
+        .team_section{
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+
         .teams {
             height: 380px;
             width: 44%;
@@ -118,6 +164,7 @@
             width: 107px;
             border-radius: 50%;
             background-color: #d9d9d9;
+            overflow: hidden;
         }
 
         .player-name {
@@ -144,13 +191,27 @@
             background-position-y: 450px;
         }
 
-        .confirm-btn {
+        .confirm-btn{
             display: none;
             height: 40px;
             width: 90px;
             background-color: black;
             color: white;
             border-radius: 12px;
+        }
+
+        .tie-btn{
+            height: 50px;
+            width: 110px;
+            background-color: black;
+            color: white;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .logo img{
+            height: 100%;
+            object-fit: cover;
         }
         @media (max-width:350px) {
             .logo {
@@ -174,17 +235,52 @@
             <label for="">Who won the Match?</label>
         </div>
         <div class="sector">
-            <div class="teams">
-                <div class="logo"></div>
-                <div class="player-name">Player Name1</div>
-                <div class="image1"></div>
-                <button class="confirm-btn" style="display: none;">Confirm</button>
+            <div class="team_section">
+                <div class="teams">
+                    <?php
+                        $t_id1 = $score_log['white'];
+                        $t_name1 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id1'"));
+                    ?>
+                    <div class="logo">
+                        <?php if($t_name1['t_logo']) { ?>
+                            <img src="../../assets/images/teams/<?php echo $t_name1['t_logo']; ?>" alt="">
+                        <?php }else{ ?>
+                            <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                        <?php } ?>
+                    </div>
+                    <div class="player-name">
+                        <?php
+                            echo $t_name1['t_name'];
+                        ?>
+                    </div>
+                    <div class="image1"></div>
+                    <button class="confirm-btn" data-team="<?php echo $score_log['white']; ?>">Confirm</button>
+                </div>
+                
+                <div class="teams">
+                    <?php
+                        $t_id2 = $score_log['black'];
+                        $t_name2 = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$t_id2'"));
+                    ?>
+                    <div class="logo">
+                        <?php if($t_name2['t_logo']) { ?>
+                            <img src="../../assets/images/teams/<?php echo $t_name2['t_logo']; ?>" alt="">
+                        <?php }else{ ?>
+                            <img src="https://cdn-icons-png.flaticon.com/512/8140/8140303.png" alt="">
+                        <?php } ?>
+                    </div>
+                    <div class="player-name">
+                        <?php
+                            echo $t_name2['t_name'];
+                        ?>
+                    </div>
+                    <div class="image2"></div>
+                    <button class="confirm-btn" data-team="<?php echo $score_log['black']; ?>">Confirm</button>
+                </div>
             </div>
-            <div class="teams">
-                <div class="logo"></div>
-                <div class="player-name">Player Name2</div>
-                <div class="image2"></div>
-                <button class="confirm-btn">Confirm</button>
+
+            <div class="tie-btns">
+                <button class="tie-btn" onclick="get_tie(this)" data-teams='["<?php echo $score_log["white"]; ?>","<?php echo $score_log["black"]; ?>"]'>Tie</button>
             </div>
         </div>
     </div>
@@ -192,6 +288,38 @@
     <script>
         const teams = document.querySelectorAll('.teams');
         const confirm_btn = document.querySelectorAll('.confirm-btn');
+        const tie_btn = document.querySelector('.tie-btn');
+        const match_id = '<?php echo $match_id; ?>';
+
+        let goBack = ()=>{
+            window.history.back();
+        }
+
+        let get_score = (data) => {
+            let params = {
+                'match_id':match_id,
+                'team':data
+            }
+
+            console.log(params);
+
+            fetch('./Backend/update-chess-logs.php',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+            .then(response => response.json())
+            .then((data)=>{
+                console.log(data);
+                if(data.status == 200){
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.log(error));
+
+        }
 
         teams.forEach(team => {
             team.addEventListener('click', () => {
@@ -209,17 +337,28 @@
             });
         });
 
-            confirm_btn.forEach(selector => {
-                selector.addEventListener("click", () => {
-                    const parentTeam = selector.closest('.teams'); // get the correct .teams div
+           confirm_btn.forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    let parentTeam = btn.closest('.teams'); // or e.currentTarget.closest('.teams')
                     if (parentTeam) {
-                        const playerNameEl = parentTeam.querySelector('.player-name'); // get that team's player name
+                        let playerNameEl = parentTeam.querySelector('.player-name');
                         if (playerNameEl) {
-                            console.log(playerNameEl.innerText); // ✅ prints only that one
+                            let team = btn.getAttribute('data-team');
+                            get_score(team);
                         }
                     }
                 });
             });
+
+            let get_tie = (tie_btn) => {
+                let parentTeam = tie_btn.closest('.sector'); 
+                if (parentTeam) {
+                    let playerNameEls = parentTeam.querySelectorAll('.teams .player-name');
+                    const teams = JSON.parse(tie_btn.dataset.teams);
+                    get_score(teams);
+                }
+            }
+
 
             // Disable right-click
   document.addEventListener('contextmenu', event => event.preventDefault());

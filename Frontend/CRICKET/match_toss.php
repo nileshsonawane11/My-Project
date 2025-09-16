@@ -17,10 +17,9 @@
     $row = mysqli_fetch_assoc($query1);
 
     if(!empty($row['toss_winner'])){
-        header("Location: ./select-players.php?match_id=$match");
+        header("Location: ./score_panel.php?match_id=$match");
         exit();
     }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

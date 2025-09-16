@@ -182,7 +182,7 @@ if(isset($exit) && $exit){
 
     $winner = ($team1_points > $team2_points) ? $team1 : $team2;
 
-    if($score_log[$current_set] == $score_log['total_sets']){
+    if($score_log['current_set'] == $score_log['total_sets']){
         if($team1_points == $team2_points){
             echo json_encode(['status' => 200, 'message' => 'Match Completed','field'=>'is_tie']);
             exit();
@@ -194,7 +194,6 @@ if(isset($exit) && $exit){
                 $score_log['sets_won']['team2'] += 1;
                 $score_log['sets'][$current_set]['set_completed'] = true;
             }
-            $score_log['current_set'] += 1;
             $score_log['current_serve'] = $score_log['current_serve'] == $score_log['team1'] ? $score_log['team2'] : $score_log['team1'];
 
             saveHistorySnapshot($conn, $match_id, $score_log);

@@ -593,7 +593,7 @@ function getWicketBallDetails($balls, $player_id) {
         transform: skew(-15deg, 0deg);
         transform-origin: top left;
         background: linear-gradient(90deg, var(--primary-transparent), rgba(209, 34, 31, 0.05));
-        z-index: -1;
+        z-index: 1;
     }
     
     .weather{
@@ -1783,6 +1783,7 @@ function getWicketBallDetails($balls, $player_id) {
         return document.body.getAttribute('data-theme') || 'light';
     }
     document.addEventListener("DOMContentLoaded", () => {
+        const menuItems = document.querySelectorAll('.menu-items');
         window.swiper = new Swiper(".swiper", {
             speed: 300,
             slidesPerView: 1,
@@ -2010,10 +2011,10 @@ function getWicketBallDetails($balls, $player_id) {
                             }
                         }
 
-                        $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
+                        // $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
                         $session_email = $_SESSION['email'] ?? '';
 
-                        if ($scorer_emails && in_array($session_email, $scorer_emails) && $row['status'] == 'Live') {
+                        if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
                             echo "<div class='info'>";
                             if(empty($score_log)){
                                 echo "<span class='date-time'>".formatMatchTime($row['match_date'], $row['start_time'])."</span>";
@@ -2066,30 +2067,31 @@ function getWicketBallDetails($balls, $player_id) {
                             $scorers = [];
                             $commentators = [];
 
-                            if (!empty($row['umpires'])) {
-                                $decoded = json_decode($row['umpires'], true);
+                            // Helper: safely decode either JSON or CSV
+                            function decodeEmails($value) {
+                                if (empty($value)) return [];
+
+                                $decoded = json_decode($value, true);
+
                                 if (is_array($decoded)) {
-                                    $umpires = $decoded;
+                                    return $decoded; // proper JSON array
                                 }
+
+                                // fallback: comma separated
+                                return array_map('trim', explode(',', $value));
                             }
 
-                            if (!empty($row['scorers'])) {
-                                $decoded = json_decode($row['scorers'], true);
-                                if (is_array($decoded)) {
-                                    $scorers = $decoded;
-                                }
-                            }
-
-                            if (!empty($row['commentators'])) {
-                                $decoded = json_decode($row['commentators'], true);
-                                if (is_array($decoded)) {
-                                    $commentators = $decoded;
-                                }
-                            }
+                            // Decode roles
+                            $umpires = decodeEmails($row['umpires']);
+                            $scorers = decodeEmails($row['scorers']);
+                            $commentators = decodeEmails($row['commentators']);
 
                             // Combine all for querying
                             $all_emails = array_merge($umpires, $scorers, $commentators);
 
+                            $umpire_users = [];
+                            $scorer_users = [];
+                            $commentator_users = [];
                             // Prepare and execute query if emails are present
                             if (!empty($all_emails)) {
                                 $placeholders = implode(',', array_fill(0, count($all_emails), '?'));
@@ -2108,21 +2110,18 @@ function getWicketBallDetails($balls, $player_id) {
                                 }
 
                                 // Group by role
-                                $umpire_users = [];
                                 foreach ($umpires as $email) {
                                     if (isset($user_map[$email])) {
                                         $umpire_users[] = $user_map[$email];
                                     }
                                 }
 
-                                $scorer_users = [];
                                 foreach ($scorers as $email) {
                                     if (isset($user_map[$email])) {
                                         $scorer_users[] = $user_map[$email];
                                     }
                                 }
 
-                                $commentator_users = [];
                                 foreach ($commentators as $email) {
                                     if (isset($user_map[$email])) {
                                         $commentator_users[] = $user_map[$email];
@@ -2872,7 +2871,10 @@ function getWicketBallDetails($balls, $player_id) {
         </div>
     </div>
 
-    <script>
+    <script type="module">
+    import { host, port } from "../../config.js";
+    window.socket = new WebSocket(`ws://${host}:${port}`);
+    // window.socket = new WebSocket(`wss://my-project-pk19.onrender.com`);
     const menuItems = document.querySelectorAll('.menu-items');
     const indicator = document.querySelector('.menu-line-indicator');
     const close_fed_container = document.querySelector('.exit');
@@ -2882,6 +2884,37 @@ function getWicketBallDetails($balls, $player_id) {
     const ad_container = document.querySelector('.ad');
     const matchID = <?php echo json_encode($match_id); ?>;
     let current_innings = <?php echo json_encode($current_innings); ?>;
+    //websocket programing
+    window.socket.onopen = () => {
+        console.log("Connected to server");
+    }
+
+    window.socket.onmessage = (event) => {
+        let data = JSON.parse(event.data);
+        // console.log(data)
+
+        if (data.type == "Cricketpanel") {
+            let log = data.log;
+                    
+
+            // If it's still a string, parse again
+            if (typeof log === "string") {
+                try {
+                    log = JSON.parse(log);
+                } catch (e) {
+                    console.error("❌ Could not parse log JSON:", log);
+                    return;
+                }
+            }
+
+            console.log("Updated Score Log:", log);
+            // update_score_log(log);
+            if(matchID == log.match_id){
+                fetchScoreboard(log);
+            }
+        }
+    };
+
     //Menu Bar
         const menu_bar = document.querySelector('.menu-bar');
         const side = document.querySelector('.sidebar');
@@ -3022,10 +3055,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 let previousData = null;
 
-function fetchScoreboard() {
-    fetch(`../../API/CRICKET_api.php?match_id=${matchID}&current_innings=${current_innings}`)
-        .then(response => response.json())
-        .then(data => {
+function fetchScoreboard(data) {
+    // fetch(`../../API/CRICKET_api.php?match_id=${matchID}&current_innings=${current_innings}`)
+    //     .then(response => response.json())
+    //     .then(data => {
             // Update scoreboard elements
             // console.log(data);
             if (typeof data === 'string') {
@@ -3106,11 +3139,21 @@ function fetchScoreboard() {
                 
             }
 
-        });
+        // });
 }
 
+function calculateEconomy(overs_bowled, runs_conceded) {
+            const parts = overs_bowled.toString().split('.');
+            const fullOvers = parseInt(parts[0]) || 0;
+            const extraBalls = parseInt(parts[1]) || 0;
+
+            const totalBalls = fullOvers * 6 + extraBalls;
+
+            return totalBalls > 0 ? ((runs_conceded / totalBalls) * 6).toFixed(0) : '0.00';
+        }
+
 // Fetch every 5 seconds
-setInterval(fetchScoreboard, 1500);
+// setInterval(fetchScoreboard, 1500);
 
 //speech
 function speakText(text) {
@@ -3332,14 +3375,14 @@ let updatebatsman = (data) => {
         ...batmans.map(player => (player.wicket_by || '').split(',')[0].trim()).filter(Boolean)
     ])].join(',');
 
-    fetch(`../../API/get_player.php?ids=${ids}`)
-        .then(res => res.json())
-        .then(players => {
+    // fetch(`../../API/get_player.php?ids=${ids}`)
+    //     .then(res => res.json())
+    //     .then(players => {
             const container = section.querySelector('.batsmanStats');
             container.innerHTML = ''; // clear previous if needed
 
             batmans.forEach(batsman => {
-                const name = players[batsman.id] || 'Unknown Player';
+                const name = data.Players_map[batsman.id] || 'Unknown Player';
                 const runs = batsman.runs;
                 const balls = batsman.balls_faced;
                 const fours = batsman.fours;
@@ -3350,13 +3393,13 @@ let updatebatsman = (data) => {
                 const wicket_type = batsman.wicket_type || '';
                 const wicket_by = batsman.wicket_by || '';
                 const bowler_id = batsman.bowler || '';
-                const bowler_name = players[bowler_id] || '';
+                const bowler_name = data.Players_map[bowler_id] || '';
                 
                 let fielder_name = '';
                 if (wicket_by) {
                     const fielder_id = wicket_by.split(',')[0].trim();
                     if (fielder_id) {
-                        fielder_name = players[fielder_id] || '';
+                        fielder_name = data.Players_map[fielder_id] || '';
                     }
                 }
 
@@ -3393,8 +3436,8 @@ let updatebatsman = (data) => {
 
                 container.appendChild(div);
             });
-        })
-        .catch(error => console.error('Error fetching player names:', error));
+        // })
+        // .catch(error => console.error('Error fetching player names:', error));
     
         let extra = data['innings'][current_innings]['Extras'];
         let total_ex = extra['total_extras'];
@@ -3476,9 +3519,9 @@ let updatebatsman = (data) => {
         const bowlerIds = Array.from(bowlerIdsSet).join(',');
 
         // Step 3: Fetch names and render UI
-        fetch(`../../API/get_player.php?ids=${bowlerIds}`)
-            .then(res => res.json())
-            .then(playerMap => {
+        // fetch(`../../API/get_player.php?ids=${bowlerIds}`)
+        //     .then(res => res.json())
+        //     .then(playerMap => {
                 targetContainer.innerHTML = '';
 
                 for (const inningKey in allBowlerInnings) {
@@ -3493,7 +3536,7 @@ let updatebatsman = (data) => {
                             bowlerData = currentBowler;
                         }
 
-                        const bowlerName = playerMap[bowlerId] || 'Unknown Bowler';
+                        const bowlerName = data.Players_map[bowlerId] || 'Unknown Bowler';
                         const overs = bowlerData.overs_bowled || '0.0';
                         const maidens = bowlerData.maidens || 0;
                         const runs = bowlerData.runs_conceded || 0;
@@ -3519,8 +3562,8 @@ let updatebatsman = (data) => {
                         console.log(div)
                     }
                 }
-            })
-            .catch(err => console.error("Error fetching bowler names:", err));
+            // })
+            // .catch(err => console.error("Error fetching bowler names:", err));
 
         //Fall Of Wickets
         // 1. Collect all unique player IDs (batsman, bowler, fielder)
@@ -3542,9 +3585,9 @@ let updatebatsman = (data) => {
         const idsParam = allIds.join(',');
 
     // 2. Fetch player names using your API
-    fetch(`../../API/get_player.php?ids=${idsParam}`)
-    .then(res => res.json())
-    .then(players => {
+    // fetch(`../../API/get_player.php?ids=${idsParam}`)
+    // .then(res => res.json())
+    // .then(players => {
         // 3. Render Fall of Wickets block
         let fall_number = 1;
         const fallOfWicketsContainer = section.querySelector('#fall-of-wickets');
@@ -3553,17 +3596,17 @@ let updatebatsman = (data) => {
         batmans.forEach(batsman => {
             if (batsman.out_status !== 'not out') {
                 const playerId = batsman.id;
-                const name = players[playerId] || 'Unknown Player';
+                const name = data.Players_map[playerId] || 'Unknown Player';
 
                 const bowlerId = batsman.bowler || '';
                 const wicketType = batsman.wicket_type || '';
                 const wicketBy = batsman.wicket_by || '';
 
-                const bowlerName = players[bowlerId] || '';
+                const bowlerName = data.Players_map[bowlerId] || '';
                 let fielderName = '';
                 if (wicketBy) {
                     const fielderId = wicketBy.split(',')[0].trim();
-                    fielderName = players[fielderId] || '';
+                    fielderName = data.Players_map[fielderId] || '';
                 }
 
                 let outBy = '';
@@ -3612,8 +3655,8 @@ let updatebatsman = (data) => {
                 fall_number++;
             }
         });
-    })
-    .catch(err => console.error('Error fetching player names:', err));
+    // })
+    // .catch(err => console.error('Error fetching player names:', err));
     
     let inning = (data?.super_over_innings && Object.keys(data.super_over_innings).length > 0)
             ? 'super_over_innings'
@@ -3633,12 +3676,12 @@ let updatebatsman = (data) => {
         const ids = [strikerId, nonStrikerId, current_bowlerId].filter(Boolean).join(',');
 
         // Fetch player names
-        fetch(`../../API/get_player.php?ids=${ids}`)
-            .then(res => res.json())
-            .then(players => {
-                strikerName = players[strikerId] || 'Striker';
-                nonStrikerName = players[nonStrikerId] || 'Non-Striker';
-                currentBowlerName = players[current_bowlerId] || 'Current Bowler';
+        // fetch(`../../API/get_player.php?ids=${ids}`)
+        //     .then(res => res.json())
+        //     .then(players => {
+                strikerName = data.Players_map[strikerId] || 'Striker';
+                nonStrikerName = data.Players_map[nonStrikerId] || 'Non-Striker';
+                currentBowlerName = data.Players_map[current_bowlerId] || 'Current Bowler';
 
                 let curr_players = document.querySelector('.curr_players');
                 let HTMLData = `
@@ -3703,17 +3746,8 @@ let updatebatsman = (data) => {
                         </div>
                     </div>`;
                     curr_players.innerHTML = HTMLData;
-            })
-            .catch(err => console.error('Error loading openers:', err));
-        function calculateEconomy(overs_bowled, runs_conceded) {
-            const parts = overs_bowled.toString().split('.');
-            const fullOvers = parseInt(parts[0]) || 0;
-            const extraBalls = parseInt(parts[1]) || 0;
-
-            const totalBalls = fullOvers * 6 + extraBalls;
-
-            return totalBalls > 0 ? ((runs_conceded / totalBalls) * 6).toFixed(0) : '0.00';
-        }
+            // })
+            // .catch(err => console.error('Error loading openers:', err));
     }
 }
 
@@ -3747,11 +3781,11 @@ function initShowMoreButton() {
 }
 
 
- function smoothReload() {
-    //   document.body.classList.add("fade-out");
-      setTimeout(() => {
-        location.replace(location.href); // reload after fade out
-      }, 800);
+    function smoothReload() {
+        //   document.body.classList.add("fade-out");
+        setTimeout(() => {
+            location.replace(location.href); // reload after fade out
+        }, 800);
     }
 
     window.addEventListener("pageshow", function () {
@@ -3759,7 +3793,7 @@ function initShowMoreButton() {
     });
 
     // Open dialog for password
-        function openDialog(button, event) {
+        window.openDialog = function(button, event) {
             if (event) event.stopPropagation();
             const dialog = document.getElementById("startMatchDialog");
             dialog.showModal();
@@ -3771,7 +3805,7 @@ function initShowMoreButton() {
         }
 
         // Close dialog of password
-        function closeDialog() {
+        window.closeDialog = function() {
             const dialog = document.getElementById("startMatchDialog");
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';
@@ -3785,8 +3819,8 @@ function initShowMoreButton() {
         // Variefy match password
         document.getElementById("matchPasswordForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            password = document.getElementById("matchPassword").value;
-            match_id = document.getElementById("match_id").value;
+            let password = document.getElementById("matchPassword").value;
+            let match_id = document.getElementById("match_id").value;
 
             let formdata = new FormData();
             formdata.append('password', password.trim());
@@ -3816,7 +3850,7 @@ function initShowMoreButton() {
             .catch();
         });
 
-        function shareContent() {
+        window.shareContent = function() {
             if (navigator.share) {
                 navigator.share({
                     title: 'LiveStrike',
@@ -3831,7 +3865,7 @@ function initShowMoreButton() {
         }
 
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+//   document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {
@@ -3843,5 +3877,46 @@ function initShowMoreButton() {
 
   
     </script>
+    <script>
+  // Make function globally accessible
+  window.openDialog = function(button, event) {
+      if (event) event.stopPropagation();
+      const dialog = document.getElementById("startMatchDialog");
+      dialog.showModal();
+
+      const match_to_start = button.closest('.game-info').getAttribute('data-match_id');
+      console.log("Match : " + match_to_start);
+
+      document.getElementById("match_id").value = match_to_start;
+  }
+
+  // Close dialog of password
+        window.closeDialog = function() {
+            const dialog = document.getElementById("startMatchDialog");
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                el.innerHTML = '';
+                el.style.display = 'none';
+            });
+            document.getElementById("matchPasswordForm").reset();
+            dialog.close();
+        }
+
+         window.shareContent = function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'LiveStrike',
+                    text: 'Check out this awesome real-time score tracking!',
+                    url: window.location.href
+                })
+                .then(() => console.log('Successfully shared'))
+                .catch((error) => console.error('Error sharing:', error));
+            } else {
+                alert('Sharing not supported on this browser.');
+            }
+        }
+
+        
+</script>
+
 </body>
 </html>

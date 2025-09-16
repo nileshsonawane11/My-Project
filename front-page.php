@@ -340,6 +340,11 @@
         font-weight: 700;    
     }
 
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
     /* Mobile Styles */
     @media(max-width: 601px) {
         .toggle-container{
@@ -552,7 +557,7 @@
                     <input type="number" name="otp1" maxlength="1" id="otp1" oninput="moveFocus(this, 'otp2', 'next')" onkeydown="handleBackspace(event, this, 'otp1')" />
                     <input type="number" name="otp2" maxlength="1" id="otp2" oninput="moveFocus(this, 'otp3', 'next')" onkeydown="handleBackspace(event, this, 'otp2')" />
                     <input type="number" name="otp3" maxlength="1" id="otp3" oninput="moveFocus(this, 'otp4', 'next')" onkeydown="handleBackspace(event, this, 'otp3')" />
-                    <input type="number" name="otp4" maxlength="1" id="otp4" onkeydown="handleBackspace(event, this, 'otp4')" />
+                    <input type="number" name="otp4" maxlength="1" id="otp4" oninput="limitLength(this)" onkeydown="handleBackspace(event, this, 'otp4')" />
                 </div>
                 <div id="error-otp" class="error"></div>
                 <div class="otp-btn" id="otp-btn"></div>
@@ -681,12 +686,19 @@
         });
 
         function moveFocus(current, nextId, direction) {
-      if (direction === 'next' && current.value.length === 1) {
-        
-        const nextInput = document.getElementById(nextId);
-        if (nextInput) nextInput.focus();
-      }
-    }
+            limitLength(current)
+            if (direction === 'next' && current.value.length === 1) {
+                
+                const nextInput = document.getElementById(nextId);
+                if (nextInput) nextInput.focus();
+            }
+        }
+
+        function limitLength(input) {
+            if (input.value.length > 1) {
+                input.value = input.value.slice(0, 1);
+            }
+        }
 
     function handleBackspace(event, current, currentId) {
       if (event.key === "Backspace" && current.value === "") {

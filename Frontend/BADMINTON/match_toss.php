@@ -485,7 +485,7 @@
                         <div class="sector types">
                             <div class="options" data-value="SERVE">
                                 <div class="logo">
-                                    <img src="https://i.ibb.co/C5x2Py2s/vecteezy-badminton-player-png-graphic-clipart-design-20002668.png">
+                                    <img src="https://i.ibb.co/YFftD8VJ/Pngtree-volleyball-player-blue-costume-8875190.png">
 
                                 </div>
                                 <div class="tname">SERVE</div>
@@ -493,10 +493,10 @@
 
                             <div class="options" data-value="COURT">
                                 <div class="logo">
-                                    <img src="https://i.ibb.co/FkqLXhgn/vecteezy-badminton-player-png-graphic-clipart-design-20002623.png">
+                                    <img src="https://i.ibb.co/xS1nd7nb/Pngtree-volleyball-player-red-custom-8530229.png">
 
                                     </div>
-                                    <div class="tname">RECEIVE</div>
+                                    <div class="tname">COURT</div>
                                 </div>
                             </div>
                             <div class="error" id="error-decision"></div>
@@ -510,12 +510,12 @@
                             
                             <div class="rule">
                                  <div class="input-fields event-time">
-                                    <input type="number" id="sets"  required><label for="sets" id="time">Number of Games</label></div>
+                                    <input type="number" id="sets"  required><label for="sets" id="time">Number of Sets</label></div>
                             </div>
 
                             <div class="rule">
                                  <div class="input-fields event-time">
-                                    <input type="number" id="points"  required><label for="points" id="time">Points to complete Game</label></div>
+                                    <input type="number" id="points"  required><label for="points" id="time">Points to complete set</label></div>
                             </div>
                         </div>
                         <div class="error" id="error-data_empty"></div>
@@ -603,6 +603,17 @@
             .catch(error => console.log(error));
 
         }
+
+        // Disable right-click
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+  document.onkeydown = function(e) {
+    if(e.keyCode == 123) return false; // F12
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
+  }
         // Theme management for this page
     function initializeTheme() {
         // Check for saved theme preference or use system preference

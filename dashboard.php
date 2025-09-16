@@ -47,6 +47,23 @@
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <title><?php echo $username;?>'s Dashboard</title>
+
+        <link rel="manifest" href="/My-Project/manifest.json">
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#d1221f"/>
+
+    <!-- iOS Safari Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LiveStrike">
+    <link rel="apple-touch-icon" href="/My-Project/assets/images/logo-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    
+
+
+
 <style>
     * {
         margin: 0px;
@@ -111,6 +128,38 @@
         z-index: 999;
         height: 61px;
         border-bottom: 1px solid var(--border-color);
+    }
+
+    #installBtn {
+        padding: 12px 24px;
+        background: #d1221f;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        }
+
+        #installBtn:hover {
+        background: #b51c1a;
+        }
+
+        /* Tablet */
+        @media (max-width: 768px) {
+        #installBtn {
+            font-size: 15px;
+            padding: 10px 20px;
+        }
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+        #installBtn {
+            font-size: 14px;
+            padding: 8px 16px;
+        }
     }
     
     .game svg path ,
@@ -1278,7 +1327,9 @@
                     <div class="items">
                         <div class="logo-img"><img src="./assets/images/logo.png" alt=""></div>
                     </div>
+                    
                     <div class="items list">
+                        <button id="installBtn">📱 Get App</button>
 
                     <!-- L<label class="toggle-switch">
                         <input type="checkbox" id="theme-toggle">
@@ -1766,7 +1817,7 @@ resizeText(".team-score");
         }
 
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+//   document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {
@@ -1775,6 +1826,57 @@ resizeText(".team-score");
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
-    </script>
+
+
+
+// ✅ Register Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/My-Project/service-worker.js', { scope: '/My-Project/' })
+        .then(function (registration) {
+          console.log('✅ Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function (error) {
+          console.log('❌ Service Worker registration failed:', error);
+        });
+    });
+  }
+
+  // ✅ PWA Install Button Logic
+  let deferredPrompt;
+  const installBtn = document.getElementById("installBtn");
+
+  // Hide button until PWA is installable
+  installBtn.style.display = "none";
+
+  // Listen for installable event
+  window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('✅ PWA is installable!');
+    e.preventDefault();       // Prevent auto prompt
+    deferredPrompt = e;       // Save event for later
+    installBtn.style.display = "inline-block"; // Show button
+  });
+
+  // Handle button click
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+
+    console.log("📱 Install button clicked!");
+    deferredPrompt.prompt();
+
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to install: ${outcome}`);
+
+    deferredPrompt = null;
+    installBtn.style.display = "none"; // Hide after install
+  });
+
+  // Detect if app was installed
+  window.addEventListener("appinstalled", () => {
+    console.log("✅ PWA installed successfully!");
+    installBtn.style.display = "none";
+  });
+</script>
+
 </body>
 </html>

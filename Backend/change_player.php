@@ -17,7 +17,7 @@ $Inning = $data['Inning'];
 $Inning_type = $data['Inning Type'] ?? null;
 
 $row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM matches WHERE match_id = '$match_id'"));
-function saveHistorySnapshot($conn, $match_id, $score_log) {
+function saveHistorySnapshot($conn, $match_id, $score_log, $Inning) {
     // Fetch current history from DB
     $result = $conn->query("SELECT history FROM matches WHERE match_id = '$match_id'");
     $row = $result->fetch_assoc();
@@ -41,9 +41,10 @@ function saveHistorySnapshot($conn, $match_id, $score_log) {
     // Update history and score_log in DB
     $stmt = $conn->prepare("UPDATE matches SET history = ?, score_log = ? WHERE match_id = ?");
     $stmt->bind_param("sss", $newHistoryJson, $newScoreLogJson, $match_id);
-
+    
     if ($stmt->execute()) {
-        echo json_encode(['status'=>200,'message'=>'player Added','field'=>'success']);
+        $update = json_decode(get_data($match_id, $Inning),true);
+        echo json_encode(['status'=>200,'message'=>'player Added','field'=>'success','Data'=>$update]);
         exit();
     } else {
         // Optionally log error somewhere or return error info
@@ -105,7 +106,7 @@ if($person == 'Bowler'){
             ]
     ];
 
-    saveHistorySnapshot($conn, $match_id, $score_log);
+    saveHistorySnapshot($conn, $match_id, $score_log, $Inning);
 
 }else if($person == 'Striker'){
     $score_log[$Inning_type][$Inning]['openers']['current_striker']['id'] = $player_id;
@@ -123,7 +124,7 @@ if($person == 'Bowler'){
         $score_log[$Inning_type][$Inning]['batmans'][] = $score_log[$Inning_type][$Inning]['openers']['current_striker'];
     }
 
-    saveHistorySnapshot($conn, $match_id, $score_log);
+    saveHistorySnapshot($conn, $match_id, $score_log, $Inning);
 
 } else if($person == 'Non-Striker'){
     $score_log[$Inning_type][$Inning]['openers']['current_non_striker']['id'] = $player_id;
@@ -141,9 +142,19 @@ if($person == 'Bowler'){
         $score_log[$Inning_type][$Inning]['batmans'][] = $score_log[$Inning_type][$Inning]['openers']['current_non_striker'];
     }
 
-    saveHistorySnapshot($conn, $match_id, $score_log);
+    saveHistorySnapshot($conn, $match_id, $score_log, $Inning);
 }
 
+function get_data($match_id, $Inning){
+    $_GET['match_id'] = $match_id;
+    $_GET['current_innings'] = $Inning;
+
+    ob_start();
+    include '../API/CRICKET_api.php';  // executes with $_GET values
+    $response = ob_get_clean();
+
+    return $response;
+}
 // if($query){
 //     echo json_encode(['status'=>200,'message'=>'player Added','field'=>'success']);
 //     exit();
