@@ -1727,76 +1727,8 @@ function getWicketBallDetails($balls, $player_id) {
     }
 </style>
 <body>
-    <script>
-        // Theme management for this page
-    function initializeTheme() {
-        // Check for saved theme preference or use system preference
-        const currentTheme = localStorage.getItem('theme') || 
-                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        
-        // Set the initial theme
-        if (currentTheme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-        } else {
-            document.body.removeAttribute('data-theme');
-        }
-        
-        // Listen for theme changes from other tabs/pages
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'theme') {
-                if (e.newValue === 'dark') {
-                    document.body.setAttribute('data-theme', 'dark');
-                } else {
-                    document.body.removeAttribute('data-theme');
-                }
-            }
-        });
-        
-        // Listen for custom events if your dashboard dispatches them
-        window.addEventListener('themeChanged', function(e) {
-            if (e.detail === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-            } else {
-                document.body.removeAttribute('data-theme');
-            }
-        });
-    }
 
-    // Initialize theme when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeTheme();
-    });
 
-    // Function to programmatically change theme if needed
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-        }
-    }
-
-    // Function to get current theme
-    function getCurrentTheme() {
-        return document.body.getAttribute('data-theme') || 'light';
-    }
-    document.addEventListener("DOMContentLoaded", () => {
-        const menuItems = document.querySelectorAll('.menu-items');
-        window.swiper = new Swiper(".swiper", {
-            speed: 300,
-            slidesPerView: 1,
-            on: {
-                slideChange: () => {
-                    menuItems.forEach(i => i.classList.remove('active'));
-                    menuItems[swiper.activeIndex].classList.add('active');
-                    moveIndicator(swiper.activeIndex);
-                }
-            }
-        });
-    });
-    </script>
 
     <dialog id="startMatchDialog">
             <div id="content-wrapper">
@@ -1873,7 +1805,7 @@ function getWicketBallDetails($balls, $player_id) {
     <div class="popup-container">
         <div id="team-feedback" open>
             <div class="fed-head"><span class="logo"><div class="items">
-                <div class="logo-img"><img src="../../assets/images/logo.png" alt=""></div>
+                <div class="">Feedback</div>
             </div></span><span class="exit"><img src="https://staticg.sportskeeda.com/skm/assets/close.png" alt=""></span></div>
             <form class="fed-body">
                 <textarea name="" id="" class="feedback-container"></textarea>
@@ -3914,6 +3846,68 @@ function initShowMoreButton() {
                 alert('Sharing not supported on this browser.');
             }
         }
+
+
+        // Set theme and handle logo
+    function setTheme(theme, save = true) {
+    const logo = document.querySelector('.logo-img img'); // select logo
+
+    if (!logo) return; // safety check
+
+    if (theme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        logo.src = "../../assets/images/toggle-logo.png"; // match your HTML relative path
+        if (save) localStorage.setItem('theme', 'dark');
+    } else {
+        document.body.setAttribute('data-theme', 'light');
+        logo.src = "../../assets/images/logo.png"; // match your HTML relative path
+        if (save) localStorage.setItem('theme', 'light');
+    }
+
+    // Dispatch theme change event
+    window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+}
+
+// Initialize theme
+function initializeTheme() {
+    const checkLogo = setInterval(() => {
+        const logo = document.querySelector('.logo-img img');
+        if (logo) {
+            clearInterval(checkLogo);
+
+            const currentTheme = localStorage.getItem('theme') ||
+                                 (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            setTheme(currentTheme, false);
+
+            // Sync theme across tabs
+            window.addEventListener('storage', e => {
+                if (e.key === 'theme') setTheme(e.newValue, false);
+            });
+
+            // Listen for custom theme change events
+            window.addEventListener('themeChanged', e => setTheme(e.detail, false));
+        }
+    }, 50);
+}
+
+// Run after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTheme();
+
+    // Swiper initialization
+    const menuItems = document.querySelectorAll('.menu-items');
+    window.swiper = new Swiper(".swiper", {
+        speed: 300,
+        slidesPerView: 1,
+        on: {
+            slideChange: () => {
+                menuItems.forEach(i => i.classList.remove('active'));
+                menuItems[swiper.activeIndex].classList.add('active');
+                moveIndicator(swiper.activeIndex);
+            }
+        }
+    });
+});
 
         
 </script>

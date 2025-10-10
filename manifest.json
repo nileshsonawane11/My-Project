@@ -5,7 +5,7 @@
   "description": "Real-time score tracking for multiple sports with PWA support.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#1e1e1e",
+  "background_color": "#ffffff",
   "theme_color": "#d1221f",
   "orientation": "any",
   "categories": ["sports", "productivity", "entertainment"],

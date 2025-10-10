@@ -1665,60 +1665,71 @@
 <body>
     <script>
 
-        // Theme management for this page
-    function initializeTheme() {
-        // Check for saved theme preference or use system preference
-        const currentTheme = localStorage.getItem('theme') || 
-                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        
-        // Set the initial theme
-        if (currentTheme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-        } else {
-            document.body.removeAttribute('data-theme');
+   // Theme management functions
+        function initializeTheme() {
+            // Check for saved theme preference or use system preference
+            const currentTheme = localStorage.getItem('theme') || 
+                                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Set the initial theme
+            setTheme(currentTheme, false); // false = don’t save twice
+
+            // Add event listener to theme toggle if it exists
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        setTheme('dark');
+                    } else {
+                        setTheme('light');
+                    }
+                });
+            }
         }
-        
-        // Listen for theme changes from other tabs/pages
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'theme') {
-                if (e.newValue === 'dark') {
-                    document.body.setAttribute('data-theme', 'dark');
-                } else {
-                    document.body.removeAttribute('data-theme');
+
+        // Listen for theme changes from other tabs/windows
+        function setupThemeSync() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme') {
+                    setTheme(e.newValue, false);
                 }
-            }
-        });
-        
-        // Listen for custom events if your dashboard dispatches them
-        window.addEventListener('themeChanged', function(e) {
-            if (e.detail === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-            } else {
-                document.body.removeAttribute('data-theme');
-            }
-        });
-    }
-
-    // Initialize theme when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeTheme();
-    });
-
-    // Function to programmatically change theme if needed
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
+            });
         }
-    }
 
-    // Function to get current theme
-    function getCurrentTheme() {
-        return document.body.getAttribute('data-theme') || 'light';
-    }
+        // ✅ Updated setTheme to also handle logo switching
+        function setTheme(theme, save = true) {
+            const logo = document.querySelector('.logo-img img'); // target your logo <img>
+            
+            if (theme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                if (save) localStorage.setItem('theme', 'dark');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = true;
+                }
+                if (logo) logo.src = "../../assets/images/toggle-logo.png"; // dark version
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                if (save) localStorage.setItem('theme', 'light');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = false;
+                }
+                if (logo) logo.src = "../../assets/images/logo.png"; // light version
+            }
+            
+            // Dispatch event for other components to listen to
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+        }
+
+        // Get current theme
+        function getCurrentTheme() {
+            return document.body.getAttribute('data-theme') || 'dark';
+        }
+
+        // Initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            setupThemeSync();
+        });
     document.addEventListener("DOMContentLoaded", () => {
         window.swiper = new Swiper(".swiper", {
             speed: 300,
@@ -1809,7 +1820,7 @@
     <div class="popup-container">
         <div id="team-feedback" open>
             <div class="fed-head"><span class="logo"><div class="items">
-                <div class="logo-img"><img src="../../assets/images/logo.png" alt=""></div>
+                <div class="">Feedback</div>
             </div></span><span class="exit"><img src="https://staticg.sportskeeda.com/skm/assets/close.png" alt=""></span></div>
             <form class="fed-body">
                 <textarea name="" id="" class="feedback-container"></textarea>

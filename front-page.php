@@ -263,16 +263,21 @@
         margin: 20px 0;
     }
 
-    .social-icons a{
+    .social-icons a {
         border: 1px solid var(--social-border);
-        border-radius: 20%;
+        border-radius: 10px;
         display: inline-flex;
         justify-content: center;
         align-items: center;
         margin: 0 3px;
-        width: 40px;
+        width: max-content;
         height: 40px;
+        gap: 10px;
         transition: border-color 0.3s;
+        padding: 0px 20px;
+        font-size: 15px;
+        color: white;
+        background: linear-gradient(90deg, var(--primary-light), var(--primary-dark), rgba(160, 25, 23, 1));
     }
 
     .toggle-container{
@@ -530,10 +535,10 @@
             <form action="" method="post" class="register" autocomplete="on">
                 <h1>Create Account</h1>
                 <div class="social-icons">
-                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i></a>
-                    <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'> Continue with Google</i></a>
+                    <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
-                    <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a>
+                    <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
                 </div>
                 <span>Register with E-mail</span>
                 
@@ -581,12 +586,12 @@
             <form action="" method="post" class="login" autocomplete="on">
                 <h1>Sign In</h1>
                 <div class="social-icons">
-                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i></a>
-                    <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i>   Continue with Google</a>
+                    <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
-                    <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a>
+                    <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
                 </div>
-                <span>Login With Username & Password</span>
+                <span>Login With Email & Password</span>
                 <input id="login-email" type="email" placeholder="Enter Email" name="email" autocomplete="email" required>
                 <div class="password-container">
                     <input id="login-password" type="password" placeholder="Enter Password" name="password" autocomplete="current-password" required>
@@ -943,7 +948,7 @@
             };
 
 // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  //document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

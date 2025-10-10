@@ -762,8 +762,7 @@ if (isset($score_log['innings'][$current_inning])) {
         const person = urlParams.get('for');
         const strikerParam = urlParams.get('striker');
         const nonStrikerParam = urlParams.get('non-striker');
-        let out_players = <?php echo json_encode($out_batsmen ?? []); ?>;                               
-        let out_players = <?php echo json_encode($out_batsmen ?? []); ?>;                               
+        let out_players = <?php echo json_encode($out_batsmen ?? []); ?>;                              
         const striker = strikerParam ? strikerParam.split(",")[0] : null;
         const non_striker = nonStrikerParam ? nonStrikerParam.split(",")[0] : null;
 

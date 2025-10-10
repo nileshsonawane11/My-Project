@@ -115,7 +115,7 @@
     }
     
     .bx {
-        color: var(--text-dark);
+        color: white;
     }
     .nav-bar {
         display: flex;
@@ -1522,34 +1522,16 @@ resizeText(".team-score");
                                 (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             
             // Set the initial theme
-            if (currentTheme === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-                if (document.getElementById('theme-toggle')) {
-                    document.getElementById('theme-toggle').checked = true;
-                }
-            } else {
-                document.body.setAttribute('data-theme', 'light');
-                if (document.getElementById('theme-toggle')) {
-                    document.getElementById('theme-toggle').checked = false;
-                }
-            }
-            
+            setTheme(currentTheme, false); // false = don’t save twice
+
             // Add event listener to theme toggle if it exists
             const themeToggle = document.getElementById('theme-toggle');
             if (themeToggle) {
                 themeToggle.addEventListener('change', function() {
                     if (this.checked) {
-                        document.body.setAttribute('data-theme', 'dark');
-                        localStorage.setItem('theme', 'dark');
-                        
-                        // Dispatch event for other components to listen to
-                        window.dispatchEvent(new CustomEvent('themeChanged', { detail: 'dark' }));
+                        setTheme('dark');
                     } else {
-                        document.body.setAttribute('data-theme', 'light');
-                        localStorage.setItem('theme', 'light');
-                        
-                        // Dispatch event for other components to listen to
-                        window.dispatchEvent(new CustomEvent('themeChanged', { detail: 'light' }));
+                        setTheme('light');
                     }
                 });
             }
@@ -1559,19 +1541,38 @@ resizeText(".team-score");
         function setupThemeSync() {
             window.addEventListener('storage', function(e) {
                 if (e.key === 'theme') {
-                    if (e.newValue === 'dark') {
-                        document.body.setAttribute('data-theme', 'dark');
-                        if (document.getElementById('theme-toggle')) {
-                            document.getElementById('theme-toggle').checked = true;
-                        }
-                    } else {
-                        document.body.setAttribute('data-theme', 'light');
-                        if (document.getElementById('theme-toggle')) {
-                            document.getElementById('theme-toggle').checked = false;
-                        }
-                    }
+                    setTheme(e.newValue, false);
                 }
             });
+        }
+
+        // ✅ Updated setTheme to also handle logo switching
+        function setTheme(theme, save = true) {
+            const logo = document.querySelector('.logo-img img'); // target your logo <img>
+            
+            if (theme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                if (save) localStorage.setItem('theme', 'dark');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = true;
+                }
+                if (logo) logo.src = "./assets/images/toggle-logo.png"; // dark version
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                if (save) localStorage.setItem('theme', 'light');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = false;
+                }
+                if (logo) logo.src = "./assets/images/logo.png"; // light version
+            }
+            
+            // Dispatch event for other components to listen to
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+        }
+
+        // Get current theme
+        function getCurrentTheme() {
+            return document.body.getAttribute('data-theme') || 'dark';
         }
 
         // Initialize theme when DOM is loaded
@@ -1580,30 +1581,6 @@ resizeText(".team-score");
             setupThemeSync();
         });
 
-        // Optional: Add this if you want to programmatically change the theme from other parts of your site
-        function setTheme(theme) {
-            if (theme === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                if (document.getElementById('theme-toggle')) {
-                    document.getElementById('theme-toggle').checked = true;
-                }
-            } else {
-                document.body.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-                if (document.getElementById('theme-toggle')) {
-                    document.getElementById('theme-toggle').checked = false;
-                }
-            }
-            
-            // Dispatch event for other components to listen to
-            window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
-        }
-
-        // Optional: Get current theme
-        function getCurrentTheme() {
-            return document.body.getAttribute('data-theme') || 'dark';
-        }
 
 
 

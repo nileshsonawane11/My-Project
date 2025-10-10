@@ -13,204 +13,267 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>forgot password</title>
     <style>
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Montserrat', sans-serif;
+    }
 
-        :root {
-            --primary-light: #FAC01F;
-            --primary-dark: #F83900;
-            --background : linear-gradient(0deg, var(--primary-light), var(--primary-dark));
-        }
-        .container form{
-            width: 100%;
+    :root {
+        --primary-red: rgba(209, 34, 31, 1);
+        --primary-red-light: rgba(209, 34, 31, 0.8);
+        --primary-red-dark: rgba(160, 25, 23, 1);
+        --background: linear-gradient(135deg, #1e1e1e, #121212);
+        --card-bg: #1e1e1e;
+        --text-dark: #e0e0e0;
+        --text-light: #a0a0a0;
+        --border-color: #333333;
+        --accent-color: #1c0003ff;
+        --svg-fill: white;
+        --nav-fill: #2d2d2d;
+        --invert: invert(1);
+    }
+
+    [data-theme="light"] {
+        --background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+        --card-bg: #ffffff;
+        --text-dark: #212529;
+        --text-light: #495057;
+        --border-color: #dee2e6;
+        --svg-fill: black;
+        --nav-fill: #ffffffff;
+        --invert: invert(0);
+    }
+
+    body {
+        background: var(--background);
+        color: var(--text-dark);
+    }
+
+    .container form {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .otptxt {
+        font-size: 13px;
+        margin: 10px;
+        color: var(--text-dark);
+    }
+
+    .toogle-pass {
+        width: 100%;
+        gap: 9px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        color: var(--text-dark);
+    }
+
+    .otp-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .error {
+        display: none;
+        color: var(--primary-red);
+        width: 100%;
+        font-size: 12px;
+        margin: 5px;
+    }
+
+    .otp-btn {
+        width: 100%;
+        margin: 9px;
+        color: var(--primary-red-light);
+        font-size: 13px;
+        cursor: pointer;
+        display: none;
+    }
+
+    .otp {
+        width: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .otp-container input {
+        text-align: center;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-dark);
+    }
+
+    .submit-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .return {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .return svg {
+        cursor: pointer;
+        filter: var(--invert);
+    }
+
+    #showPass {
+        cursor: pointer;
+        filter: var(--invert);
+    }
+
+    h1 {
+        margin-bottom: 60px;
+        color: var(--text-dark);
+    }
+
+    @media (min-width:601px) {
+        body {
+            backdrop-filter: blur(10px);
             display: flex;
+            background-repeat: no-repeat;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            background-attachment: fixed;
+            background-position: center;
+            background-size: cover;
             flex-direction: column;
-            gap: 5px;
+            height: 100vh;
+            user-select: none;
         }
-        .otptxt {
-            font-size: 13px;
-            margin: 10px;
+
+        .container {
+            display: flex;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+            width: 768px;
+            max-width: 100%;
+            min-height: 480px;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            padding: 40px;
         }
-        .toogle-pass {
-            width: 100%;
-            gap: 9px;
+
+        .container button {
+            background: linear-gradient(90deg, var(--primary-red-light), var(--primary-red-dark));
+            color: #fff;
             font-size: 12px;
-            display: flex;
-            align-items: center;
-            flex-direction: row;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            cursor: pointer;
         }
-        .otp-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 5px;
-            width: 100%;
-        }
-        .error{
-            display: none;
-            color:red; 
-            width:100%;
-            font-size:12px;
-            margin: 5px;
-        }
-        .otp-btn{
-            width: 100%;
-            margin: 9px;
-            color: blue;
+
+        .container input[type="text"],
+        [type="email"],
+        [type="password"],
+        select {
+            background-color: var(--nav-fill);
+            border: 1px solid var(--border-color);
+            margin: 8px 0;
+            padding: 10px 15px;
             font-size: 13px;
-            cursor: pointer;
-            display: none;
-        }
-        .otp{
+            border-radius: 8px;
             width: 100%;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            outline: none;
+            height: 45px;
+            overflow: hidden;
+            color: var(--text-dark);
         }
-        .otp-container input{
-            text-align: center;
+
+        .container form {
+            max-width: 450px;
         }
-        .submit-btn{
-            width: 100%;
+    }
+
+    @media(max-width: 601px) {
+        body {
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            height: 100vh;
         }
-        .return{
-            width: 100%;
+
+        .container {
             display: flex;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+            position: relative;
+            overflow: hidden;
+            width: 768px;
+            z-index: 0;
+            max-width: 100%;
+            min-height: 480px;
+            padding: 40px 40px;
+            height: 100vh;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            flex-direction: row;
-        }
-        .return svg{
-            cursor: pointer;
-        }
-        #showPass{
-            cursor: pointer;
-        }
-        
-        h1{
-            margin-bottom:60px;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
         }
 
-        @media (min-width:601px) {
-            body{
-                backdrop-filter: blur(10px);
-                display: flex;
-                background-repeat: no-repeat;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                background-attachment: fixed;
-                background-position: center;
-                background-size: cover;
-                flex-direction: column;
-                height: 100vh;
-                user-select: none;
-            }
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                overflow: hidden;
-                width: 768px;
-                max-width: 100%;
-                min-height: 480px;
-                align-items: center;
-                justify-content : space-between;
-                flex-direction: column;
-            }
-            .container button{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                margin-top: 10px;
-                cursor: pointer;
-            }
-            .container input[type="text"],[type="email"],[type="password"],select{
-                background-color: #eee;
-                border:none;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 13px;
-                border-radius: 8px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                overflow: hidden;
-            }
-            .container form{
-                max-width: 450px;
-            }
+        .container button {
+            background: linear-gradient(90deg, var(--primary-red-light), var(--primary-red-dark));
+            color: #fff;
+            font-size: 12px;
+            padding: 10px 45px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            cursor: pointer;
+            width: 100%;
+            height: 45px;
         }
 
-        @media(max-width: 601px) {
-            body{
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-                height: 100vh;
-            }
-            .container{
-                display: flex;
-                background-color: #fff;
-                box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
-                position: relative;
-                overflow: hidden;
-                width: 768px;
-                z-index: 0;
-                max-width: 100%;
-                min-height: 480px;
-                padding: 40px 40px;
-                height: 100vh;
-                align-items: center;
-                justify-content : space-between;
-                flex-direction: column;
-            }
-            .container button{
-                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
-                color: #fff;
-                font-size: 12px;
-                padding: 10px 45px;
-                border: 1px solid transparent;
-                border-radius: 8px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                margin-top: 10px;
-                cursor: pointer;
-                width: 100%;
-                height: 45px;
-            }
-            .container input[type="text"],[type="email"],[type="password"],select{
-                background-color: #eee;
-                border:none;
-                margin: 8px 0;
-                padding: 10px 15px;
-                font-size: 15px;
-                border-radius: 8px;
-                width: 100%;
-                outline: none;
-                height: 45px;
-                overflow: hidden;
-            }
+        .container input[type="text"],
+        [type="email"],
+        [type="password"],
+        select {
+            background-color: var(--nav-fill);
+            border: 1px solid var(--border-color);
+            margin: 8px 0;
+            padding: 10px 15px;
+            font-size: 15px;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+            height: 45px;
+            overflow: hidden;
+            color: var(--text-dark);
         }
+    }
     </style>
 </head>
 <body>
@@ -417,7 +480,7 @@
            },10); 
 
            // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+ // document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {
@@ -426,6 +489,61 @@
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
+  // Theme management for this page
+    function initializeTheme() {
+        // Check for saved theme preference or use system preference
+        const currentTheme = localStorage.getItem('theme') || 
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Set the initial theme
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+        }
+        
+        // Listen for theme changes from other tabs/pages
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme') {
+                if (e.newValue === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                }
+            }
+        });
+        
+        // Listen for custom events if your dashboard dispatches them
+        window.addEventListener('themeChanged', function(e) {
+            if (e.detail === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                document.body.removeAttribute('data-theme');
+            }
+        });
+    }
+
+    // Initialize theme when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeTheme();
+    });
+
+    // Function to programmatically change theme if needed
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Function to get current theme
+    function getCurrentTheme() {
+        return document.body.getAttribute('data-theme') || 'light';
+    }
     </script>
 </body>
 </html>
