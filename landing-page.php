@@ -12,6 +12,76 @@
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <title>LiveStrike</title>
+
+    <!-- Web App Manifest -->
+<link rel="manifest" href="./manifest.json">
+
+<!-- Theme Color for Mobile Browsers -->
+<meta name="theme-color" content="#d1221f"/>
+
+<!-- iOS Safari Specific Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LiveStrike">
+<link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+        .then(function(registration) {
+          console.log('✅ Service Worker registered with scope:', registration.scope);
+        })
+        .catch(function(error) {
+          console.log('❌ Service Worker registration failed:', error);
+        });
+    });
+  }
+</script>
+
+<script>
+let deferredPrompt;
+
+// Listen for the event that says the app is installable
+window.addEventListener('beforeinstallprompt', (e) => {
+  console.log('✅ PWA is installable!');
+  e.preventDefault(); // Prevent automatic prompt
+  deferredPrompt = e;
+  showInstallButton();
+});
+
+function showInstallButton() {
+  const installBtn = document.createElement('button');
+  installBtn.textContent = '📱 Install LiveStrike App';
+  installBtn.style = 'position: fixed; bottom: 20px; left: 20px; z-index: 9999; ' + 
+                     'padding: 12px 20px; background: #d1221f; color: white; ' +
+                     'border: none; border-radius: 8px; font-size: 16px; ' +
+                     'cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3);';
+  
+  installBtn.onclick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User installed the app');
+        }
+        deferredPrompt = null;
+      });
+    }
+  };
+  
+  document.body.appendChild(installBtn);
+}
+
+// Also check if the app is already installable on page load
+if (window.deferredPrompt) {
+  showInstallButton();
+}
+</script>
+
+
 <style>
     *{
         margin: 0px;
@@ -90,7 +160,6 @@
     .img-container{
         position: relative;
         width: 100%;
-        margin-top: 60px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -1040,7 +1109,7 @@
         }
 
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+//   document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

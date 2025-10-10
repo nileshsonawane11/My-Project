@@ -23,6 +23,9 @@ $sql = mysqli_query($conn,"SELECT * FROM users WHERE email = '$recipient_email'"
 $row = mysqli_fetch_assoc($sql);
 $name = $row['fname'].' '.$row['lname'];
 
+$sql2 = mysqli_query($conn,"SELECT * FROM users");
+$count = mysqli_num_rows($sql2);
+
 echo "$game ,$date ,$time ,$venue ,$recipient_email";
 
 // Create email content (HTML format)
@@ -197,7 +200,135 @@ $email_content = "
 </html>"; 
 
 $subject = 'Umpire Selection Confirmation';
+}else if($for_value == 'new_user'){
+$email_content = "
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Welcome - LiveStrike</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+            text-align: left;
+        }
+        .header {
+            background: #28a745;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .details {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+        .button {
+            display: block;
+            width: 96%;
+            text-align: center;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class='container'>
+        <div class='header'>
+            <h2>WELCOME TO LIVESTRIKE!</h2>
+        </div>
+        <div class='content'>
+            <p>Dear <strong>$name</strong>,</p>
+            <p>We are excited to welcome you as a $count<sup>th</sup> new member of <strong>LiveStrike</strong>! 🎉</p>
+            <div class='details'>
+                <p>✅ You can now log in and explore your account.</p>
+                <p>✅ Stay updated with real-time scores and match updates.</p>
+                <p>✅ Manage your profile and settings easily.</p>
+            </div>
+        </div>
+        <div class='footer'>
+            <p>If you need any assistance, feel free to contact us anytime.</p>
+            <a href='/support.php' class='button'>Get Support</a>
+        </div>
+    </div>
+</body>
+</html>"; 
+
+$subject = 'Welcome to LiveStrike';
+
+    // Send email using PHPMailer
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'livestrike.in@gmail.com'; // Change to your email
+        $mail->Password = 'sdie phiv vbgk qymy'; // Use App Password if required
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->setFrom('livestrike.in@gmail.com', 'LiveStrike'); // Sender
+
+        // $mail->isSMTP();
+        // $mail->Host = 'smtp.hostinger.com';
+        // $mail->SMTPAuth = true;
+        // $mail->Username = 'admin@livestrike.in'; // Change to your email
+        // $mail->Password = 'Livestrike@123'; // Use App Password if required
+        // $mail->SMTPSecure = 'ssl';
+        // $mail->Port = 465;
+
+        // $mail->setFrom('admin@livestrike.in', 'LiveStrike'); // Sender
+        
+        $mail->addAddress($recipient_email); // Recipient
+        $mail->Subject = $subject;
+        $mail->isHTML(true);                                                                    
+        $mail->Body = $email_content;
+        $mail->send();
+
+        $mail->clearAddresses();
+        $mail->addAddress('livestrike.in@gmail.com'); // Recipient
+        $mail->Subject = $subject;
+        $mail->isHTML(true);                                                                    
+        $mail->Body = $email_content;
+
+        if ($mail->send()) {
+            echo 'Email sent successfully';
+        }
+    } catch (Exception $e) {
+        echo 'Email failed: ' . $mail->ErrorInfo;
+    }
+
+    exit();
 }
+
 
 // Send email using PHPMailer
 $mail = new PHPMailer(true);

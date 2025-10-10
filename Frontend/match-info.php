@@ -105,9 +105,7 @@
             width: 100%;
             max-width: 800px;
             background: var(--card-bg);
-            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--card-shadow);
         }
 
         .header {

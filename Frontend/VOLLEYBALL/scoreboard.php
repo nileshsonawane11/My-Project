@@ -2852,7 +2852,6 @@ function update_scoreboard(data){
 }
 
 
-
     function initShowMoreButton() {
         const container = document.querySelector('.comm-data');
         let toggleButton = document.getElementById('toggle-button');

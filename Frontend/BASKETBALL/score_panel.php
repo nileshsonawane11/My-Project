@@ -1693,7 +1693,6 @@
     });
 
 
-
     // Open modal
     team_btns.forEach(selector => {
         selector.addEventListener('click', (event) => {
@@ -1796,7 +1795,6 @@
         }
     });
        
-
 
  // Disable F5 and Ctrl+R keyboard shortcuts
         window.addEventListener("keydown", function (e) {

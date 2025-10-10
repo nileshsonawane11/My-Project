@@ -50,7 +50,6 @@
         width: 100%;
         max-width: 800px;
         background: var(--background);
-        border-radius: var(--border-radius);
         overflow: hidden;
         box-shadow: var(--card-shadow);
         transition: background 0.3s ease, box-shadow 0.3s ease;

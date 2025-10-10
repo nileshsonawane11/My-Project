@@ -20,6 +20,19 @@
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
 
     <title>Login & Register Page</title>
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="./manifest.json">
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#d1221f"/>
+
+    <!-- iOS Safari Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LiveStrike">
+    <link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    
 <style>
        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
@@ -822,6 +835,19 @@
                 if(data.status === 200){
                     alert(`${email} User Registered Successfully!`)
                     window.location.href = './front-page.php';
+
+                        let scorerData = {
+                            for_value: 'new_user',
+                            game: '',
+                            venue: '',
+                            time: '',
+                            password: '',
+                            date: '',
+                            recipient_email: email
+                        };
+                        const scorerBlob = new Blob([JSON.stringify(scorerData)], { type: 'application/json' });
+                        navigator.sendBeacon('./mail.php', scorerBlob);
+                    console.log('mail sent');
                     
                 }else{
                     let el = document.getElementById('error-'+data.field);

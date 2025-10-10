@@ -572,7 +572,7 @@
         </div>
         
         <div class="actions-section">
-            <button class="action-btn">Change Password</button>
+            <button onclick='window.location.href=`./forget-password.php`' class="action-btn">Change Password</button>
             <button class="action-btn1" onclick='window.location.href="./support.php"'>Contact</button>
             
             <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column;">

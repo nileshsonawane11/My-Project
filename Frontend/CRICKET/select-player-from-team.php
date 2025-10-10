@@ -12,6 +12,7 @@
     }
 
     $current_inning = null;
+    $current_inning = null;
     $for = $_GET['for'] ?? '';
     $team = $_GET['team'] ?? '';
     $match = $_GET['match'] ?? '';
@@ -45,9 +46,6 @@ if (isset($score_log['innings'][$current_inning])) {
 
     // Output or return the filtered list
     // echo json_encode($out_batsmen);
-    if($for =='Bowler'){
-        $out_batsmen = [];
-    }
 }
 ?>
 <!DOCTYPE html>
@@ -764,7 +762,7 @@ if (isset($score_log['innings'][$current_inning])) {
         const person = urlParams.get('for');
         const strikerParam = urlParams.get('striker');
         const nonStrikerParam = urlParams.get('non-striker');
-        let out_players = <?php echo json_encode($out_batsmen ?? []); ?>;                               
+        let out_players = <?php echo json_encode($out_batsmen ?? []); ?>;                              
         const striker = strikerParam ? strikerParam.split(",")[0] : null;
         const non_striker = nonStrikerParam ? nonStrikerParam.split(",")[0] : null;
 
@@ -813,6 +811,7 @@ if (isset($score_log['innings'][$current_inning])) {
         if(out_players.includes(block)){
             option.removeEventListener('click', handleSelect);
             option.style.background = '#fff';
+            option.style.border = '#ff0000ff 2px solid';
             option.style.border = '#ff0000ff 2px solid';
             option.querySelector('.reason').innerHTML = 'Out';
         }

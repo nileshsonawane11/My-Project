@@ -31,6 +31,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
     <title>LiveStrike</title>
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="./manifest.json">
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#d1221f"/>
+
+    <!-- SEO Meta -->
+    <meta name="description" content="LiveStrike provides real-time live score updates, game results, and sports tracking for cricket, football, and more.">
+    <meta name="keywords" content="livestrike,live,match,cricket,kabaddi,score,game,sports,gpn,gpnashik, live strike, live score, live updates, sports updates, games, cricket scores, football scores, match tracker, online score">
+    <meta name="author" content="LiveStrike Team">
+
+    <!-- iOS Safari Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LiveStrike">
+    <link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- iOS Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LiveStrike">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/logo-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Favicon (All Browsers) -->
+    <link rel="icon" type="image/x-icon" href="./assets/images/logo-192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/logo-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/logo-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/images/logo-192.png">
+
+    <!-- Open Graph (Social Preview) -->
+    <meta property="og:title" content="LiveStrike - Live Score Updates & Games Tracker">
+    <meta property="og:description" content="Track live sports scores and updates instantly with LiveStrike.">
+    <meta property="og:image" content="./assets/images/logo-192.png">
+    <meta property="og:url" content="https://livestrike.in">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LiveStrike - Live Score Updates">
+    <meta name="twitter:description" content="Real-time match scores and sports updates with LiveStrike.">
+    <meta name="twitter:image" content="./assets/images/logo-192.png">
+
     <style>
 * {
   margin: 0;
@@ -163,7 +207,7 @@ body {
 }
 
 </style>
-
+</head>
 <body>
   <div id="loader">
     <div class="spinner"></div>

@@ -1,10 +1,6 @@
 <?php
     session_start();
     include 'config.php';
-    if(isset($_SESSION['user'])){
-        header('location: ./dashboard.php?update="live"&sport="CRICKET"');
-        exit();
-    }
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -45,10 +45,6 @@ if($for == "dashboard"){
             LEFT JOIN teams AS t2 ON matches.team_2 = t2.t_id 
             WHERE sports.sport_name = '$sport'";
 
-    if (empty($search)) {
-        $sql .= " AND matches.status = '$status'";
-    }
-
     if (!empty($search)) {
         $sql .= " AND (
             matches.match_name LIKE '%$search%' OR 
