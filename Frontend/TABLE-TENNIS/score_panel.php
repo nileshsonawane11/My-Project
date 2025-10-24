@@ -270,23 +270,16 @@
         }
 
         .blur-container {
-                top: 0;
-                position: absolute;
-                height: 100%;
-                width: 100%;
-                background-color: transparent;
-                filter: blur(3px);
-                z-index: -1;
-                background-position: center;
-                background-image: url("https://images.volleyballworld.com/image/upload/t_ratio10_16-size30-f_webp-c_fill/v1746718372/assets/v2/backgrounds/world_rankings_bkg.jpg");
-                background-size: cover;
-                    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-                mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-                -webkit-mask-size: 100% 100%;
-                mask-size: 100% 100%;
-                -webkit-mask-repeat: no-repeat;
-                mask-repeat: no-repeat;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(255,255,255,0.2) 100%), 
+                        url('your-background.jpg') center/cover no-repeat;
+            filter: blur(3px);
         }
+
 
         .scoreboard {
             width: 100%;
@@ -1024,8 +1017,7 @@
                     </svg>
                 </div>
                 <div class="undo-seyup"><p class="undo-txt">UNDO ?</p></div>
-                <div class="undo-seyup"><p class="undo-warn">Cancel the last ball ?</p></div>
-                <div class="error" id="error-empty"></div>
+                <div class="undo-seyup"><p class="undo-warn">Cancel the last action ?</p></div>
                 <div class="undo-seyup"><button class="undo-btn" id='undo-btn' onclick="process_undo()">Yes I’m certain</button></div>
                 <div class="undo-seyup"><p class="undo-cancel" onclick="document.querySelector('#undo').close();">Cancel</p></div>
             </div>

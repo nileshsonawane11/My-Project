@@ -15,39 +15,38 @@
         $score_log = json_decode($row['score_log'] ?? '{}', true);
     }
 
-    // Detect current set
-    $current_set = null;
-    $last_rally = null;
+    // Detect current half and last raid
+    $current_half = $score_log['current_half'] ?? '';
+    $half_data = $score_log['halves'][$current_half] ?? '';
+    $last_raid = null;
 
-    if (isset($score_log['sets']) && is_array($score_log['sets'])) {
-        foreach ($score_log['sets'] as $set_number => $set_data) {
-            if (isset($set_data['set_completed']) && $set_data['set_completed'] === false) {
-                $current_set = $set_number;
-                $set_team1 = $score_log['team1'];
-                $set_team2 = $score_log['team2'];
-                if (!empty($set_data['rallies'])) {
-                    $last_rally = end($set_data['rallies']);
-                    reset($set_data['rallies']);
-                }
-                break;
-            }
-        }
+    if (!empty($half_data['raids'])) {
+        $last_raid = end($half_data['raids']);
     }
 
-    // If no active set, fallback to last one (even if completed)
-    if ($current_set === null && isset($score_log['sets']) && is_array($score_log['sets'])) {
-        $last_set_number = array_key_last($score_log['sets']);
-        if (is_array($score_log['sets'][$last_set_number])) {
-            $current_set = $last_set_number;
-            $set_team1 = $score_log['team1'];
-            $set_team2 = $score_log['team2'];
-            $rallies = $score_log['sets'][$last_set_number]['rallies'] ?? [];
-            $last_rally = is_array($rallies) ? end($rallies) : null;
-
-        }
+    if (empty($last_raid)) {
+        $last_half_number = array_key_last($score_log['halves'] ?? []);
+        $raids_array = $score_log['halves'][$last_half_number]['raids'] ?? [];
+        $last_raid = end($raids_array);
     }
 
-    $current_serve_team = $score_log['current_serve'] ?? '';
+    $current_raid = $score_log['current_raid_team'] ?? '';
+
+    $team1_role = null;
+    $team2_role = null;
+    if($current_raid == ($score_log['team1'] ?? '')){
+        $team1_role = 'Raiding';
+        $team2_role = 'Defending';
+
+        $raid_team = $score_log['team1'] ?? '';
+        $defence_team = $score_log['team2'] ?? '';
+    }else{
+        $team1_role = 'Defending';
+        $team2_role = 'Raiding';
+
+        $raid_team = $score_log['team2'] ?? '';
+        $defence_team = $score_log['team1'] ?? '';
+    }
 
     function formatMatchTime($matchDate, $startTime) {
         if (empty($matchDate) || empty($startTime)) {
@@ -125,8 +124,8 @@
         --radius-md: 12px;
         --radius-lg: 16px;
         --light-bg: #f9f9f9;
-        --nav-fill: #ffffffff;
         --invert: invert(0);
+        --nav-fill: #ffffffff;
     }
 
     [data-theme="dark"] {
@@ -138,8 +137,9 @@
         --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
         --shadow-lg: 0 10px 15px rgba(0,0,0,0.3);
         --light-bg: #1e1e1e;
-        --nav-fill: #2d2d2d;
         --invert: invert(1);
+        --nav-fill: #2d2d2d;
+
     }
     
     body{
@@ -689,12 +689,11 @@
     .run{
         height: 25px;
         width: 52px;
-        padding: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
         border: 1px solid var(--primary-color);
-        border-radius: 15%;
+        border-radius: 7px;
         color: var(--primary-color);
         font-weight: 600;
         font-size: 13px;
@@ -1609,7 +1608,8 @@
         }
     }
 
-    @media(min-width: 601px) {      
+    @media(min-width: 601px) {
+        
         .txt-strike{
             font-weight: 600;
             color: var(--primary-color);
@@ -1674,6 +1674,7 @@
         color: var(--text-dark);
         transition: color 0.3s ease;
     }
+
     .logo-img {
         height: 90px;
         width: 100px;
@@ -1684,23 +1685,8 @@
         }
 </style>
 <body>
-    <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        window.swiper = new Swiper(".swiper", {
-            speed: 300,
-            slidesPerView: 1,
-            on: {
-                slideChange: () => {
-                    menuItems.forEach(i => i.classList.remove('active'));
-                    menuItems[swiper.activeIndex].classList.add('active');
-                    moveIndicator(swiper.activeIndex);
-                }
-            }
-        });
-    });
-    </script>
 
-    <dialog id="startMatchDialog">
+<dialog id="startMatchDialog">
             <div id="content-wrapper">
                 <div class="top-container">
                     <p id="title">Enter Password to Start Match</p>
@@ -1792,6 +1778,7 @@
             <a href="javascript:history.back()">
                 <div class="items">
                     <div class="logo-img"><img src="../../assets/images/logo.png" alt=""></div>
+                    <!-- <sup class="trade-mark">TM</sup></div> -->
                 </div>
             </a>
             <div class="items">
@@ -1835,7 +1822,7 @@
                                 echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
                             }
 
-                            $astr = (!empty($current_serve_team) &&  $current_serve_team == $team1['t_id']) ? '*' : '';
+                            $astr = (!empty($current_serve_team) &&  $current_serve_team == $team1['t_id'] && !empty($score_log['winner'])) ? '*' : '';
 
                             echo $team1['t_name'].' '.$astr;
                         ?>
@@ -1845,14 +1832,14 @@
 
                 <div class="info team-score">
                     <div class="team">
-                         <?php
+                        <?php
                             if (!empty($team2['t_logo'])) {
                                 echo "<img src='../../assets/images/teams/{$team2['t_logo']}' alt='{$team2['t_name']}' onerror=\"this.style.opacity='0'\">";
                             }else{
                                 echo "<img src='https://cdn-icons-png.flaticon.com/512/8140/8140303.png' onerror=\"this.style.opacity='0'\">";
                             }
 
-                            $astr = (!empty($current_serve_team) &&  $current_serve_team == $team2['t_id']) ? '*' : '';
+                            $astr = (!empty($current_serve_team) &&  $current_serve_team == $team2['t_id'] && !empty($score_log['winner'])) ? '*' : '';
 
                             echo $team2['t_name'].' '.$astr;
                         ?>
@@ -1886,7 +1873,7 @@
                         
                     }
                 ?>
-
+                
                 <!-- OR if toss declared -->
                 <!--
                 <div class="info update">
@@ -1896,7 +1883,7 @@
             </div>
 
             <div class="strt-btn">
-                <div class="info">
+                
                     <?php
                         $scorers = [];
 
@@ -1911,14 +1898,13 @@
                         $session_email = $_SESSION['email'] ?? '';
 
                         if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
-                            echo "<div class='info'>";
+                            echo "<div class='info strt-btn'>";
                             if(empty($score_log)){
                                 echo "<span class='date-time'>".formatMatchTime($row['match_date'], $row['start_time'])."</span>";
                             }
                             echo "<button class='start-btn' onclick='openDialog(this, event)'>Start</button></div>";
                         }
                     ?>
-                </div>
             </div>
         </div>
     </div>
@@ -1934,13 +1920,14 @@
         </div>
     </div>
 
-    <div class="ad2">Advertisement (412px x 60px)
+    <div class="ad2">
+        Advertisement (412px x 60px)
     </div>
 
     <div class="swiper">
         <div class="swiper-wrapper">
             <div class="swiper-slide">
-                <table>
+                <table class="table">
                     <tbody>
                         <tr>
                             <td class="title">Date & Time</td>
@@ -2072,7 +2059,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <?php
+                 <?php
                     $apiKey = "76604801ccb3576d81ddd1bca09b978a";
                     $location = $row['venue'];
                     $geo_url = "http://api.openweathermap.org/geo/1.0/direct?q=".urlencode($location)."&limit=1&appid={$apiKey}";
@@ -2139,6 +2126,9 @@
 
                 ?>
 
+                <div class="ad3">
+                    Advertisement (600px x 300px)
+                </div>
             </div>
 
             <div class="swiper-slide">
@@ -2156,21 +2146,20 @@
                     }
                     
                 ?>
-
                 <div class="comm">
                     <?php
-                        $all_serves = [];
+                        $all_raids = [];
 
                         // 1. Merge balls from 1st and 2nd innings
-                        $total_sets = $score_log['total_sets'] ?? '';
-                        for ($inning_key = 1; $inning_key <= $total_sets; $inning_key++) {
+                        $total_halves = $score_log['total_halves'] ?? '';
+                        for ($inning_key = 1; $inning_key <= $total_halves; $inning_key++) {
                             if (
-                                isset($score_log['sets'][$inning_key]['rallies']) &&
-                                is_array($score_log['sets'][$inning_key]['rallies'])
+                                isset($score_log['halves'][$inning_key]['raids']) &&
+                                is_array($score_log['halves'][$inning_key]['raids'])
                             ) {
-                                foreach ($score_log['sets'][$inning_key]['rallies'] as $rally) {
-                                    $rally['inning'] = $inning_key; // Add the inning key to each rally
-                                    $all_serves[] = $rally;
+                                foreach ($score_log['halves'][$inning_key]['raids'] as $raid) {
+                                    $raid['current Half'] = $inning_key; // Add the inning key to each raid
+                                    $all_raids[] = $raid;
                                 }
                             }
                         }
@@ -2190,84 +2179,114 @@
                                     $team2_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id = '$team2_id' LIMIT 1"));
                                     $team2_name = $team2_row['t_name'] ?? "";
                                 }
-                        // $all_serves = array_reverse($all_serves);
+                        // $all_raidsd = array_reverse($all_raids);
                     ?>
                     <div class="comm-name">Commentary</div>
                     <div class="comm-data">
                         <hr class="line">
-                        <?php foreach ($all_serves as $serves): ?>
+                        <?php foreach ($all_raids as $raids): ?>
                             <?php
-                                $winner = $serves['winner_team'] ?? '';
-                                $last_score = $serves['last score'] ?? '';
-                                $action = $serves['action'] ?? '';
-                                $team1_points = $serves['team1_points'] ?? '';
-                                $team2_points = $serves['team2_points'] ?? '';
-                                $curr_serve = $serves['Curr_serve'] ?? '';
-                                $serve_player = $serves['serve_player'] ?? '';
-                                $inning = $serves['inning'] ?? '';
+                                $def_points = $raids['def points'] ?? '';
+                                $last_score = $raids['last score'] ?? '';
+                                $raid_points = $raids['raid points'] ?? '';
+                                $team1_points = $raids['team1_points'] ?? '';
+                                $team2_points = $raids['team2_points'] ?? '';
+                                $curr_raid_team = $raids['current_raid_team'] ?? '';
+                                $raider = $raids['raider'] ?? '';
+                                $current_Half = $raids['current Half'] ?? '';
                                 $comment = '';
 
                                 // Get Curr Serve team name
-                                $curr_serve_name = '';
-                                if (!empty($curr_serve)) {
-                                    $curr_serve_id = trim($curr_serve);
-                                    $curr_serve_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id = '$curr_serve_id' LIMIT 1"));
-                                    $curr_serve_name = $curr_serve_row['t_name'] ?? "";
+                                $curr_raid_team_name = '';
+                                if (!empty($curr_raid_team)) {
+                                    $curr_raid_team_id = trim($curr_raid_team);
+                                    $curr_raid_team_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id = '$curr_raid_team_id' LIMIT 1"));
+                                    $curr_raid_team_name = $curr_raid_team_row['t_name'] ?? "";
                                 }
 
                                 // Get Serve Player Name
-                                $serve_player_name = '';
-                                if (!empty($serve_player)) {
-                                    $serve_player_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$serve_player' LIMIT 1"));
-                                    $serve_player_name = $serve_player_row['player_name'] ?? "";
+                                $raider_player_name = '';
+                                if (!empty($raider)) {
+                                    $raider_player_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT player_name FROM players WHERE user_id = '$raider' LIMIT 1"));
+                                    $raider_player_name = $raider_player_row['player_name'] ?? "";
                                 }
 
-                                // Get Winner Team Name
-                                $winner_name = '';
-                                if (!empty($winner)) {
-                                    $winner_id = $winner;
-                                    $winner_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id = '$winner_id' LIMIT 1"));
-                                    $winner_name = $winner_row['t_name'] ?? "";
+                                // Get defence Team Name
+                                $defence_team_name = '';
+                                if (!empty($defence_team)) {
+                                    $defence_team_id = $defence_team;
+                                    $defence_team_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id = '$defence_team_id' LIMIT 1"));
+                                    $defence_team_name = $defence_team_row['t_name'] ?? "";
                                 }
 
-                                // Commentary generation
-                                if (!empty($serve_player_name)) {
-                                    $comment = "$serve_player_name serves the ball. Point awarded to $winner_name.";
-                                } else if (!empty($action)) {
-                                    $action = strtolower(trim($action));
-                                    switch ($action) {
-                                        case 'ace':
-                                            $comment = "ACE! $serve_player_name delivers a powerful serve. Point to $winner_name.";
-                                            break;
-                                        case 'service error':
-                                            $comment = "Service Error by $serve_player_name. Point to $winner_name.";
-                                            break;
-                                        default:
-                                            $comment = ucfirst($action) . " by $serve_player_name. Point to $winner_name.";
-                                            break;
+                                // Get defence Team Name
+                                $raid_team_name = '';
+                                if (!empty($raid_team)) {
+                                    $raid_team_id = $raid_team;
+                                    $raid_team_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id = '$raid_team_id' LIMIT 1"));
+                                    $raid_team_name = $raid_team_row['t_name'] ?? "";
+                                }
+
+                               // Commentary generation (Raider Optional, Always Result-Based, Never Empty)
+                                if (!empty($curr_raid_team_name)) {
+                                    if (!empty($raider_player_name)) {
+                                        if ($raid_points > 0 && $def_points == 0) {
+                                            $comment = "$raider_player_name from $curr_raid_team_name scores $raid_points point(s) in a successful raid.";
+                                        } elseif ($def_points > 0 && $raid_points == 0) {
+                                            $comment = "$raider_player_name from $curr_raid_team_name is tackled! Defence gets $def_points point(s).";
+                                        } elseif ($raid_points > 0 && $def_points > 0) {
+                                            $comment = "$raider_player_name from $curr_raid_team_name earns $raid_points point(s), but defence also scores $def_points point(s).";
+                                        } else {
+                                            $comment = "$raider_player_name from $curr_raid_team_name returns empty-handed. No points scored.";
+                                        }
+                                    } else {
+                                        if ($raid_points > 0 && $def_points == 0) {
+                                            $comment = "$curr_raid_team_name scores $raid_points point(s) from a successful raid.";
+                                        } elseif ($def_points > 0 && $raid_points == 0) {
+                                            $comment = "$curr_raid_team_name's raid is unsuccessful. Defence scores $def_points point(s).";
+                                        } elseif ($raid_points > 0 && $def_points > 0) {
+                                            $comment = "$curr_raid_team_name's raid results in $raid_points point(s), but defence gains $def_points point(s) too.";
+                                        } else {
+                                            $comment = "$curr_raid_team_name attempts a raid but no points are scored.";
+                                        }
                                     }
                                 } else {
-                                    $comment = "$curr_serve_name serves. Point awarded to $winner_name.";
-                                    if ($team1_points !== '' && $team2_points !== '') {
-                                        $comment .= " <i>Current Score: $team1_points - $team2_points</i>";
+                                    // Fallback if no team info
+                                    if ($raid_points > 0 && $def_points == 0) {
+                                        $comment = "Raid successful. $raid_points point(s) awarded.";
+                                    } elseif ($def_points > 0 && $raid_points == 0) {
+                                        $comment = "Raid failed. Defence scores $def_points point(s).";
+                                    } elseif ($raid_points > 0 && $def_points > 0) {
+                                        $comment = "Both teams score! Raid: $raid_points point(s), Defence: $def_points point(s).";
+                                    } else {
+                                        $comment = "A raid attempt took place. No points recorded.";
                                     }
                                 }
-                            ?>
-                            <div class="ball-data">
-                                <div class="ball-runs">
-                                    <div class="ball"><?php echo $inning; ?></div>
-                                    <div class="run"><?php echo "$team1_points - $team2_points"; ?></div>
-                                </div>
-                                <div class="commentry">
-                                    <?php echo $comment; ?>
-                                </div>
-                            </div>
-                            <hr class="line">
-                        <?php endforeach; ?>
 
+                                // Add current score if available
+                                if ($team1_points !== '' && $team2_points !== '') {
+                                    $comment .= " <i>Current Score: $team1_points - $team2_points</i>";
+                                }
+                            ?>
+                        <div class="ball-data">
+                            <div class="ball-runs">
+                                <div class="ball"><?php echo $current_Half; ?></div>
+                                <div class="run"><?php echo "$team1_points - $team2_points"; ?></div>
+                            </div>
+                            <div class="commentry">
+                                <?php echo $comment; ?>
+                            </div>
+                        </div>
+
+                        <hr class="line">
+                        <?php endforeach; ?>
                         <!-- Optional "Show More" Button -->
-                        <button id="toggle-button" style="margin-top: 10px;justify-content: center;align-items: center;">Show More</button>
+                        <button id="toggle-button" style="margin-top: 10px; justify-content: center;align-items: center;">Show More</button>
                     </div>
+                </div>
+
+                <div class="ad3">
+                    Advertisement (600px x 300px)
                 </div>
                 
                 <div class="feedback-cta-container">
@@ -2283,10 +2302,10 @@
             </div>
 
             <div class="swiper-slide">
-
-            <?php
-                $HTML = <<<HTML
+                <?php
+                    $HTML = <<<HTML
                         <div class="match-not-start">
+                            <div class="error-img2"></div>
                             <span class="error-text">Match has not started yet</span>
                         </div>
                         HTML;
@@ -2299,25 +2318,45 @@
                 <section id="team1">
                     <div class="bowl-data">
                         <?php
-                            // Assume $data contains your decoded JSON
-                            $total_sets = isset($score_log['total_sets']) ? (int)$score_log['total_sets'] : 0;
-                            $sets = $score_log['sets'] ?? [];
-                            $sets_won = $score_log['sets_won'] ?? [];
+                            // Assume $score_log is already available as given
 
-                            if(!empty($sets)){
-                            
-                            // Build table header
+                            $team1_name = $team1['t_name'] ?? 'Team1';
+                            $team2_name = $team2['t_name'] ?? 'Team2';
+
+                            $total_halves = isset($score_log['total_halves']) ? (int)$score_log['total_halves'] : 2;
+                            $halves = $score_log['halves'] ?? [];
+
+                            // Calculate full result totals
+                            $team1_total = 0;
+                            $team2_total = 0;
+                            foreach ($halves as $half_data) {
+                                $team1_total += $half_data['team1_points'] ?? 0;
+                                $team2_total += $half_data['team2_points'] ?? 0;
+                            }
+
+                            // Determine Win/Loss/Draw
+                            if ($team1_total > $team2_total) {
+                                $team1_result = '-';
+                                $team2_result = '-';
+                            } elseif ($team2_total > $team1_total) {
+                                $team1_result = '-';
+                                $team2_result = '-';
+                            } else {
+                                $team1_result = $team2_result = 'Draw';
+                            }
+
+                            // Start table
                             echo '<table class="table-score">';
                             echo '<thead>';
                             echo '<tr class="table-head">';
                             echo '<th>Teams</th>';
-                            echo '<th>F</th>';
+                            echo '<th>FR</th>';
 
-                            // Show set numbers in reverse order (3 to 1)
-                            for ($i = $total_sets; $i >= 1; $i--) {
-                                echo "<th>$i</th>";
+                            // Reverse order half headers (2nd, 1st)
+                            for ($i = $total_halves; $i >= 1; $i--) {
+                                $suffix = ($i == 1) ? '1<sup>st</sup>' : ($i == 2 ? '2<sup>nd</sup>' : "{$i}<sup>th</sup>");
+                                echo "<th>$suffix</th>";
                             }
-
                             echo '</tr>';
                             echo '</thead>';
                             echo '<tbody>';
@@ -2325,10 +2364,9 @@
                             // Team 1 row
                             echo '<tr>';
                             echo "<td>$team1_name</td>";
-                            echo "<td>{$sets_won['team1']}</td>";
-
-                            for ($i = $total_sets; $i >= 1; $i--) {
-                                $score = isset($sets[$i]['team1_points']) ? $sets[$i]['team1_points'] : '';
+                            echo "<td>$team1_result</td>";
+                            for ($i = $total_halves; $i >= 1; $i--) {
+                                $score = $halves[$i]['team1_points'] ?? 0;
                                 echo "<td>$score</td>";
                             }
                             echo '</tr>';
@@ -2336,24 +2374,23 @@
                             // Team 2 row
                             echo '<tr>';
                             echo "<td>$team2_name</td>";
-                            echo "<td>{$sets_won['team2']}</td>";
-
-                            for ($i = $total_sets; $i >= 1; $i--) {
-                                $score = isset($sets[$i]['team2_points']) ? $sets[$i]['team2_points'] : '';
+                            echo "<td>$team2_result</td>";
+                            for ($i = $total_halves; $i >= 1; $i--) {
+                                $score = $halves[$i]['team2_points'] ?? 0;
                                 echo "<td>$score</td>";
                             }
                             echo '</tr>';
 
                             echo '</tbody>';
-                            echo '</table>'; 
-                            }
-
-                            // Optional: team name lookup if needed
-
+                            echo '</table>';
                         ?>
                     </div>
 
                 </section>
+
+                <div class="ad3">
+                    Advertisement (600px x 300px)
+                </div>
                 
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
@@ -2387,7 +2424,7 @@
                         <span class="vs">vs</span>
                         <div class="t2">
                             <div class="teamimg">
-                                <?php
+                                 <?php
                                     if (!empty($team2['t_logo'])) {
                                         echo "<img src='../../assets/images/teams/{$team2['t_logo']}' alt='{$team1['t_name']}' onerror=\"this.style.opacity='0'\">";
                                     }else{
@@ -2462,10 +2499,13 @@
                                 if ($index === 0) echo "<div class='squad-border'></div>"; // Border between two teams
                             }
                         ?>
+                    </div>
                 </div>
 
-                
-            </div>
+                <div class="ad3">
+                    Advertisement (600px x 300px)
+                </div>
+
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -2476,6 +2516,8 @@
                 <div class="cmc-report-issue-button-wrapper">
                     <button id="cmc-report-issue-button" class="cmc-report-issue-button">Report an Issue</button>
                 </div>
+            </div>
+
         </div>
     </div>
 
@@ -2484,10 +2526,11 @@
     const indicator = document.querySelector('.menu-line-indicator');
     const close_fed_container = document.querySelector('.exit');
     const feedback = document.querySelectorAll('.feedback-cta-holder');
+    const feedback_page = document.querySelector('.cmc-report-issue-button');
     const close_ad = document.querySelector('.hide-ad');
     const ad_container = document.querySelector('.ad');
-    const feedback_page = document.querySelector('.cmc-report-issue-button');
-    const matchID = <?php echo json_encode($match_id); ?>;
+    const matchId = <?php echo json_encode($match_id); ?>
+    
     //Menu Bar
         const menu_bar = document.querySelector('.menu-bar');
         const side = document.querySelector('.sidebar');
@@ -2560,346 +2603,7 @@
         });
     });
 
-    //show more
-    document.addEventListener("DOMContentLoaded", function () {
-        const container = document.querySelector(".comm-data");
-        const button = document.getElementById("toggle-button");
-
-        // ✅ Exit early if container or button is not found
-        if (!container || !button) return;
-
-        const allBlocks = Array.from(container.querySelectorAll(".ball-data"));
-        const allLines = Array.from(container.querySelectorAll(".line"));
-
-        let visibleCount = allBlocks.length > 7 ? 7 : allBlocks.length;
-        let expanded = false;
-
-        function updateView() {
-            const total = allBlocks.length;
-
-            allBlocks.forEach((el, i) => {
-                el.style.display = (i >= total - visibleCount) ? "flex" : "none";
-            });
-
-            allLines.forEach((el, i) => {
-                el.style.display = (i >= total - visibleCount) ? "block" : "none";
-            });
-
-            if (visibleCount >= total && total > 7) {
-                button.textContent = "Show Less";
-                container.style.height = "max-content";
-                expanded = true;
-            } else {
-                button.textContent = "Show More";
-                container.style.height = "max-content";
-                expanded = false;
-            }
-        }
-
-        updateView();
-
-        button.addEventListener("click", function () {
-            visibleCount = expanded ? 7 : allBlocks.length;
-            updateView();
-        });
-    });
-
-    function stopCommentary() {
-                window.speechSynthesis.cancel();
-            }
-
-    let commentaryEnabled = true;
-
-        //allow and deny voice commentry
-        document.getElementById('commentaryIcon').addEventListener('click', function() {
-            commentaryEnabled = commentaryEnabled ? false : true;
-
-            if (commentaryEnabled) {
-                console.log("Commentary enabled",commentaryEnabled);
-                //  change icon color to active
-                this.innerHTML = '<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/></svg>';
-            } else {
-                console.log("Commentary disabled",commentaryEnabled);
-                stopCommentary();
-                //  change icon color to muted
-                this.innerHTML = '<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5036 4.41266C14.5036 3.51089 13.4149 3.05919 12.7776 3.69707L8.98097 7.49682C8.8307 7.64726 8.65227 7.76659 8.4559 7.84799C8.25952 7.92938 8.04904 7.97124 7.83649 7.97118H4.79777C3.93972 7.97118 3.11682 8.31232 2.51009 8.91956C1.90336 9.52679 1.5625 10.3504 1.5625 11.2091V14.4471C1.5625 15.3059 1.90336 16.1295 2.51009 16.7367C3.11682 17.3439 3.93972 17.6851 4.79777 17.6851H7.83649C8.04904 17.685 8.25952 17.7269 8.4559 17.8083C8.65227 17.8897 8.8307 18.009 8.98097 18.1594L12.7776 21.9592C13.4149 22.5971 14.5036 22.1454 14.5036 21.2436V4.41266ZM17.167 9.82734C17.3187 9.67559 17.5244 9.59034 17.7388 9.59034C17.9533 9.59034 18.159 9.67559 18.3107 9.82734L20.1653 11.6835L22.0199 9.82734C22.1725 9.67989 22.3768 9.5983 22.5888 9.60014C22.8009 9.60199 23.0038 9.68712 23.1537 9.8372C23.3037 9.98729 23.3887 10.1903 23.3906 10.4026C23.3924 10.6148 23.3109 10.8193 23.1636 10.972L21.309 12.8281L23.1636 14.6843C23.3109 14.837 23.3924 15.0414 23.3906 15.2537C23.3887 15.4659 23.3037 15.669 23.1537 15.819C23.0038 15.9691 22.8009 16.0543 22.5888 16.0561C22.3768 16.058 22.1725 15.9764 22.0199 15.8289L20.1653 13.9727L18.3107 15.8289C18.1581 15.9764 17.9538 16.058 17.7417 16.0561C17.5297 16.0543 17.3268 15.9691 17.1769 15.819C17.0269 15.669 16.9418 15.4659 16.94 15.2537C16.9381 15.0414 17.0197 14.837 17.167 14.6843L19.0216 12.8281L17.167 10.972C17.0154 10.8202 16.9302 10.6143 16.9302 10.3997C16.9302 10.185 17.0154 9.97915 17.167 9.82734Z" fill="black"/></svg>';
-            }
-        });
-
-    //speech
-    function speakText(text) {
-        console.log('called')
-        const speech = new SpeechSynthesisUtterance(text);
-        speech.lang = "en-US"; // Language (e.g., 'hi-IN' for Hindi)
-        speech.pitch = 1;
-        speech.rate = 1;
-        speech.volume = 1;
-        window.speechSynthesis.speak(speech);
-    }
-
-    let lastDataString = '';
-    let showAllBalls = false;
-    //AJAX
-    function fetchScoreboard() {
-        fetch(`../../API/VOLLEYBALL_api.php?match_id=${matchID}`)
-        .then(response => response.json())
-        .then(data => {
-            // Update scoreboard elements
-            // console.log(data);
-            if (typeof data === 'string') {
-                data = JSON.Parse(data);
-            }
-            // console.log(data);
-            const currentDataString = JSON.stringify(data);
-            if (currentDataString !== lastDataString) {
-                lastDataString = currentDataString;
-
-                update_commentry(data);
-                update_scoreboard(data);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching scoreboard:', error);
-        });
-    }
-
-    // Fetch every 5 seconds
-setInterval(fetchScoreboard, 1500);
-
-function update_commentry(data){
-    // console.log(data);
-    let allServes = [];
-    const container = document.querySelector('.comm-data');
-    let toggleButton = document.getElementById('toggle-button');
-    
-    // Clear existing content
-    if(container){
-        container.innerHTML = '';
-    }
-
-    if (!data || Object.keys(data).length === 0) {
-        container.innerHTML = '<p>No commentary available yet</p>';
-        toggleButton.style.display = 'none';
-        return;
-    }
-
-    const totalSets = parseInt(data.total_sets) || 0;
-
-    // Merge all rallies with inning info
-    for (let inningKey = 1; inningKey <= totalSets; inningKey++) {
-        const set = data.sets?.[inningKey];
-        if (set?.rallies && Array.isArray(set.rallies)) {
-            set.rallies.forEach(rally => {
-                allServes.push({ ...rally, inning: inningKey });
-            });
-        }
-    }
-
-    const teamMap = data.team_map || {};
-    const playerMap = data.player_map || {};
-
-    allServes =  allServes.reverse();
-
-    // Create document fragment for better performance
-    const fragment = document.createDocumentFragment();
-
-    allServes.forEach((serves, index) => {
-        const winner = serves.winner_team || '';
-        const action = serves.action || '';
-        const team1Points = serves.team1_points ?? '';
-        const team2Points = serves.team2_points ?? '';
-        const currServe = serves.Curr_serve || '';
-        const servePlayer = serves.serve_player || '';
-        const inning = serves.inning || '';
-
-        let comment = '';
-
-        const currServeName = teamMap[currServe] || '';
-        const servePlayerName = playerMap[servePlayer] || '';
-        const winnerName = teamMap[winner] || '';
-
-        if (servePlayerName) {
-            comment = `${servePlayerName} serves the ball. Point awarded to ${winnerName}.`;
-        } else if (action) {
-            const lowerAction = action.toLowerCase().trim();
-            switch (lowerAction) {
-                case 'ace':
-                    comment = `ACE! ${servePlayerName} delivers a powerful serve. Point to ${winnerName}.`;
-                    break;
-                case 'service error':
-                    comment = `Service Error by ${servePlayerName}. Point to ${winnerName}.`;
-                    break;
-                default:
-                    comment = `${action.charAt(0).toUpperCase() + action.slice(1)} by ${servePlayerName}. Point to ${winnerName}.`;
-                    break;
-            }
-        } else {
-            comment = `${currServeName} serves. Point awarded to ${winnerName}.`;
-            if (team1Points !== '' && team2Points !== '') {
-                comment += ` <i>Current Score: ${team1Points} - ${team2Points}</i>`;
-            }
-        }
-
-        if (index === 0 && commentaryEnabled && !data.winner) {
-            let cleanText = comment.replace(/<[^>]*>/g, '').replace(/(\d+)\s*-\s*(\d+)/g, '$1 to $2').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
-            speakText(cleanText);
-        }
-            
-         // Create ball element
-        const ballDiv = document.createElement('div');
-        ballDiv.className = 'ball-data';
-        ballDiv.style.display = (index >= 7 && !showAllBalls) ? 'none' : 'flex';
-        ballDiv.innerHTML = `
-                                <div class="ball-runs">
-                                    <div class="ball">${inning}</div>
-                                    <div class="run">${team1Points} - ${team2Points}</div>
-                                </div>
-                                <div class="commentry">
-                                    ${comment}
-                                </div>`;
-
-        fragment.appendChild(ballDiv);
-        
-        // Create line element
-        const line = document.createElement('hr');
-        line.className = 'line';
-        line.style.display = (index >= 7 && !showAllBalls) ? 'none' : 'block';
-        fragment.appendChild(line);
-        
-    })
-        
-        container.appendChild(fragment);
-        
-        container.appendChild(toggleButton);
-        initShowMoreButton();
-}
-
-function update_scoreboard(data){
-    console.log(data);
-    const container = document.querySelector('.bowl-data');
-    if (!data || !container) return;
-
-    const score_log = data;
-    const team1_id = data.team1;
-    const team2_id = data.team2;
-    const team1_name = data.team_map?.[team1_id] || "Team 1";
-    const team2_name = data.team_map?.[team2_id] || "Team 2";
-
-    const total_sets = parseInt(score_log.total_sets) || 0;
-    const sets = score_log.sets || {};
-    const sets_won = score_log.sets_won || {};
-
-    if (Object.keys(sets).length === 0) return;
-
-    // Start building the table HTML
-    let html = `<table class="table-score">
-                    <thead>
-                        <tr class="table-head">
-                            <th>Teams</th>
-                            <th>F</th>`;
-
-    // Set headers from total_sets down to 1
-    for (let i = total_sets; i >= 1; i--) {
-        html += `<th>${i}</th>`;
-    }
-
-    html += `</tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>${team1_name}</td>
-                    <td>${sets_won.team1 ?? ''}</td>`;
-
-    // Team 1 scores
-    for (let i = total_sets; i >= 1; i--) {
-        let score = sets[i]?.team1_points ?? '';
-        html += `<td>${score}</td>`;
-    }
-
-    html += `</tr>
-            <tr>
-                <td>${team2_name}</td>
-                <td>${sets_won.team2 ?? ''}</td>`;
-
-    // Team 2 scores
-    for (let i = total_sets; i >= 1; i--) {
-        let score = sets[i]?.team2_points ?? '';
-        html += `<td>${score}</td>`;
-    }
-
-    html += `</tr>
-            </tbody>
-        </table>`;
-
-    container.innerHTML = html;
-
-    const matchInfoContainer = document.querySelector('.match-data');
-    if (matchInfoContainer) {
-        const currentSet = data.sets[data.current_set];
-        const curr_serve = data.current_serve;
-        matchInfoContainer.querySelectorAll('.score')[0].innerHTML = `${currentSet.team1_points} ( ${data.sets_won.team1} )`;
-        matchInfoContainer.querySelectorAll('.score')[1].innerHTML = `${currentSet.team2_points} ( ${data.sets_won.team2} )`;
-
-        let team_key = curr_serve == data.team1 ? 0 : 1;
-        let other_team_key = team_key === 0 ? 1 : 0;
-
-        let team_name_key = curr_serve == data.team1 ? team1_name : team2_name;
-        let other_team_name_key = team_key === 0 ? team2_name : team1_name;
-
-        let teams = matchInfoContainer.querySelectorAll('.team');
-
-        // Update current server team
-        let teamDiv = teams[team_key];
-        if (teamDiv) {
-            for (let node of teamDiv.childNodes) {
-                if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
-                    node.nodeValue = `${team_name_key} *`;
-                    break;
-                }
-            }
-        }
-
-        // Remove * from the other team
-        let otherTeamDiv = teams[other_team_key];
-        if (otherTeamDiv) {
-            for (let node of otherTeamDiv.childNodes) {
-                if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
-                    node.nodeValue = other_team_name_key;
-                    break;
-                }
-            }
-        }
-    }
-}
-
-
-    function initShowMoreButton() {
-        const container = document.querySelector('.comm-data');
-        let toggleButton = document.getElementById('toggle-button');
-        const ballElements = container.querySelectorAll('.ball-data');
-        
-        
-        if (ballElements.length <= 7) {
-            toggleButton.style.display = 'none';
-            return;
-        }
-        
-        toggleButton.style.display = 'block';
-        toggleButton.textContent = showAllBalls ? 'Show Less' : 'Show More';
-        
-        toggleButton.onclick = function() {
-            showAllBalls = !showAllBalls;
-            
-            const allElements = container.children;
-            for (let i = 10; i < allElements.length; i++) { // Start from index 10 (6th ball + line)
-                allElements[i].style.display = showAllBalls ? 'flex' : 'none';
-            }
-            
-            toggleButton.textContent = showAllBalls ? 'Show Less' : 'Show More';
-        };
-    }
-
-      // Open dialog for password
+    // Open dialog for password
         function openDialog(button, event) {
             if (event) event.stopPropagation();
             const dialog = document.getElementById("startMatchDialog");
@@ -2956,6 +2660,311 @@ function update_scoreboard(data){
             })
             .catch();
         });
+
+        function stopCommentary() {
+                window.speechSynthesis.cancel();
+            }
+
+    let commentaryEnabled = true;
+
+        //allow and deny voice commentry
+        document.getElementById('commentaryIcon').addEventListener('click', function() {
+            commentaryEnabled = commentaryEnabled ? false : true;
+
+            if (commentaryEnabled) {
+                console.log("Commentary enabled",commentaryEnabled);
+                //  change icon color to active
+                this.innerHTML = '<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/></svg>';
+            } else {
+                console.log("Commentary disabled",commentaryEnabled);
+                stopCommentary();
+                //  change icon color to muted
+                this.innerHTML = '<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5036 4.41266C14.5036 3.51089 13.4149 3.05919 12.7776 3.69707L8.98097 7.49682C8.8307 7.64726 8.65227 7.76659 8.4559 7.84799C8.25952 7.92938 8.04904 7.97124 7.83649 7.97118H4.79777C3.93972 7.97118 3.11682 8.31232 2.51009 8.91956C1.90336 9.52679 1.5625 10.3504 1.5625 11.2091V14.4471C1.5625 15.3059 1.90336 16.1295 2.51009 16.7367C3.11682 17.3439 3.93972 17.6851 4.79777 17.6851H7.83649C8.04904 17.685 8.25952 17.7269 8.4559 17.8083C8.65227 17.8897 8.8307 18.009 8.98097 18.1594L12.7776 21.9592C13.4149 22.5971 14.5036 22.1454 14.5036 21.2436V4.41266ZM17.167 9.82734C17.3187 9.67559 17.5244 9.59034 17.7388 9.59034C17.9533 9.59034 18.159 9.67559 18.3107 9.82734L20.1653 11.6835L22.0199 9.82734C22.1725 9.67989 22.3768 9.5983 22.5888 9.60014C22.8009 9.60199 23.0038 9.68712 23.1537 9.8372C23.3037 9.98729 23.3887 10.1903 23.3906 10.4026C23.3924 10.6148 23.3109 10.8193 23.1636 10.972L21.309 12.8281L23.1636 14.6843C23.3109 14.837 23.3924 15.0414 23.3906 15.2537C23.3887 15.4659 23.3037 15.669 23.1537 15.819C23.0038 15.9691 22.8009 16.0543 22.5888 16.0561C22.3768 16.058 22.1725 15.9764 22.0199 15.8289L20.1653 13.9727L18.3107 15.8289C18.1581 15.9764 17.9538 16.058 17.7417 16.0561C17.5297 16.0543 17.3268 15.9691 17.1769 15.819C17.0269 15.669 16.9418 15.4659 16.94 15.2537C16.9381 15.0414 17.0197 14.837 17.167 14.6843L19.0216 12.8281L17.167 10.972C17.0154 10.8202 16.9302 10.6143 16.9302 10.3997C16.9302 10.185 17.0154 9.97915 17.167 9.82734Z" fill="black"/></svg>';
+            }
+        });
+
+    //speech
+    function speakText(text) {
+        const speech = new SpeechSynthesisUtterance(text);
+        speech.lang = "en-US"; // Language (e.g., 'hi-IN' for Hindi)
+        speech.pitch = 1;
+        speech.rate = 1;
+        speech.volume = 1;
+        window.speechSynthesis.speak(speech);
+    }
+
+    let lastDataString = '';
+    let showAllBalls = false;
+    //AJAX
+    function fetchScoreboard() {
+        fetch(`../../API/VOLLEYBALL_api.php?match_id=${matchId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Update scoreboard elements
+            // console.log(data);
+            if (typeof data === 'string') {
+                data = JSON.Parse(data);
+            }
+            // console.log(data);
+            const currentDataString = JSON.stringify(data);
+            if (currentDataString !== lastDataString) {
+                lastDataString = currentDataString;
+
+                update_commentry(data);
+                update_scoreboard(data);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching scoreboard:', error);
+        });
+    }
+
+    // Fetch every 5 seconds
+setInterval(fetchScoreboard, 1500);
+
+function update_commentry(data) {
+    let allRaids = [];
+    const container = document.querySelector('.comm-data');
+    let toggleButton = document.getElementById('toggle-button');
+
+    if (container) {
+        container.innerHTML = '';
+    }
+
+    if (!data || Object.keys(data).length === 0) {
+        container.innerHTML = '<p>No commentary available yet</p>';
+        toggleButton.style.display = 'none';
+        return;
+    }
+
+    const totalHalves = parseInt(data.total_halves) || 0;
+
+    for (let halfKey = 1; halfKey <= totalHalves; halfKey++) {
+        const half = data.halves?.[halfKey];
+        if (half?.raids && Array.isArray(half.raids)) {
+            half.raids.forEach(raid => {
+                allRaids.push({ ...raid, half: halfKey });
+            });
+        }
+    }
+
+    const teamMap = data.team_map || {};
+    const playerMap = data.player_map || {};
+
+    allRaids = allRaids.reverse();
+
+    const fragment = document.createDocumentFragment();
+
+    allRaids.forEach((raid, index) => {
+        const defPoints = raid['def points'] ?? '';
+        const raidPoints = raid['raid points'] ?? '';
+        const team1Points = raid['team1_points'] ?? '';
+        const team2Points = raid['team2_points'] ?? '';
+        const currRaidTeam = raid['current_raid_team'] ?? '';
+        const raider = raid['raider'] ?? '';
+        const half = raid['current Half'] ?? '';
+
+        const currRaidTeamName = teamMap[currRaidTeam] || '';
+        const raiderPlayerName = playerMap[raider] || '';
+
+        let comment = '';
+
+        if (currRaidTeamName) {
+            if (raiderPlayerName) {
+                if (raidPoints > 0 && defPoints == 0) {
+                    comment = `${raiderPlayerName} from ${currRaidTeamName} scores ${raidPoints} point(s) in a successful raid.`;
+                } else if (defPoints > 0 && raidPoints == 0) {
+                    comment = `${raiderPlayerName} from ${currRaidTeamName} is tackled! Defence gets ${defPoints} point(s).`;
+                } else if (raidPoints > 0 && defPoints > 0) {
+                    comment = `${raiderPlayerName} from ${currRaidTeamName} earns ${raidPoints} point(s), but defence also scores ${defPoints} point(s).`;
+                } else {
+                    comment = `${raiderPlayerName} from ${currRaidTeamName} returns empty-handed. No points scored.`;
+                }
+            } else {
+                if (raidPoints > 0 && defPoints == 0) {
+                    comment = `${currRaidTeamName} scores ${raidPoints} point from a successful raid.`;
+                } else if (defPoints > 0 && raidPoints == 0) {
+                    comment = `${currRaidTeamName}'s raid is unsuccessful. Defence scores ${defPoints} point.`;
+                } else if (raidPoints > 0 && defPoints > 0) {
+                    comment = `${currRaidTeamName}'s raid results in ${raidPoints} point, but defence gains ${defPoints} point too.`;
+                } else {
+                    comment = `${currRaidTeamName} attempts a raid but no points are scored.`;
+                }
+            }
+        } else {
+            if (raidPoints > 0 && defPoints == 0) {
+                comment = `Raid successful. ${raidPoints} point awarded.`;
+            } else if (defPoints > 0 && raidPoints == 0) {
+                comment = `Raid failed. Defence scores ${defPoints} point.`;
+            } else if (raidPoints > 0 && defPoints > 0) {
+                comment = `Both teams score! Raid: ${raidPoints} point, Defence: ${defPoints} point.`;
+            } else {
+                comment = `A raid attempt took place. No points recorded.`;
+            }
+        }
+
+        if (team1Points !== '' && team2Points !== '') {
+            comment += ` <i>Current Score: ${team1Points} - ${team2Points}</i>`;
+        }
+
+        if (index === 0 && typeof commentaryEnabled !== 'undefined' && commentaryEnabled && !data.winner) {
+            let cleanText = comment.replace(/<[^>]*>/g, '').replace(/(\d+)\s*-\s*(\d+)/g, '$1 to $2').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+            speakText(cleanText);
+        }
+
+        const ballDiv = document.createElement('div');
+        ballDiv.className = 'ball-data';
+        ballDiv.style.display = (index >= 7 && !showAllBalls) ? 'none' : 'flex';
+        ballDiv.innerHTML = `
+            <div class="ball-runs">
+                <div class="ball">${half}</div>
+                <div class="run">${team1Points} - ${team2Points}</div>
+            </div>
+            <div class="commentry">
+                ${comment}
+            </div>`;
+
+        fragment.appendChild(ballDiv);
+
+        const line = document.createElement('hr');
+        line.className = 'line';
+        line.style.display = (index >= 7 && !showAllBalls) ? 'none' : 'block';
+        fragment.appendChild(line);
+    });
+
+    container.appendChild(fragment);
+    container.appendChild(toggleButton);
+    initShowMoreButton();
+}
+
+function update_scoreboard(data) {
+    const container = document.querySelector('.bowl-data');
+    if (!data || !container) return;
+
+    const team1_id = data.team1;
+    const team2_id = data.team2;
+    const team1_name = data.team_map?.[team1_id] || "Team 1";
+    const team2_name = data.team_map?.[team2_id] || "Team 2";
+    let winner_team = '';
+    if(data.match_completed){
+        winner_team = data.winner;
+    }
+     
+
+    const total_halves = parseInt(data.total_halves) || 0;
+    const halves = data.halves || {};
+
+    if (Object.keys(halves).length === 0) return;
+
+    let html = `<table class="table-score">
+                    <thead>
+                        <tr class="table-head">
+                            <th>Teams</th>
+                            <th>F</th>`;
+
+    for (let i = total_halves; i >= 1; i--) {
+        html += `<th>${i}</th>`;
+    }
+
+    html += `</tr>
+            </thead>
+            <tbody>`;
+
+    // Team 1 row
+    html += `<tr>
+                <td>${team1_name}</td>
+                <td>${winner_team == data.team1 ? 'Win' : 'Lose'}</td>`;
+    for (let i = total_halves; i >= 1; i--) {
+        let score = halves[i]?.team1_points ?? '';
+        html += `<td>${score}</td>`;
+    }
+    html += `</tr>`;
+
+    // Team 2 row
+    html += `<tr>
+                <td>${team2_name}</td>
+                <td>${winner_team == data.team2 ? 'Win' : 'Lose'}</td>`;
+    for (let i = total_halves; i >= 1; i--) {
+        let score = halves[i]?.team2_points ?? '';
+        html += `<td>${score}</td>`;
+    }
+    html += `</tr>
+            </tbody>
+        </table>`;
+
+    container.innerHTML = html;
+
+    // Update match live score and current serve info
+    const matchInfoContainer = document.querySelector('.match-data');
+    if (matchInfoContainer && data.current_half && data.halves[data.current_half]) {
+        const current_half = data.halves[data.current_half];
+        const current_raid_team = data.current_raid_team;
+
+        const scores = matchInfoContainer.querySelectorAll('.score');
+        if (scores.length >= 2) {
+            scores[0].innerHTML = `${data.team1_score} ( ${current_half.team1_points} )`;
+            scores[1].innerHTML = `${data.team2_score} ( ${current_half.team2_points} )`;
+        }
+
+        const teams = matchInfoContainer.querySelectorAll('.team');
+        const team_key = current_raid_team === team1_id ? 0 : 1;
+        const other_team_key = team_key === 0 ? 1 : 0;
+
+        const team_name_key = team_key === 0 ? team1_name : team2_name;
+        const other_team_name_key = other_team_key === 0 ? team1_name : team2_name;
+
+        // Add * to the serving team
+        let teamDiv = teams[team_key];
+        if (teamDiv && !data.winner) {
+            for (let node of teamDiv.childNodes) {
+                if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
+                    node.nodeValue = `${team_name_key} *`;
+                    break;
+                }
+            }
+        }
+
+        // Remove * from the other team
+        let otherTeamDiv = teams[other_team_key];
+        if (otherTeamDiv && !data.winner) {
+            for (let node of otherTeamDiv.childNodes) {
+                if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
+                    node.nodeValue = `${other_team_name_key}`;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function initShowMoreButton() {
+        const container = document.querySelector('.comm-data');
+        let toggleButton = document.getElementById('toggle-button');
+        const ballElements = container.querySelectorAll('.ball-data');
+        
+        
+        if (ballElements.length <= 7) {
+            toggleButton.style.display = 'none';
+            return;
+        }
+        
+        toggleButton.style.display = 'block';
+        toggleButton.textContent = showAllBalls ? 'Show Less' : 'Show More';
+        
+        toggleButton.onclick = function() {
+            showAllBalls = !showAllBalls;
+            
+            const allElements = container.children;
+            for (let i = 10; i < allElements.length; i++) {
+                // Skip the toggle button
+                if (allElements[i].id === 'toggle-button') continue;
+
+                allElements[i].style.display = showAllBalls ? 'flex' : 'none';
+            }
+            
+            toggleButton.textContent = showAllBalls ? 'Show Less' : 'Show More';
+        };
+    }
 
         function shareContent() {
             if (navigator.share) {
@@ -3046,6 +3055,7 @@ function update_scoreboard(data){
         }
     }, 50);
 };
+  
     </script>
 </body>
 </html>

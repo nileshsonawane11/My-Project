@@ -29,6 +29,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://i.ibb.co/gLY2MgSd/logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script>
+        // Apply stored theme instantly before the page renders
+        (function() {
+            const theme = localStorage.getItem('theme') ||
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply theme attributes early to avoid white flash
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body?.setAttribute('data-theme', theme);
+
+            // Wait for the logo to exist, then update it
+            const checkLogo = setInterval(() => {
+                const logo = document.querySelector('.logo-img img');
+                if (logo) {
+                    logo.src = theme === 'dark'
+                        ? "../../assets/images/toggle-logo.png"
+                        : "../../assets/images/logo.png";
+                    clearInterval(checkLogo);
+                }
+            }, 50);
+        })();
+    </script>
     <title>Scoring</title>
 <style>
     * {
@@ -484,18 +506,12 @@
                         <label for="">Toss winner chose to</label>
                         <div class="sector types">
                             <div class="options" data-value="SERVE">
-                                <div class="logo">
-                                    <img src="https://i.ibb.co/YFftD8VJ/Pngtree-volleyball-player-blue-costume-8875190.png">
-
-                                </div>
+                                
                                 <div class="tname">SERVE</div>
                             </div>
 
                             <div class="options" data-value="COURT">
-                                <div class="logo">
-                                    <img src="https://i.ibb.co/xS1nd7nb/Pngtree-volleyball-player-red-custom-8530229.png">
-
-                                    </div>
+                                
                                     <div class="tname">COURT</div>
                                 </div>
                             </div>

@@ -18,8 +18,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script>
+        // Apply stored theme instantly before the page renders
+        (function() {
+            const theme = localStorage.getItem('theme') ||
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply theme attributes early to avoid white flash
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body?.setAttribute('data-theme', theme);
+
+            // Wait for the logo to exist, then update it
+            const checkLogo = setInterval(() => {
+                const logo = document.querySelector('.logo-img img');
+                if (logo) {
+                    logo.src = theme === 'dark'
+                        ? "../../assets/images/toggle-logo.png"
+                        : "../../assets/images/logo.png";
+                    clearInterval(checkLogo);
+                }
+            }, 50);
+        })();
+    </script>
     <title>Manage Tournaments</title>
-    <style>
+<style>
     * {
         margin: 0;
         padding: 0;
@@ -56,6 +78,9 @@
         --nav-fill: #2d2d2d;
     }
     
+    svg path {
+        fill : var(--text-dark);
+    }
     body {
         height: 100vh;
         height: -webkit-fill-available;
@@ -66,10 +91,7 @@
         justify-content: center;
         transition: background 0.3s ease, color 0.3s ease;
     }
-
-    svg path {
-        fill : var(--text-dark);
-    }
+    
     .container {
         display: flex;
         background-color: var(--card-bg);
@@ -84,9 +106,14 @@
         flex-direction: column;
         gap: 20px;
         border-radius: 20px;
-        padding: 30px;
+        padding: 20px;
         overflow: hidden;
         transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .container2 {
+        height: 100%;
+        width: 100%;
     }
     
     .return {
@@ -94,20 +121,19 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 20px 10px;
+        padding: 0 10px 20px 10px;
     }
     
     .return svg {
         cursor: pointer;
-        font-size: 28px;
+        transition: transform 0.2s ease;
         color: var(--text-dark);
-        transition: all 0.2s ease;
         fill: var(--text-dark);
     }
     
     .return svg:hover {
-        color: var(--primary-color);
         transform: translateX(-3px);
+        color: var(--primary-color);
         fill: var(--primary-color);
     }
     
@@ -117,10 +143,11 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 5px 20px;
+        padding: 0 10px;
         color: var(--text-dark);
         font-size: 18px;
         margin-bottom: 10px;
+        transition: color 0.3s ease;
     }
     
     .game-container {
@@ -150,13 +177,13 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-width: 90px;
-        padding: 12px;
+        min-width: 86px;
+        padding: 10px;
         gap: 8px;
         white-space: nowrap;
         cursor: pointer;
         transition: all 0.2s ease;
-        border-radius: 12px;
+        border-radius: 10px;
     }
     
     .game:hover {
@@ -165,7 +192,7 @@
     
     .game.selected {
         background: var(--selected-bg);
-        border-radius: 12px;
+        border-radius: 10px;
     }
     
     .game p {
@@ -178,8 +205,8 @@
     }
     
     .game svg {
-        height: 28px;
-        width: 28px;
+        height: 24px;
+        width: 24px;
         fill: var(--text-dark);
         transition: fill 0.3s ease;
     }
@@ -195,36 +222,47 @@
     
     .team-container {
         width: 100%;
-        height: calc(100% - 180px);
-        padding: 10px;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-        gap: 25px;
+        height: calc(100% - 150px);
+        padding-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
         overflow-y: auto;
-        align-content: flex-start;
     }
     
-    .game-info {
-        height: 100%;
-        padding: 15px;
-        display: flex;
-        font-size: 14px;
-        gap: 15px;
+    .team-list {
         width: 100%;
-        background: var(--nav-fill);
-        border-radius: 20px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        height: max-content;
+        gap: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        justify-content: center;
+        justify-items: center;
+        align-items: start;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .team {
+        width: 100%;
+        max-width: 300px;
+        display: flex;
         flex-direction: row;
-        justify-content: space-between;
         align-items: center;
+        gap: 15px;
+        color: var(--text-dark);
+        border: 1px solid var(--border-color);
+        padding: 15px;
+        border-radius: 15px;
+        background: var(--nav-fill);
         cursor: pointer;
         transition: all 0.2s ease;
-        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
     
-    .game-info:hover {
+    .team:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         border-color: var(--primary-color);
     }
     
@@ -233,81 +271,61 @@
         background: var(--selected-bg);
     }
     
-    .match-data {
-        display: flex;
-        gap: 8px;
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-    }
-    
-    .game-name {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 5px;
-        width: 100%;
-        transition: color 0.3s ease;
-    }
-    
-    .info {
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row;
-        align-items: center;
-        width: 100%;
-    }
-    
-    .team-score {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text-dark);
-        transition: color 0.3s ease;
-    }
-    
-    .team {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: row;
-        gap: 10px;
-    }
-    
-    .team img {
-        height: 40px;
-        width: 40px;
+    .logo {
+        height: 70px;
+        width: 70px;
         background: var(--card-bg);
         border-radius: 50%;
-        display: flex;
         overflow: hidden;
-        object-fit: cover;
+        flex-shrink: 0;
+        display: flex;
         align-items: center;
         justify-content: center;
         border: 1px solid var(--border-color);
         transition: background 0.3s ease, border-color 0.3s ease;
     }
     
-    .start-btn {
-        width: 90px;
-        height: 36px;
-        border-radius: 18px;
-        border: none;
-        color: white;
+    .logo img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    .team-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        width: calc(100% - 85px);
+    }
+    
+    .team-info h4 {
+        font-size: 16px;
         font-weight: 600;
-        background: var(--primary-color);
-        box-shadow: 0 4px 10px rgba(209, 34, 31, 0.2);
-        cursor: pointer;
-        transition: all 0.2s ease;
+        color: var(--text-dark);
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: color 0.3s ease;
     }
     
-    .start-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(209, 34, 31, 0.3);
-        background: var(--primary-dark);
+    .team-info label.data {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 5px;
+        font-size: 13px;
+        color: var(--text-light);
+        width: 100%;
+        transition: color 0.3s ease;
     }
     
-    .start-btn:active {
-        transform: translateY(0);
+    label.data .dt {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 180px;
     }
     
     .no-data {
@@ -316,7 +334,6 @@
         grid-column: 1 / -1;
         text-align: center;
         padding: 40px 0;
-        font-size: 16px;
         transition: color 0.3s ease;
     }
     
@@ -350,17 +367,40 @@
     .plus:active {
         transform: translateY(0);
     }
-
-    .container2 {
-        height: 100%;
+    
+    .add-btn {
         width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
     }
-
-    @media (max-width: 1000px) {
-        .team-container {
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
+    
+    .add-btn button {
+        background: var(--primary-color);
+        color: white;
+        font-size: 14px;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        height: 45px;
+        width: 150px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 10px rgba(209, 34, 31, 0.2);
+    }
+    
+    .add-btn button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(209, 34, 31, 0.3);
+        background: var(--primary-dark);
+    }
+    
+    .add-btn button:active {
+        transform: translateY(0);
     }
 
     @media (max-width: 600px) {
@@ -372,9 +412,12 @@
             box-shadow: none;
         }
         
-        .team-container {
+        .team-list {
             grid-template-columns: 1fr;
-            padding: 10px 5px;
+        }
+        
+        .team {
+            max-width: 100%;
         }
         
         .plus {
@@ -382,17 +425,6 @@
             right: 30px;
             height: 55px;
             width: 55px;
-        }
-        
-        .game-list {
-            height: 70px;
-            padding: 0 5px;
-            gap: 10px;
-        }
-        
-        .game {
-            min-width: 86px;
-            padding: 10px;
         }
     }
 
@@ -431,124 +463,6 @@
     
     .game-list::-webkit-scrollbar-thumb:hover {
         background: var(--primary-dark);
-    }
-    
-    #startMatchDialog {
-        z-index: 9999;
-        position: fixed;
-        transform: translateX(-50%) translateY(-50%);
-        top: 50%;
-        left: 50%;
-        width: 90%;
-        max-width: 500px;
-        border: none;
-        height: max-content;
-        background: var(--card-bg);
-        flex-direction: column;
-        transition: all 0.3s ease;
-        justify-content: center;
-        align-items: flex-start;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        border: 1px solid var(--border-color);
-    }
-    
-    #startMatchDialog::backdrop {
-        position: fixed;
-        inset: 0px;
-        background: rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(3px);
-    }
-    
-    #content-wrapper {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 25px
-    }
-    
-    #matchPasswordForm {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        gap: 25px;
-    }
-    
-    .form-data {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 8px;
-        width: 100%;
-    }
-    
-    .form-data label {
-        font-size: 15px;
-        line-height: 35px;
-        font-weight: 500;
-        color: var(--text-dark);
-        transition: color 0.3s ease;
-    }
-    
-    .btns {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 15px;
-        width: 100%;
-    }
-    
-    #matchPassword {
-        padding: 12px 15px;
-        height: 45px;
-        outline: none;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        background: var(--card-bg);
-        color: var(--text-dark);
-        font-size: 15px;
-        transition: border-color 0.3s ease, background 0.3s ease, color 0.3s ease;
-    }
-    
-    #matchPassword:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(209, 34, 31, 0.2);
-    }
-
-    #title{
-        font-size: 18px;
-        font-weight: 500;
-        color: var(--text-dark);
-        transition: color 0.3s ease;
-    }
-    
-    .btns>* {
-        width: 110px;
-        height: 40px;
-        border-radius: 25px;
-        border: solid 1px var(--primary-color);
-        color: var(--primary-color);
-        background: transparent;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-weight: 600;
-    }
-    
-    .btns>*:last-child {
-        background: var(--primary-color);
-        color: white;
-        border: none;
-    }
-    
-    .btns>*:last-child:hover {
-        background: var(--primary-dark);
-    }
-    
-    .btns>*:first-child:hover {
-        background: var(--hover-bg);
     }
 </style>
 </head>
@@ -785,6 +699,7 @@
         let selectedTeams = [];
 
         let get_team_info = (el)=>{
+            console.log("Hello babu");
             const tournamentID = el.getAttribute('data-team_id');
             if (document.referrer.includes('select-teams.php')) {
                 let urlParams = new URLSearchParams(window.location.search);
@@ -812,7 +727,7 @@
                 console.log(selectedTeams);
 
             }else{
-                // window.location.href = `team-info.php?t=${tournamentID}`;
+                 window.location.href = `tournament-info.php?t=${tournamentID}`;
             }
         }
 
@@ -826,7 +741,7 @@
         }
 
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  //document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

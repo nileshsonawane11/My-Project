@@ -130,6 +130,30 @@ function getWicketBallDetails($balls, $player_id) {
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="icon" type="image/png" href="../../assets/images/logo.png">
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        // Apply stored theme instantly before the page renders
+        (function() {
+            const theme = localStorage.getItem('theme') ||
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply theme attributes early to avoid white flash
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body?.setAttribute('data-theme', theme);
+
+            // Wait for the logo to exist, then update it
+            const checkLogo = setInterval(() => {
+                const logo = document.querySelector('.logo-img img');
+                if (logo) {
+                    logo.src = theme === 'dark'
+                        ? "../../assets/images/toggle-logo.png"
+                        : "../../assets/images/logo.png";
+                    clearInterval(checkLogo);
+                }
+            }, 50);
+        })();
+    </script>
+
+
     <title>Document</title>
 </head>
 <style>
@@ -192,6 +216,13 @@ function getWicketBallDetails($balls, $player_id) {
         fill: none;
         stroke: var(--text-dark);
     } */
+    
+    /* Add to your main stylesheet */
+    .no-theme-transition body {
+        transition: none !important;
+    }
+
+
 
     .menu-bar img {
         filter: var(--invert);
@@ -3848,66 +3879,33 @@ function initShowMoreButton() {
         }
 
 
-        // Set theme and handle logo
-    function setTheme(theme, save = true) {
-    const logo = document.querySelector('.logo-img img'); // select logo
+       function initializeTheme() {
+    document.body.classList.add('no-theme-transition');
 
-    if (!logo) return; // safety check
-
-    if (theme === 'dark') {
-        document.body.setAttribute('data-theme', 'dark');
-        logo.src = "../../assets/images/toggle-logo.png"; // match your HTML relative path
-        if (save) localStorage.setItem('theme', 'dark');
-    } else {
-        document.body.setAttribute('data-theme', 'light');
-        logo.src = "../../assets/images/logo.png"; // match your HTML relative path
-        if (save) localStorage.setItem('theme', 'light');
-    }
-
-    // Dispatch theme change event
-    window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
-}
-
-// Initialize theme
-function initializeTheme() {
     const checkLogo = setInterval(() => {
-        const logo = document.querySelector('.logo-img img');
+        
         if (logo) {
             clearInterval(checkLogo);
 
             const currentTheme = localStorage.getItem('theme') ||
                                  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             setTheme(currentTheme, false);
+            
 
-            // Sync theme across tabs
+            // Remove transition blocker after short delay
+            setTimeout(() => document.body.classList.remove('no-theme-transition'), 100);
+
+            // Sync across tabs
             window.addEventListener('storage', e => {
                 if (e.key === 'theme') setTheme(e.newValue, false);
             });
 
-            // Listen for custom theme change events
+            // Listen for manual theme change
             window.addEventListener('themeChanged', e => setTheme(e.detail, false));
         }
     }, 50);
-}
-
-// Run after DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-    initializeTheme();
-
-    // Swiper initialization
-    const menuItems = document.querySelectorAll('.menu-items');
-    window.swiper = new Swiper(".swiper", {
-        speed: 300,
-        slidesPerView: 1,
-        on: {
-            slideChange: () => {
-                menuItems.forEach(i => i.classList.remove('active'));
-                menuItems[swiper.activeIndex].classList.add('active');
-                moveIndicator(swiper.activeIndex);
-            }
-        }
-    });
-});
+};
+    
 
         
 </script>
