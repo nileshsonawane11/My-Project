@@ -68,6 +68,40 @@
             return date('d-m-Y', strtotime($matchDate)) . ", " . date('h:i A', strtotime($startTime));
         }
     }
+
+    //increment cviews count
+$page = 'Cricket'; // change per page
+$today = date('Y-m-d');
+
+// Calculate seconds until midnight
+$midnight = strtotime('tomorrow') - time();
+
+// Unique cookie name for each page & match per day
+$cookie_name = "viewed_{$page}_{$match_id}_{$today}";
+
+// Check if cookie not set (first view today)
+if (!isset($_COOKIE[$cookie_name])) {
+
+    // Set cookie to expire automatically at midnight
+    setcookie($cookie_name, '1', time() + $midnight, "/");
+
+    // Increment page view count safely
+    if (!isset($score_log['page_views'])) {
+        $score_log['page_views'] = 1;
+    } else {
+        $score_log['page_views'] = (int)$score_log['page_views'] + 1;
+    }
+
+    // Convert back to JSON
+    $json = json_encode($score_log);
+
+    // Update database
+    $stmt = $conn->prepare("UPDATE matches SET score_log = ? WHERE match_id = ?");
+    $stmt->bind_param("ss", $json, $match_id);
+    $stmt->execute();
+
+    $conn->commit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1513,7 +1547,7 @@
     <div class="popup-container">
         <div id="team-feedback" open>
             <div class="fed-head"><span class="logo"><div class="items">
-                <div class="logo-img"><img src="../../assets/images/logo.png" alt=""></div>
+                <div class="">Feedback</div>
                 <div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
             </div></span><span class="exit"><img src="https://staticg.sportskeeda.com/skm/assets/close.png" alt=""></span></div>
             <form class="fed-body">
@@ -1531,23 +1565,20 @@
             <a href="javascript:history.back()">
                 <div class="items">
                     <div class="logo-img"><img src="../../assets/images/logo.png" alt=""></div>
-                    <div class="l-name"><div class="logo-name"><p class="logo-name"><span class="txt-live"><b>Live</b></span><span class="txt-strike">Strike</span></p></div>
-                    <sup class="trade-mark">TM</sup></div>
+                    <!-- <sup class="trade-mark">TM</sup></div> -->
                 </div>
             </a>
             <div class="items">
                 <div id='commentaryIcon'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on">
-                    <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                    <line x1="12" y1="19" x2="12" y2="23"/>
-                    <line x1="8" y1="23" x2="16" y2="23"/>
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/>
                     </svg>
+
                 </div>
                 <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
             </div>
         </div>
-    </nav>    
+    </nav>     
 
     <div class="ad">
         <div class="hide-ad">
@@ -1632,7 +1663,10 @@
                         
                     }
                 ?>
-
+                <div class="info">
+                    <p id='run_rate'></p>
+                    <p>Views : <?php echo $score_log['page_views']; ?></p>
+                </div>
                 <!-- OR if toss declared -->
                 <!--
                 <div class="info update">
@@ -2364,12 +2398,12 @@
             if (commentaryEnabled) {
                 console.log("Commentary enabled",commentaryEnabled);
                 //  change icon color to active
-                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+                this.innerHTML = '<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/></svg>';
             } else {
                 console.log("Commentary disabled",commentaryEnabled);
                 stopCommentary();
                 //  change icon color to muted
-                this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon mic-on"><path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4z"/><line x1="4" y1="4" x2="20" y2="20"stroke="#d6d6d65b"stroke-width="6"stroke-linecap="round" /><line x1="4" y1="4" x2="20" y2="20"stroke="red"stroke-width="2"stroke-linecap="round" /><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+                this.innerHTML = '<svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5036 4.41266C14.5036 3.51089 13.4149 3.05919 12.7776 3.69707L8.98097 7.49682C8.8307 7.64726 8.65227 7.76659 8.4559 7.84799C8.25952 7.92938 8.04904 7.97124 7.83649 7.97118H4.79777C3.93972 7.97118 3.11682 8.31232 2.51009 8.91956C1.90336 9.52679 1.5625 10.3504 1.5625 11.2091V14.4471C1.5625 15.3059 1.90336 16.1295 2.51009 16.7367C3.11682 17.3439 3.93972 17.6851 4.79777 17.6851H7.83649C8.04904 17.685 8.25952 17.7269 8.4559 17.8083C8.65227 17.8897 8.8307 18.009 8.98097 18.1594L12.7776 21.9592C13.4149 22.5971 14.5036 22.1454 14.5036 21.2436V4.41266ZM17.167 9.82734C17.3187 9.67559 17.5244 9.59034 17.7388 9.59034C17.9533 9.59034 18.159 9.67559 18.3107 9.82734L20.1653 11.6835L22.0199 9.82734C22.1725 9.67989 22.3768 9.5983 22.5888 9.60014C22.8009 9.60199 23.0038 9.68712 23.1537 9.8372C23.3037 9.98729 23.3887 10.1903 23.3906 10.4026C23.3924 10.6148 23.3109 10.8193 23.1636 10.972L21.309 12.8281L23.1636 14.6843C23.3109 14.837 23.3924 15.0414 23.3906 15.2537C23.3887 15.4659 23.3037 15.669 23.1537 15.819C23.0038 15.9691 22.8009 16.0543 22.5888 16.0561C22.3768 16.058 22.1725 15.9764 22.0199 15.8289L20.1653 13.9727L18.3107 15.8289C18.1581 15.9764 17.9538 16.058 17.7417 16.0561C17.5297 16.0543 17.3268 15.9691 17.1769 15.819C17.0269 15.669 16.9418 15.4659 16.94 15.2537C16.9381 15.0414 17.0197 14.837 17.167 14.6843L19.0216 12.8281L17.167 10.972C17.0154 10.8202 16.9302 10.6143 16.9302 10.3997C16.9302 10.185 17.0154 9.97915 17.167 9.82734Z" fill="black"/></svg>';
             }
         });
 
@@ -2718,6 +2752,85 @@ function update_scoreboard(data){
                 alert('Sharing not supported on this browser.');
             }
         }
+
+        // Theme management functions
+        function initializeTheme() {
+            // Check for saved theme preference or use system preference
+            const currentTheme = localStorage.getItem('theme') || 
+                                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Set the initial theme
+            setTheme(currentTheme, false); // false = don’t save twice
+
+            // Add event listener to theme toggle if it exists
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        setTheme('dark');
+                    } else {
+                        setTheme('light');
+                    }
+                });
+            }
+        }
+
+        // Listen for theme changes from other tabs/windows
+        function setupThemeSync() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme') {
+                    setTheme(e.newValue, false);
+                }
+            });
+        }
+
+        // ✅ Updated setTheme to also handle logo switching
+        function setTheme(theme, save = true) {
+            const logo = document.querySelector('.logo-img img'); // target your logo <img>
+            
+            if (theme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                if (save) localStorage.setItem('theme', 'dark');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = true;
+                }
+                if (logo) logo.src = "../../assets/images/toggle-logo.png"; // dark version
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                if (save) localStorage.setItem('theme', 'light');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = false;
+                }
+                if (logo) logo.src = "../../assets/images/logo.png"; // light version
+            }
+            
+            // Dispatch event for other components to listen to
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+        }
+
+        // Get current theme
+        function getCurrentTheme() {
+            return document.body.getAttribute('data-theme') || 'dark';
+        }
+
+        // Initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            setupThemeSync();
+        });
+    document.addEventListener("DOMContentLoaded", () => {
+        window.swiper = new Swiper(".swiper", {
+            speed: 300,
+            slidesPerView: 1,
+            on: {
+                slideChange: () => {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    menuItems[swiper.activeIndex].classList.add('active');
+                    moveIndicator(swiper.activeIndex);
+                }
+            }
+        });
+    });
 
         // Disable right-click
   document.addEventListener('contextmenu', event => event.preventDefault());

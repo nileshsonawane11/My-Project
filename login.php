@@ -17,8 +17,8 @@ if (mysqli_num_rows($result1) > 0) {
     $row = mysqli_fetch_assoc($result1);
 
             if($check){
-                setcookie('user', $row['user_id'], time() + (60 * 720), "/");   
-                setcookie('email', $row['email'], time() + (60 * 720), "/");
+                setcookie('user', $row['user_id'], time() + (60 * 60 * 24 * 30), "/");   
+                setcookie('email', $row['email'], time() + (60 * 60 * 24 * 30), "/");
             }
             $_SESSION['user']=$row['user_id'];
             $_SESSION['email']=$row['email'];

@@ -11,6 +11,28 @@
         exit();
     }
 
+    $team_id = $_GET['t'];
+
+    if (isset($_POST['confirm']) && isset($_POST['team_id'])) {
+
+        $delete = mysqli_query($conn, "DELETE FROM teams WHERE t_id = '$team_id'");
+
+        if ($delete) {
+            echo "<script>window.history.back();</script>";
+        } else {
+            echo "<script>alert('Failed to delete team');</script>";
+        }
+    }
+
+    // Example: assume $conn is your database connection
+    $query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$team_id'");
+    $result = mysqli_fetch_assoc($query);
+
+    if(mysqli_num_rows($query) == 0) {
+        echo "<script>window.history.back();</script>";
+        exit;
+    }
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id']) && isset($_GET['mem'])) {
         $id = $_POST['delete_id'];
         $type = $_GET['mem']; // 'Player' or 'Staff'
@@ -477,6 +499,124 @@
         #playerMenu div:hover {
         background-color: var(--hover-bg);
         }
+        .logout-btn,
+        .save-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 30px;
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 20px;
+            box-shadow: 0 4px 12px rgba(209, 34, 31, 0.2);
+        }
+
+        .logout-btn:hover,
+        .save-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(209, 34, 31, 0.3);
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+        }
+
+        .popup-box {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--card-shadow);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .popup-message {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--text-color);
+        }
+
+        .popup-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--light-bg);
+            color: var(--text-color);
+        }
+
+        .popup-input:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--primary-light-transparent);
+        }
+
+        .popup-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .popup-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .popup-btn.cancel {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            border: none;
+        }
+
+        .popup-btn.cancel:hover {
+            background-color: var(--border-color);
+        }
+
+        .popup-btn.confirm {
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+        }
+
+        .popup-btn.confirm:hover {
+            background-color: var(--primary-color);
+        }
 
         @media (min-width:601px) {
                     .container{
@@ -665,6 +805,20 @@
                             </div>
                         </div>
                 </div>
+                <button class="logout-btn">DELETE TEAM</button>
+            </div>
+    </div>
+    <form method="post" class="popup-overlay" id="popupOverlay" action="<?php $_SERVER['PHP_SELF']; ?>">
+        <div class="popup-box" id="popupBox">
+            <input type="hidden" name="team_id" value="<?php echo $team_id; ?>"> <!-- ✅ This is required -->
+
+            <p class="popup-message" id="popupMessage"></p>
+            <div class="popup-actions">
+                <button type="button" class="popup-btn cancel" id="cancelBtn">Cancel</button>
+                <button type="submit" class="popup-btn confirm" id="confirmBtn" name="confirm">Confirm</button>
+            </div>
+        </div>
+    </form>
                 <div class="info-section">
                     <div class="sec schedule active">Schedule</div>
                     <div class="sec team">Team</div>
@@ -834,6 +988,28 @@ function attachEditListeners() {
   });
 }
 
+const popupOverlay = document.getElementById("popupOverlay");
+        const popupMessage = document.getElementById("popupMessage");
+        const cancelBtn = document.getElementById("cancelBtn");
+
+        // Messages for logout
+        const messages = {
+            "logout": "Are you sure you want to Delete the Team?"
+            };
+
+            const logoutBtn = document.querySelector(".logout-btn");
+
+            logoutBtn.addEventListener("click", () => {
+            const className = "logout";  // We know this is logout
+
+            popupMessage.innerHTML = messages[className] || "Are you sure?";
+            popupOverlay.style.display = "flex";
+
+
+            cancelBtn.onclick = () => {
+                popupOverlay.style.display = "none";
+            };
+        });
 
 function showPlayerMenu(targetElement, name) {
   const menu = document.getElementById('playerMenu');

@@ -38,20 +38,26 @@ self.addEventListener('activate', (event) => {
 
 // FETCH: Handle requests
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // 🛑 Only handle GET requests for caching
+  if (request.method !== 'GET') {
+    // Still allow network fetches for POST/PUT/DELETE etc.
+    return;
+  }
 
   // 1️⃣ Dynamic PHP pages (scoreboard, manage-matches, etc.)
   if (url.pathname.endsWith('.php')) {
     event.respondWith(
-      fetch(event.request)
+      fetch(request)
         .then((response) => {
-          // Save latest copy in cache
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           return response;
         })
         .catch(() =>
-          caches.match(event.request).then((cached) => cached || caches.match('./offline.html'))
+          caches.match(request).then((cached) => cached || caches.match('./offline.html'))
         )
     );
     return;
@@ -60,23 +66,23 @@ self.addEventListener('fetch', (event) => {
   // 2️⃣ API calls (network-first, fallback to cache)
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
-      fetch(event.request)
+      fetch(request)
         .then((response) => {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           return response;
         })
-        .catch(() => caches.match(event.request))
+        .catch(() => caches.match(request))
     );
     return;
   }
 
   // 3️⃣ Static assets (cache-first)
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
+    caches.match(request).then((cachedResponse) => {
       return (
         cachedResponse ||
-        fetch(event.request).catch(() => caches.match('./offline.html'))
+        fetch(request).catch(() => caches.match('./offline.html'))
       );
     })
   );

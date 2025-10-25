@@ -46,6 +46,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Match Details</title>
     <style>
         * {
@@ -496,6 +497,37 @@
             font-size:14px;
             margin: 5px;
         }
+        .rule {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            padding: 15px 0;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        #flexSwitchCheckChecked.form-check-input {
+            height: 25px;
+            width: 50px;
+        }
+        
+        #flexSwitchCheckChecked.form-check-input:checked {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-light);
+        }
+        
+        .form-check-input:focus {
+            border-color: var(--primary-dark);
+            outline: 0;
+            box-shadow: 0 0 0 .25rem rgba(209, 34, 31, 0.22);
+        }
+        
+        .form-check-input {
+            border: 1px solid var(--primary-dark);
+            transition: background-position .5s ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -590,6 +622,13 @@
                 <div class="form-group">
                     <label class="form-label">Time</label>
                     <input type="time" class="form-input" value="<?php echo $result['start_time']; ?>" disabled>
+                </div>
+            </div>
+
+            <div class="rule">
+                <h6>Private Visibility</h6>
+                <div class="form-check form-switch">
+                    <input class="form-check-input isfreehit" type="checkbox" id="flexSwitchCheckChecked" disabled <?php echo $button = $result['visibility'] == 'false' ? '' : 'checked'; ?>>
                 </div>
             </div>
             
@@ -755,6 +794,7 @@
         const pencil = document.querySelectorAll(".pencil");
         const pass = document.querySelector(".pass");
         const save_btn = document.querySelector(".save-btn");
+        const match_visibility = document.getElementById("flexSwitchCheckChecked");
         save_btn.style.display = "none";
         let Umpires = [];
         let Scorers = [];
@@ -857,6 +897,20 @@
             }
         });
 
+        
+        let label = document.querySelector('.rule h6');
+        if(match_visibility.checked){
+            label.innerText = 'Public Visibility';
+        }
+
+        match_visibility.addEventListener('click', function(e) {
+            if(match_visibility.checked){
+                label.innerText = 'Public Visibility';
+            }else{
+                label.innerText = 'Private Visibility';
+            }
+        });
+
         // Back button functionality
         function goBack() {
             // Implement your back navigation logic here
@@ -869,21 +923,21 @@
 
         // Messages for logout
         const messages = {
-        "logout": "Are you sure you want to Delete the Match?"
-        };
+            "logout": "Are you sure you want to Delete the Match?"
+            };
 
-        const logoutBtn = document.querySelector(".logout-btn");
+            const logoutBtn = document.querySelector(".logout-btn");
 
-        logoutBtn.addEventListener("click", () => {
-        const className = "logout";  // We know this is logout
+            logoutBtn.addEventListener("click", () => {
+            const className = "logout";  // We know this is logout
 
-        popupMessage.innerHTML = messages[className] || "Are you sure?";
-        popupOverlay.style.display = "flex";
+            popupMessage.innerHTML = messages[className] || "Are you sure?";
+            popupOverlay.style.display = "flex";
 
 
-        cancelBtn.onclick = () => {
-            popupOverlay.style.display = "none";
-        };
+            cancelBtn.onclick = () => {
+                popupOverlay.style.display = "none";
+            };
         });
 
         const toggleBtn = document.getElementById("editToggle1");
@@ -919,15 +973,16 @@
             formdata.append("matchVenue", matchVenue);
             formdata.append("matchCity", matchCity);
             formdata.append("matchDate", matchDate);
+            formdata.append("match_visibility",  match_visibility.checked);
             formdata.append("matchTime", matchTime);
             formdata.append("matchPass", matchPass);
             formdata.append('Umpires[]', Umpires);
             formdata.append('Scorers[]', Scorers);
             formdata.append('Commentators[]', Commentators);
 
-            // for (let [key, value] of formdata.entries()) {
-            //     console.log(`${key}:`, value);
-            // }
+            for (let [key, value] of formdata.entries()) {
+                console.log(`${key}:`, value);
+            }
 
              // First schedule the match via fetch()
             fetch('../Backend/update_match.php', {

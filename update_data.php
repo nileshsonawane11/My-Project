@@ -45,6 +45,11 @@ if($for == "dashboard"){
             LEFT JOIN teams AS t2 ON matches.team_2 = t2.t_id 
             WHERE sports.sport_name = '$sport'";
 
+    if (empty($search)) {
+        $sql .= " AND matches.status = '$status'
+                    AND matches.visibility = 'true'";
+    }
+
     if (!empty($search)) {
         $sql .= " AND (
             matches.match_name LIKE '%$search%' OR 
@@ -104,7 +109,7 @@ if($for == "dashboard"){
 
                     if(empty($row['toss_winner'])){
                         echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
-                    }else if($row['status'] == 'Live'){
+                    }else if($row['status'] == 'Live' && $sport != 'BASKETBALL'){
                         
 
                         $team = '';
@@ -115,7 +120,7 @@ if($for == "dashboard"){
                         }
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
-                    }else if($row['status'] == 'Completed'){
+                    }else if($row['status'] == 'Completed' && $sport != 'BASKETBALL'){
 
                         if($score_log['winner'] != 'Draw'){
                             $winner = $score_log['winner'];
@@ -125,7 +130,7 @@ if($for == "dashboard"){
                         if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
 
                             echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
-                        }else if($score_log['completed'] == "Draw"){
+                        }else if($score_log['winner'] == "Draw"){
                             echo "<div class='info update'><p>Match Tied</p></div>";
                         }else{
                             echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
@@ -168,6 +173,10 @@ if($for == "dashboard"){
         LEFT JOIN teams AS t1 ON matches.team_1 = t1.t_id 
         LEFT JOIN teams AS t2 ON matches.team_2 = t2.t_id 
         WHERE sports.sport_name = '$sport'";
+
+        if (empty($search)) {
+            $sql .= " AND matches.visibility = 'true'";
+        }
 
         if (!empty($search)) {
             $sql .= " AND (
@@ -228,7 +237,7 @@ if($for == "dashboard"){
 
                     if(empty($row['toss_winner'])){
                         echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
-                    }else if($row['status'] == 'Live'){
+                    }else if($row['status'] == 'Live' && $sport != 'BASKETBALL'){
                         
 
                         $team = '';
@@ -239,12 +248,17 @@ if($for == "dashboard"){
                         }
 
                         echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
-                    }else if($row['status'] == 'Completed'){
-                        $winner = $score_log['winner'];
-                        $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                    }else if($row['status'] == 'Completed' && $sport != 'BASKETBALL'){
+                        if($score_log['winner'] != 'Draw'){
+                            $winner = $score_log['winner'];
+                            $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
+                        }
                         // If match is not completed and no winner is declared
                         if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
+
                             echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                        }else if($score_log['winner'] == "Draw"){
+                            echo "<div class='info update'><p>Match Tied</p></div>";
                         }else{
                             echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
                         }

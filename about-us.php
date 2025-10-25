@@ -206,14 +206,14 @@
                     </div>
                 </div></a>
                 
-                <a href = ""  target="_blank"><div class="team-member">
+                <a href = "https://www.linkedin.com/in/prabhavati-jadhav-825133389/"  target="_blank"><div class="team-member">
                     <img src="https://i.ibb.co/zWGGS3kS/prabhavati.jpg" alt="Product">
                     <div class="team-info">
                         <h4>Jadhav Prabhavati</h4>                       
                     </div>
                 </div> </a>
 
-                <a href = ""  target="_blank"><div class="team-member">
+                <a href = "https://www.linkedin.com/in/ketki-sonawane-0a21b2316/"  target="_blank"><div class="team-member">
                     <img src="https://i.ibb.co/p6MqTrx4/Ketki.jpg" alt="Product">
                     <div class="team-info">
                         <h4>Sonawane Ketki</h4>                       

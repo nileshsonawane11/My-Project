@@ -5,6 +5,13 @@ use PHPMailer\PHPMailer\Exception;
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
 session_start();
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0"); // Proxies
+if(isset($_SESSION['user'])){
+    header('location: ./dashboard.php?update=Live&sport=CRICKET');
+    exit();
+}
 include './config.php'; // your DB connection file
 
 // Fix for broken $_GET on localhost
@@ -21,7 +28,7 @@ if (isset($_GET['code'])) {
         $fname = $data->givenName ?? '';
         $lname = $data->familyName ?? '';
         $email = $data->email ?? '';
-        $role = 'User';
+        $role = 'Admin';
         $phone = NULL;
         $password = md5($email);
 
@@ -63,6 +70,10 @@ if (isset($_GET['code'])) {
         $_SESSION['user'] = $google_id;
         $_SESSION['role'] = $role;
         $_SESSION['email'] = $email;
+
+        setcookie('user', $row['user_id'], time() + (60 * 60 * 24 * 30), "/");   
+        setcookie('email', $row['email'], time() + (60 * 60 * 24 * 30), "/");
+
         $name = $fname.' '.$lname;
 
         $email_content = "
