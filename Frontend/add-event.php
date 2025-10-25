@@ -233,6 +233,66 @@
         cursor: pointer;
         }
 
+        .container3{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-img{
+            height: 110px;
+            width: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .img-container{
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+        }
+        .image{
+            height: 100%;
+            width: 100%;
+            border: solid 1px var(--border-color);
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .image img{
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+        .select-img{
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--card-bg);
+            height: 40px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor : pointer;
+            box-shadow: var(--shadow);
+        }
+        .select-img svg {
+            fill: var(--svg-fill);
+        }
+
+        .add-btn{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
         @media (min-width:601px) {
              .container{
                 display: flex;
@@ -264,6 +324,20 @@
                 height: 45px;
                 background: var(--input-bg);
                 color: var(--text-dark);
+            }
+            .add-btn button{
+                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+                color: #fff;
+                font-size: 12px;
+                padding: 10px 45px;
+                border: 1px solid transparent;
+                border-radius: 8px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                height: 40px;
+                width: 300px;
             }
         }
 
@@ -299,7 +373,23 @@
                 background: var(--input-bg);
                 color: var(--text-dark);
             }
+
+            .add-btn button{
+                background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+                color: #fff;
+                font-size: 12px;
+                padding: 10px 45px;
+                border: 1px solid transparent;
+                border-radius: 8px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                width: 90%;
+                height: 45px;
+            }
         }
+
     </style>
 </head>
 <body>
@@ -308,33 +398,99 @@
             <div><svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z" fill="black"/>
                 </svg></div>
-            <div class="save-btn">Save</div>
+            <!-- <div class="save-btn">Save</div> -->
         </div>
         
         <div class="container2">
             <div class="txt">
-                <label for="">Team Name</label>
+                <!-- <label for="">Team Name</label> -->
                 <h4>Add Event</h4>
             </div>
             <div class="get-info">
                 <div class="info">
-                    <div class="schedule">
-                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Date</label></div>
-                        <div class="input-fields event-time"><input type="time" id="timeInput" placeholder="Select Time" required><label for="timeInput" id="time">Time</label></div>
+                    <div class="container3">
+                    <div class="logo-img">
+                        <div class="img-container">
+                            <div class="image">
+                                <img  id="previewImage" src="../assets/images/new_event_img.png" alt="">
+                            </div>
+                            <div class="select-img" onclick="uploadfile()">
+                                <svg width="28" height="22" viewBox="0 0 31 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M26.2918 3.24984H23.8467L22.3051 1.70817C21.4125 0.815546 19.8461 0.166504 18.5835 0.166504H12.4168C11.1542 0.166504 9.58787 0.815546 8.69525 1.70817L7.15358 3.24984H4.7085C2.15858 3.24984 0.0834961 5.32492 0.0834961 7.87484V20.2082C0.0834961 22.7581 2.15858 24.8332 4.7085 24.8332H26.2918C28.8417 24.8332 30.9168 22.7581 30.9168 20.2082V7.87484C30.9168 5.32492 28.8417 3.24984 26.2918 3.24984ZM15.5002 18.6665C14.0689 18.6663 12.6963 18.0975 11.6844 17.0853C10.6725 16.0731 10.1041 14.7004 10.1043 13.2691C10.1045 11.8379 10.6733 10.4653 11.6855 9.45338C12.6977 8.44146 14.0704 7.87309 15.5017 7.87329C16.933 7.8735 18.3055 8.44227 19.3175 9.45447C20.3294 10.4667 20.8977 11.8394 20.8975 13.2707C20.8973 14.7019 20.3286 16.0745 19.3164 17.0864C18.3042 18.0983 16.9314 18.6667 15.5002 18.6665ZM24.7502 11.4191C24.487 11.4191 24.2264 11.3673 23.9832 11.2666C23.74 11.1659 23.5191 11.0182 23.333 10.8321C23.1469 10.646 22.9993 10.4251 22.8986 10.1819C22.7978 9.93877 22.746 9.67815 22.746 9.41496C22.746 9.15177 22.7978 8.89116 22.8986 8.648C22.9993 8.40484 23.1469 8.18391 23.333 7.9978C23.5191 7.8117 23.74 7.66407 23.9832 7.56335C24.2264 7.46263 24.487 7.4108 24.7502 7.4108C25.2817 7.4108 25.7915 7.62195 26.1673 7.9978C26.5432 8.37366 26.7543 8.88342 26.7543 9.41496C26.7543 9.9465 26.5432 10.4563 26.1673 10.8321C25.7915 11.208 25.2817 11.4191 24.7502 11.4191Z" fill="black"/>
+                                </svg>
+                                <input type="file" name="" id="fileInput" style="display:none">
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-fields"><input type="text" name="" id="opponent" required><label for="opponent">Opponent</label></div>
+                </div>
+                    <div class="input-fields"><input type="text" name="" id="name" required><label for="opponent">Event Name</label></div>
+                    <div class="schedule">
+                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Start Date</label></div>
+                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">End Date</label></div>
+                    </div>
                     <div class="input-fields"><input type="text" name="" id="location" required><label for="location">Location</label></div>
-                    <div class="check">
+                    <!-- Organizer / Department -->
+                    <div class="input-fields">
+                        <input type="text" id="organizer" name="organizer" required>
+                        <label for="organizer">Organizer / Department</label>
+                    </div>
+
+                    <!-- Coordinator Name -->
+                    <div class="input-fields">
+                        <input type="text" id="coordinator" name="coordinator" required>
+                        <label for="coordinator">Coordinator Name</label>
+                    </div>
+
+                    <!-- Contact Number -->
+                    <div class="input-fields">
+                        <input type="text" id="coordinator" name="coordinator" required>
+                        <label for="coordinator">Contact Number</label>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="input-fields">
+                        <input type="email" id="email" name="email" required>
+                        <label for="email">Email</label>
+                    </div>
+
+                    <!-- Event Type -->
+                    <div class="input-fields">
+                        <select id="event_type" name="event_type" required>
+                            <option value="" disabled selected hidden>Select Event Type</option>
+                            <option value="intra">Intra-College</option>
+                            <option value="inter">Inter-College</option>
+                            <option value="zonal">Zonal</option>
+                            <option value="national">National</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="input-fields">
+                        <input type="text" id="sponsor" name="sponsor" required>
+                        <label for="sponsor">Sponsorship Partner (Optional)</label>
+                    </div>
+                    <!-- <div class="check">
                         <input type="text" name="" id="" value="" placeholder="Full Day Event" readonly disabled>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" onclick="checkStatus()">
                         </div>
-                    </div>
-                    <div class="time">
+                    </div> -->
+                    <!-- <div class="time">
                         <div class="input-fields"><input type="number" name="" id="duration" required><label for="duration">Duration</label></div>
                         <div class="input-fields"><input type="datetime" name="" id="arrival" required><label for="arrival">Arrival</label></div>
-                    </div>
+                    </div> -->
                     <div class="input-fields"><textarea name="" id="notes" placeholder="Description(Optional)" required></textarea></div>
+
+                    <!-- <div class="input-fields file-field">
+                        <input type="file" id="poster" name="poster" accept="image/*" required>
+                        <label for="poster">Upload Event Poster</label>
+                    </div> -->
+
+                    
+
+                    <div class="add-btn">
+                        <button onclick="add_tournament(event)" type="submit" id="add-event">Next (Add TOURNAMENTS)</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -344,6 +500,29 @@
         function goBack() {
             window.history.back();
         }
+
+        let uploadfile = () => {
+            document.getElementById("fileInput").click();
+        }
+
+        let select_teams = () => {
+
+        }
+
+        document.addEventListener('message',(event)=>{
+            if (event.data === "closeIframe") {
+                next_page.classList.remove('active');  
+
+                setTimeout(()=>{
+                    window.location.replace(`./add-tournament.php?game=${gameName}`);
+                },550)
+            }
+        })
+
+        document.getElementById("fileInput").addEventListener("change", function(event) {
+            const file = URL.createObjectURL(event.target.files[0]);
+            document.getElementById("previewImage").src = file;
+        });
 
         //manage textarea
         const textarea = document.getElementById('notes');
@@ -365,9 +544,9 @@
             }
         }
 
-        document.querySelector('.save-btn').addEventListener('click',()=>{
-            window.location.href = './team-info.php';
-        })
+        // document.querySelector('.save-btn').addEventListener('click',()=>{
+        //     window.location.href = './team-info.php';
+        // })
 
         // Disable right-click
   document.addEventListener('contextmenu', event => event.preventDefault());
