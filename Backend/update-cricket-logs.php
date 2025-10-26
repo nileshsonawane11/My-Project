@@ -122,11 +122,10 @@ function saveHistorySnapshot($conn, $match_id, $score_log) {
     }
     
     // Update both history and overs
-    $stmt = $conn->prepare("UPDATE matches SET history = ?, score_log = ?, overs = ? WHERE match_id = ?");
-    $stmt->bind_param("ssss", 
+    $stmt = $conn->prepare("UPDATE matches SET history = ?, score_log = ? WHERE match_id = ?");
+    $stmt->bind_param("sss", 
         json_encode($history),
         json_encode($score_log),
-        $overs,
         $match_id
     );
     

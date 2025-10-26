@@ -142,16 +142,11 @@ if($for == "dashboard"){
 
                     echo "<div class='strt-btn'>";
                     
-                    $scorers = [];
-
-                    if (!empty($row['scorers'])) {
-                        $decoded = json_decode($row['scorers'], true); // decode as array
-                        if (is_array($decoded)) {
-                            $scorers = $decoded;
-                        }
+                    $scorers = json_decode($row['scorers'] ?? '[]', true);
+                    if (!is_array($scorers)) {
+                        $scorers = [];
                     }
 
-                    // $scorer_emails = isset($scorers[0]) ? explode(",", $scorers[0]) : [];
                     $session_email = $_SESSION['email'];
 
                     if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
@@ -269,8 +264,11 @@ if($for == "dashboard"){
 
                     echo "<div class='strt-btn'>";
                     
-                    $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    // $scorer_emails = explode(",", $scorers[0]);
+                    $scorers = json_decode($row['scorers'] ?? '[]', true);
+                    if (!is_array($scorers)) {
+                        $scorers = [];
+                    }
+
                     $session_email = $_SESSION['email'];
 
                     if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {
@@ -413,13 +411,11 @@ if($for == "manage_matches"){
 
                     echo "<div class='strt-btn'>";
                     
-                    $scorers = json_decode($row['scorers']) ?? '[]'; // decode JSON array
-                    $scorer_emails = [];
+                    $scorers = json_decode($row['scorers'] ?? '[]', true);
+                    if (!is_array($scorers)) {
+                        $scorers = [];
+                    }
 
-                    // if (!empty($scorers) && isset($scorers[0])) {
-                    //     $scorer_emails = explode(",", $scorers[0]);
-                    // }
-                    
                     $session_email = $_SESSION['email'];
 
                     if ($scorers && in_array($session_email, $scorers) && $row['status'] == 'Live') {

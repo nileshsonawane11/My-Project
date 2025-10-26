@@ -110,6 +110,28 @@ if (!isset($_COOKIE[$cookie_name])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        // Apply stored theme instantly before the page renders
+        (function() {
+            const theme = localStorage.getItem('theme') ||
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply theme attributes early to avoid white flash
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body?.setAttribute('data-theme', theme);
+
+            // Wait for the logo to exist, then update it
+            const checkLogo = setInterval(() => {
+                const logo = document.querySelector('.logo-img img');
+                if (logo) {
+                    logo.src = theme === 'dark'
+                        ? "../../assets/images/toggle-logo.png"
+                        : "../../assets/images/logo.png";
+                    clearInterval(checkLogo);
+                }
+            }, 50);
+        })();
+    </script>
     <title>Document</title>
 </head>
 <style>
@@ -3070,84 +3092,70 @@ function initShowMoreButton() {
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
 
-  // Theme management functions
-        function initializeTheme() {
-            // Check for saved theme preference or use system preference
-            const currentTheme = localStorage.getItem('theme') || 
-                                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            
-            // Set the initial theme
-            setTheme(currentTheme, false); // false = don’t save twice
+  // Make function globally accessible
+  window.openDialog = function(button, event) {
+      if (event) event.stopPropagation();
+      const dialog = document.getElementById("startMatchDialog");
+      dialog.showModal();
 
-            // Add event listener to theme toggle if it exists
-            const themeToggle = document.getElementById('theme-toggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('change', function() {
-                    if (this.checked) {
-                        setTheme('dark');
-                    } else {
-                        setTheme('light');
-                    }
-                });
-            }
-        }
+      const match_to_start = button.closest('.game-info').getAttribute('data-match_id');
+      console.log("Match : " + match_to_start);
 
-        // Listen for theme changes from other tabs/windows
-        function setupThemeSync() {
-            window.addEventListener('storage', function(e) {
-                if (e.key === 'theme') {
-                    setTheme(e.newValue, false);
-                }
+      document.getElementById("match_id").value = match_to_start;
+  }
+
+  // Close dialog of password
+        window.closeDialog = function() {
+            const dialog = document.getElementById("startMatchDialog");
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                el.innerHTML = '';
+                el.style.display = 'none';
             });
+            document.getElementById("matchPasswordForm").reset();
+            dialog.close();
         }
 
-        // ✅ Updated setTheme to also handle logo switching
-        function setTheme(theme, save = true) {
-            const logo = document.querySelector('.logo-img img'); // target your logo <img>
-            
-            if (theme === 'dark') {
-                document.body.setAttribute('data-theme', 'dark');
-                if (save) localStorage.setItem('theme', 'dark');
-                if (document.getElementById('theme-toggle')) {
-                    document.getElementById('theme-toggle').checked = true;
-                }
-                if (logo) logo.src = "../../assets/images/toggle-logo.png"; // dark version
+         window.shareContent = function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'LiveStrike',
+                    text: 'Check out this awesome real-time score tracking!',
+                    url: window.location.href
+                })
+                .then(() => console.log('Successfully shared'))
+                .catch((error) => console.error('Error sharing:', error));
             } else {
-                document.body.setAttribute('data-theme', 'light');
-                if (save) localStorage.setItem('theme', 'light');
-                if (document.getElementById('theme-toggle')) {
-                    document.getElementById('theme-toggle').checked = false;
-                }
-                if (logo) logo.src = "../../assets/images/logo.png"; // light version
+                alert('Sharing not supported on this browser.');
             }
+        }
+
+
+       function initializeTheme() {
+    document.body.classList.add('no-theme-transition');
+
+    const checkLogo = setInterval(() => {
+        
+        if (logo) {
+            clearInterval(checkLogo);
+
+            const currentTheme = localStorage.getItem('theme') ||
+                                 (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            setTheme(currentTheme, false);
             
-            // Dispatch event for other components to listen to
-            window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
-        }
 
-        // Get current theme
-        function getCurrentTheme() {
-            return document.body.getAttribute('data-theme') || 'dark';
-        }
+            // Remove transition blocker after short delay
+            setTimeout(() => document.body.classList.remove('no-theme-transition'), 100);
 
-        // Initialize theme when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeTheme();
-            setupThemeSync();
-        });
-    document.addEventListener("DOMContentLoaded", () => {
-        window.swiper = new Swiper(".swiper", {
-            speed: 300,
-            slidesPerView: 1,
-            on: {
-                slideChange: () => {
-                    menuItems.forEach(i => i.classList.remove('active'));
-                    menuItems[swiper.activeIndex].classList.add('active');
-                    moveIndicator(swiper.activeIndex);
-                }
-            }
-        });
-    });
+            // Sync across tabs
+            window.addEventListener('storage', e => {
+                if (e.key === 'theme') setTheme(e.newValue, false);
+            });
+
+            // Listen for manual theme change
+            window.addEventListener('themeChanged', e => setTheme(e.detail, false));
+        }
+    }, 50);
+};
     </script>
 </body>
 </html>

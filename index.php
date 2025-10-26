@@ -8,18 +8,11 @@
 
     $current_time = date('Y-m-d H:i:s');
 
-    // Prepare and execute delete query
+    // Delete accounts older than 24 hours after deletion request
     $query = "DELETE FROM users WHERE delete_on IS NOT NULL AND TIMESTAMPDIFF(HOUR, delete_on, ?) >= 24";
-
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $current_time);
-
-    if ($stmt->execute()) {
-        // echo (['status' => 'success', 'message' => 'Accounts older than 24 hours deleted']);
-    } else {
-        // echo (['status' => 'error', 'message' => 'Deletion failed: ' . $stmt->error]);
-    }
-
+    $stmt->execute();
     $stmt->close();
     $conn->close();
 ?> 
@@ -95,7 +88,6 @@ body {
   height: 100vh;
   background-color: #fff;
   font-family: Arial, sans-serif;
-  user-select: none;
   overflow: hidden;
 }
 
@@ -109,13 +101,13 @@ body {
 }
 
 .logo-container {
-  position: relative;       /* fix reference for absolute logos */
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  overflow: hidden;         /* prevent mobile overflow */
+  overflow: hidden;
 }
 
 .logo1, .logo2 {
@@ -127,7 +119,6 @@ body {
   height: auto;
 }
 
-/* Individual logo z-index and animation */
 .logo1 {
   z-index: 1;
   animation: logo-right 0.3s ease-out 0.6s forwards;
@@ -144,7 +135,6 @@ body {
   animation: logo-left 0.3s ease-out 0.6s forwards;
 }
 
-/* Animations adjusted to center */
 @keyframes logo-left {
   from {
     transform: translate(-200%, -40%);
@@ -169,26 +159,26 @@ body {
 
 /* Loader */
 #loader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: var(--card-bg);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-  
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid var(--gray-bg);
-        border-top: 3px solid var(--primary-color);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--card-bg);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-bg);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
 
 @keyframes spin {
   to {
@@ -197,15 +187,9 @@ body {
 }
 
 @media(max-width: 600px) {
-  .logo1 {
-    height: 65px;
-  }
-
-.logo2 {
-    height: 150px;
-  }
+  .logo1 { height: 65px; }
+  .logo2 { height: 150px; }
 }
-
 </style>
 </head>
 <body>
@@ -221,37 +205,57 @@ body {
   </div>
 
 <script>
+/* ===============================
+   ✅ PWA Detection & Redirect Fix
+   =============================== */
+window.addEventListener('load', async () => {
+  // If already in PWA mode, do nothing
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log("Running inside PWA — no redirect needed.");
+    return;
+  }
+
+  // If previously installed PWA, redirect immediately from index
+  if (localStorage.getItem('livestrike_pwa_installed') === 'true') {
+    console.log("Detected LiveStrike PWA installation — redirecting to app...");
+    window.location.href = '/'; // Redirect to your PWA start URL
+    return;
+  }
+
+  // Listen for installation event
+  window.addEventListener('appinstalled', () => {
+    localStorage.setItem('livestrike_pwa_installed', 'true');
+  });
+});
+
+/* ===============================
+   Existing Logo Animation + Redirect Logic
+   =============================== */
 setTimeout(() => {
   let isloggedin = <?php echo json_encode($isloggedin); ?>;
-  console.log(isloggedin);
+  console.log("User logged in:", isloggedin);
+
   document.getElementById('loader').style.display = 'flex';
-  if(!isloggedin){
+
+  if (!isloggedin) {
     let iframe = document.createElement('iframe');
     iframe.style.display = 'none';
     iframe.src = './landing-page.php';
-
-    iframe.onload = function () {
-      window.location.href = './landing-page.php';
-    };
+    iframe.onload = () => window.location.href = './landing-page.php';
     document.body.appendChild(iframe);
   } else {
     let iframe = document.createElement('iframe');
     iframe.style.display = 'none';
     iframe.src = './dashboard.php?update="live"&sport="CRICKET"';
-
-    iframe.onload = function () {
-      window.location.href = './dashboard.php?update="live"&sport="CRICKET"';
-    };
+    iframe.onload = () => window.location.href = './dashboard.php?update="live"&sport="CRICKET"';
     document.body.appendChild(iframe);
   }
 }, 4000);
 
-// Disable right-click
-document.addEventListener('contextmenu', event => event.preventDefault());
-
-// Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+// Disable right-click and dev tools shortcuts
+document.addEventListener('contextmenu', e => e.preventDefault());
 document.onkeydown = function(e) {
-  if(e.keyCode == 123) return false; // F12
+  if(e.keyCode == 123) return false;
   if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
   if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
   if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;

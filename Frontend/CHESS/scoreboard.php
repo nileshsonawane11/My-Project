@@ -67,40 +67,6 @@
             return date('d-m-Y', strtotime($matchDate)) . ", " . date('h:i A', strtotime($startTime));
         }
     }
-
-    //increment cviews count
-$page = 'Cricket'; // change per page
-$today = date('Y-m-d');
-
-// Calculate seconds until midnight
-$midnight = strtotime('tomorrow') - time();
-
-// Unique cookie name for each page & match per day
-$cookie_name = "viewed_{$page}_{$match_id}_{$today}";
-
-// Check if cookie not set (first view today)
-if (!isset($_COOKIE[$cookie_name])) {
-
-    // Set cookie to expire automatically at midnight
-    setcookie($cookie_name, '1', time() + $midnight, "/");
-
-    // Increment page view count safely
-    if (!isset($score_log['page_views'])) {
-        $score_log['page_views'] = 1;
-    } else {
-        $score_log['page_views'] = (int)$score_log['page_views'] + 1;
-    }
-
-    // Convert back to JSON
-    $json = json_encode($score_log);
-
-    // Update database
-    $stmt = $conn->prepare("UPDATE matches SET score_log = ? WHERE match_id = ?");
-    $stmt->bind_param("ss", $json, $match_id);
-    $stmt->execute();
-
-    $conn->commit();
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,28 +75,6 @@ if (!isset($_COOKIE[$cookie_name])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script>
-        // Apply stored theme instantly before the page renders
-        (function() {
-            const theme = localStorage.getItem('theme') ||
-                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            
-            // Apply theme attributes early to avoid white flash
-            document.documentElement.setAttribute('data-theme', theme);
-            document.body?.setAttribute('data-theme', theme);
-
-            // Wait for the logo to exist, then update it
-            const checkLogo = setInterval(() => {
-                const logo = document.querySelector('.logo-img img');
-                if (logo) {
-                    logo.src = theme === 'dark'
-                        ? "../../assets/images/toggle-logo.png"
-                        : "../../assets/images/logo.png";
-                    clearInterval(checkLogo);
-                }
-            }, 50);
-        })();
-    </script>
     <title>Document</title>
 </head>
 <style>
@@ -1719,7 +1663,87 @@ if (!isset($_COOKIE[$cookie_name])) {
         }
 </style>
 <body>
+    <script>
 
+   // Theme management functions
+        function initializeTheme() {
+            // Check for saved theme preference or use system preference
+            const currentTheme = localStorage.getItem('theme') || 
+                                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Set the initial theme
+            setTheme(currentTheme, false); // false = don’t save twice
+
+            // Add event listener to theme toggle if it exists
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        setTheme('dark');
+                    } else {
+                        setTheme('light');
+                    }
+                });
+            }
+        }
+
+        // Listen for theme changes from other tabs/windows
+        function setupThemeSync() {
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'theme') {
+                    setTheme(e.newValue, false);
+                }
+            });
+        }
+
+        // ✅ Updated setTheme to also handle logo switching
+        function setTheme(theme, save = true) {
+            const logo = document.querySelector('.logo-img img'); // target your logo <img>
+            
+            if (theme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                if (save) localStorage.setItem('theme', 'dark');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = true;
+                }
+                if (logo) logo.src = "../../assets/images/toggle-logo.png"; // dark version
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                if (save) localStorage.setItem('theme', 'light');
+                if (document.getElementById('theme-toggle')) {
+                    document.getElementById('theme-toggle').checked = false;
+                }
+                if (logo) logo.src = "../../assets/images/logo.png"; // light version
+            }
+            
+            // Dispatch event for other components to listen to
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
+        }
+
+        // Get current theme
+        function getCurrentTheme() {
+            return document.body.getAttribute('data-theme') || 'dark';
+        }
+
+        // Initialize theme when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTheme();
+            setupThemeSync();
+        });
+    document.addEventListener("DOMContentLoaded", () => {
+        window.swiper = new Swiper(".swiper", {
+            speed: 300,
+            slidesPerView: 1,
+            on: {
+                slideChange: () => {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    menuItems[swiper.activeIndex].classList.add('active');
+                    moveIndicator(swiper.activeIndex);
+                }
+            }
+        });
+    });
+    </script>
 
 <dialog id="startMatchDialog">
             <div id="content-wrapper">
@@ -1818,15 +1842,12 @@ if (!isset($_COOKIE[$cookie_name])) {
             </a>
             <div class="items">
                 <div id='commentaryIcon'>
-                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/>
-                    </svg>
-
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/></svg>
                 </div>
                 <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
             </div>
         </div>
-    </nav>  
+    </nav>    
 
     <div class="ad">
         <div class="hide-ad">
@@ -1911,10 +1932,7 @@ if (!isset($_COOKIE[$cookie_name])) {
                         
                     }
                 ?>
-                <div class="info">
-                    <p id='run_rate'></p>
-                    <p>Views : <?php echo $score_log['page_views']; ?></p>
-                </div>
+                
                 <!-- OR if toss declared -->
                 <!--
                 <div class="info update">
@@ -2377,11 +2395,11 @@ if (!isset($_COOKIE[$cookie_name])) {
 
                             // Determine Win/Loss/Draw
                             if ($team1_total > $team2_total) {
-                                $team1_result = '-';
-                                $team2_result = '-';
+                                $team1_result = 'Win';
+                                $team2_result = 'Loss';
                             } elseif ($team2_total > $team1_total) {
-                                $team1_result = '-';
-                                $team2_result = '-';
+                                $team1_result = 'Win';
+                                $team2_result = 'Loss';
                             } else {
                                 $team1_result = $team2_result = 'Draw';
                             }
@@ -2391,14 +2409,14 @@ if (!isset($_COOKIE[$cookie_name])) {
                             echo '<thead>';
                             echo '<tr class="table-head">';
                             echo '<th>Teams</th>';
-                            echo '<th>FR</th>';
+                            echo '<th>Final Result</th>';
 
                             // Reverse order half headers (2nd, 1st)
-                            for ($i = $total_halves; $i >= 1; $i--) {
-                                $suffix = ($i == 1) ? '1<sup>st</sup>' : ($i == 2 ? '2<sup>nd</sup>' : "{$i}<sup>th</sup>");
-                                echo "<th>$suffix</th>";
-                            }
-                            echo '</tr>';
+                            // for ($i = $total_halves; $i >= 1; $i--) {
+                            //     $suffix = ($i == 1) ? '1<sup>st</sup>' : ($i == 2 ? '2<sup>nd</sup>' : "{$i}<sup>th</sup>");
+                            //     echo "<th>$suffix</th>";
+                            // }
+                            // echo '</tr>';
                             echo '</thead>';
                             echo '<tbody>';
 
@@ -2406,21 +2424,21 @@ if (!isset($_COOKIE[$cookie_name])) {
                             echo '<tr>';
                             echo "<td>$team1_name</td>";
                             echo "<td>$team1_result</td>";
-                            for ($i = $total_halves; $i >= 1; $i--) {
-                                $score = $halves[$i]['team1_points'] ?? 0;
-                                echo "<td>$score</td>";
-                            }
+                            // for ($i = $total_halves; $i >= 1; $i--) {
+                            //     $score = $halves[$i]['team1_points'] ?? 0;
+                            //     echo "<td>$score</td>";
+                            // }
                             echo '</tr>';
 
                             // Team 2 row
                             echo '<tr>';
                             echo "<td>$team2_name</td>";
                             echo "<td>$team2_result</td>";
-                            for ($i = $total_halves; $i >= 1; $i--) {
-                                $score = $halves[$i]['team2_points'] ?? 0;
-                                echo "<td>$score</td>";
-                            }
-                            echo '</tr>';
+                            // for ($i = $total_halves; $i >= 1; $i--) {
+                            //     $score = $halves[$i]['team2_points'] ?? 0;
+                            //     echo "<td>$score</td>";
+                            // }
+                            // echo '</tr>';
 
                             echo '</tbody>';
                             echo '</table>';
@@ -3032,70 +3050,7 @@ function initShowMoreButton() {
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
 
-  // Make function globally accessible
-  window.openDialog = function(button, event) {
-      if (event) event.stopPropagation();
-      const dialog = document.getElementById("startMatchDialog");
-      dialog.showModal();
-
-      const match_to_start = button.closest('.game-info').getAttribute('data-match_id');
-      console.log("Match : " + match_to_start);
-
-      document.getElementById("match_id").value = match_to_start;
-  }
-
-  // Close dialog of password
-        window.closeDialog = function() {
-            const dialog = document.getElementById("startMatchDialog");
-            document.querySelectorAll('[id^="error-"]').forEach((el) => {
-                el.innerHTML = '';
-                el.style.display = 'none';
-            });
-            document.getElementById("matchPasswordForm").reset();
-            dialog.close();
-        }
-
-         window.shareContent = function() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'LiveStrike',
-                    text: 'Check out this awesome real-time score tracking!',
-                    url: window.location.href
-                })
-                .then(() => console.log('Successfully shared'))
-                .catch((error) => console.error('Error sharing:', error));
-            } else {
-                alert('Sharing not supported on this browser.');
-            }
-        }
-
-
-       function initializeTheme() {
-    document.body.classList.add('no-theme-transition');
-
-    const checkLogo = setInterval(() => {
-        
-        if (logo) {
-            clearInterval(checkLogo);
-
-            const currentTheme = localStorage.getItem('theme') ||
-                                 (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            setTheme(currentTheme, false);
-            
-
-            // Remove transition blocker after short delay
-            setTimeout(() => document.body.classList.remove('no-theme-transition'), 100);
-
-            // Sync across tabs
-            window.addEventListener('storage', e => {
-                if (e.key === 'theme') setTheme(e.newValue, false);
-            });
-
-            // Listen for manual theme change
-            window.addEventListener('themeChanged', e => setTheme(e.detail, false));
-        }
-    }, 50);
-};
+  
     </script>
 </body>
 </html>

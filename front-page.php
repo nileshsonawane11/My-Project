@@ -492,7 +492,7 @@
     }
 
     .otp-container {
-        display: flex;
+        display: none;
         justify-content: space-between;
         gap: 5px;
         width: 100%;
@@ -519,6 +519,7 @@
         font-size : 13px;
         margin: 10px;
         color: var(--text-color);
+        display: none;
     }
 
     .error{
@@ -959,6 +960,10 @@
 
                 let send_again_btn = document.getElementById('otp-btn');
                 let send_btn = document.getElementById('sendOTP'); 
+                let otp_container = document.querySelector('.otp-container');
+                let otp_txt = document.querySelector('.otptxt');
+                otp_container.style.display = 'flex';
+                otp_txt.style.display = 'block';
 
                 if(!send_btn){
                     console.error("Send OTP button not found");

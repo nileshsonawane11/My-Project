@@ -17,6 +17,7 @@ include './config.php'; // your DB connection file
 // Fix for broken $_GET on localhost
 parse_str($_SERVER['QUERY_STRING'] ?? '', $_GET);
 
+
 if (isset($_GET['code'])) {
     $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
 

@@ -1,13 +1,19 @@
 <?php
     session_start();
-    include 'config.php';
+    if(!isset($_SESSION['user'])){
+        header('location: ./front-page.php');
+        exit();
+    }else{
+        $user_id = $_SESSION['user'];
+    }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>forgot password</title>
+    <title>Change Password</title>
     <style>
     * {
         margin: 0;
@@ -56,12 +62,6 @@
         gap: 5px;
     }
 
-    .otptxt {
-        font-size: 13px;
-        margin: 10px;
-        color: var(--text-dark);
-    }
-
     .toogle-pass {
         width: 100%;
         gap: 9px;
@@ -72,13 +72,6 @@
         color: var(--text-dark);
     }
 
-    .otp-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 5px;
-        width: 100%;
-    }
-
     .error {
         display: none;
         color: var(--primary-red);
@@ -87,28 +80,13 @@
         margin: 5px;
     }
 
-    .otp-btn {
-        width: 100%;
-        margin: 9px;
-        color: var(--primary-red-light);
-        font-size: 13px;
-        cursor: pointer;
+    .success {
         display: none;
-    }
-
-    .otp {
+        color: #28a745;
         width: 100%;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-
-    .otp-container input {
+        font-size: 12px;
+        margin: 5px;
         text-align: center;
-        background-color: var(--card-bg);
-        border: 1px solid var(--border-color);
-        color: var(--text-dark);
     }
 
     .submit-btn {
@@ -138,8 +116,30 @@
     }
 
     h1 {
-        margin-bottom: 60px;
+        margin-bottom: 40px;
         color: var(--text-dark);
+        text-align: center;
+    }
+
+    .password-strength {
+        width: 100%;
+        margin: 5px 0;
+        font-size: 12px;
+    }
+
+    .strength-bar {
+        width: 100%;
+        height: 4px;
+        background: var(--border-color);
+        border-radius: 2px;
+        margin-top: 5px;
+        overflow: hidden;
+    }
+
+    .strength-fill {
+        height: 100%;
+        width: 0%;
+        transition: width 0.3s ease, background 0.3s ease;
     }
 
     @media (min-width:601px) {
@@ -282,32 +282,37 @@
             <div></div>
         </div>
 
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" >
-            <h1>Reset Password</h1>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            <div id="error-email" class="error"></div>
-            <button type="button" name="forgot" onclick="send_otp(event)" id="sendOTP" disabled style="opacity: 0.5;">Request OTP</button>
-            <div class="otp">
-                <label class="otptxt" for="otp">Enter OTP : </label>
-                <div class="otp-container">
-                    <input type="text" name="otp1" maxlength="1" id="otp1" oninput="moveFocus(this, 'otp2', 'next')" onkeydown="handleBackspace(event, this, 'otp1')" />
-                    <input type="text" name="otp2" maxlength="1" id="otp2" oninput="moveFocus(this, 'otp3', 'next')" onkeydown="handleBackspace(event, this, 'otp2')" />
-                    <input type="text" name="otp3" maxlength="1" id="otp3" oninput="moveFocus(this, 'otp4', 'next')" onkeydown="handleBackspace(event, this, 'otp3')" />
-                    <input type="text" name="otp4" maxlength="1" id="otp4" onkeydown="handleBackspace(event, this, 'otp4')" />
+        <form id="changePasswordForm">
+            <h1>Change Password</h1>
+            
+            <input type="password" name="current_password" placeholder="Current Password" id="current_password" class='password' required>
+            <div id="error-current_password" class="error"></div>
+            
+            <input type="password" name="new_password" placeholder="New Password" id="new_password" class='password' required>
+            <div class="password-strength">
+                <div id="password-strength-text"></div>
+                <div class="strength-bar">
+                    <div class="strength-fill" id="password-strength-bar"></div>
                 </div>
-                <div id="error-otp" class="error"></div>
-                <div class="otp-btn" id="otp-btn"></div>
             </div>
-                <input type="password" name="password" placeholder="Password"  id="password" class='password'>
-                <input type="password" name="password2" placeholder="Re-Enter Password"  id="password2" class='password'>
-                    <div id="error-password" class="error"></div>
-                <div class='toogle-pass'><input type="checkbox" id="showPass" onclick="showPassword()"> Show Password</div>
-                <div id="error-empty" class="error"></div>
+            <div id="error-new_password" class="error"></div>
+            
+            <input type="password" name="confirm_password" placeholder="Confirm New Password" id="confirm_password" class='password' required>
+            <div id="error-confirm_password" class="error"></div>
+            
+            <div class='toogle-pass'>
+                <input type="checkbox" id="showPass" onclick="showPassword()"> Show Password
+            </div>
+            
+            <div id="success-message" class="success"></div>
+            <div id="error-general" class="error"></div>
         </form>
+        
         <div class="submit-btn">
-            <button onclick="reset(event)" type="submit" id="signup-btn" name="reset_pass">Reset Password</button>
+            <button onclick="changePassword(event)" type="submit" id="change-btn" name="change_password">Change Password</button>
         </div>
     </div>
+
     <script>
         function goBack() {
             window.history.back();
@@ -322,25 +327,92 @@
             });
         }
 
-        let reset = (e)=>{
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let feedback = "";
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[!@#$%^&*(),.?":{}|<>]+/)) strength++;
+
+            const strengthBar = document.getElementById('password-strength-bar');
+            const strengthText = document.getElementById('password-strength-text');
+
+            switch(strength) {
+                case 0:
+                case 1:
+                    strengthBar.style.width = '20%';
+                    strengthBar.style.background = '#dc3545';
+                    strengthText.textContent = 'Weak';
+                    strengthText.style.color = '#dc3545';
+                    break;
+                case 2:
+                case 3:
+                    strengthBar.style.width = '50%';
+                    strengthBar.style.background = '#ffc107';
+                    strengthText.textContent = 'Medium';
+                    strengthText.style.color = '#ffc107';
+                    break;
+                case 4:
+                    strengthBar.style.width = '80%';
+                    strengthBar.style.background = '#28a745';
+                    strengthText.textContent = 'Strong';
+                    strengthText.style.color = '#28a745';
+                    break;
+                case 5:
+                    strengthBar.style.width = '100%';
+                    strengthBar.style.background = '#28a745';
+                    strengthText.textContent = 'Very Strong';
+                    strengthText.style.color = '#28a745';
+                    break;
+            }
+        }
+
+        // Real-time password strength checking
+        document.getElementById('new_password').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+
+        let changePassword = (e) => {
             e.preventDefault();
-        
-            let email = document.getElementById('email').value;
-            let otp1 = document.getElementById('otp1').value;
-            let otp2 = document.getElementById('otp2').value;
-            let otp3 = document.getElementById('otp3').value;
-            let otp4 = document.getElementById('otp4').value;
-            let otp = otp1 + otp2 + otp3 + otp4;
-            let password = document.getElementById('password').value;
-            let password2 = document.getElementById('password2').value;
+            
+            let currentPassword = document.getElementById('current_password').value;
+            let newPassword = document.getElementById('new_password').value;
+            let confirmPassword = document.getElementById('confirm_password').value;
+            
             let data = {
-                'email': email,
-                'otp': otp,
-                'password': password,
-                'password2': password2,
+                'current_password': currentPassword,
+                'new_password': newPassword,
+                'confirm_password': confirmPassword
             }
 
-            fetch("./Backend/reset_password.php", {
+            // Clear previous messages
+            document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                el.innerHTML = '';
+                el.style.display = 'none';
+            });
+            document.getElementById('success-message').style.display = 'none';
+
+            // Basic client-side validation
+            // if (newPassword !== confirmPassword) {
+            //     let el = document.getElementById('error-confirm_password');
+            //     el.innerHTML = 'Passwords do not match';
+            //     el.style.display = 'block';
+            //     return;
+            // }
+
+            // if (newPassword.length < 8) {
+            //     let el = document.getElementById('error-new_password');
+            //     el.innerHTML = 'Password must be at least 8 characters long';
+            //     el.style.display = 'block';
+            //     return;
+            // }
+
+            // Simulate API call - replace with your actual endpoint
+            fetch("./Backend/change_password.php", {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
@@ -348,148 +420,46 @@
                 }
             })
             .then(response => response.json())
-            .then((data)=>{
-                document.querySelectorAll('[id^="error-"]').forEach((el) => {
-                    el.innerHTML = '';
-                    el.style.display = 'none';
-                });
-
+            .then((data) => {
+                console.log(data)
                 if(data.status === 200){
-                    alert(`Password Reset Successfully!`)
-                    window.location.href = './front-page.php';
+                    document.getElementById('success-message').innerHTML = data.message || 'Password changed successfully!';
+                    document.getElementById('success-message').style.display = 'block';
                     
-                }else{
-                    let el = document.getElementById('error-'+data.field);
+                    // Clear form
+                    document.getElementById('changePasswordForm').reset();
+                    document.getElementById('password-strength-bar').style.width = '0%';
+                    document.getElementById('password-strength-text').textContent = '';
+                    
+                    // Optionally redirect after success
+                    // setTimeout(() => {
+                    //     window.location.href = './dashboard.php';
+                    // }, 2000);
+                    
+                } else {
+                    let el = document.getElementById('error-' + (data.field));
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }
-
-                console.log(data.message);
             })
-            .catch(error => console.log(error));
-
+            .catch(error => {
+                console.log(error);
+                let el = document.getElementById('error-general');
+                el.innerHTML = 'An error occurred. Please try again.';
+                el.style.display = 'block';
+            });
         };
-        
-        let send_otp =(e)=>{
-            e.preventDefault();
-            let email = document.getElementById('email').value;
-            let send_btn = document.getElementById('sendOTP'); 
-            send_btn.innerText = 'Proccessing...';
-            let data = {
-                'role': '',
-                'email': email,
-                'fname': '',
-                'lname': '',
-                'for' : 'forgot'
-            }
-            data = JSON.stringify(data);
-            e.preventDefault();
-            fetch('./OTP-mail.php', {
-                        method: 'POST',
-                        body: data,
-                        headers: {
-                            'Content-type': 'application/json; charset=UTF-8'
-                        }
-                    })
-            .then((response) => response.json())
-            .then((data) => {
-                        document.querySelectorAll('[id^="error-"]').forEach((el) => {
-                            el.innerHTML = '';
-                            el.style.display = 'none';
-                        });
 
-                        if(data.status == "error"){
+        // Disable right-click
+        // document.addEventListener('contextmenu', event => event.preventDefault());
 
-                            if(!send_btn){
-                                console.error("Send OTP button not found");
-                                return;
-                            }
-
-                            send_btn.innerText = 'Request OTP';
-                            send_btn.setAttribute('disabled', 'true');
-                            send_btn.style.opacity = '0.5';
-
-                            let email_error = document.getElementById('error-email');
-                            email_error.style.display = 'block';
-                            email_error.innerHTML = data.message;
-                        }else{
-                            sent();
-                            alert(`OTP sent successfully! on ${email}`);
-                            send_btn.innerText = 'Request OTP'; 
-                        }
-                        console.log(data);
-                    })
-            .catch();
+        // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false; // F12
+            if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
+            if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
+            if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
         }
-
-        function sent(){
-                
-                let otp_container = document.querySelector('.otp');
-                let send_again_btn = document.getElementById('otp-btn');
-                let send_btn = document.getElementById('sendOTP'); 
-
-                if(!send_btn){
-                    console.error("Send OTP button not found");
-                    return;
-                }
-
-                otp_container.style.display = 'flex';
-                send_again_btn.style.display = 'block';
-                send_btn.setAttribute('disabled', 'true');
-                send_btn.style.opacity = '0.5';
-
-                let waitTime = 59;
-                send_again_btn.innerHTML = '00:' + waitTime;
-
-                let countdown = setInterval(() => {
-                    waitTime--;
-                    send_again_btn.innerHTML = '00:' + (waitTime < 10 ? '0' + waitTime : waitTime);
-
-                    if (waitTime <= 0) {
-                        clearInterval(countdown);
-                        send_again_btn.disabled = false;
-                        send_again_btn.innerHTML = "<span class='sendagain' onclick='send_otp(event)'>Resend OTP</span>";
-                    }
-                }, 1000);
-            };
-
-             function moveFocus(current, nextId, direction) {
-                if (direction === 'next' && current.value.length === 1) {
-                    
-                    const nextInput = document.getElementById(nextId);
-                    if (nextInput) nextInput.focus();
-                }
-            };
-            function handleBackspace(event, current, currentId) {
-                if (event.key === "Backspace" && current.value === "") {
-                    const prevInput = current.previousElementSibling;
-                    if (prevInput) prevInput.focus();
-                }
-            };
-
-            setInterval(() => {
-                let send_btn = document.querySelector('#sendOTP');
-                let email2 = document.getElementById('email');
-                email2.addEventListener('input', function () {
-                    var email = email2.value;
-                    var isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-                    send_btn.removeAttribute('disabled');
-                    send_btn.style.opacity = '1';
-                });
-           },10); 
-
-           // Disable right-click
- // document.addEventListener('contextmenu', event => event.preventDefault());
-
-  // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-  document.onkeydown = function(e) {
-    if(e.keyCode == 123) return false; // F12
-    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0))) return false;
-    if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
-    if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
-  }
-
-  // Add this JavaScript to your site
 
         // Theme management functions
         function initializeTheme() {
@@ -498,7 +468,7 @@
                                 (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             
             // Set the initial theme
-            setTheme(currentTheme, false); // false = don’t save twice
+            setTheme(currentTheme, false);
 
             // Add event listener to theme toggle if it exists
             const themeToggle = document.getElementById('theme-toggle');
@@ -522,9 +492,8 @@
             });
         }
 
-        // ✅ Updated setTheme to also handle logo switching
         function setTheme(theme, save = true) {
-            const logo = document.querySelector('.logo-img img'); // target your logo <img>
+            const logo = document.querySelector('.logo-img img');
             
             if (theme === 'dark') {
                 document.body.setAttribute('data-theme', 'dark');
@@ -532,21 +501,19 @@
                 if (document.getElementById('theme-toggle')) {
                     document.getElementById('theme-toggle').checked = true;
                 }
-                if (logo) logo.src = "./assets/images/toggle-logo.png"; // dark version
+                if (logo) logo.src = "./assets/images/toggle-logo.png";
             } else {
                 document.body.setAttribute('data-theme', 'light');
                 if (save) localStorage.setItem('theme', 'light');
                 if (document.getElementById('theme-toggle')) {
                     document.getElementById('theme-toggle').checked = false;
                 }
-                if (logo) logo.src = "./assets/images/logo.png"; // light version
+                if (logo) logo.src = "./assets/images/logo.png";
             }
             
-            // Dispatch event for other components to listen to
             window.dispatchEvent(new CustomEvent('themeChanged', { detail: theme }));
         }
 
-        // Get current theme
         function getCurrentTheme() {
             return document.body.getAttribute('data-theme') || 'dark';
         }

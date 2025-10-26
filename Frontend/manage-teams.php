@@ -18,6 +18,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script>
+        // Apply stored theme instantly before the page renders
+        (function() {
+            const theme = localStorage.getItem('theme') ||
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply theme attributes early to avoid white flash
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body?.setAttribute('data-theme', theme);
+
+            // Wait for the logo to exist, then update it
+            const checkLogo = setInterval(() => {
+                const logo = document.querySelector('.logo-img img');
+                if (logo) {
+                    logo.src = theme === 'dark'
+                        ? "../../assets/images/toggle-logo.png"
+                        : "../../assets/images/logo.png";
+                    clearInterval(checkLogo);
+                }
+            }, 50);
+        })();
+    </script>
     <title>Manage Teams</title>
 <style>
     * {

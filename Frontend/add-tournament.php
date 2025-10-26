@@ -584,7 +584,7 @@
                     <input type="hidden" id="selectedprize" name="prize_type">
                 </div>
                 <div class="info info-input">
-                    <h4>Tournament Format</h4>
+                    <h4>Tournament Format <sup class="ast">*</sup></h4>
                     <div class="prize-container">
                         <div class="option1" data-value="league">LEAGUE</div>
                         <div class="option1" data-value="knockout">KNOCKOUT</div>

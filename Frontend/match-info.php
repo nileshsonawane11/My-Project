@@ -998,7 +998,7 @@
                     el.style.display = 'none';
                 });
 
-                if (data.status == 409) {
+                if (data.status !== 200) {
                     let el = document.getElementById(`error-${data.field}`);
                     el.innerHTML = data.message;
                     el.style.display = 'block';

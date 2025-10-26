@@ -344,6 +344,7 @@
                 <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z" fill="black"/>
                 </svg>
             </div>
+            <div class="error-existe"></div>
             <div>
                 <div class='add-btn'>
                     <button onclick='save(event)' type='submit' id='save'>save</button>
@@ -523,8 +524,9 @@
     </div>
     <script>
         let tournament = <?php echo json_encode($tournament); ?>;
-        let matches = <?php echo json_encode($matches); ?>;
+        let matches = <?php echo json_encode($matches) ?? []; ?>;
         let teams = '<?php echo json_encode($team_ids) ?>';
+        let error = document.querySelector('.error-existe');
 
         //got ot previous page
         let goBack = ()=>{
@@ -595,6 +597,7 @@
                         window.location.href = '../dashboard.php?update=Live&sport=CRICKET';
                     } else {
                         console.warn(item.match + ' — ' + item.message);
+                        error.innerText = item.message;
                     }
                 });
 
@@ -606,7 +609,7 @@
         console.log(matches);
 
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  //document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

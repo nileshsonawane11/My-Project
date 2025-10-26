@@ -2554,7 +2554,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     if(is_match_complete != true && ball_type != null){
                         setTimeout(() => {
                             window.speechSynthesis.speak(utter);
-                        }, 000);
+                        }, 0);
                     }
                     
                     
