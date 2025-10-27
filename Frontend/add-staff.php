@@ -56,7 +56,7 @@
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             --svg-fill: #ffffff;
             --hover-bg: rgba(209, 34, 31, 0.15);
-            --input-bg: #2a2a2a;
+            --input-bg: #1e1e1e;
             --gradient: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
             --team-bg: #3d3d3d;
             --logo-bg: #4d4d4d;
@@ -219,6 +219,7 @@
                 justify-content: flex-start;
                 flex-direction: column;
                 gap: 30px;
+                padding: 40px 40px;
             }
             .container2{
                 gap: 70px;

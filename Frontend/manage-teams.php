@@ -64,6 +64,7 @@
         --hover-bg: rgba(209, 34, 31, 0.1);
         --selected-bg: rgba(209, 34, 31, 0.15);
         --nav-fill: #ffffffff;
+        --shadow: rgba(0, 0, 0, 0.2);
     }
 
     [data-theme="dark"] {
@@ -75,7 +76,8 @@
         --card-bg: #1e1e1e;
         --hover-bg: rgba(209, 34, 31, 0.2);
         --selected-bg: rgba(209, 34, 31, 0.25);
-        --nav-fill: #2d2d2d;
+        --nav-fill: #222222;
+        --shadow: rgb(0 0 0 / 73%);
     }
     
     svg path {
@@ -154,7 +156,7 @@
         width: 100%;
         background: var(--nav-fill);
         border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 10px var(--shadow);
         margin-bottom: 20px;
         overflow: hidden;
         transition: background 0.3s ease;
@@ -257,7 +259,7 @@
         background: var(--nav-fill);
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 8px var(--shadow);
     }
     
     .team:hover {

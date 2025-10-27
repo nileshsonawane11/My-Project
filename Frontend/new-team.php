@@ -53,7 +53,7 @@
         --text-dark: #ffffff;
         --text-light: #e0e0e0;
         --border-color: #333333;
-        --input-bg: #1e1e1e;
+        --input-bg: #121212;
         --shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         --hover-bg: rgba(209, 34, 31, 0.2);
     }
@@ -70,6 +70,7 @@
         flex-direction: column;
         transition: background 0.3s ease, color 0.3s ease;
     }
+
     
     .select-img svg path,
     .return svg path {

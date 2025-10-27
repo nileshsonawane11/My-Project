@@ -43,7 +43,7 @@
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             --svg-fill: #ffffff;
             --hover-bg: rgba(209, 34, 31, 0.15);
-            --input-bg: #2a2a2a;
+            --input-bg: #1e1e1e;
             --gradient: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
             --invert: invert(1);
         }
@@ -549,7 +549,7 @@
         // })
 
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  //document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {
