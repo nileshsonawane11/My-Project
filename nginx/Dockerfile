@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
 COPY . /var/www/html
 
 # Copy Nginx config
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 # Expose HTTP port
 EXPOSE 80
