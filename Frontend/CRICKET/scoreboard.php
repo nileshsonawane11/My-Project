@@ -3163,6 +3163,8 @@ if (!isset($_COOKIE[$cookie_name])) {
                                 echo "</div>"; // Close team div
                                 if ($index === 0) echo "<div class='squad-border'></div>"; // Border between two teams
                             }
+
+                            mysqli_close($conn);
                         ?>
                         </div>
                     </div>
