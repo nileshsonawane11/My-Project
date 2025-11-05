@@ -44,6 +44,10 @@ if (isset($_GET['code'])) {
             // User exists
             $row = $result->fetch_assoc();
             
+            $user = $row['user_id'];
+            $email = $row['email'];
+            setcookie('user', $user, time() + (60 * 60 * 24 * 30), "/");   
+            setcookie('email', $email, time() + (60 * 60 * 24 * 30), "/");
             // Start session
             $_SESSION['user'] = $row['user_id']; // or $row['id'] depending on your DB
             $_SESSION['role'] = $row['role'];
@@ -72,8 +76,9 @@ if (isset($_GET['code'])) {
         $_SESSION['role'] = $role;
         $_SESSION['email'] = $email;
 
-        setcookie('user', $row['user_id'], time() + (60 * 60 * 24 * 30), "/");   
-        setcookie('email', $row['email'], time() + (60 * 60 * 24 * 30), "/");
+        // ✅ Use google_id and email (row does NOT exist here)
+        setcookie('user', $google_id, time() + (60 * 60 * 24 * 30), "/");
+        setcookie('email', $email, time() + (60 * 60 * 24 * 30), "/");
 
         $name = $fname.' '.$lname;
 
@@ -163,25 +168,25 @@ if (isset($_GET['code'])) {
         $mail = new PHPMailer(true);
 
         try {
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'livestrike.in@gmail.com'; // Change to your email
-            $mail->Password = 'sdie phiv vbgk qymy'; // Use App Password if required
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
-
-            $mail->setFrom('livestrike.in@gmail.com', 'LiveStrike'); // Sender
-
             // $mail->isSMTP();
-            // $mail->Host = 'smtp.hostinger.com';
+            // $mail->Host = 'smtp.gmail.com';
             // $mail->SMTPAuth = true;
-            // $mail->Username = 'admin@livestrike.in'; // Change to your email
-            // $mail->Password = 'Livestrike@123'; // Use App Password if required
-            // $mail->SMTPSecure = 'ssl';
-            // $mail->Port = 465;
+            // $mail->Username = 'livestrike.in@gmail.com'; // Change to your email
+            // $mail->Password = 'sdie phiv vbgk qymy'; // Use App Password if required
+            // $mail->SMTPSecure = 'tls';
+            // $mail->Port = 587;
 
-            // $mail->setFrom('admin@livestrike.in', 'LiveStrike'); // Sender
+            // $mail->setFrom('livestrike.in@gmail.com', 'LiveStrike'); // Sender
+
+            $mail->isSMTP();
+            $mail->Host = 'smtp.hostinger.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'admin@livestrike.in'; // Change to your email
+            $mail->Password = 'Livestrike@123'; // Use App Password if required
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = 465;
+
+            $mail->setFrom('admin@livestrike.in', 'LiveStrike'); // Sender
             
             $mail->addAddress($email); // Recipient
             $mail->Subject = $subject;

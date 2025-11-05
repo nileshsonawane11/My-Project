@@ -243,6 +243,12 @@ if ($winner_team == $team1) {
 $team1_points = $score_log['sets'][$current_set]['team1_points'];
 $team2_points = $score_log['sets'][$current_set]['team2_points'];
 
+if(str_contains($action,'Ace')){
+    $scoring_team = $score_log['current_serve'];
+}else if(str_contains($action,'Error')){
+    $scoring_team = $opponent_team;
+}
+
 // Store rally data 
 $score_log['sets'][$current_set]['rallies'][] = [
     'team1_points' => $team1_points,

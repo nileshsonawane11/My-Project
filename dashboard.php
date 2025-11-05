@@ -264,7 +264,6 @@
         flex-direction: column;
         align-items: center;
         height: 85%;
-        justify-content: space-between;
         padding: 0 20px;
     }
     
@@ -303,8 +302,10 @@
     }
     
     .menu-items .user-photo {
-        height: 50px;
-        width: 50px;
+        min-height: 50px;
+        min-width: 50px;
+        max-height: 50px;
+        max-width: 50px;
         border-radius: 50%;
         object-fit: cover;
         border: 1px solid var(--border-color);
@@ -878,7 +879,7 @@
     
     .add-container.active {
         transform: translateY(0);
-        height: max-content;
+        height: 100vh;
     }
     
     .ad2{
@@ -1132,21 +1133,7 @@
         }
     }
     /* Add smooth transitions to all theme-affected elements */
-    .nav-bar,
-    .sidebar,
-    .form-control,
-    .updates,
-    .updates .update-container,
-    .game-info,
-    .team img,
-    #startMatchDialog,
-    #matchPassword,
-    .blocks,
-    .add-container,
-    .game svg path ,
-    .menu-bar svg path {
-        transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-    }
+    
 </style>
 </head>
 <body>

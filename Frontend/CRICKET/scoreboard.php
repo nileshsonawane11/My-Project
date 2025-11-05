@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+ob_start();
 session_start();
 include '../../config.php';
 
@@ -145,22 +146,8 @@ if (!isset($_COOKIE[$cookie_name])) {
     // Set cookie to expire automatically at midnight
     setcookie($cookie_name, '1', time() + $midnight, "/");
 
-    // Increment page view count safely
-    if (!isset($score_log['page_views'])) {
-        $score_log['page_views'] = 1;
-    } else {
-        $score_log['page_views'] = (int)$score_log['page_views'] + 1;
-    }
+    mysqli_query($conn, "UPDATE matches SET view_count = view_count + 1 WHERE match_id='$match_id'");
 
-    // Convert back to JSON
-    $json = json_encode($score_log);
-
-    // Update database
-    $stmt = $conn->prepare("UPDATE matches SET score_log = ? WHERE match_id = ?");
-    $stmt->bind_param("ss", $json, $match_id);
-    $stmt->execute();
-
-    $conn->commit();
 }
 
 ?>
@@ -2049,7 +2036,7 @@ if (!isset($_COOKIE[$cookie_name])) {
                 ?>
                 <div class="info">
                     <p id='run_rate'>CRR : 0.0</p>
-                    <p>Views : <?php echo $score_log['page_views'] ?? 0; ?></p>
+                    <p>Views : <?php echo $row['view_count'] ?? 0; ?></p>
                 </div>
                 <!-- OR if toss declared -->
                 <!--

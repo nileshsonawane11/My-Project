@@ -14,12 +14,12 @@ class WebsiteUser(HttpUser):
 
     @task
     def check_scores(self):
-        self.client.get("/Frontend/CRICKET/scoreboard.php?match_id=dc3e950a014b157c98e5d702f09d838247d2c5615b6fba465589e640c7a61969")
+        self.client.get("/Frontend/VOLLEYBALL/scoreboard.php?match_id=d6fe3be89437af64bffc4e7685b6493a5625a64bdddeec3026289caa7bcf0629")
 
     @task
     def post_score(self):
-        self.client.post("/Frontend/CRICKET/score_panel.php", {
-            "match_id": "dc3e950a014b157c98e5d702f09d838247d2c5615b6fba465589e640c7a61969",
+        self.client.post("/Frontend/VOLLEYBALL/score_panel.php", {
+            "match_id": "dc1dfd15feba6abd9db5a6c8d9101f7d1dacf1d249095aa14559b0b6a2529a5e",
             "runs": 4
         })
 

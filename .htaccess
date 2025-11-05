@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^livestrike\.in$ [NC]
+RewriteRule ^(.*)$ https://www.livestrike.in/$1 [L,R=301]

@@ -2,7 +2,13 @@
     session_start();
     include './config.php';
     if(isset($_COOKIE['user'])){
-      $_SESSION['user']=$_COOKIE['user'];
+        $user_id = $_COOKIE['user'];
+        $result = $conn->query("SELECT email,role,fname,lname FROM users WHERE user_id = '$user_id'");
+        $row = $result->fetch_assoc();
+        $_SESSION['user']=$user_id;
+        $_SESSION['email']=$row['email'];
+        $_SESSION['role']=$row['role'];
+        $_SESSION['name']=$row['fname'].' '.$row['lname'];
     }
     $isloggedin = isset($_COOKIE['user']);
 
@@ -195,6 +201,11 @@ body {
 <body>
   <div id="loader">
     <div class="spinner"></div>
+  </div>
+  
+  <div style="display:none;">
+    <h1>LiveStrike - The Real Time Score Tracking System</h1>
+    <p>LiveStrike provides real-time live score updates, game results, and sports tracking for cricket, football, and more.</p>
   </div>
 
   <div class="container">
