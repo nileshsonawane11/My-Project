@@ -452,7 +452,7 @@ if($result->num_rows > 0){
             <div class="thank-you" id="thankYou">
                 <h2>Thank You for Your Feedback!</h2>
                 <p>We appreciate you taking the time to help us improve LiveStrike. Our team will review your comments carefully.</p>
-                <p style="margin-top: 15px;">Want to help even more? <a href="#" style="color: var(--primary-dark); font-weight: 600;">Join our beta testing program</a></p>
+                <p style="margin-top: 15px;">Want to help even more? <a href="./support.php" style="color: var(--primary-dark); font-weight: 600;">contact us</a></p>
             </div>
 
             <div class="ratings">
