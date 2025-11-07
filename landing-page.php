@@ -1,9 +1,19 @@
 <?php
 include './config.php';
     session_start();
+    if(isset($_COOKIE['user'])){
+        $user_id = $_COOKIE['user'];
+        $result = $conn->query("SELECT email,role,fname,lname FROM users WHERE user_id = '$user_id'");
+        $row = $result->fetch_assoc();
+        $_SESSION['user']=$user_id;
+        $_SESSION['email']=$row['email'];
+        $_SESSION['role']=$row['role'];
+        $_SESSION['name']=$row['fname'].' '.$row['lname'];
+    }
     if(isset($_SESSION['user'])){
         header('location: ./dashboard.php?update="live"&sport="CRICKET"');
     }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1277,6 +1287,8 @@ if (window.deferredPrompt) {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
     <script>
+        history.pushState(null, '', location.href);
+        window.onpopstate = () => history.go(1);
         const slides = document.querySelectorAll('.slides');
         const img_bar = document.querySelectorAll('.img-bar');
 
@@ -1406,10 +1418,6 @@ if (window.deferredPrompt) {
             initializeTheme();
             setupThemeSync();
         });
-
-
-
-
 
         // Show button after scrolling 200px
         window.onscroll = function() {
