@@ -1,4 +1,5 @@
 <?php
+include './config.php';
     session_start();
     if(isset($_SESSION['user'])){
         header('location: ./dashboard.php?update="live"&sport="CRICKET"');
@@ -20,6 +21,9 @@
 <meta name="theme-color" content="#d1221f"/>
 
 <!-- iOS Safari Specific Meta Tags -->
+<meta name="description" content="LiveStrike provides real-time live score updates, game results, and sports tracking for cricket, football, and more.">
+<meta name="keywords" content="livestrike,live,match,cricket,kabaddi,score,game,sports,gpn,gpnashik, live strike, live score, live updates, sports updates, games, cricket scores, football scores, match tracker, online score">
+<meta name="author" content="LiveStrike Team">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="LiveStrike">
@@ -104,6 +108,7 @@ if (window.deferredPrompt) {
         --border-color: #e0e0e0;
         --img-color: invert(0);
         --nav-fill: #ffffffff;
+        --bar-color : #8080802e;
     }
 
     [data-theme="dark"] {
@@ -116,6 +121,7 @@ if (window.deferredPrompt) {
         --border-color: #333333;
         --img-color: invert(1);
         --nav-fill: #2d2d2d;
+        --bar-color : #ffffff;
     }
     
     body{
@@ -261,7 +267,10 @@ if (window.deferredPrompt) {
         border: none;
         height: fit-content;
     }
-    
+    a {
+        text-decoration: none;
+        color: black;
+    }
     .circle{
         position: absolute;
         height: 10px;
@@ -418,6 +427,195 @@ if (window.deferredPrompt) {
         }
     }
     
+    #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--card-bg);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+  
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--gray-bg);
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      #topBtn {
+            position: fixed;
+            bottom: 35px;
+            right: 35px;
+            padding: 16px 16px;
+            font-size: 16px;
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: none;
+            z-index: 999;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        #topBtn:hover {
+            background-color: var(--gray-bg);
+            transform: scale(1);
+        }
+        .ratings{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 30px 0;
+        gap: 20px;
+        padding: 0px 35px;
+    }
+    .notice{
+        font-size: 15px;
+    }
+    .rating-txt{
+        font-weight: 500;
+    }
+    .rate-container{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        gap: 5px;
+    }
+    .rate-avg{
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: column;
+        align-items: center;
+        font-size: x-large;
+        gap: 5px;
+        padding: 20px;
+    }
+    .rate-list{
+        text-align: left;
+        display: flex;
+        align-items: flex-start;
+    }
+    .rate-container li{
+        list-style: none;
+        width: 100%;
+        gap: 5px;
+        display: flex;
+        align-items: center;
+    }
+    ul{
+        width: 100%;
+    }
+    .stat{
+        width: 100%;
+        background: var(--bar-color);
+        border-radius: 25px;
+        height: 15px;
+        display: flex;
+        overflow: hidden;
+    }
+    .ranks-no{
+        width: 15px;
+        text-align: left;
+    }
+    .no-rate{
+        font-size: 15px;
+    }
+    .avg-stars{
+        font-size: 20px;
+    }
+    .avg{
+        font-size: 30px;
+        font-weight: 600;
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+    }
+    .mem-feed{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .mem-head{
+        display: flex;
+        flex-direction: column;
+        gap:5px;
+    }
+    .mem-info{
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .mem-rate-date{
+        display: flex;
+        gap: 10px;
+    }
+    .mem-date{
+        font-size: 15px;
+    }
+    .mem-info img{
+        border-radius: 50%;
+        object-fit: cover;
+        height: 45px;
+        width : 45px;
+    }
+    .feedback-list{
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    .inner-bar{
+        background: var(--primary-color);
+    }
+    .avg-stars {
+        font-size: 25px;
+        color: #ccc; /* empty color */
+        position: relative;
+        display: inline-block;
+    }
+
+    .avg-stars span {
+        color: var(--primary-color);
+        position: relative;
+        display: inline-block;
+    }
+
+    .avg-stars span.partial {
+        color: #ccc; /* make background gray */
+        position: relative;
+    }
+
+    .avg-stars span.partial::before {
+        content: "★";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: var(--fill);
+        overflow: hidden;
+    }
+    .mem-rate{
+        font-size: 20px;
+    }
+    .mem-message{
+       text-align: left; 
+    }
+    .see-all{
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+        cursor: pointer;
+    }
+
     @media(min-width: 601px) {
         .menu-bar{
             display: none;
@@ -542,6 +740,21 @@ if (window.deferredPrompt) {
         
         .sidebar{
             display: none;
+        }
+        .rate-container {
+            justify-content: center;
+            align-items: center;
+        }
+        .rate-list {
+            text-align: left;
+            display: flex;
+            width: 30%;
+        }
+        .ratings{
+            text-align: center;
+        }
+        .see-all{
+            text-align: left;
         }
     }
     
@@ -703,52 +916,10 @@ if (window.deferredPrompt) {
             text-align: center;
             color: var(--text-dark);
         }
+        .rate-list {
+            flex:1;
+        }
     }
-    
-    #loader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: var(--card-bg);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-  
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid var(--gray-bg);
-        border-top: 3px solid var(--primary-color);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-      
-      #topBtn {
-            position: fixed;
-            bottom: 35px;
-            right: 35px;
-            padding: 16px 16px;
-            font-size: 16px;
-            background-color: var(--card-bg);
-            color: var(--text-dark);
-            border: none;
-            border-radius: 20px;
-            box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            display: none;
-            z-index: 999;
-            transform: scale(0.9);
-            transition: var(--transition);
-        }
-
-        #topBtn:hover {
-            background-color: var(--gray-bg);
-            transform: scale(1);
-        }
 </style>
 </head>
 <body>
@@ -859,6 +1030,134 @@ if (window.deferredPrompt) {
                     <h5>Contribute & Improve -</h5>
                     <p>Join the open-source community and enhance the system</p>
                     <span class="circle"></span>
+                </div>
+            </div>
+
+            <div class="ratings">
+                <?php
+                    $result = $conn->query("SELECT * FROM feedback");
+                    $count = $result->num_rows;
+                    $sum_rating = 0;
+                    $percentages = [];
+                    $avg_rating = 0.0;
+
+                    // Initialize count for each rating
+                    $rating_counts = [1=>0,2=>0,3=>0,4=>0,5=>0];
+
+                    // Count ratings and sum them
+                    while($row = $result->fetch_assoc()){
+                        $rating = $row['rating'];
+                        $sum_rating += $rating;
+
+                        if(isset($rating_counts[$rating])){
+                            $rating_counts[$rating]++;
+                        }
+                    }
+
+                    // Calculate percentage for each rating
+                    foreach($rating_counts as $rate => $rate_count){
+                        $percentages[$rate] = $count != 0 ? round(($rate_count / $count) * 100, 1) : 0;
+                    }
+
+                    // Calculate average rating
+                    if($count != 0){
+                        $avg_rating = round($sum_rating / $count, 1);
+                    }
+
+                   function generateStars($avg) {
+                        $full = floor($avg);               // full stars
+                        $fraction = $avg - $full;          // decimal part
+                        $empty = 5 - ceil($avg);           // remaining stars
+
+                        $html = "";
+
+                        // full stars
+                        for ($i = 0; $i < $full; $i++) {
+                            $html .= '<span>★</span>';
+                        }
+
+                        // fractional star (only if there's a decimal part)
+                        if ($fraction > 0) {
+                            $width = $fraction * 100; // e.g. 0.3 → 30%
+                            $html .= '<span class="partial" style="--fill:' . $width . '%;">★</span>';
+                        }
+
+                        // empty stars
+                        for ($i = 0; $i < $empty; $i++) {
+                            $html .= '★';
+                        }
+
+                        return $html;
+                    }
+
+                    $stars = generateStars($avg_rating);
+
+                ?>
+                <div class="rate-feedbacks">
+                    <h2 class="rating-txt headers">Rating and feedbacks</h2>
+                    <div class="rating-txt"></div>
+                </div>
+                <span class="notice">Every rating and feedback entry on LiveStrike reflects real user experience with our platform.</span>
+                <div class="rate-container">
+                    <div class="rate-avg">
+                        <div class="avg"><?php echo $avg_rating ?></div>
+                        <div class="avg-stars"><?= $stars ?></div>
+                        <div class="no-rate"><?php echo $count ?></div>
+                    </div>
+                    <div class="rate-list">
+                        <ul>
+                            <li class="rank-no1"><label for="" class="ranks-no">1</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[1] . '%;' ?>"></div></div></li>
+                            <li class="rank-no2"><label for="" class="ranks-no">2</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[2] . '%;' ?>"></div></div></li>
+                            <li class="rank-no3"><label for="" class="ranks-no">3</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[3] . '%;' ?>"></div></div></li>
+                            <li class="rank-no4"><label for="" class="ranks-no">4</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[4] . '%;' ?>"></div></div></li>
+                            <li class="rank-no5"><label for="" class="ranks-no">5</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[5] . '%;' ?>"></div></div></li>
+                        </ul>
+                    </div>
+                </div>
+                <br>
+                <div class="feedback-list">
+                   <?php
+                        $html = "";
+                        $inc = 0;
+                        $result = $conn->query("SELECT * FROM feedback ORDER BY `datetime` DESC Limit 3");
+                        while ($row = $result->fetch_assoc()) {
+                            $inc++;
+                            $email = $row['user_email'];
+                            $name = $row['user_name'];
+                            $message = $row['message'];
+                            $rating = $row['rating'];
+                            $date = $row['date'];
+
+                            $result2 = $conn->query("SELECT user_photo FROM users WHERE email = '$email'");
+                            $row2 = $result2->fetch_assoc();
+
+                            $img = (!empty($row2['user_photo'])) ? './assets/images/users/'.$row2['user_photo'] : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s';
+
+                            $rate_stars = generateStars($rating);
+                            $html .= <<<HTML
+                                        <div class="mem-feed">
+                                            <div class="mem-head">
+                                                <div class="mem-info">
+                                                    <img src="$img" alt="">
+                                                    <label class="mems-name">{$name}</label>
+                                                </div>
+                                                <div class="mem-rate-date">
+                                                    <div class="mem-rate avg-stars">{$rate_stars}</div>
+                                                    <div class="mem-date">{$date}</div>
+                                                </div>
+                                            </div>
+                                            <div class="mem-message">
+                                                {$message}
+                                            </div>
+                                        </div>
+                                    HTML;
+                        }
+
+                        echo $html;
+                        if($inc == 3){
+                            echo "<a href='./feedback_list.php'><div class='see-all'>See all feedbacks</div></a>";
+                        }
+                    ?>
                 </div>
             </div>
 
@@ -1023,7 +1322,7 @@ if (window.deferredPrompt) {
         });
 
         let nextpage = ()=>{
-            document.getElementById('loader').style.display = 'flex';
+            // document.getElementById('loader').style.display = 'flex';
 
   
             const iframe = document.createElement('iframe');

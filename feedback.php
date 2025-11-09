@@ -1,3 +1,13 @@
+<?php
+session_start();
+include './config.php';
+$email = $_SESSION['email'] ?? '';
+$submitted = false;
+$result = $conn->query("SELECT user_email FROM feedback where user_email = '$email' LIMIT 1");
+if($result->num_rows > 0){
+    $submitted = true;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +37,8 @@
         --border-radius: 12px;
         --transition: all 0.3s ease;
         --border-color: #dddddd;
+        --bar-color : #8080802e;
+        --arrow-bg : #e8e8e8;
     }
 
     [data-theme="dark"] {
@@ -35,6 +47,8 @@
         --light-bg: #1e1e1e;
         --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         --border-color: #333333;
+        --bar-color : #ffffff;
+        --arrow-bg : #333333ff;
     }
 
     body {
@@ -124,7 +138,7 @@
         gap: 8px;
     }
     
-    label {
+    label,.ranks-no {
         font-size: 17px;
         font-weight: 600;
         color: var(--primary-color);
@@ -205,6 +219,177 @@
     .thank-you p {
         font-size: 16px;
     }
+
+    .astr{
+        color:red;
+    }
+    input:disabled {
+        background-color: #eee;
+        cursor: not-allowed;
+    }
+    .ratings{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top: 30px;
+        gap: 20px;
+    }
+    .notice{
+        font-size: 15px;
+    }
+    .rating-txt{
+        font-weight: 500;
+    }
+    .rate-container{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        gap: 30px;
+    }
+    .rate-avg{
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: column;
+        align-items: center;
+        font-size: x-large;
+        gap: 5px;
+        padding: 20px;
+    }
+    .rate-list{
+        text-align: left;
+        display: flex;
+        align-items: flex-start;
+        flex: 1;
+    }
+    .rate-container li{
+        list-style: none;
+        width: 100%;
+        gap: 5px;
+        display: flex;
+        align-items: center;
+    }
+    ul{
+        width: 100%;
+    }
+    .stat{
+        width: 100%;
+        background: var(--bar-color);
+        border-radius: 25px;
+        height: 15px;
+        display: flex;
+        overflow: hidden;
+    }
+    .ranks-no{
+        width: 15px;
+        text-align: left;
+    }
+    .no-rate{
+        font-size: 15px;
+    }
+    .avg-stars{
+        font-size: 20px;
+    }
+    .avg{
+        font-size: 30px;
+        font-weight: 600;
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+    }
+    .mem-feed{
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .mem-head{
+        display: flex;
+        flex-direction: column;
+        gap:5px;
+    }
+    .mem-info{
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .mem-rate-date{
+        display: flex;
+        gap: 10px;
+    }
+    .mem-date{
+        font-size: 15px;
+    }
+    .mem-info img{
+        border-radius: 50%;
+        object-fit: cover;
+        height: 45px;
+        width : 45px;
+    }
+    .feedback-list{
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    .inner-bar{
+        background: var(--primary-color);
+    }
+    .avg-stars {
+        font-size: 25px;
+        color: #ccc; /* empty color */
+        position: relative;
+        display: inline-block;
+    }
+
+    .avg-stars span {
+        color: var(--primary-color);
+        position: relative;
+        display: inline-block;
+    }
+
+    .avg-stars span.partial {
+        color: #ccc; /* make background gray */
+        position: relative;
+    }
+
+    .avg-stars span.partial::before {
+        content: "★";
+        color: var(--primary-color);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: var(--fill);
+        overflow: hidden;
+    }
+    .mem-rate{
+        font-size: 20px;
+    }
+    .see-all{
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+        cursor: pointer;
+    }
+    .rate-feedbacks{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .arr{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--arrow-bg);
+        padding: 5px;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+    .arr:hover{
+        transform: translate(1px, -1px) scale(1.1);
+    }
+    a {
+        text-decoration: none;
+        color: black;
+    }
 </style>
 </head>
 <body>
@@ -223,19 +408,19 @@
         <div class="container2">
             <p>We're committed to making <b>LiveStrike</b> the best sports scoring platform available. Your feedback helps us understand what's working well and where we can improve. Please take a moment to share your thoughts with us.</p>
 
-            <div class="feedback-form" id="feedbackForm">
+            <form class="feedback-form" id="feedbackForm" style="<?= $submitted ? 'display:none;' : 'display:flex;' ?>">
                 <div class="form-group">
-                    <label for="name">Your Name (Optional)</label>
-                    <input type="text" id="name" placeholder="Enter your name">
+                    <span><label for="name">Your Name</label><sup class="astr"> *</sup></span>
+                    <input type="text" id="name" value="<?php echo $_SESSION['name'] ?? ''; ?>" placeholder="Enter your name" <?php echo $edit = (isset($_SESSION['user'])) ? 'disabled' : ''; ?>>
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email (Optional)</label>
-                    <input type="email" id="email" placeholder="Enter your email">
+                    <span><label for="email">Email</label><sup class="astr"> *</sup></span>
+                    <input type="email" id="email" value="<?php echo $_SESSION['email'] ?? ''; ?>" placeholder="Enter your email" <?php echo $edit = (isset($_SESSION['user'])) ? 'disabled' : ''; ?>>
                 </div>
                 
                 <div class="form-group">
-                    <label for="feedback-type">Type of Feedback</label>
+                    <span><label for="feedback-type">Type of Feedback</label><sup class="astr"> *</sup></span>
                     <select id="feedback-type">
                         <option value="">Select feedback type</option>
                         <option value="suggestion">Feature Suggestion</option>
@@ -246,7 +431,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>How would you rate your experience?</label>
+                    <span><label>How would you rate your experience?</label></span>
                     <div class="rating">
                         <span class="star" data-rating="1">★</span>
                         <span class="star" data-rating="2">★</span>
@@ -257,17 +442,145 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="message">Your Feedback</label>
+                    <span><label for="message">Your Feedback</label><sup class="astr"> *</sup></span>
                     <textarea id="message" placeholder="Tell us what you think about LiveStrike..." required></textarea>
                 </div>
                 
                 <button type="button" class="submit-btn" onclick="submitFeedback()">Submit Feedback</button>
-            </div>
+            </form>
             
             <div class="thank-you" id="thankYou">
                 <h2>Thank You for Your Feedback!</h2>
                 <p>We appreciate you taking the time to help us improve LiveStrike. Our team will review your comments carefully.</p>
-                <p style="margin-top: 15px;">Want to help even more? <a href="#" style="color: var(--primary-dark); font-weight: 600;">Join our beta testing program</a></p>
+                <p style="margin-top: 15px;">Want to help even more? <a href="./support.php" style="color: var(--primary-dark); font-weight: 600;">contact us</a></p>
+            </div>
+
+            <div class="ratings">
+                <?php
+                    $result = $conn->query("SELECT * FROM feedback");
+                    $count = $result->num_rows;
+                    $sum_rating = 0;
+                    $percentages = [];
+                    $avg_rating = 0.0;
+
+                    // Initialize count for each rating
+                    $rating_counts = [1=>0,2=>0,3=>0,4=>0,5=>0];
+
+                    // Count ratings and sum them
+                    while($row = $result->fetch_assoc()){
+                        $rating = $row['rating'];
+                        $sum_rating += $rating;
+
+                        if(isset($rating_counts[$rating])){
+                            $rating_counts[$rating]++;
+                        }
+                    }
+
+                    // Calculate percentage for each rating
+                    foreach($rating_counts as $rate => $rate_count){
+                        $percentages[$rate] = $count != 0 ? round(($rate_count / $count) * 100, 1) : 0;
+                    }
+
+                    // Calculate average rating
+                    if($count != 0){
+                        $avg_rating = round($sum_rating / $count, 1);
+                    }
+
+                   function generateStars($avg) {
+                        $full = floor($avg);               // full stars
+                        $fraction = $avg - $full;          // decimal part
+                        $empty = 5 - ceil($avg);           // remaining stars
+
+                        $html = "";
+
+                        // full stars
+                        for ($i = 0; $i < $full; $i++) {
+                            $html .= '<span>★</span>';
+                        }
+
+                        // fractional star (only if there's a decimal part)
+                        if ($fraction > 0) {
+                            $width = $fraction * 100; // e.g. 0.3 → 30%
+                            $html .= '<span class="partial" style="--fill:' . $width . '%;">★</span>';
+                        }
+
+                        // empty stars
+                        for ($i = 0; $i < $empty; $i++) {
+                            $html .= '★';
+                        }
+
+                        return $html;
+                    }
+
+                    $stars = generateStars($avg_rating);
+
+                ?>
+                <div class="rate-feedbacks">
+                    <div class="rating-txt">Rating and feedbacks</div>
+                    <div class="rating-txt"><a href="./feedback_list.php?rating=all"><div class="arr"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M12.043 7.5L9.396 4.854l.708-.708L13.957 8l-3.853 3.854l-.708-.707L12.043 8.5H3v-1z" clip-rule="evenodd"/></svg></div></a></div>
+                </div>
+                <span class="notice">Every rating and feedback entry on LiveStrike reflects real user experience with our platform.</span>
+                <div class="rate-container">
+                    <div class="rate-avg">
+                        <div class="avg"><?php echo $avg_rating ?></div>
+                        <div class="avg-stars"><?= $stars ?></div>
+                        <div class="no-rate"><?php echo $count ?></div>
+                    </div>
+                    <div class="rate-list">
+                        <ul>
+                            <li class="rank-no1"><label for="" class="ranks-no">1</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[1] . '%;' ?>"></div></div></li>
+                            <li class="rank-no2"><label for="" class="ranks-no">2</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[2] . '%;' ?>"></div></div></li>
+                            <li class="rank-no3"><label for="" class="ranks-no">3</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[3] . '%;' ?>"></div></div></li>
+                            <li class="rank-no4"><label for="" class="ranks-no">4</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[4] . '%;' ?>"></div></div></li>
+                            <li class="rank-no5"><label for="" class="ranks-no">5</label><div class="stat"><div class="inner-bar" style="<?= 'width:' . $percentages[5] . '%;' ?>"></div></div></li>
+                        </ul>
+                    </div>
+                </div>
+                <br>
+                <div class="feedback-list">
+                   <?php
+                        $html = "";
+                        $inc = 0;
+                        $result = $conn->query("SELECT * FROM feedback ORDER BY `datetime` DESC Limit 3");
+                        while ($row = $result->fetch_assoc()) {
+                            $inc++;
+                            $email = $row['user_email'];
+                            $name = $row['user_name'];
+                            $message = $row['message'];
+                            $rating = $row['rating'];
+                            $date = $row['date'];
+
+                            $result2 = $conn->query("SELECT user_photo FROM users WHERE email = '$email'");
+                            $row2 = $result2->fetch_assoc();
+
+                            $img = (!empty($row2['user_photo'])) ? './assets/images/users/'.$row2['user_photo'] : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s';
+
+                            $rate_stars = generateStars($rating);
+                            $html .= <<<HTML
+                                        <div class="mem-feed">
+                                            <div class="mem-head">
+                                                <div class="mem-info">
+                                                    <img src="$img" alt="">
+                                                    <label class="mems-name">{$name}</label>
+                                                </div>
+                                                <div class="mem-rate-date">
+                                                    <div class="mem-rate avg-stars">{$rate_stars}</div>
+                                                    <div class="mem-date">{$date}</div>
+                                                </div>
+                                            </div>
+                                            <div class="mem-message">
+                                                {$message}
+                                            </div>
+                                        </div>
+                                    HTML;
+                        }
+
+                        echo $html;
+                        if($inc == 3){
+                            echo "<a href='./feedback_list.php?rating=all'><div class='see-all'>See all feedbacks</div></a>";
+                        }
+                    ?>
+                </div>
             </div>
         </div>
     </div>
@@ -316,6 +629,14 @@
         
         function submitFeedback() {
         const message = document.getElementById('message').value;
+        const feed_name = document.getElementById('name').value;
+        const feed_email = document.getElementById('email').value;
+        const feed_type = document.getElementById('feedback-type').value
+
+        if(!feed_email || !feed_name || !feed_type){
+            alert('All Fields Required.');
+            return;
+        }
         
         if (!message) {
             alert('Please enter your feedback before submitting.');
@@ -324,10 +645,10 @@
         
         // Get form data
         const feedbackData = {
-            name: document.getElementById('name').value || 'Anonymous',
-            email: document.getElementById('email').value || 'No email provided',
-            type: document.getElementById('feedback-type').value || 'General Feedback',
-            rating: currentRating || 'Not rated',
+            name: feed_name || 'Anonymous',
+            email: feed_email || 'No email provided',
+            type: feed_type || 'General Feedback',
+            rating: currentRating || 1,
             message: message
         };
 
@@ -353,11 +674,23 @@
         })
         .then(response => response.json())
         .then(data => {
+            fetch('./Backend/feedback.php',{
+                method : 'post',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body : JSON.stringify(feedbackData)
+            })
+            .then(res=>res.json())
+            .then(data => console.log(data))
+            .catch(err => console.log(err))
+
             console.log('Feedback email sent:', data);
             // Show thank you message
             document.getElementById('feedbackForm').style.display = 'none';
             document.getElementById('thankYou').style.display = 'block';
             document.getElementById('thankYou').scrollIntoView({ behavior: 'smooth' });
+
         })
         .catch(error => {
             console.error('Error sending feedback:', error);

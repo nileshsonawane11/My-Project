@@ -1,4 +1,5 @@
 <?php
+ob_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(1);
@@ -197,4 +198,5 @@ $score_log['current_innings']=$current_innings;
 // Return as JSON
 echo json_encode($score_log);
 
+ob_end_flush();
 ?>
