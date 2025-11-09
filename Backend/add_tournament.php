@@ -33,7 +33,12 @@ $sports = [
 $game = $sports[$game];
 
 if(empty($tournament_name) || empty($city) || empty($ground) || empty($organizer_name) || empty($organizer_number) || empty($organizer_email) || empty($tournament_date) || empty($tournament_time)){
-    echo json_encode(['status' => 409, 'message' => 'All (*) marked fields are required', 'field' => 'empty']);
+    echo json_encode(['status' => 409, 'message' => 'All (*) marked fields are required', 'field' => 'exist']);
+    exit();
+}
+
+if(empty($tournament_format)){
+    echo json_encode(['status' => 409, 'message' => 'Tournament Format Required', 'field' => 'exist']);
     exit();
 }
 
@@ -57,6 +62,8 @@ if (!empty($tournament_date) && !empty($tournament_time)) {
 
             $input = uniqid(microtime(true) . bin2hex(random_bytes(5)). ($team1.$team2) . $date, true);
             $id = hash('sha256', $input);
+
+            $logo_name = null;
             if($logo){
                 $logo_name = $id.'-'.$logo['name'];
             }
@@ -64,8 +71,10 @@ if (!empty($tournament_date) && !empty($tournament_time)) {
             $query = mysqli_query($conn, "INSERT INTO `tournaments`(`tournament_id`,`sport_id`, `tournament_name`, `city`, `ground`, `organizer_name`, `organizer_number`, `organizer_email`, `tournament_date`, `tournament_time`, `sports_type`, `winning_prize`, `tournament_format`, `additional_details`, `logo`,`created_by`) VALUES ('$id','$game','$tournament_name','$city','$ground','$organizer_name','$organizer_number','$organizer_email','$tournament_date','$tournament_time','$sports_type','$winning_prize','$tournament_format','$additional_details','$logo_name','$user_id')");
 
             if($query){
-                $tmp_name = $logo['tmp_name'];
-                move_uploaded_file($tmp_name, "../assets/images/tournaments/$logo_name");
+                if(!empty($logo)){
+                    $tmp_name = $logo['tmp_name'];
+                    move_uploaded_file($tmp_name, "../assets/images/tournaments/$logo_name");
+                }
                 echo json_encode(['status' => 200, 'message' => 'Tournament added successfully', 'id' => $id,'field' => 'empty']);
                 exit();
             }
@@ -75,7 +84,4 @@ if (!empty($tournament_date) && !empty($tournament_time)) {
             exit();
         }
 }
-
-
-
 ?>

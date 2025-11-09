@@ -2,8 +2,11 @@
     session_start();
     if(isset($_SESSION['user'])){
         header('location: ./dashboard.php?update="live"&sport="CRICKET"');
+        exit();
     }
-
+    header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+    header("Pragma: no-cache"); // HTTP 1.0.
+    header("Expires: 0"); // Proxies
     include './config.php';
 
     $login_url = $client->createAuthUrl();
@@ -20,6 +23,19 @@
     <link rel="icon" type="image/png" href="./assets/images/logo.png">
 
     <title>Login & Register Page</title>
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="./manifest.json">
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#d1221f"/>
+
+    <!-- iOS Safari Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="LiveStrike">
+    <link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    
 <style>
        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
@@ -140,7 +156,7 @@
         line-height: 20px;
         letter-spacing: 0.3px;
         margin: 20px 0;
-        color: var(--text-color: #333333);
+        color: var(--text-color);
     }
 
     .container span{
@@ -272,7 +288,7 @@
         margin: 0 3px;
         width: max-content;
         height: 40px;
-        gap: 10px;
+        gap: 5px;
         transition: border-color 0.3s;
         padding: 0px 20px;
         font-size: 15px;
@@ -476,7 +492,7 @@
     }
 
     .otp-container {
-        display: flex;
+        display: none;
         justify-content: space-between;
         gap: 5px;
         width: 100%;
@@ -503,6 +519,7 @@
         font-size : 13px;
         margin: 10px;
         color: var(--text-color);
+        display: none;
     }
 
     .error{
@@ -521,6 +538,14 @@
         cursor: pointer;
         display: none;
     }
+
+    .social-icons svg{
+        height:25px;
+    }
+
+    .bx{
+        font-size: 20px;
+    }
 </style>
 </head>
 
@@ -535,7 +560,7 @@
             <form action="" method="post" class="register" autocomplete="on">
                 <h1>Create Account</h1>
                 <div class="social-icons">
-                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'> Continue with Google</i></a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i> Continue with Google</a>
                     <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
@@ -586,7 +611,7 @@
             <form action="" method="post" class="login" autocomplete="on">
                 <h1>Sign In</h1>
                 <div class="social-icons">
-                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i>   Continue with Google</a>
+                    <a href="<?php echo $login_url; ?>" class="icons"><i class='bx bxl-google'></i>  Continue with Google</a>
                     <!-- <a href="#" class="icons"><i class='bx bxl-facebook'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-github'></i></a>
                     <a href="#" class="icons"><i class='bx bxl-linkedin'></i></a> -->
@@ -827,6 +852,19 @@
                 if(data.status === 200){
                     alert(`${email} User Registered Successfully!`)
                     window.location.href = './front-page.php';
+
+                        let scorerData = {
+                            for_value: 'new_user',
+                            game: '',
+                            venue: '',
+                            time: '',
+                            password: '',
+                            date: '',
+                            recipient_email: email
+                        };
+                        const scorerBlob = new Blob([JSON.stringify(scorerData)], { type: 'application/json' });
+                        navigator.sendBeacon('./mail.php', scorerBlob);
+                    console.log('mail sent');
                     
                 }else{
                     let el = document.getElementById('error-'+data.field);
@@ -922,6 +960,10 @@
 
                 let send_again_btn = document.getElementById('otp-btn');
                 let send_btn = document.getElementById('sendOTP'); 
+                let otp_container = document.querySelector('.otp-container');
+                let otp_txt = document.querySelector('.otptxt');
+                otp_container.style.display = 'flex';
+                otp_txt.style.display = 'block';
 
                 if(!send_btn){
                     console.error("Send OTP button not found");

@@ -95,7 +95,6 @@
     .container {
         display: flex;
         background-color: var(--card-bg);
-        box-shadow: var(--shadow);
         position: relative;
         width: 90%;
         max-width: 1200px;

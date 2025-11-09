@@ -120,6 +120,49 @@ function getWicketBallDetails($balls, $player_id) {
     return [null, null]; // if not found
 }
 
+function addPoints(&$arr, $id, $pts){ $arr[$id] = ($arr[$id] ?? 0) + $pts; }
+function saveDetails(&$arr, $id, $name, $bat=[], $bowl=[]){
+    $arr[$id]['name']=$name;
+    if($bat) $arr[$id]['bat']=$bat;
+    if($bowl) $arr[$id]['bowl']=$bowl;
+}
+function oversToBalls($o){ return (strpos($o,'.')!==false)? (intval($o)*6 + intval(explode('.',$o)[1])) : (intval($o)*6); }
+function ballsToOvers($b){ return intdiv($b,6).".".($b%6); }
+
+//increment cviews count
+$page = 'Cricket'; // change per page
+$today = date('Y-m-d');
+
+// Calculate seconds until midnight
+$midnight = strtotime('tomorrow') - time();
+
+// Unique cookie name for each page & match per day
+$cookie_name = "viewed_{$page}_{$match_id}_{$today}";
+
+// Check if cookie not set (first view today)
+if (!isset($_COOKIE[$cookie_name])) {
+
+    // Set cookie to expire automatically at midnight
+    setcookie($cookie_name, '1', time() + $midnight, "/");
+
+    // Increment page view count safely
+    if (!isset($score_log['page_views'])) {
+        $score_log['page_views'] = 1;
+    } else {
+        $score_log['page_views'] = (int)$score_log['page_views'] + 1;
+    }
+
+    // Convert back to JSON
+    $json = json_encode($score_log);
+
+    // Update database
+    $stmt = $conn->prepare("UPDATE matches SET score_log = ? WHERE match_id = ?");
+    $stmt->bind_param("ss", $json, $match_id);
+    $stmt->execute();
+
+    $conn->commit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -1631,6 +1674,51 @@ function getWicketBallDetails($balls, $player_id) {
         width: 100px;
     }
 
+    .player_of_match{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 30px;
+        justify-content: center;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+        background: var(--background);
+        box-shadow: var(--shadow-sm);
+    }
+    .p_photo{
+        overflow: hidden;
+        height: 80px;
+        width: 80px;
+        border-radius: 50%;
+    }
+    .p_photo img{
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    .p_name{
+        font-size: 17px;
+        font-weight: 700;
+        color: #008d0d;
+    }
+    .p_txt{
+        color: #fd6e00;
+    }
+    .p_info{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+    }
+    .p_team{
+        width: max-content;
+        padding: 2px 7px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, var(--primary-transparent), rgba(209, 34, 31, 0.1));
+    }
+
     @media(max-width: 600px) {
         .nav-content{
             display: flex;
@@ -1638,9 +1726,17 @@ function getWicketBallDetails($balls, $player_id) {
             align-items: center;
             width: 100%;
         }
+        .p_photo{
+            overflow: hidden;
+            height: 60px;
+            width: 60px;
+            border-radius: 50%;
+        }
         
-        
-        
+        .player_of_match{
+            gap: 20px;
+        }    
+            
         .logo-name {
             font-size: 22px;
             color: var(--text-dark);
@@ -1953,6 +2049,7 @@ function getWicketBallDetails($balls, $player_id) {
                 ?>
                 <div class="info">
                     <p id='run_rate'>CRR : 0.0</p>
+                    <p>Views : <?php echo $score_log['page_views'] ?? 0; ?></p>
                 </div>
                 <!-- OR if toss declared -->
                 <!--
@@ -2010,6 +2107,84 @@ function getWicketBallDetails($balls, $player_id) {
     <div class="swiper">
         <div class="swiper-wrapper">
             <div class="swiper-slide">
+                <?php
+                if($row['status'] == 'Completed'){
+                    $data = $score_log; // your match data
+
+                    // Utility functions
+
+                    $players_points=[]; $players_details=[];
+
+                    // Loop innings
+                    foreach($data['innings'] as $inning){
+                        // Batting points
+                        foreach($inning['batmans'] as $b){
+                            $id=$b['id'];
+                            $pts = $b['runs'] + $b['fours']*5 + $b['sixes']*8;
+                            if($b['out_status']=='not out' && $b['runs']>20) $pts+=10;
+                            addPoints($players_points,$id,$pts);
+                            saveDetails($players_details,$id,$id,[
+                                'runs'=>$b['runs'],'balls'=>$b['balls_faced'],
+                                'fours'=>$b['fours'],'sixes'=>$b['sixes'],'out_status'=>$b['out_status']
+                            ]);
+                        }
+
+                        // Bowling points (include current bowler)
+                        $bowler_totals=[];
+                        foreach($inning['bowlers']??[] as $b){
+                            $bowler_totals[$b['id']] = [
+                                'balls'=>oversToBalls($b['overs_bowled']),
+                                'runs'=>$b['runs_conceded'],'wkts'=>$b['wickets'],'maidens'=>$b['maidens']
+                            ];
+                        }
+
+                        if(isset($inning['current_bowler']['id'])){
+                            $cb=$inning['current_bowler']; $id=$cb['id'];
+                            $balls=oversToBalls($cb['overs_bowled']);
+                            if(isset($bowler_totals[$id])){
+                                $bowler_totals[$id]['balls']+=$balls;
+                                $bowler_totals[$id]['runs']+=$cb['runs_conceded'];
+                                $bowler_totals[$id]['wkts']+=$cb['wickets'];
+                                $bowler_totals[$id]['maidens']+=$cb['maidens'];
+                            }else{
+                                $bowler_totals[$id]=['balls'=>$balls,'runs'=>$cb['runs_conceded'],'wkts'=>$cb['wickets'],'maidens'=>$cb['maidens']];
+                            }
+                        }
+
+                        foreach($bowler_totals as $id=>$b){
+                            $pts = ($b['wkts']*25) - $b['runs'] + ($b['maidens']*10);
+                            addPoints($players_points,$id,$pts);
+                            saveDetails($players_details,$id,$id,[],[
+                                'overs'=>ballsToOvers($b['balls']),
+                                'runs_conceded'=>$b['runs'],'wickets'=>$b['wkts'],'maidens'=>$b['maidens']
+                            ]);
+                        }
+                    }
+
+                    // Top player
+                    arsort($players_points);
+                    $top_id = array_key_first($players_points);
+                    $top = $players_details[$top_id];
+
+                    // Fetch player info
+                    $p = $conn->query("SELECT * FROM players WHERE user_id='$top_id'")->fetch_assoc();
+                    $p_name = $p['player_name'];
+                    $p_team = $conn->query("SELECT t_name FROM teams WHERE t_id='".$p['team_id']."'")->fetch_assoc()['t_name'] ?? 'Unknown';
+                    $p_photo = !empty($p['photo']) ? "../../assets/images/users/".$p['photo'] : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+
+                    // Display
+                    echo <<<HTML
+                    <div class="p_txt">Player Of The Match</div>
+                    <div class="player_of_match">
+                        <div class="p_photo"><img src="$p_photo" alt="" onerror="this.style.opacity='0'"></div>
+                        <div class="p_info">
+                            <span class="p_name">$p_name</span>
+                            <span class="p_team">$p_team</span>
+                        </div>
+                    </div>
+                    HTML;
+                }
+                ?>
                 <table>
                     <tbody>
                         <tr>
@@ -2168,6 +2343,7 @@ function getWicketBallDetails($balls, $player_id) {
                                 }
 
                                 $batsman_count = count($batmans);
+                                $Bat__team = $inning['batting_team'];
                                 $avg_runs = $batsman_count > 0 ? round($total_runs / $batsman_count, 2) : '-';
                                 $avg_sr = $sr_count > 0 ? round($total_sr / $sr_count, 2) : '-';
                             } else {
@@ -2176,9 +2352,18 @@ function getWicketBallDetails($balls, $player_id) {
                                 $avg_sr = '-';
                             }
 
+                            $t_name = null;
+                            if(!empty($Bat__team)){
+                                $name = $conn->query("SELECT * FROM teams WHERE t_id = '$Bat__team'");
+
+                                while($result = $name->fetch_assoc()){
+                                    $t_name = $result['t_name'];
+                                }
+                            }
+                            
                             echo '
                             <div class="inning">
-                                <div class="inn-no inn-info"><div class="skew"></div> ' . ucfirst($inning_key) . ' Inning</div>
+                                <div class="inn-no inn-info"><div class="skew"></div> ' . ucfirst($inning_key) . ' Inning<br> ('.$t_name.')</div>
                                 <div class="runs inn-info"><span class="avg-runs" >' . $avg_runs . '</span> <label for="">Avg Runs</label></div>
                                 <div class="wicket inn-info"><span class="avg-wickets" >' . $wickets . '</span> <label for="">Avg Wickets</label></div>
                                 <div class="SR inn-info"><span class="avg-sr" >' . $avg_sr . '</span> <label for="">Avg SR</label></div>
@@ -2330,7 +2515,7 @@ function getWicketBallDetails($balls, $player_id) {
                             }
 
                             // 5. Optional: show latest first
-                            $all_balls = ($all_balls);
+                            $all_balls = array_reverse($all_balls);
                         ?>
 
                         <div class="comm-name">Commentary</div>
@@ -2432,6 +2617,174 @@ function getWicketBallDetails($balls, $player_id) {
                         
                     if($row['status'] == 'Upcoming' || empty($row['toss_winner'])){
                         echo $HTML;
+                    }else if($row['status'] == 'Completed'){
+
+                        $data = $score_log;
+
+                        $players_points = [];
+                        $players_details = [];
+
+                        // Add points function
+                        // function addPoints(&$players_points, $id, $points) {
+                        //     if(!isset($players_points[$id])) $players_points[$id] = 0;
+                        //     $players_points[$id] += $points;
+                        // }
+
+                        // Save details function
+                        // function saveDetails(&$players_details, $id, $name, $bat=[], $bowl=[]) {
+                        //     if(!isset($players_details[$id])) {
+                        //         $players_details[$id] = [
+                        //             'name' => $name,
+                        //             'bat' => $bat,
+                        //             'bowl' => $bowl
+                        //         ];
+                        //     } else {
+                        //         if(!empty($bat)) $players_details[$id]['bat'] = $bat;
+                        //         if(!empty($bowl)) $players_details[$id]['bowl'] = $bowl;
+                        //     }
+                        // }
+
+                        // Convert overs string like "1.5" to total balls
+                        // function oversToBalls($overs) {
+                        //     if(strpos($overs, '.') !== false) {
+                        //         list($o, $b) = explode('.', $overs);
+                        //         return intval($o)*6 + intval($b);
+                        //     }
+                        //     return intval($overs)*6;
+                        // }
+
+                        // Convert total balls back to overs format
+                        // function ballsToOvers($balls) {
+                        //     return intdiv($balls, 6) . "." . ($balls % 6);
+                        // }
+
+                        // Loop through innings
+                        foreach($data['innings'] as $inning) {
+                            // Batting
+                            foreach($inning['batmans'] as $b) {
+                                $id = $b['id'];
+                                $name = $b['id']; // using id as name
+                                $points = $b['runs'] + $b['fours']*5 + $b['sixes']*8;
+                                if($b['out_status'] == 'not out' && $b['runs']>20) $points += 10;
+
+                                addPoints($players_points, $id, $points);
+
+                                saveDetails($players_details, $id, $name, [
+                                    'runs' => $b['runs'],
+                                    'balls' => $b['balls_faced'],
+                                    'fours' => $b['fours'],
+                                    'sixes' => $b['sixes'],
+                                    'out_status' => $b['out_status']
+                                ]);
+                            }
+
+                            // Bowling
+                            $bowler_totals = [];
+
+                            // Completed bowlers
+                            if(isset($inning['bowlers'])) {
+                                foreach($inning['bowlers'] as $b) {
+                                    $id = $b['id'];
+                                    $bowler_totals[$id] = [
+                                        'balls' => oversToBalls($b['overs_bowled']),
+                                        'runs_conceded' => $b['runs_conceded'],
+                                        'wickets' => $b['wickets'],
+                                        'maidens' => $b['maidens']
+                                    ];
+                                }
+                            }
+
+                            // Include current bowler if exists
+                            if(isset($inning['current_bowler']) && $inning['current_bowler']['id'] !== null) {
+                                $curr = $inning['current_bowler'];
+                                $id = $curr['id'];
+                                $balls = oversToBalls($curr['overs_bowled']);
+                                if(isset($bowler_totals[$id])) {
+                                    $bowler_totals[$id]['balls'] += $balls;
+                                    $bowler_totals[$id]['runs_conceded'] += $curr['runs_conceded'];
+                                    $bowler_totals[$id]['wickets'] += $curr['wickets'];
+                                    $bowler_totals[$id]['maidens'] += $curr['maidens'];
+                                } else {
+                                    $bowler_totals[$id] = [
+                                        'balls' => $balls,
+                                        'runs_conceded' => $curr['runs_conceded'],
+                                        'wickets' => $curr['wickets'],
+                                        'maidens' => $curr['maidens']
+                                    ];
+                                }
+                            }
+
+                            // Add points and save details
+                            foreach($bowler_totals as $id => $b) {
+                                $name = $id;
+                                $overs_formatted = ballsToOvers($b['balls']);
+                                $points = ($b['wickets']*25) - $b['runs_conceded'] + ($b['maidens']*10);
+
+                                addPoints($players_points, $id, $points);
+
+                                saveDetails($players_details, $id, $name, [], [
+                                    'overs' => $overs_formatted,
+                                    'runs_conceded' => $b['runs_conceded'],
+                                    'wickets' => $b['wickets'],
+                                    'maidens' => $b['maidens']
+                                ]);
+                            }
+                        }
+
+                        // Find top performer
+                        arsort($players_points);
+                        $top_id = array_key_first($players_points);
+                        $top_points = $players_points[$top_id];
+                        $top = $players_details[$top_id];
+                        $player = $top['name'];
+                        
+                        $name = $conn->query("SELECT * FROM players WHERE user_id = '$player'");
+                        $p_name = null;
+                        $p_photo = null;
+                        $p_team = null;
+
+                        while($result = $name->fetch_assoc()){
+                            $p_name = $result['player_name'];
+                            if(!empty($result['photo'])){
+                               $p_photo = "../../assets/images/users/".$result['photo']; 
+                            }else{
+                                $p_photo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+                            }
+
+                            if(!empty($result['team_id'])){
+                                $teamQuery = $conn->query("SELECT t_name FROM teams WHERE t_id = '".$result['team_id']."'");
+                                if($teamQuery && $teamQuery->num_rows > 0) {
+                                    $t = $teamQuery->fetch_assoc();
+                                    $p_team = $t['t_name'];
+                                }
+                            }
+                            
+                        }
+
+                        // Display
+                        // echo "🏏 Player of the Match: ".$p_name."( ".$p_team." )\n";
+                        // echo "⭐ Total Points: ".$top_points."\n\n";
+
+                        // if(!empty($top['bat'])) {
+                        //     echo "Batting: ".$top['bat']['runs']."(".$top['bat']['balls'].") | 4s: ".$top['bat']['fours']." | 6s: ".$top['bat']['sixes']." | ".$top['bat']['out_status']."\n";
+                        // }
+
+                        // if(!empty($top['bowl'])) {
+                        //     echo "Bowling: ".$top['bowl']['overs']." overs | ".$top['bowl']['wickets']." wickets | ".$top['bowl']['runs_conceded']." runs | Maidens: ".$top['bowl']['maidens']."\n";
+                        // }
+
+                        $player_container = <<<TEXT
+                                                <div class="p_txt">Player Of The Match</div>
+                                                <div class="player_of_match">
+                                                    <div class="p_photo"><img src='$p_photo' alt='' onerror="this.style.opacity='0'"></div>
+                                                    <div class="p_info">
+                                                        <span class="p_name">$p_name</span>
+                                                        <span class="p_team">$p_team</span>
+                                                    </div>
+                                                </div>
+                                            TEXT;
+                        echo $player_container;
+
                     }
                     
                 ?>
@@ -2810,6 +3163,8 @@ function getWicketBallDetails($balls, $player_id) {
                                 echo "</div>"; // Close team div
                                 if ($index === 0) echo "<div class='squad-border'></div>"; // Border between two teams
                             }
+
+                            mysqli_close($conn);
                         ?>
                         </div>
                     </div>

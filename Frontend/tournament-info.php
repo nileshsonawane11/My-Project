@@ -1,4 +1,52 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['user'])){
+        header('location: ./front-page.php');
+        exit();
+    }
 
+    if($_SESSION['role'] == "User"){
+        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+        exit();
+    }
+
+    include '../config.php';
+
+    $tournament_id = $_GET['t'];
+
+    if (empty($tournament_id)) {
+        header("Location: ../dashboard.php?update=Live&sport=CRICKET"); // Change 'index.php' to your actual file
+        exit();
+    }
+
+    if (isset($_POST['confirm']) && isset($_POST['match_id'])) {
+
+        $delete = mysqli_query($conn, "DELETE FROM tournaments WHERE tournament_id = '$tournament_id'");
+
+        if ($delete) {
+            echo "<script>window.history.back();</script>";
+        } else {
+            echo "<script>alert('Failed to delete match');</script>";
+        }
+    }
+
+
+    // Example: assume $conn is your database connection
+    $query = mysqli_query($conn, "SELECT * FROM tournaments WHERE tournament_id = '$tournament_id'");
+    $result = mysqli_fetch_assoc($query);
+
+    if(mysqli_num_rows($query) == 0) {
+        echo "<script>window.history.back();</script>";
+        exit;
+    }
+
+    $format = $result['tournament_format'];
+    $owner = $result['created_by'];
+    $sport = $result['sport_id'];
+    $venue = $result['city'];
+    $tournament_name = $result['tournament_name'];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,6 +96,32 @@
             --invert: invert(1);
         }
 
+        :root {
+    --primary-color: rgba(209,34,31,1);
+    --primary-light: rgba(209,34,31,0.8);
+    --primary-dark: rgba(160,25,23,1);
+    --background: #fff;
+    --card-bg: #fff;
+    --text-dark: #000;
+    --text-light: #333;
+    --border-color: #e0e0e0;
+    --shadow: 0 4px 15px rgba(0,0,0,0.1);
+    --team-bg: #eee;
+    --logo-bg: #d9d9d9;
+    --gradient: linear-gradient(0deg, var(--primary-light), var(--primary-dark));
+}
+
+[data-theme="dark"] {
+    --background: #121212;
+    --card-bg: #1e1e1e;
+    --text-dark: #fff;
+    --text-light: #e0e0e0;
+    --border-color: #333;
+    --shadow: 0 4px 15px rgba(0,0,0,0.3);
+    --team-bg: #3d3d3d;
+    --logo-bg: #4d4d4d;
+}
+
         svg path {
             fill: var(--text-color);
         }
@@ -63,7 +137,6 @@
             width: 100%;
             max-width: 800px;
             background: var(--card-bg);
-            border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--card-shadow);
         }
@@ -464,8 +537,120 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 11px;`
+            border-radius: 11px;
         }
+        .matches {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    align-items: center;
+}
+
+.match-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.match-head {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.team-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 500px;
+    gap: 20px;
+}
+
+.teams {
+    width: 120px;
+    height: 150px;
+    background: var(--team-bg);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: var(--shadow);
+    transition: all 0.5s ease-in-out;
+}
+
+.logo {
+    width: 75px;
+    height: 75px;
+    background: var(--logo-bg);
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tname {
+    font-size: 16px;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.vs {
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.team-no {
+    width: 100%;
+    display: flex;
+    padding: 0 30px;
+    justify-content: space-between;
+    max-width: 500px;
+}
+
+.t-num {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+/* Animations */
+.show {
+    opacity: 1;
+    transform: translate(0,0);
+    transition: all 0.5s ease-in-out;
+}
+
+/* Responsive */
+@media (min-width:601px){
+    .matches { width: 70%; }
+    .team-container, .team-no { max-width: 600px; }
+}
+
+@media (max-width:600px){
+    .matches { 
+        width: 90%; 
+    }
+    .team-container, .team-no {
+        max-width: 100%; 
+        align-items: center; 
+        gap: 10px; 
+        padding: 0 20px;
+     }
+    .vs { 
+        transform: translateY(0); 
+    }
+    .team-no{
+        padding: 0 40px;
+    }
+}
     </style>
 </head>
 <body>
@@ -475,9 +660,18 @@
                 <svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z"/>
                 </svg>
-                <div class="slots">
-                    <div class="make-slots">Make Slots</div>
-                </div>
+                
+                    <?php 
+                        $sql = "SELECT * FROM matches WHERE tournament = '$tournament_id' ORDER BY match_name";
+                        $query = mysqli_query($conn,$sql);
+                        $count_matches = mysqli_num_rows($query);
+                        if($count_matches == 0){
+                    ?>
+                        <div class="slots">
+                            <div class="make-slots">Make Slots</div>
+                        </div>
+                    <?php } ?>
+                
                 <div class="edit-toggle" id="editToggle">
                     <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10.2085 10.209H8.75016C7.97661 10.209 7.23475 10.5163 6.68777 11.0633C6.14079 11.6102 5.8335 12.3521 5.8335 13.1257V26.2507C5.8335 27.0242 6.14079 27.7661 6.68777 28.313C7.23475 28.86 7.97661 29.1673 8.75016 29.1673H21.8752C22.6487 29.1673 23.3906 28.86 23.9376 28.313C24.4845 27.7661 24.7918 27.0242 24.7918 26.2507V24.7923" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -485,104 +679,339 @@
                     </svg>
                 </div>
             </div>
-            <h1 style="text-align: center; font-size: 1.8rem;">Tournament Details</h1>
+            <h2 style="text-align: center;">Tournament Details</h2>
+            <p style="text-align: center; font-size: 1.2rem;">(<?php echo $result['tournament_name']; ?>)</p>
         </div>
         
         <!-- Teams Display -->
-        
-        <div class="teams-section">
-            <div class="team">
-                <div class="team-logo-container">
-                    
-                </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-            
-            <div class="vs">VS</div>
-            
-            <div class="team">
-                <div class="team-logo-container">
+<?php
+if ($format == 'knockout') {
+    echo "<h2>Knockout Matches</h2>";
 
-                </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-        </div>
+    // Fetch all teams
+    $teams = [];
+    $teamRes = mysqli_query($conn, "SELECT team_id FROM tournament_teams WHERE tournament_id='$tournament_id'");
+    while ($t = mysqli_fetch_assoc($teamRes)) $teams[] = $t['team_id'];
 
-        <div class="teams-section">
-            <div class="team">
-                <div class="team-logo-container">
-                    
-                </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-            
-            <div class="vs">VS</div>
-            
-            <div class="team">
-                <div class="team-logo-container">
-                    
-                </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-        </div>
+    // Cache team details
+    $teamCache = [];
+    $teamDataRes = mysqli_query($conn, "SELECT * FROM teams");
+    while ($tr = mysqli_fetch_assoc($teamDataRes)) $teamCache[$tr['t_id']] = $tr;
 
-        <div class="teams-section">
-            <div class="team">
-                <div class="team-logo-container">
-                    
-                </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-            
-            <div class="vs">VS</div>
-            
-            <div class="team">
-                <div class="team-logo-container">
-                    
-                </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-        </div>
+    // Fetch all existing matches
+    $matchesRes = mysqli_query($conn, "SELECT * FROM matches WHERE tournament='$tournament_id' ORDER BY round ASC, match_id ASC");
+    $allMatches = [];
+    while ($m = mysqli_fetch_assoc($matchesRes)) $allMatches[] = $m;
 
-        <div class="teams-section">
-            <div class="team">
-                <div class="team-logo-container">
-                    
+    // Group by round
+    $matchesByRound = [];
+    foreach ($allMatches as $m) {
+        $matchesByRound[$m['round']][] = $m;
+    }
+
+    ksort($matchesByRound);
+    $roundNo = 1;
+    $totalRounds = ceil(log(count($teams), 2));
+
+    // ===== Main Tournament Loop =====
+    while (true) {
+        $roundMatches = $matchesByRound[$roundNo] ?? [];
+        $roundTeams = [];
+
+        // Round title logic
+        $roundTitle = "Round $roundNo";
+        if ($roundNo == $totalRounds - 1) $matchTitle = $roundTitle = "Semifinal";
+        elseif ($roundNo == $totalRounds) $matchTitle = $roundTitle = "Final";
+
+        if (str_contains($roundTitle, 'Round')) {
+            $matchTitle = "Match";
+        }
+
+        // --- Display Matches ---
+        if (!empty($roundMatches)) {
+            echo "<br><br><h3>$roundTitle</h3>";
+            $matchCounter = 0;
+
+            foreach ($roundMatches as $m) {
+                $t1 = $m['team_1'];
+                $t2 = $m['team_2'];
+                $t1Data = $teamCache[$t1] ?? ['t_name' => 'TBD', 't_logo' => ''];
+                $t2Data = ($t2 && $t2 != "BYE" && $t2 != "TBD") ? ($teamCache[$t2] ?? ['t_name' => 'TBD', 't_logo' => '']) : ['t_name' => $t2, 't_logo' => ''];
+
+                echo '
+                <div class="match-container">
+                    <h4 class="match-head">'.$matchTitle.' '.(++$matchCounter).'</h4>
+                    <div class="team-container">
+                        <div class="teams left-side">
+                            '.(!empty($t1Data['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t1Data['t_logo'].'" alt=""></div>' : '<div class="logo"></div>').'
+                            <div class="tname">'.$t1Data['t_name'].'</div>
+                        </div>
+                        <label class="vs">VS</label>
+                        <div class="teams right-side">
+                            '.(!empty($t2Data['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t2Data['t_logo'].'" alt=""></div>' : '<div class="logo"></div>').'
+                            <div class="tname">'.($t2Data['t_name'] ?? 'TBD').'</div>
+                        </div>
+                    </div>
+                    <div class="team-no">
+                        <div class="t-num">('.($t1Data['t_name']!="TBD"?array_search($t1,$teams)+1:'TBD').')</div>
+                        <div class="t-num">('.(($t2Data['t_name']!="TBD" && $t2Data['t_name']!="BYE")?array_search($t2,$teams)+1:'TBD').')</div>
+                    </div>
+                </div>';
+
+                // Determine winner or bye
+                $scoreLog = json_decode($m['score_log'], true);
+                if (!empty($scoreLog['winner'])) {
+                    $roundTeams[] = $scoreLog['winner'];
+                } elseif ($t2 == "BYE" || $t2 == "TBD" || empty($t2)) {
+                    $roundTeams[] = $t1;
+                }
+            }
+        }
+
+        // --- Handle BYE teams in 1st round only ---
+        if ($roundNo == 1) {
+            $matchedTeams = [];
+            foreach ($roundMatches as $m) {
+                $matchedTeams[] = $m['team_1'];
+                $matchedTeams[] = $m['team_2'];
+            }
+            $byeTeams = array_diff($teams, $matchedTeams);
+            $matchCounter = count($roundMatches);
+            foreach ($byeTeams as $bt) {
+                $btData = $teamCache[$bt] ?? ['t_name' => 'TBD', 't_logo' => ''];
+                echo '
+                <div class="match-container">
+                    <h4 class="match-head">'.$matchTitle.' '.(++$matchCounter).'</h4>
+                    <div class="team-container">
+                        <div class="teams left-side">
+                            '.(!empty($btData['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$btData['t_logo'].'" alt=""></div>' : '<div class="logo"></div>').'
+                            <div class="tname">'.$btData['t_name'].'</div>
+                        </div>
+                        <label class="vs">VS</label>
+                        <div class="teams right-side"><div class="logo"></div><div class="tname">BYE</div></div>
+                    </div>
+                    <div class="team-no">
+                        <div class="t-num">('.(array_search($bt,$teams)+1).')</div>
+                        <div class="t-num">(TBD)</div>
+                    </div>
+                </div>';
+                $roundTeams[] = $bt;
+            }
+        }
+
+        // --- Schedule Next Round (auto-fill missing matches) ---
+        if (!empty($roundTeams) && count($roundTeams) > 1) {
+            $nextRoundNo = $roundNo + 1;
+            $existingNextRound = mysqli_query($conn, "SELECT COUNT(*) AS c FROM matches WHERE tournament='$tournament_id' AND round='$nextRoundNo'");
+            $existCount = mysqli_fetch_assoc($existingNextRound)['c'];
+
+            if ($existCount == 0) {
+                // Skip bye scheduling for semifinal if only 3 teams
+                if ($nextRoundNo == $totalRounds - 1 && count($roundTeams) == 3) {
+                    $roundTeams[] = "BYE";
+                }
+
+                $matchCounter = 1;
+                for ($i = 0; $i < count($roundTeams); $i += 2) {
+                    $t1 = $roundTeams[$i];
+                    $t2 = $roundTeams[$i+1] ?? 'BYE';
+
+                    if ($roundTitle == "Semifinal" && $t2 == "BYE") continue;
+
+                    $nextTitle = ($nextRoundNo == $totalRounds - 1) ? "Semifinal" :
+                                 (($nextRoundNo == $totalRounds) ? "Final" : "Round $nextRoundNo");
+                    $matchName = "$nextTitle ".$matchCounter++." | ".$tournament_name;
+
+                    $id = hash('sha256', uniqid(microtime(true), true));
+
+                    mysqli_query($conn, "INSERT INTO matches (match_id, sport_id, status, tournament, team_1, team_2, round, match_name, created_by)
+                        VALUES ('$id','$sport','Upcoming','$tournament_id','$t1','$t2','$nextRoundNo','$matchName','$owner')");
+
+                    $matchesByRound[$nextRoundNo][] = [
+                        'team_1'=>$t1,
+                        'team_2'=>$t2,
+                        'round'=>$nextRoundNo,
+                        'match_name'=>$matchName,
+                        'score_log'=>json_encode([])
+                    ];
+                }
+            }
+        }
+
+        // --- End condition ---
+        if (count($roundTeams) == 1 && $roundTitle == "Final") {
+            $finalWinner = $roundTeams[0];
+            $winnerData = $teamCache[$finalWinner] ?? ['t_name'=>'Unknown'];
+            echo "<br><br><h3>🏆 Tournament Winner: ".$winnerData['t_name']."</h3>";
+            mysqli_query($conn, "UPDATE tournaments SET winner='$finalWinner' WHERE tournament_id='$tournament_id'");
+            break;
+        }
+
+        if (empty($roundTeams) || count($roundTeams) <= 1) break;
+        $roundNo++;
+    }
+}
+
+
+$matchNo = 1;
+$matchSlots = []; // 🟢 Store all slots here
+
+if ($format == 'league') {
+    echo "<h2>League Matches</h2>";
+
+    // ✅ Step 1: Get all teams for this tournament
+    $team_query = mysqli_query($conn, "SELECT team_id FROM tournament_teams WHERE tournament_id = '$tournament_id'");
+    $teams = [];
+    while ($row = mysqli_fetch_assoc($team_query)) {
+        $teams[] = $row['team_id'];
+    }
+
+    $numTeams = count($teams);
+    $hasBye = ($numTeams % 2 != 0);
+
+    // ✅ Step 2: Add a temporary BYE slot if teams are odd
+    if ($hasBye) {
+        $teams[] = 'BYE';
+        $numTeams++;
+    }
+
+    // ✅ Step 3: Get already scheduled matches
+    $match_query = mysqli_query($conn, "SELECT * FROM matches WHERE tournament = '$tournament_id' ORDER BY match_id ASC");
+    $scheduledMatches = [];
+    while ($row = mysqli_fetch_assoc($match_query)) {
+        $scheduledMatches[] = $row;
+    }
+
+    // ✅ Step 4: Loop through all possible match combinations
+    for ($i = 0; $i < $numTeams - 1; $i++) {
+        for ($j = $i + 1; $j < $numTeams; $j++) {
+            $team1 = $teams[$i];
+            $team2 = $teams[$j];
+            $matchName = "Match " . $matchNo;
+
+            // 🟠 Case 1: Handle BYE display only
+            if ($team1 == 'BYE' || $team2 == 'BYE') {
+                $byeTeam = ($team1 == 'BYE') ? $team2 : $team1;
+                $bye_query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$byeTeam'");
+                $bye_row = mysqli_fetch_assoc($bye_query);
+
+                $matchSlots[] = [
+                    'match_name' => $matchName . ' (Bye)',
+                    'team1_name' => $bye_row['t_name'],
+                    'team2_name' => 'BYE',
+                    'match_id'   => null
+                ];
+
+                echo '
+                <div class="match-container">
+                    <h4 class="match-head">' . $matchName . ' (Bye)</h4>
+                    <div class="team-container">
+                        <div class="teams left-side">
+                            ' . (!empty($bye_row['t_logo'])
+                                ? '<div class="logo"><img src="../assets/images/teams/' . $bye_row['t_logo'] . '" alt=""></div>'
+                                : '<div class="logo"></div>') . '
+                            <div class="tname">' . $bye_row['t_name'] . '</div>
+                        </div>
+                        <label for="" class="vs">VS</label>
+                        <div class="teams right-side">
+                            <div class="logo"></div>
+                            <div class="tname">BYE</div>
+                        </div>
+                    </div>
+                    <div class="team-no">
+                        <div class="t-num">(Team ' . (($team1 == 'BYE') ? $j + 1 : $i + 1) . ')</div>
+                        <div class="t-num">(Bye)</div>
+                    </div>
+                </div>';
+                $matchNo++;
+                continue;
+            }
+
+            // 🟢 Case 2: Normal matches
+            $team1_query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$team1'");
+            $team1_row = mysqli_fetch_assoc($team1_query);
+
+            $team2_query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$team2'");
+            $team2_row = mysqli_fetch_assoc($team2_query);
+
+            // Check if this match exists in DB
+            $matchId = null;
+            $exists = false;
+            foreach ($scheduledMatches as $m) {
+                if (
+                    ($m['team_1'] == $team1 && $m['team_2'] == $team2) ||
+                    ($m['team_1'] == $team2 && $m['team_2'] == $team1)
+                ) {
+                    $exists = true;
+                    $matchId = $m['match_id'];
+                    break;
+                }
+            }
+
+            // 🟢 Store this match slot in array
+            $matchSlots[] = [
+                'match_name' => $matchName,
+                'team1_name' => $team1_row['t_name'],
+                'team2_name' => $team2_row['t_name'],
+                'match_id'   => $matchId
+            ];
+
+            // 🟢 Display match
+            echo '
+            <div class="match-container">
+                <h4 class="match-head">' . $matchName . ($exists ? '' : ' (Not Scheduled)') . '</h4>
+                <div class="team-container">
+                    <div class="teams left-side">
+                        ' . (!empty($team1_row['t_logo'])
+                            ? '<div class="logo"><img src="../assets/images/teams/' . $team1_row['t_logo'] . '" alt=""></div>'
+                            : '<div class="logo"></div>') . '
+                        <div class="tname">' . $team1_row['t_name'] . '</div>
+                    </div>
+                    <label for="" class="vs">VS</label>
+                    <div class="teams right-side">
+                        ' . (!empty($team2_row['t_logo'])
+                            ? '<div class="logo"><img src="../assets/images/teams/' . $team2_row['t_logo'] . '" alt=""></div>'
+                            : '<div class="logo"></div>') . '
+                        <div class="tname">' . $team2_row['t_name'] . '</div>
+                    </div>
                 </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-            
-            <div class="vs">VS</div>
-            
-            <div class="team">
-                <div class="team-logo-container">
-                    
+                <div class="team-no">
+                    <div class="t-num">(Team ' . ($i + 1) . ')</div>
+                    <div class="t-num">(Team ' . ($j + 1) . ')</div>
                 </div>
-                <input type="text" class="team-name" value="" disabled>
-            </div>
-        </div>
-        
+            </div>';
+            $matchNo++;
+        }
+    }
+}
+
+// 🧾 Debug print to verify array (optional)
+// echo "<pre>";
+// print_r($matchSlots);
+// echo "</pre>";
+?>
+
         <!-- Match Details Form -->
         <div class="form-section">
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">City/Town</label>
-                    <input type="text" class="form-input" value="" disabled>
+                    <input type="text" class="form-input" value="<?php echo $result['city']; ?>" disabled>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Ground</label>
-                    <input type="text" class="form-input" value="" disabled>
+                    <input type="text" class="form-input" value="<?php echo $result['ground']; ?>" disabled>
                 </div>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Date</label>
-                    <input type="date" class="form-input" value="" disabled>
+                    <input type="date" class="form-input" value="<?php echo $result['tournament_date']; ?>" disabled>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Time</label>
-                    <input type="time" class="form-input" value="" disabled>
+                    <input type="time" class="form-input" value="<?php echo $result['tournament_time']; ?>" disabled>
                 </div>
             </div>
             
@@ -609,53 +1038,10 @@
     <script>
         // Edit Toggle Functionality
         const toggle = document.getElementById("editToggle");
-        const matchID = ;
-        let edit = false;
         const inputs = document.querySelectorAll("input:not(.file-input)");
-        const logoEdits = document.querySelectorAll(".team-logo-edit");
-        const pencil = document.querySelectorAll(".pencil");
-        const pass = document.querySelector(".pass");
         const save_btn = document.querySelector(".save-btn");
-        save_btn.style.display = "none";
-        let Umpires = [];
-        let Scorers = [];
-        let Commentators = [];
-        let next_page = document.querySelector('.officials-frame');
-
-        let select_person = (el) => {
-            let parent = el.closest('.form-group');
-            let text = parent.querySelector('.form-label').textContent.trim();
-            next_page.src = `./select-officials.php?p=${text}`;
-            next_page.classList.add('active');
-        };
+        let edit = false;
         
-         window.addEventListener("message", (event) => {
-            if (event.data === "closeIframe") {
-                next_page.classList.remove('active');  
-
-            }
-
-            if (event.data.type === "emailList" && (event.data.Umpires)) {
-                let arr = event.data.Umpires;
-                Umpires = arr;
-            }
-
-            if (event.data.type === "emailList" && (event.data.Scorers)) {
-                let arr = event.data.Scorers;
-                Scorers = arr;
-
-            }
-
-            if (event.data.type === "emailList" && (event.data.Commentator)) {
-                let arr = event.data.Commentator;
-                Commentators = arr;
-            }
-        });
-
-        let passfield = true;
-        
-        // Initially hide edit buttons
-        logoEdits.forEach(el => el.style.display = "none");
 
         toggle.addEventListener("click", () => {
             edit = !edit;
@@ -666,11 +1052,6 @@
                 
                 // Enable inputs
                 inputs.forEach(el => el.disabled = false);
-                
-                // Show logo edit buttons
-                logoEdits.forEach(el => el.style.display = "flex");
-
-                pencil.forEach(el => el.style.display = "flex");
 
                 save_btn.style.display = "block";
                 
@@ -682,39 +1063,11 @@
                 
                 // Disable inputs
                 inputs.forEach(el => el.disabled = true);
-                
-                // Hide logo edit buttons
-                logoEdits.forEach(el => el.style.display = "none");
-
-                pencil.forEach(el => el.style.display = "none");
 
                 save_btn.style.display = "none";
                 
                 // Remove edit mode class
                 document.querySelector('.container').classList.remove('edit-mode');
-            }
-        });
-
-        // Handle team logo uploads
-        document.getElementById('team1LogoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('team1Logo').src = event.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        document.getElementById('team2LogoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('team2Logo').src = event.target.result;
-                };
-                reader.readAsDataURL(file);
             }
         });
 
@@ -730,7 +1083,7 @@
 
         // Messages for logout
         const messages = {
-        "logout": "Are you sure you want to Delete the Match?"
+        "logout": "Are you sure you want to Delete the Tournament?"
         };
 
         const logoutBtn = document.querySelector(".logout-btn");
@@ -742,55 +1095,14 @@
         popupOverlay.style.display = "flex";
 
 
-        cancelBtn.onclick = () => {
-            popupOverlay.style.display = "none";
-        };
+            cancelBtn.onclick = () => {
+                popupOverlay.style.display = "none";
+            };
         });
 
-        const toggleBtn = document.getElementById("editToggle1");
-
-        toggleBtn.addEventListener("click", () => {
-            if (pass.type === "password") {
-                pass.type = "text";
-                toggleBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.99988 4.03116L4.03103 3L20.9999 19.9689L19.9688 21L2.99988 4.03116ZM12.1565 9.00389L14.9958 11.8431C14.9563 11.1029 14.6445 10.4034 14.1204 9.87928C13.5962 9.35513 12.8967 9.04333 12.1565 9.00389ZM11.8434 14.9955L9.00419 12.1562C9.04363 12.8964 9.35543 13.5959 9.87958 14.1201C10.4037 14.6442 11.1032 14.956 11.8434 14.9955Z" fill="black"/><path d="M12 16.5C11.3077 16.5 10.6248 16.3403 10.0043 16.0333C9.38376 15.7264 8.84246 15.2803 8.42248 14.73C8.00249 14.1797 7.71514 13.5398 7.58278 12.8603C7.45043 12.1808 7.47664 11.4799 7.65937 10.8122L4.42172 7.57406C3.09938 8.78531 1.83937 10.3659 0.75 12C1.98844 14.0625 3.6825 16.1831 5.44687 17.3991C7.47094 18.7931 9.67172 19.5 11.9887 19.5C13.255 19.5008 14.5117 19.282 15.7031 18.8531L13.1902 16.3406C12.8024 16.4468 12.4021 16.5004 12 16.5ZM12 7.5C12.6923 7.49997 13.3752 7.65966 13.9957 7.96665C14.6162 8.27365 15.1575 8.71966 15.5775 9.27C15.9975 9.82034 16.2849 10.4602 16.4172 11.1397C16.5496 11.8192 16.5234 12.5201 16.3406 13.1878L19.6528 16.5C21.0192 15.2695 22.2811 13.6144 23.25 12C22.0134 9.96422 20.3016 7.84875 18.5072 6.61781C16.4578 5.2125 14.2645 4.5 11.9887 4.5C10.7365 4.50178 9.49467 4.72867 8.32266 5.16984L10.8122 7.65937C11.1992 7.55342 11.5987 7.49982 12 7.5Z" fill="black"/></svg>'; // Or your SVG for "hide"
-            } else {
-                pass.type = "password";
-                toggleBtn.innerHTML = '<svg class="eye" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.1429C10.932 17.1429 9.88795 16.8412 8.99992 16.2761C8.1119 15.711 7.41976 14.9078 7.01105 13.9681C6.60234 13.0284 6.4954 11.9943 6.70376 10.9967C6.91212 9.99906 7.42642 9.08269 8.18162 8.36345C8.93683 7.64421 9.89901 7.1544 10.9465 6.95596C11.994 6.75752 13.0798 6.85937 14.0665 7.24862C15.0532 7.63787 15.8966 8.29704 16.4899 9.14278C17.0833 9.98852 17.4 10.9828 17.4 12C17.4 13.364 16.8311 14.6721 15.8184 15.6365C14.8057 16.601 13.4322 17.1429 12 17.1429ZM12 4C3.6 4 0 12 0 12C0 12 3.6 20 12 20C20.4 20 24 12 24 12C24 12 20.4 4 12 4Z" fill="black"/><path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" fill="black"/></svg>'; // Or your SVG for "show"
-            }
-        });
 
         save_btn.addEventListener("click", function() {
             
-            const team1Name = document.querySelectorAll(".team-name")[0].value;
-            const team2Name = document.querySelectorAll(".team-name")[1].value;
-            const team1Logo = document.getElementById("team1LogoInput").files[0];
-            const team2Logo = document.getElementById("team2LogoInput").files[0];
-            const matchVenue = document.querySelectorAll(".form-input")[0].value;
-            const matchCity = document.querySelectorAll(".form-input")[1].value;
-            const matchDate = document.querySelectorAll(".form-input")[2].value;
-            const matchTime = document.querySelectorAll(".form-input")[3].value;
-            const matchPass = document.querySelector(".pass").value;
-
-            const formdata = new FormData();
-            formdata.append("match_id", matchID);
-            formdata.append("team1Name", team1Name);
-            formdata.append("team2Name", team2Name);
-            formdata.append("team1Logo", team1Logo);
-            formdata.append("team2Logo", team2Logo);
-            formdata.append("matchVenue", matchVenue);
-            formdata.append("matchCity", matchCity);
-            formdata.append("matchDate", matchDate);
-            formdata.append("matchTime", matchTime);
-            formdata.append("matchPass", matchPass);
-            formdata.append('Umpires[]', Umpires);
-            formdata.append('Scorers[]', Scorers);
-            formdata.append('Commentators[]', Commentators);
-
-            // for (let [key, value] of formdata.entries()) {
-            //     console.log(`${key}:`, value);
-            // }
-
-             // First schedule the match via fetch()
             fetch('../Backend/update_match.php', {
                 method: 'POST',
                 body: formdata
@@ -808,48 +1120,7 @@
                     let el = document.getElementById(`error-${data.field}`);
                     el.innerHTML = data.message;
                     el.style.display = 'block';
-                } else if (data.status == 200) {
-
-                    // Send mails via sendBeacon (fire-and-forget)
-                    Scorers.forEach((scorer) => {
-                        let scorerData = {
-                            for_value: 'Scorer',
-                            game: data.game,
-                            venue: matchCity,
-                            time: matchTime,
-                            password: matchPass,
-                            date: matchDate,
-                            recipient_email: scorer
-                        };
-                        const scorerBlob = new Blob([JSON.stringify(scorerData)], { type: 'application/json' });
-                        navigator.sendBeacon('../mail.php', scorerBlob);
-                    });
-
-                    Umpires.forEach((umpire) => {
-                        let umpireData = {
-                            for_value: 'Umpire',
-                            game: data.game,
-                            venue: matchCity,
-                            time: matchTime,
-                            date: matchDate,
-                            recipient_email: umpire
-                        };
-                        const umpireBlob = new Blob([JSON.stringify(umpireData)], { type: 'application/json' });
-                        navigator.sendBeacon('../mail.php', umpireBlob);
-                    });
-
-                    const totalBeacons = Scorers.length + Umpires.length;
-
-                        if (totalBeacons > 0) {
-                            console.log("Waiting 500ms before reload");
-                            setTimeout(() => {
-                                console.log("Reloading now...");
-                                window.location.reload();
-                            }, 500);
-                        } else {
-                            console.log("Reloading immediately...");
-                            window.location.reload();
-                        }
+                } else if (data.status == 200) {  
 
                 }
             })

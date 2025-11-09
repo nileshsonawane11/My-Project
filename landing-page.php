@@ -166,7 +166,6 @@ if (window.deferredPrompt) {
     .img-container{
         position: relative;
         width: 100%;
-        margin-top: 60px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -294,7 +293,7 @@ if (window.deferredPrompt) {
     
     .footer .footer-legal {
         background: var(--card-bg);
-        padding: 30px 0px;
+        padding: 30px 0px 75px 0px;
         transition: var(--transition);
     }
     
@@ -875,9 +874,9 @@ if (window.deferredPrompt) {
                                 <p>
                                     <br><br>
                                     <strong>Your Ultimate Real-Time Sports Tracking Platform</strong><br>
-                                    <strong>Phone:</strong><a href="tel:+91 9607828130">+91 XXXXXXXXXX</a><br>
-                                    <strong>Email:</strong><a href="mailto:sonawanenileshk6@gmail.com">
-                                        contact@yourdomain.com</a><br> 
+                                    <strong>Phone:</strong><a href="tel:+91 9607828130"  style="color:blue;">+91 XXXXXXX130</a><br>
+                                    <strong>Email:</strong><a href="mailto:admin@livestrike.in"  style="color:blue;">
+                                        admin@livestrike.in</a><br> 
                                 </p>
             
                             </div>
@@ -968,8 +967,8 @@ if (window.deferredPrompt) {
                         <div class="copyright">
                             2025 © Copyright <strong><span>LiveStrike</span></strong> All Rights Reserved.
                                 <div class="credits text-center">
-                                    Designed &amp; Developed by <a href="#" target="_blank">Sonawane Nilesh</a>, <a href="#" target="_blank">Patil Kaustubh</a>, <a href="#" target="_blank">Jadhav Prabhavati</a>, <a href="#" target="_blank">Sonawane Ketki</a>, <a href="#" target="_blank">Shinkar Anuja </a>Department of Information Technology, Government Polytechnic Nashik (Batch 2023–2026)
-                                    <br>Guided by <a target="_blank" href="#" rel="follow"><u>Prof: Mr.P.B.Mali</u></a>
+                                    Designed &amp; Developed by <a href="https://www.linkedin.com/in/nilesh-sonawane-152171349" target="_blank"   style="color:blue;">Sonawane Nilesh</a>, <a href="https://www.linkedin.com/in/kaustubh-patil-494433376" target="_blank"   style="color:blue;">Patil Kaustubh</a>, <a href="https://www.linkedin.com/in/prabhavati-jadhav-825133389/" target="_blank"   style="color:blue;">Jadhav Prabhavati</a>, <a href="https://www.linkedin.com/in/ketki-sonawane-0a21b2316/" target="_blank"   style="color:blue;">Sonawane Ketki</a>, <a href="#" target="_blank"   style="color:blue;">Shinkar Anuja </a>Department of Information Technology, Government Polytechnic Nashik (Batch 2023–2026)
+                                    <br>Guided by <a target="_blank" href="#" rel="follow"><u   style="color:blue;">Prof: Mr.P.B.Mali</u></a>
                                 </div>
                         </div>
                     </div>

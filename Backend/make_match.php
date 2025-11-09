@@ -1,13 +1,14 @@
 <?php
 session_start();
+error_reporting(1);
 include '../config.php';
 $responses = [];
 $matches = json_decode($_POST['matches'], true);
-$tournament = $_POST['tournament'];
+$tournament_id = $_POST['tournament'];
 $admin_id = $_SESSION['user'];
 $date = date('Y-m-d h:i:s');
 
-$get_tour = mysqli_query($conn,"SELECT * FROM tournaments WHERE tournament_id = '$tournament'");
+$get_tour = mysqli_query($conn,"SELECT * FROM tournaments WHERE tournament_id = '$tournament_id'");
 $tournament = mysqli_fetch_assoc($get_tour);
 
 $sport = $tournament['sport_id'];
@@ -22,26 +23,15 @@ foreach($matches as $match){
     $input = uniqid(microtime(true) . bin2hex(random_bytes(5)). json_encode($match) . $date, true);
     $id = hash('sha256', $input);
 
-    $checkSql = "SELECT * FROM matches 
-               WHERE sport_id = '$sport' 
-               AND (
-                    (team_1 = '$team1' AND team_2 = '$team2') 
-                    OR 
-                    (team_1 = '$team2' AND team_2 = '$team1')
-               )";
-        $checkResult = mysqli_query($conn, $checkSql);
-
-        if (mysqli_num_rows($checkResult) > 0) {
-                 $responses[] = ['status' => 409,'field' => 'datetime','message' => 'Match already exists!'];
-        } else {
-            $query = "INSERT INTO matches(match_id, sport_id, match_name, status, venue, team_1, team_2, created_by) values('$id','$sport','$match_name','Upcoming','$venue','$team1','$team2','$admin_id')";
+    
+            $query = "INSERT INTO matches(match_id, sport_id, match_name, status, venue, team_1, team_2, created_by, tournament) values('$id','$sport','$match_name','Upcoming','$venue','$team1','$team2','$admin_id','$tournament_id')";
             $result = mysqli_query($conn, $query);
             if($result){
                 $responses[] = ['status' => 200,'field' => 'datetime','message' => 'Match added successfully'];
             }else{
                 $responses[] = ['status' => 409,'field' => 'datetime','message' => 'Failed to add match'];
             }
-        }
+
 }
 echo json_encode($responses);
 exit();

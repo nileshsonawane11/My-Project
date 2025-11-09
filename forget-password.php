@@ -1,10 +1,6 @@
 <?php
     session_start();
     include 'config.php';
-    if(isset($_SESSION['user'])){
-        header('location: ./dashboard.php?update="live"&sport="CRICKET"');
-        exit();
-    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -377,6 +373,8 @@
         let send_otp =(e)=>{
             e.preventDefault();
             let email = document.getElementById('email').value;
+            let send_btn = document.getElementById('sendOTP'); 
+            send_btn.innerText = 'Proccessing...';
             let data = {
                 'role': '',
                 'email': email,
@@ -401,13 +399,13 @@
                         });
 
                         if(data.status == "error"){
-                            let send_btn = document.getElementById('sendOTP'); 
 
                             if(!send_btn){
                                 console.error("Send OTP button not found");
                                 return;
                             }
 
+                            send_btn.innerText = 'Request OTP';
                             send_btn.setAttribute('disabled', 'true');
                             send_btn.style.opacity = '0.5';
 
@@ -416,7 +414,8 @@
                             email_error.innerHTML = data.message;
                         }else{
                             sent();
-                            alert(`OTP sent successfully! on ${email}`); 
+                            alert(`OTP sent successfully! on ${email}`);
+                            send_btn.innerText = 'Request OTP'; 
                         }
                         console.log(data);
                     })

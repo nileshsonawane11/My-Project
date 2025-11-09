@@ -1,3 +1,13 @@
+<?php
+    session_start();
+    if(!isset($_SESSION['user'])){
+        header('location: ./front-page.php');
+        exit();
+    }else{
+        $user_id = $_SESSION['user'];
+    }
+    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -387,19 +397,19 @@
             document.getElementById('success-message').style.display = 'none';
 
             // Basic client-side validation
-            if (newPassword !== confirmPassword) {
-                let el = document.getElementById('error-confirm_password');
-                el.innerHTML = 'Passwords do not match';
-                el.style.display = 'block';
-                return;
-            }
+            // if (newPassword !== confirmPassword) {
+            //     let el = document.getElementById('error-confirm_password');
+            //     el.innerHTML = 'Passwords do not match';
+            //     el.style.display = 'block';
+            //     return;
+            // }
 
-            if (newPassword.length < 8) {
-                let el = document.getElementById('error-new_password');
-                el.innerHTML = 'Password must be at least 8 characters long';
-                el.style.display = 'block';
-                return;
-            }
+            // if (newPassword.length < 8) {
+            //     let el = document.getElementById('error-new_password');
+            //     el.innerHTML = 'Password must be at least 8 characters long';
+            //     el.style.display = 'block';
+            //     return;
+            // }
 
             // Simulate API call - replace with your actual endpoint
             fetch("./Backend/change_password.php", {
@@ -411,6 +421,7 @@
             })
             .then(response => response.json())
             .then((data) => {
+                console.log(data)
                 if(data.status === 200){
                     document.getElementById('success-message').innerHTML = data.message || 'Password changed successfully!';
                     document.getElementById('success-message').style.display = 'block';
@@ -426,7 +437,7 @@
                     // }, 2000);
                     
                 } else {
-                    let el = document.getElementById('error-' + (data.field || 'general'));
+                    let el = document.getElementById('error-' + (data.field));
                     el.innerHTML = data.message;
                     el.style.display = 'block';
                 }

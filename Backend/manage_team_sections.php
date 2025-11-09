@@ -18,37 +18,55 @@
                         </div>
                     TEXT;
 
-        $events = <<<TEXT
+        $sql = "Select * FROM matches WHERE team_1 = '$team' OR team_2 = '$team' AND status IN ('Upcoming','Live')";
+        $result = mysqli_query($conn,$sql);
+
+        if(mysqli_num_rows($result) > 0){
+            $events = null;
+            while($row = mysqli_fetch_assoc($result)){
+                $opponent = null;
+                if($row['team_1'] == $team){
+                    $opponent = $row['team_2'];
+                }else if($row['team_2'] == $team){
+                    $opponent = $row['team_1'];
+                }
+
+                $result2 = mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$opponent' LIMIT 1");
+                $row2 = mysqli_fetch_assoc($result2);
+
+                $timestamp = strtotime($row['match_date']);
+                // Get month and year in words
+                $month_year = date("F, Y", $timestamp);
+
+                $t1_score = $row['score_team_1'] ?? 0;
+                $t2_score = $row['score_team_2'] ?? 0;
+
+                $events .= <<<TEXT
                         <div class="Events">
                             <div class="event">
-                                <label for="" class="schedule-time ">Month, Year</label>
+                                <label for="" class="schedule-time ">$month_year</label>
                                 <div class="opponent">
-                                    <label for="opponent-team">Vs.Opponent</label>
-                                    <label for="date">Date, Year</label>
-                                    <label for="score">0-0</label>
-                                </div>
-                            </div>
-                            
-                            <div class="event">
-                                <label for="" class="schedule-time ">Month, Year</label>
-                                <div class="opponent">
-                                    <label for="opponent-team">Vs.Opponent</label>
-                                    <label for="date">Date, Year</label>
-                                    <label for="score">0-0</label>
+                                    <label for="opponent-team">Vs. {$row2['t_name']}</label>
+                                    <label for="date">{$row['match_date']}</label>
+                                    <label for="score">$t1_score - $t2_score</label>
                                 </div>
                             </div>
                         </div>
                     TEXT;
+            }
+            
+            echo $events;
+        }else{
+            echo $no_event;
+        }
 
         $new_btn = <<<TEXT
                         <div class="new-btn">
                             <button onclick="add_event(event)" type="submit" id="add-event">Add Event</button>
                         </div>
                     TEXT;
-
-        echo $no_event;
-        echo $events;
-        echo $new_btn;
+        
+        //echo $new_btn;
     }
 
     if($sec == 'Team' && $mem == 'Staff'){

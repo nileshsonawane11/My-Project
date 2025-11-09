@@ -20,7 +20,7 @@ $matchDate    = escape($conn, $_POST['matchDate'] ?? '');
 $matchTime    = escape($conn, $_POST['matchTime'] ?? '');
 $matchPass    = escape($conn, $_POST['matchPass'] ?? '');
 $match_id     = escape($conn, $_POST['match_id'] ?? '');
-
+$match_visibility = $_POST['match_visibility'] ?? 'false';
 $Umpires      = array_filter($_POST['Umpires'] ?? []);
 $Scorers      = array_filter($_POST['Scorers'] ?? []);
 $Commentators = array_filter($_POST['Commentators'] ?? []);
@@ -134,14 +134,14 @@ if (!empty($Commentators)) {
 
 // Validate datetime
 if (!empty($matchDate) && !empty($matchTime)) {
-    $inputDateTime = strtotime("$matchDate $matchTime");
-    if ($inputDateTime > time()) {
+    // $inputDateTime = strtotime("$matchDate $matchTime");
 
         // Prepare full update SQL
         $updateMatch = "UPDATE matches SET
             match_date = '$matchDate',
             venue = '$matchVenue',
             start_time = '$matchTime',
+            visibility = '$match_visibility',
             password = '$matchPass'"
             . (!empty($update_fields) ? ", " . implode(", ", $update_fields) : "") .
             " WHERE match_id = '$match_id'";
@@ -161,10 +161,6 @@ if (!empty($matchDate) && !empty($matchTime)) {
                 'message' => 'Database error: ' . mysqli_error($conn)
             ]);
         }
-
-    } else {
-        echo json_encode(['status' => 409, 'field' => 'datetime', 'message' => 'Date and time must be in the future.']);
-    }
 } else {
     echo json_encode(['status' => 400, 'field' => 'datetime', 'message' => 'Missing date or time.']);
 }

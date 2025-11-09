@@ -122,11 +122,10 @@ function saveHistorySnapshot($conn, $match_id, $score_log) {
     }
     
     // Update both history and overs
-    $stmt = $conn->prepare("UPDATE matches SET history = ?, score_log = ?, overs = ? WHERE match_id = ?");
-    $stmt->bind_param("ssss", 
+    $stmt = $conn->prepare("UPDATE matches SET history = ?, score_log = ? WHERE match_id = ?");
+    $stmt->bind_param("sss", 
         json_encode($history),
         json_encode($score_log),
-        $overs,
         $match_id
     );
     
@@ -187,12 +186,11 @@ if (($Ball_Type == null && $undo == true)) {
         
         // Update database
         $newHistory = array_slice($history, 0, -1);
-        $stmt = $conn->prepare("UPDATE matches SET history = ?,$score_field = ?, score_log = ?, overs = ? WHERE match_id = ?");
-        $stmt->bind_param("sssss", 
+        $stmt = $conn->prepare("UPDATE matches SET history = ?,$score_field = ?, score_log = ? WHERE match_id = ?");
+        $stmt->bind_param("ssss", 
             json_encode($newHistory),
             $score,
             json_encode($previousState),
-            $overs,
             $match_id
         );
         
@@ -302,12 +300,13 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
 
     // Batsman rotation logic
     if (
-        (str_starts_with($Wicket_Type, 'Run Out') &&
-        $Wicket_Type !== 'Run Out (Mankaded)' &&
-        !str_contains($Wicket_Type, 'Returning')) ||
-        str_starts_with($Wicket_Type, 'Obstructing')
+        (str_contains($Wicket_Type, 'Run Out') &&
+        $Wicket_Type !== 'Run Out (Mankaded)' ||
+        str_starts_with($Wicket_Type, 'Obstructing'))
     ) {
-        if(($Run % 2) == 0 ) {
+        if(($Run % 2) != 0 && str_contains($Wicket_Type, 'Returning')) {
+            swap_batsmans($score_log, $Inning_type, $Inning);
+        }elseif(($Run % 2) == 0){
             swap_batsmans($score_log, $Inning_type, $Inning);
         }
     } elseif (!in_array($Ball_Type, ['Wide', 'No Ball'], true)) {

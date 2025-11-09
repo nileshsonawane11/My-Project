@@ -83,12 +83,6 @@
     </script>
 <meta name="mobile-web-app-capable" content="yes">
 
-
-
-    
-
-
-
 <style>
     * {
         margin: 0px;
@@ -158,31 +152,23 @@
     }
 
     #installBtn {
-        padding: 12px 24px;
+        padding: 10px 20px;
         background: #d1221f;
         color: white;
         border: none;
-        border-radius: 8px;
-        font-size: 16px;
+        border-radius: 10px;
+        font-size: 13px;
         cursor: pointer;
         box-shadow: 0 2px 8px var(--shadow);
         transition: all 0.3s ease;
-        }
+    }
 
-        #installBtn:hover {
+    #installBtn:hover {
         background: #b51c1a;
-        }
+    }
 
-        /* Tablet */
-        @media (max-width: 768px) {
-        #installBtn {
-            font-size: 15px;
-            padding: 10px 20px;
-        }
-        }
-
-        /* Mobile */
-        @media (max-width: 500px) {
+    /* Mobile */
+    @media (max-width: 500px) {
         #installBtn {
             font-size: 10px;
             padding: 8px 16px;
@@ -194,6 +180,10 @@
     .close-icon svg path,
     .menu-items svg path {
         fill: var(--svg-fill);
+    }
+
+    .bx-search{
+        color: var(--svg-fill);
     }
     
     .pp svg path {
@@ -906,6 +896,7 @@
     
     .add-container.active {
         transform: translateY(0);
+        height: max-content;
     }
     
     .ad2{
@@ -1152,6 +1143,11 @@
             bottom: 30px;
             right: 30px;
         }
+
+        #installBtn {
+            font-size: 10px;
+            padding: 8px 16px;
+        }
     }
     /* Add smooth transitions to all theme-affected elements */
     .nav-bar,
@@ -1279,7 +1275,7 @@
                         </svg></div>
                     </div>
 
-                    <div class="menu-items danger first"><div><p class= "para1" style= "color: red">Delete Account</p><svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- <div class="menu-items danger first"><div><p class= "para1" style= "color: red">Delete Account</p><svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M1.375 21.625V20.5C1.375 18.0137 3.38875 16 5.875 16H10.375C12.8612 16 14.875 18.0137 14.875 20.5V21.625" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M8.125 12.625C6.2575 12.625 4.75 11.1175 4.75 9.25C4.75 7.3825 6.2575 5.875 8.125 5.875C9.9925 5.875 11.5 7.3825 11.5 9.25C11.5 11.1175 9.9925 12.625 8.125 12.625Z" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M14.875 1.375L21.625 8.125" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1290,7 +1286,7 @@
                     <div class="menu-items danger second"><div onclick='logout()';><p class= "para1" style= "color: red">Log Out</p><svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15.7085 4.29167L14.2397 5.76042L16.9272 8.45833H6.3335V10.5417H16.9272L14.2397 13.2292L15.7085 14.7083L20.9168 9.5M2.16683 2.20833H10.5002V0.125H2.16683C1.021 0.125 0.0834961 1.0625 0.0834961 2.20833V16.7917C0.0834961 17.9375 1.021 18.875 2.16683 18.875H10.5002V16.7917H2.16683V2.20833Z" fill="#FF0000"/>
                         </svg></div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -1352,7 +1348,7 @@
             <nav class="nav-bar">
                 <div class="nav-content">
                     <div class="items">
-                        <div class="logo-img"><img src="./assets/images/logo.png" alt=""></div>
+                        <div class="logo-img"><a href=""><img src="./assets/images/logo.png" alt=""></a></div>
                     </div>
                     
                     <div class="items list">

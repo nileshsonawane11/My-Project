@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: livestrike-nginx
+    env: docker
+    plan: free
+    dockerfilePath: ./nginx/Dockerfile
+    buildCommand: ""
+    startCommand: ""
+    envVars:
+      - key: PORT
+        value: 80
