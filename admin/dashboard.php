@@ -147,12 +147,124 @@ while ($r = $resChart->fetch_assoc()) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+@media (max-width: 768px) {
+
+    .navbar-brand {
+        font-size: 1.5rem !important;
+    }
+
+    .navbar .btn {
+        margin-top: 5px;
+        padding: 10px 16px;
+        font-size: 1.1rem;
+    }
+
+    .row.g-2 > .col-md-3,
+    .row.g-2 > .col-md-3,
+    .row.g-2 > .col-md-3 {
+        width: 100%;
+    }
+
+    .form-control {
+        font-size: 1.2rem;
+        height: 52px;
+    }
+
+    .table img {
+        max-width: 120px;
+    }
+
+    table.table th,
+    table.table td {
+        font-size: 1rem;
+    }
+}
+
+/* ----------------------------------------------------
+   ✅  Mobile Boost (max-width: 600px)
+---------------------------------------------------- */
 @media (max-width: 600px) {
-    html{ font-size:18px; }
-    .navbar{ flex-direction:column; text-align:center; gap:10px; }
-    .btn-row{ display:flex; justify-content:center; }
-    .card{ padding:1rem!important; }
+
+    html {
+        font-size: 19px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 10px;
+    }
     #clickChart{ height:230px!important; }
+    .navbar .btn {
+        width: 100%;
+        font-size: 1.25rem;
+        padding: 12px;
+    }
+
+    .card {
+        padding: 1.4rem !important;
+    }
+
+    h5 {
+        font-size: 1.6rem !important;
+        margin-bottom: 1rem;
+    }
+
+    .row.g-2 {
+        flex-direction: column;
+        margin-bottom: 1.8rem !important;
+    }
+
+    .navbar {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .btn-row{
+          display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    }
+
+    .navbar-brand {
+        font-size: 1rem !important;
+    }
+
+    .navbar .btn {
+        font-size: 0.7rem;
+        width: max-content;
+        margin: 4px 0;
+        padding: 6px 10px;
+    }
+
+    .form-control {
+        height: 55px;
+        font-size: 1rem;
+    }
+
+    /* Table readable in mobile */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table th,
+    .table td {
+        font-size: 1.15rem;
+        padding: 12px 8px;
+    }
+
+    .table img {
+        max-width: 160px;
+    }
+
+    .btn-sm {
+        padding: 7px;
+        font-size: 0.8rem;
+        margin-top: 10px;
+        width: 100%;
+    }
 }
   </style>
 </head>

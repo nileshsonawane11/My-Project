@@ -178,7 +178,6 @@ $res = $conn->query($q);
         padding: 6px 10px;
     }
 
-
     .form-control {
         height: 55px;
         font-size: 1rem;
@@ -218,7 +217,7 @@ $res = $conn->query($q);
   <div class="container-fluid">
     <span class="navbar-brand">Manage Ads</span>
     <div>
-      <a class="btn btn-outline-light me-2" href="#" onclick="safeBack('./dashboard.php'); return false;">Dashboard</a>
+      <a class="btn btn-outline-light me-2" href="./dashboard.php">Dashboard</a>
       <a class="btn btn-outline-light me-2" href="export_csv.php">Export CSV</a>
       <a class="btn btn-outline-light" href="#" onclick='logout()';>Logout</a>
     </div>

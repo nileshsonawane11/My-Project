@@ -1,9 +1,12 @@
 <?php
 include "./config.php";
 
-$slot = $_GET['slot'] ?? "";
-$page = $_GET['page'] ?? "";
-$city = $_GET['city'] ?? "";
+// Read JSON POST body
+$input = json_decode(file_get_contents("php://input"), true);
+
+$slot = $input["slot"] ?? "";
+$page = $input["page"] ?? "";
+$city = $input["city"] ?? "";
 
 $currentDate = date("Y-m-d");
 

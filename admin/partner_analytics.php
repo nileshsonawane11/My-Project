@@ -152,6 +152,10 @@ $share_url = get_full_url();
   table{ font-size:14px; }
   .navbar{flex-direction:column;text-align:center;gap:10px;}
 }
+.alert-info{
+  overflow: hidden;
+  word-wrap: break-word;
+}
 </style>
 </head>
 <body class="bg-light">

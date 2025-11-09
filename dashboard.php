@@ -1932,7 +1932,17 @@ function loadAds(pageName, cityName="") {
         let slotName = slot.dataset.slot;
         console.log(slotName,pageName,cityName)
 
-        fetch(`./get_ads.php?slot=${slotName}&page=${pageName}&city=${cityName}`)
+        fetch("../../get_ads.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                slot: slotName,
+                page: pageName,
+                city: cityName
+            })
+        })
         .then(r => r.json())
         .then(ads => {
             console.log(ads)
