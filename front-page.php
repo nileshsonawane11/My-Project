@@ -1,5 +1,15 @@
 <?php
     session_start();
+    include './config.php';
+    if(isset($_COOKIE['user'])){
+        $user_id = $_COOKIE['user'];
+        $result = $conn->query("SELECT email,role,fname,lname FROM users WHERE user_id = '$user_id'");
+        $row = $result->fetch_assoc();
+        $_SESSION['user']=$user_id;
+        $_SESSION['email']=$row['email'];
+        $_SESSION['role']=$row['role'];
+        $_SESSION['name']=$row['fname'].' '.$row['lname'];
+    }
     if(isset($_SESSION['user'])){
         header('location: ./dashboard.php?update="live"&sport="CRICKET"');
         exit();
@@ -7,7 +17,7 @@
     header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
     header("Pragma: no-cache"); // HTTP 1.0.
     header("Expires: 0"); // Proxies
-    include './config.php';
+    
 
     $login_url = $client->createAuthUrl();
 ?>

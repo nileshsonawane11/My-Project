@@ -1675,6 +1675,7 @@
 
     
     // Drag to dismiss
+    // Make sure this code is inside a function or properly enclosed
     let startY = 0;
     const threshold = 60;
 
@@ -1698,6 +1699,20 @@
             slideWrapper.style.transform = 'translateY(600px)';
         } else {
             slideWrapper.style.transform = 'translateY(0)';
+        }
+    });
+
+    // Click outside to dismiss (for desktop PWA)
+    document.addEventListener('click', (e) => {
+        // Check if click is outside the slideWrapper and slideWrapper is currently visible
+        if (slideWrapper && 
+            !slideWrapper.contains(e.target) && 
+            slideWrapper.style.transform !== 'translateY(600px)' &&
+            slideWrapper.style.transform !== '' &&
+            slideWrapper.getBoundingClientRect().top < window.innerHeight) {
+            
+            slideWrapper.style.transition = 'transform 0.5s ease';
+            slideWrapper.style.transform = 'translateY(600px)';
         }
     });
        

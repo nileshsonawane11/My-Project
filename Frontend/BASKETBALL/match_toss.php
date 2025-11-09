@@ -6,12 +6,15 @@ if(!isset($_SESSION['user'])){
     exit();
 }
 if($_SESSION['role'] == "User"){
-    header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+    header('location: ../../dashboard.php?update="live"&sport="CRICKET"');
     exit();
 }
 
 include '../../config.php';
 $match = $_GET['match_id'] ?? '';
+
+header("Location: ./score_panel.php?match_id=$match");
+exit();
 
 $query1 = mysqli_query($conn, "SELECT * FROM `matches` WHERE `match_id` = '$match'");
 $row = mysqli_fetch_assoc($query1);

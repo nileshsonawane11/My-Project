@@ -22,8 +22,21 @@ if(empty($data)){
     exit();
 }
 
-// Validate and sanitize input
 $match_id = $data['match_id'] ?? null;
+
+if(!$match_id) {
+    echo json_encode(['status'=>400,'message'=>'Match ID required']);
+    exit();
+}
+
+$stmt = $conn->prepare("SELECT score_log FROM matches WHERE match_id = ?");
+$stmt->bind_param("s", $match_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$score_log = json_decode($row['score_log'], true);
+
+// Validate and sanitize input
 $action = $data['serve_action'] ?? null;
 $serve_player = $data['serve_player'] ?? null;
 $winner_team = $data['winner_team'] ?? null;
@@ -31,27 +44,15 @@ $current_serve = $score_log['current_serve'];
 $team1 = $score_log['team1'];
 $team2 = $score_log['team2'];
 
-$opponent_team = ($current_serve === $team1) ? $team2 : $team1;
-
-if(!$match_id) {
-    echo json_encode(['status'=>400,'message'=>'Match ID required']);
-    exit();
-}
+$opponent_team = ($current_serve == $team1) ? $team2 : $team1;
 
 
 // Fetch match using prepared statement
-$stmt = $conn->prepare("SELECT score_log FROM matches WHERE match_id = ?");
-$stmt->bind_param("s", $match_id);
-$stmt->execute();
-$result = $stmt->get_result();
 
 if($result->num_rows === 0){
     echo json_encode(['status'=>404,'message'=>'Match not found']);
     exit();
 }
-
-$row = $result->fetch_assoc();
-$score_log = json_decode($row['score_log'], true);
 
 // Extract current match data
 $team1 = $score_log['team1'];
@@ -226,6 +227,12 @@ if(isset($exit) && $exit){
 }
 
 // Check which team won the point and increase score by 1
+if(str_contains($action,'Ace')){
+    $winner_team = $scoring_team = $score_log['current_serve'];
+}else if(str_contains($action,'Error')){
+    $winner_team = $scoring_team = $opponent_team;
+}
+
 if ($winner_team == $team1) {
     $score_log['sets'][$current_set]['team1_points'] += 1;
     $score_log['team1_score'] += 1;

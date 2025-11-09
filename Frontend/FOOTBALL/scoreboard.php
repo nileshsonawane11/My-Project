@@ -185,7 +185,7 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding: 10px 20px 10px 0px;
+        padding: 10px 20px 10px 10px;
     }
     
     .items,.list{
@@ -232,7 +232,7 @@
     }
     
     .ad2{
-        height: 60px;
+        height: 80px;
         width: 100%;
         background: rgba(20, 20, 20, 0.12);
         display: flex;
@@ -1921,7 +1921,7 @@
     </div>
 
     <div class="ad2">
-        Advertisement (412px x 60px)
+        Advertisement (412px x 80px)
     </div>
 
     <div class="swiper">

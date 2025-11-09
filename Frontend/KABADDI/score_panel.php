@@ -151,10 +151,17 @@
             max-width: 800px;
             background: var(--background);
             border-radius: var(--border-radius);
-            overflow: hidden;
             box-shadow: var(--card-shadow);
             transition: var(--transition);
+            overflow: auto;
+            scroll-behavior: smooth;
         }
+        html {
+            scroll-behavior: smooth;
+            }
+
+            
+
 
         .return {
             width: 100%;
@@ -178,6 +185,7 @@
         .for-exit {
             display: flex;
             justify-content: center;
+            background-color: var(--background);
         }
 
         .exit {
@@ -194,10 +202,7 @@
             transition: var(--transition);
         }
 
-        .exit:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
+        
 
         .exit-text {
             margin-left: 5px;
@@ -306,15 +311,20 @@
             transition: var(--transition);
         }
 
-        .container2 {
+        .container1 {
             position: relative;
-            width: 100%;
-            height: 80vh;
-            background-color: var(--background);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            transition: var(--transition);
-            overflow: auto;
+            z-index: 100;
         }
+
+        .container2 {
+    position: relative;        /* activate proper stacking */
+    width: 100%;
+    min-height: calc(100vh - 120px); /* adaptive height instead of fixed */
+    background-color: var(--background);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+
 
         .scoreboard {
             width: 100%;
@@ -497,7 +507,6 @@
             height: max-content;
             margin-top: 20px;
             padding: 10px;
-            border-top: 1px solid var(--border-color);
             border-radius: 10px 10px 0 0;
             transition: var(--transition);
         }
@@ -901,7 +910,6 @@
             padding: 25px;
             gap: 20px;
             background-color: var(--background);
-            border-radius: 0 0 15px 15px;
             transition: var(--transition);
         }
 
@@ -1059,55 +1067,7 @@
         }
 
         @media (min-width: 601px) {
-            .undo-btn:hover, .super-over-btn:hover {
-                background: var(--primary-dark);
-                transform: translateY(-2px);
-            }
-
-            .undo:hover {
-                background-color: var(--primary-color);
-                color: white;
-                transform: translateY(-3px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-
-            .team1-info:hover, .team2-info:hover {
-                background-color: var(--primary-transparent);
-                transform: scale(1.05);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-
-            .player-replace:hover {
-                background-color: var(--light-bg);
-                transform: translateX(5px);
-                border-left: 3px solid var(--primary-color);
-            }
-
-            .raider:hover {
-                background-color: var(--primary-color);
-                color: white;
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            }
-
-            .serve:hover {
-                background-color: var(--primary-dark);
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            }
-
-            .team-button:hover {
-                background-color: var(--primary-color);
-                color: white;
-                transform: translateY(-3px);
-                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-            }
-
-            .score-point:hover, .score-point2:hover {
-                background-color: var(--primary-light);
-                color: white;
-                transform: scale(1.05);
-            }
+            
 
             .team-data {
                 display: flex;
@@ -1141,10 +1101,7 @@
                 font-size: 2rem;
             }
             
-            .exit:hover {
-                background-color: var(--primary-color);
-                color: white;
-            }
+            
         }
 
         @media (max-width: 600px) {
@@ -1167,7 +1124,6 @@
             }
             
             .container2 {
-                height: 600px;
                 width: 100%;
             }
         }
@@ -1243,11 +1199,11 @@
 
             <div class="for-exit">
                 <div class="exit" onclick="end_halfs()">
-                    <div class="for-icon1">
+                    <!-- <div class="for-icon1">
                         <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M6.36196 6.62029L11.672 1.04729C11.7606 0.954302 11.8101 0.830761 11.8101 0.70229C11.8101 0.573819 11.7606 0.450279 11.672 0.357291L11.666 0.35129C11.623 0.306055 11.5713 0.270036 11.5139 0.245422C11.4566 0.220808 11.3949 0.208115 11.3325 0.208115C11.2701 0.208115 11.2083 0.220808 11.151 0.245422C11.0937 0.270036 11.0419 0.306055 10.999 0.35129L5.99896 5.59929L1.00096 0.35129C0.95799 0.306055 0.906263 0.270036 0.84893 0.245422C0.791597 0.220808 0.729857 0.208115 0.667463 0.208115C0.60507 0.208115 0.543329 0.220808 0.485996 0.245422C0.428663 0.270036 0.376937 0.306055 0.333963 0.35129L0.327963 0.357291C0.239318 0.450279 0.189867 0.573819 0.189867 0.70229C0.189867 0.830761 0.239318 0.954302 0.327963 1.04729L5.63796 6.62029C5.68466 6.6693 5.74082 6.70832 5.80305 6.73498C5.86528 6.76164 5.93227 6.77539 5.99996 6.77539C6.06766 6.77539 6.13465 6.76164 6.19688 6.73498C6.2591 6.70832 6.31527 6.6693 6.36196 6.62029Z" fill="#F83900"/>
                         </svg>
-                    </div>
+                    </div> -->
                     <div class="exit-text">
                     <?php
                         echo 'End Half '. $current_half;
@@ -1668,7 +1624,7 @@
                 player.addEventListener('click', (el) => {
                     goToSlide(1);
                     getplayername(player);
-                    player.style.backgroundColor = "var(--text-color)";
+                    // player.style.backgroundColor = "var(--text-color)";
                     raider=player.innerText;
                 })
             });
@@ -1678,7 +1634,6 @@
             }
 
             
-            // Drag to dismiss
             let startY = 0;
             const threshold = 60;
 
@@ -1705,6 +1660,8 @@
                 }
             });
 
+
+
             // let score_point = () => {
                 scorepoint.forEach(selector => {
                     selector.addEventListener("click", () => {
@@ -1719,8 +1676,6 @@
 
 
                             selector.style.border = "2px solid var(--text-color)";
-                            selector.style.backgroundColor = "var(--text-color)";
-                            selector.style.color = "var(--background)";
                             cancelRaidTimer();
                          
                         }
@@ -1742,8 +1697,6 @@
 
 
                             selector.style.border = "2px solid var(--text-color)";
-                            selector.style.backgroundColor = "var(--text-color)";
-                            selector.style.color = "var(--background)";
                             cancelRaidTimer();
 
                         
@@ -1763,8 +1716,6 @@
                     }, 300);
                      raid_tech_point = parseInt(el.textContent);
                             el.style.border = "2px solid var(--text-color)";
-                            el.style.backgroundColor = "var(--text-color)";
-                            el.style.color = "var(--background)";
                             cancelRaidTimer();
                 }
 
@@ -1781,8 +1732,6 @@
                     }, 300);
                     def_tech_point = parseInt(el.textContent);
                             el.style.border = "2px solid var(--text-color)";
-                            el.style.backgroundColor = "var(--text-color)";
-                            el.style.color = "var(--background)";
                             cancelRaidTimer();
 
 
@@ -1875,8 +1824,23 @@
             }
         }
 
+        // Click outside to dismiss feature
+document.addEventListener('click', (e) => {
+
+    // If the slide-out container is currently visible
+    const isOpen = slideWrapper.style.transform !== 'translateY(600px)';
+
+    // Check if the clicked element is *NOT* inside the slide wrapper
+    if (isOpen && !slideWrapper.contains(e.target) && !raiderBtn.contains(e.target)) {
+        slideWrapper.style.transition = 'transform 0.5s ease';
+        slideWrapper.style.transform = 'translateY(600px)';
+        cancelRaidTimer(); // optional if you want timer to stop when dismissed
+    }
+
+});
+
         // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  //document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

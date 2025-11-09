@@ -89,7 +89,7 @@
         justify-content: center;
         flex-wrap: wrap;
         flex-direction: column;
-        background-color: var(--bg-light);
+        background-color: var(--card-bg);
         color: var(--text-dark);
         line-height: 1.5;
     }
@@ -97,7 +97,6 @@
     .container {
         display: flex;
         background-color: var(--card-bg);
-        box-shadow: var(--shadow-lg);
         position: relative;
         width: 100%;
         max-width: 1200px;
@@ -496,7 +495,7 @@
                             <div class="error" id="error-empty"></div> 
                         </div>
                     </div>
-                    <div class="info">
+                    <!-- <div class="info">
                         <label for="">Enter match format</label>
                         <div class="sector rules">
 
@@ -506,7 +505,7 @@
                             </div>
                         </div>
                         <div class="error" id="error-data_empty"></div>
-                    </div>
+                    </div> -->
                     <div class="add-btn">
                         <button onclick="start_match(event)" type="submit" id="start-match">Let’s Start</button>
                     </div>
@@ -558,13 +557,13 @@
 
         let start_match = (e) => {
             e.preventDefault();
-            let halves = document.querySelector('#points');
+            let halves = 2;
 
             let formdata = new FormData();
             formdata.append('match_id', match_id);
             formdata.append('selectedteam', selectedteam);
             formdata.append('selecteddecision', selecteddecision);
-            formdata.append('halves', halves.value);
+            formdata.append('halves', halves);
 
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
