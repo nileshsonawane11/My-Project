@@ -381,6 +381,38 @@
     .rule:first-child{
         box-shadow: none;
     }
+    .match-frame{
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: bottom 0.8s ease;
+            z-index: 999;
+        }
+        .match-frame.active{
+            bottom: 0;
+        }
+    .seperator{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+    .select_players{
+        padding: 10px;
+        border-radius: 15px;
+        border: 1px solid black;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    .select_players.active{
+        background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+        color: #fff;
+        border: none;
+    }
     
     @media (min-width: 601px) {
         
@@ -434,27 +466,33 @@
                     <div class="info">
                         <label for="">Who won the toss?</label>
                         <div class="sector team">
-                            <div class="teams" data-value="<?php echo $row['team1']; ?>">
-                                <?php
-                                    if (empty($row['team1_logo'])) {
-                                        echo '<div class="logo"></div>';
-                                    } else {
-                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team1_logo']}\" alt=\"\"></div>";
-                                    }
+                            <div class="seperator">
+                                <div class="teams" data-value="<?php echo $row['team1']; ?>">
+                                    <?php
+                                        if (empty($row['team1_logo'])) {
+                                            echo '<div class="logo"></div>';
+                                        } else {
+                                            echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team1_logo']}\" alt=\"\"></div>";
+                                        }
 
-                                ?>
-                                <div class="tname"><?php echo $row['team1_name']; ?></div>
+                                    ?>
+                                    <div class="tname"><?php echo $row['team1_name']; ?></div>
+                                </div>
+                                <div class="select_players" data-value="<?php echo $row['team1']; ?>">Select Squad</div>
                             </div>
-                            <div class="teams" data-value="<?php echo $row['team2']; ?>">
-                                <?php
-                                    if (empty($row['team2_logo'])) {
-                                        echo '<div class="logo"></div>';
-                                    } else {
-                                        echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team2_logo']}\" alt=\"\"></div>";
-                                    }
+                            <div class="seperator">
+                                <div class="teams" data-value="<?php echo $row['team2']; ?>">
+                                    <?php
+                                        if (empty($row['team2_logo'])) {
+                                            echo '<div class="logo"></div>';
+                                        } else {
+                                            echo "<div class=\"logo\"><img src=\"../../assets/images/teams/{$row['team2_logo']}\" alt=\"\"></div>";
+                                        }
 
-                                ?>
-                                <div class="tname"><?php echo $row['team2_name'] ?></div>
+                                    ?>
+                                    <div class="tname"><?php echo $row['team2_name'] ?></div>
+                                </div>
+                                <div class="select_players" data-value="<?php echo $row['team2']; ?>">Select Squad</div>
                             </div>
                         </div>
                         <div class="error" id="error-team"></div>
@@ -528,11 +566,18 @@
             </div>
         </div>
     </div>
+    <iframe src="./select_playings.php?team=''&match=''" frameborder="0" class="match-frame"></iframe>
     <script>
         const teams = document.querySelectorAll('.teams');
         const options = document.querySelectorAll('.options');
+        const select_players_team = document.querySelectorAll('.select_players');
+        let next_page = document.querySelector('.match-frame');
+        const urlParams = new URLSearchParams(window.location.search);
+        const match = urlParams.get('match_id');
         let selecteddecision = '';
         let selectedteam = '';
+        let team1_players = '';
+        let team2_players = '';
 
         let goBack = ()=>{
             window.history.back();
@@ -568,6 +613,42 @@
             });
         });
 
+        select_players_team.forEach((e)=>{
+            e.addEventListener('click',(target)=>{
+                team = e.getAttribute('data-value');
+                if(team){
+                    next_page.src = './select_playings.php?team='+team+'&match='+match;
+                    next_page.classList.add('active');
+                }
+            })
+        })
+    
+
+        window.addEventListener("message", (event) => {
+            if (event.data === "closeIframe") {
+                next_page.classList.remove('active');
+            }
+
+            if(event.data === "gotohome"){
+                window.location.href = '../dashboard.php?update=live&sport=CRICKET';
+            }
+
+             if(event.data.team && event.data.data){
+                let team1 = select_players_team[0].getAttribute('data-value');
+                let team2 = select_players_team[1].getAttribute('data-value');
+                if(event.data.team == team1){
+                    team1_players = event.data.data;
+                    select_players_team[0].classList.add('active');
+                    select_players_team[0].innerText = 'Squad Selected';
+                }else if(event.data.team == team2){
+                    team2_players = event.data.data;
+                    select_players_team[1].classList.add('active');
+                    select_players_team[1].innerText = 'Squad Selected';
+                }
+            }
+
+        });
+
         let start_match = (e) => {
             e.preventDefault();
             const iswide = document.querySelector('.iswide').checked;
@@ -583,6 +664,8 @@
             formdata.append('isfreehit', isfreehit);
             formdata.append('issuperover', issuperover);
             formdata.append('overs', overs);
+            formdata.append('team1_players', team1_players);
+            formdata.append('team2_players', team2_players);
 
             document.querySelectorAll('[id^="error-"]').forEach((el) => {
                 el.innerHTML = '';

@@ -8,6 +8,8 @@ $isfreehit = $_POST['isfreehit'];
 $iswide = $_POST['iswide'];
 $issuperover = $_POST['issuperover'];
 $overs = $_POST['overs'];
+$team1_players = $_POST['team1_players'];
+$team2_players = $_POST['team2_players'];
 
 $match_id = $_POST['match_id'];
 $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE `match_id` = '$match_id'"));
@@ -26,6 +28,8 @@ $score_log = [
   "match_id" => $match_id,
   "team1" => $row['team_1'],
   "team2" => $row['team_2'],
+  "team1_players" => $team1_players,
+  "team2_players" => $team2_players,
   "team1_score" => null,
   "team2_score" => null,
   "team1_Wickets" => null,
@@ -156,6 +160,11 @@ if(empty($selecteddecision)){
 
 if(empty($selectedteam)){
     echo json_encode(['status'=>409,'message'=>'Please select Team','field'=>'team']);
+    exit();
+}
+
+if(empty($team1_players) || empty($team2_players)){
+    echo json_encode(['status'=>409,'message'=>'Select Playing 11s','field'=>'team']);
     exit();
 }
 

@@ -572,10 +572,10 @@ if (isset($score_log['innings'][$current_inning]) && $for !== 'Bowler' && !$is_s
                 <?php
                     $sql = "SELECT * FROM teams t JOIN sports s ON t.t_sport = s.sport_name WHERE t_id = '$team'";
                     $query = mysqli_query($conn, $sql);
-                    $row = mysqli_fetch_assoc($query);
+                    $row1 = mysqli_fetch_assoc($query);
                     $src = '';
-                    if($row['t_logo']){
-                        $src = "../../assets/images/teams/".$row['t_logo'];
+                    if($row1['t_logo']){
+                        $src = "../../assets/images/teams/".$row1['t_logo'];
                     }else{
                         $src = "https://cdn-icons-png.flaticon.com/512/8140/8140303.png";
                     }
@@ -586,15 +586,15 @@ if (isset($score_log['innings'][$current_inning]) && $for !== 'Bowler' && !$is_s
                             <img src="<?php echo $src; ?>" alt="">
                         </div>
                         <div class="logo-info">
-                            <h4><?php echo $row['t_name']; ?></h4>
+                            <h4><?php echo $row1['t_name']; ?></h4>
                             <div class="other-info">
                                 <label for="coordinator" class=""><svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3.72933 4.52067V2.93734C3.72933 2.57347 3.801 2.21316 3.94025 1.87699C4.07949 1.54081 4.28359 1.23536 4.54089 0.978062C4.79818 0.720766 5.10364 0.516669 5.43981 0.377421C5.77598 0.238174 6.13629 0.166504 6.50016 0.166504C6.86403 0.166504 7.22434 0.238174 7.56051 0.377421C7.89669 0.516669 8.20214 0.720766 8.45944 0.978062C8.71673 1.23536 8.92083 1.54081 9.06008 1.87699C9.19933 2.21316 9.271 2.57347 9.271 2.93734V4.52067C9.271 5.46275 8.80154 6.294 8.0835 6.79513V7.54721C8.0836 7.70541 8.13109 7.85994 8.21984 7.99089C8.3086 8.12184 8.43455 8.22319 8.58145 8.28188L9.83704 8.78459C10.488 9.04491 11.0459 9.49435 11.439 10.0749C11.832 10.6554 12.0419 11.3404 12.0418 12.0415H0.958496C0.958378 11.3404 1.16837 10.6554 1.56138 10.0749C1.95438 9.49435 2.51235 9.04491 3.16329 8.78459L4.41887 8.28188C4.56577 8.22319 4.69173 8.12184 4.78048 7.99089C4.86924 7.85994 4.91673 7.70541 4.91683 7.54721V6.79513C4.55019 6.53983 4.25072 6.19967 4.04395 5.80363C3.83718 5.4076 3.72924 4.96744 3.72933 4.52067Z" fill="black"/>
-                                </svg><?php echo $row['t_coordinatorName']; ?>
+                                </svg><?php echo $row1['t_coordinatorName']; ?>
                                 </label>
                                 <label for="place" class=""><svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M5.49984 0.416504C2.75859 0.416504 0.541504 2.63359 0.541504 5.37484C0.541504 9.09359 5.49984 14.5832 5.49984 14.5832C5.49984 14.5832 10.4582 9.09359 10.4582 5.37484C10.4582 2.63359 8.24109 0.416504 5.49984 0.416504ZM5.49984 7.14567C5.03018 7.14567 4.57976 6.9591 4.24767 6.62701C3.91557 6.29491 3.729 5.84449 3.729 5.37484C3.729 4.90518 3.91557 4.45476 4.24767 4.12267C4.57976 3.79057 5.03018 3.604 5.49984 3.604C5.96949 3.604 6.41991 3.79057 6.75201 4.12267C7.0841 4.45476 7.27067 4.90518 7.27067 5.37484C7.27067 5.84449 7.0841 6.29491 6.75201 6.62701C6.41991 6.9591 5.96949 7.14567 5.49984 7.14567Z" fill="black"/>
-                                </svg><?php echo $row['t_city']; ?>
+                                </svg><?php echo $row1['t_city']; ?>
                                 </label>
                             </div>
                         </div>
@@ -612,73 +612,81 @@ if (isset($score_log['innings'][$current_inning]) && $for !== 'Bowler' && !$is_s
                 <div class="mem-list">
                     <?php
                         $result = mysqli_query($conn,"SELECT * FROM `players` WHERE `team_id` = '$team'");
+                        $playing_squad = [];
                         $count = 0;
+                        if($team == $row['team_1']){
+                            $playing_squad = explode(',',$score_log['team1_players']);
+                        }else if($team == $row['team_2']){
+                            $playing_squad = explode(',',$score_log['team2_players']);
+                        }
                     ?>
-                    <h4 class="mem-head">Players (<?php echo mysqli_num_rows($result);?>)</h4>
+                    <h4 class="mem-head">Players (<?php echo count($playing_squad);?>)</h4>
                     <div class="player-container">
 
                     <?php
                         while($row2 = mysqli_fetch_assoc($result)) {
                         $user_id = $row2['user_id'];
+                        if(in_array($user_id,$playing_squad)){
                         
-                        // Try to get from users table first
-                        $user_query = mysqli_query($conn, "SELECT * FROM `users` WHERE `user_id` = '$user_id'");
-                        $user_data = mysqli_fetch_assoc($user_query);
-                        
-                        // If not found in users table, try players table
-                        if(!$user_data) {
-                            $player_query = mysqli_query($conn, "SELECT * FROM `players` WHERE `user_id` = '$user_id'");
-                            $player_data = mysqli_fetch_assoc($player_query);
+                            // Try to get from users table first
+                            $user_query = mysqli_query($conn, "SELECT * FROM `users` WHERE `user_id` = '$user_id'");
+                            $user_data = mysqli_fetch_assoc($user_query);
                             
-                            if($player_data) {
-                                // Map player data to expected format
-                                $row = [
-                                    'fname' => $player_data['player_name'] ? explode(' ', $player_data['player_name'])[0] : 'Player',
-                                    'lname' => $player_data['player_name'] ? (explode(' ', $player_data['player_name'])[1] ?? '') : '',
-                                    'user_photo' => $player_data['photo']
-                                ];
+                            // If not found in users table, try players table
+                            if(!$user_data) {
+                                $player_query = mysqli_query($conn, "SELECT * FROM `players` WHERE `user_id` = '$user_id'");
+                                $player_data = mysqli_fetch_assoc($player_query);
+                                
+                                if($player_data) {
+                                    // Map player data to expected format
+                                    $row = [
+                                        'fname' => $player_data['player_name'] ? explode(' ', $player_data['player_name'])[0] : 'Player',
+                                        'lname' => $player_data['player_name'] ? (explode(' ', $player_data['player_name'])[1] ?? '') : '',
+                                        'user_photo' => $player_data['photo']
+                                    ];
+                                } else {
+                                    // Player not found in either table - use defaults
+                                    $row = [
+                                        'fname' => 'Unknown',
+                                        'lname' => 'Player',
+                                        'user_photo' => null
+                                    ];
+                                }
                             } else {
-                                // Player not found in either table - use defaults
+                                // User found in users table
                                 $row = [
-                                    'fname' => 'Unknown',
-                                    'lname' => 'Player',
-                                    'user_photo' => null
+                                    'fname' => $user_data['fname'],
+                                    'lname' => $user_data['lname'],
+                                    'user_photo' => $user_data['user_photo']
                                 ];
                             }
-                        } else {
-                            // User found in users table
-                            $row = [
-                                'fname' => $user_data['fname'],
-                                'lname' => $user_data['lname'],
-                                'user_photo' => $user_data['user_photo']
-                            ];
+                            
+                            // Handle photo source
+                            if(!empty($row['user_photo'])) {
+                                $src = "../../assets/images/users/".$row['user_photo'];
+                            } else {
+                                $src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+                            }
+                            
+                            $count++;
+                            $player = "
+                                <div class='mem' data-value='$user_id' src='$src'>
+                                    <div class='player-detail'>
+                                        $count
+                                        <div class='mem-img'><img src='$src' alt='' class='mem-img'></div>
+                                        <div class='mem-name'>{$row['fname']} {$row['lname']}</div>
+                                    </div>
+                                    <div>
+                                        <p class='reason'></p>
+                                    </div>
+                                    <div class='done-dtn'>
+                                        <button class='done'>Done</button>
+                                    </div>
+                                </div>
+                            ";
+                            
+                            echo $player;
                         }
-                        
-                        // Handle photo source
-                        if(!empty($row['user_photo'])) {
-                            $src = "../../assets/images/users/".$row['user_photo'];
-                        } else {
-                            $src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
-                        }
-                        
-                        $count++;
-                        $player = "
-                            <div class='mem' data-value='$user_id' src='$src'>
-                                <div class='player-detail'>
-                                    $count
-                                    <div class='mem-img'><img src='$src' alt='' class='mem-img'></div>
-                                    <div class='mem-name'>{$row['fname']} {$row['lname']}</div>
-                                </div>
-                                <div>
-                                    <p class='reason'></p>
-                                </div>
-                                <div class='done-dtn'>
-                                    <button class='done'>Done</button>
-                                </div>
-                            </div>
-                        ";
-                        
-                        echo $player;
                     }
                     ?>
                         

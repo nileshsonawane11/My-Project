@@ -1707,12 +1707,11 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
 
         //open menubar
         let open_dropdown = () => {
-            if (!verifyPlayers()) return;
+            // if (!verifyPlayers()) return;
             dropdown.classList.toggle('active');
             setTimeout(() => {
                 opacity.style.display = 'block';
             }, 100);
-            
         }
 
         //prevent from refesh page
