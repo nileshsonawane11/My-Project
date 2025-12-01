@@ -36,6 +36,8 @@ function generateStars($avg) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - LiveStrike</title>
+    <meta name="google-adsense-account" content="ca-pub-4540243680881407">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4540243680881407" crossorigin="anonymous"></script>
 <style>
     * {
         margin: 0;

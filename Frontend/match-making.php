@@ -493,228 +493,171 @@
                             }
                         }
                     } else if ($format == 'knockout') {
-    echo "<h2>Knockout Matches</h2>";
-    $roundNo = 1;
-    $matchCounter = 1;
-    $semiCounter = 1;
-    $matches = []; // ✅ store all matches here
 
+    echo "<h2>Knockout Matches</h2>";
+    $matches = [];
     $totalTeams = count($teams);
 
-    // 🔹 Helper function to get team row
+    // helper: fetch team row
     function getTeamRow($conn, $team) {
         return mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM teams WHERE t_id='$team' OR t_name='$team' LIMIT 1"));
     }
 
-    // ⚙️ CASE 1: Exactly 3 teams
-    if ($totalTeams == 3) {
-        echo "<h3>⚔️ Semifinals</h3>";
-        $team1 = $teams[1];
-        $team2 = $teams[2];
-        $byeTeam = $teams[0];
+    if ($totalTeams < 2) {
+        echo "<div class='match-container'><div class='tname'>Not enough teams to create a knockout bracket.</div></div>";
+    } else {
 
-        $team1_row = getTeamRow($conn, $team1);
-        $team2_row = getTeamRow($conn, $team2);
-        $bye_row = getTeamRow($conn, $byeTeam);
+        // ------------------------------------------------
+        // STEP 1: Next Power of 2 + BYEs
+        // ------------------------------------------------
+        $nextPow = 1;
+        while ($nextPow < $totalTeams) $nextPow <<= 1;
+        $byesNeeded = $nextPow - $totalTeams;
 
-        // Semifinal 1
-        echo '
-        <div class="match-container">
-            <h4 class="match-head">Semifinal 1</h4>
-            <div class="team-container">
-                <div class="teams left-side">
-                    ' . (!empty($team1_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team1_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                    <div class="tname">'.$team1_row['t_name'].'</div>
-                </div>
-                <label class="vs">VS</label>
-                <div class="teams right-side">
-                    ' . (!empty($team2_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team2_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                    <div class="tname">'.$team2_row['t_name'].'</div>
-                </div>
-            </div>
-        </div>';
+        $byeTeams = array_slice($teams, 0, $byesNeeded);
+        $qualifyingTeams = array_slice($teams, $byesNeeded);
 
-        // Add to $matches
-        $matches[] = [
-            'round' => $roundNo,
-            'match_no' => 'Semifinal 1',
-            'team1' => $team1,
-            'team2' => $team2
-        ];
+        echo "<div class='match-container'><div class='tname'>Total Teams: <strong>$totalTeams</strong></div>";
+        echo "<div class='tname'>Next Power of 2: <strong>$nextPow</strong> — BYEs needed: <strong>$byesNeeded</strong></div></div>";
 
-        // Bye
-        echo '
-        <div class="match-container">
-            <h4 class="match-head">BYE</h4>
-            <div class="team-container">
-                <div class="teams left-side">
-                    ' . (!empty($bye_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$bye_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                    <div class="tname">'.$bye_row['t_name'].'</div>
-                </div>
-                <label class="vs">VS</label>
-                <div class="teams right-side"><div class="logo"></div><div class="tname">BYE</div></div>
-            </div>
-        </div>';
-
-
-        // Final
-        echo "<h3>🏆 Final</h3>";
-        echo '
-        <div class="match-container">
-            <h4 class="match-head">Final</h4>
-            <div class="team-container">
-                <div class="teams left-side"><div class="logo"></div><div class="tname">Winner of Semifinal 1</div></div>
-                <label class="vs">VS</label>
-                <div class="teams right-side"><div class="logo"></div><div class="tname">'.$bye_row['t_name'].'</div></div>
-            </div>
-        </div>';
-    }
-
-    // ⚙️ CASE 2: 4–6 teams
-    elseif ($totalTeams == 5 || $totalTeams == 6) {
-        echo "<h3>Round 1</h3>";
-
-        if ($totalTeams == 5) {
-            $matchesRound1 = [[$teams[3], $teams[4]]];
-            $byeTeams = array_slice($teams, 0, 3);
-        } else {
-            $matchesRound1 = [[$teams[4], $teams[5]], [$teams[2], $teams[3]]];
-            $byeTeams = array_slice($teams, 0, 2);
-        }
-
-        $matchNo = 1;
-        foreach ($matchesRound1 as $m) {
-            $team1_row = getTeamRow($conn, $m[0]);
-            $team2_row = getTeamRow($conn, $m[1]);
-            echo '
-            <div class="match-container">
-                <h4 class="match-head">Match '.$matchNo.'</h4>
-                <div class="team-container">
-                    <div class="teams left-side">' . (!empty($team1_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team1_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                        <div class="tname">'.$team1_row['t_name'].'</div></div>
-                    <label class="vs">VS</label>
-                    <div class="teams right-side">' . (!empty($team2_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team2_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                        <div class="tname">'.$team2_row['t_name'].'</div></div>
-                </div>
-            </div>';
-            
-            // Add to matches array
-            $matches[] = [
-                'round' => 1,
-                'match_no' => 'Match '.$matchNo++,
-                'team1' => $m[0],
-                'team2' => $m[1]
-            ];
-        }
-
-        foreach ($byeTeams as $bt) {
-            $bye_row = getTeamRow($conn, $bt);
-            echo '
-            <div class="match-container">
-                <h4 class="match-head">BYE</h4>
-                <div class="team-container">
-                    <div class="teams left-side">' . (!empty($bye_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$bye_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                        <div class="tname">'.$bye_row['t_name'].'</div></div>
-                    <label class="vs">VS</label>
-                    <div class="teams right-side"><div class="logo"></div><div class="tname">BYE</div></div>
-                </div>
-            </div>';
-
-        }
-
-        // Semifinals
-        echo "<h3>⚔️ Semifinals</h3>";
-        $semiPairs = ($totalTeams == 5)
-            ? [[$teams[0], $teams[1]], [$teams[2], "Winner of Match 1"]]
-            : [[$teams[0], "Winner of Match 1"], [$teams[1], "Winner of Match 2"]];
-
-        $semiNo = 1;
-        foreach ($semiPairs as $s) {
-            $team1_row = getTeamRow($conn, $s[0]);
-            $team2_row = getTeamRow($conn, $s[1]);
-            echo '
-            <div class="match-container">
-                <h4 class="match-head">Semifinal '.$semiNo.'</h4>
-                <div class="team-container">
-                    <div class="teams left-side">' . (!empty($team1_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team1_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                        <div class="tname">'.($team1_row['t_name'] ?? $s[0]).'</div></div>
-                    <label class="vs">VS</label>
-                    <div class="teams right-side">' . (!empty($team2_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team2_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                        <div class="tname">'.($team2_row['t_name'] ?? $s[1]).'</div></div>
-                </div>
-            </div>';
-            $semiNo++;
-        }
-
-        echo "<h3>🏆 Final</h3>";
-        echo '
-        <div class="match-container">
-            <h4 class="match-head">Final</h4>
-            <div class="team-container">
-                <div class="teams left-side"><div class="logo"></div><div class="tname">Winner of Semifinal 1</div></div>
-                <label class="vs">VS</label>
-                <div class="teams right-side"><div class="logo"></div><div class="tname">Winner of Semifinal 2</div></div>
-            </div>
-        </div>';
-    }
-
-    // ⚙️ CASE 3: 7 or more teams
-    else {
-        while (count($teams) > 1) {
-
-            // Add BYE to make teams even (except semifinal)
-            if (count($teams) % 2 != 0 && count($teams) > 4) {
-                $teams[] = "BYE";
+        if (!empty($byeTeams)) {
+            echo "<h3>BYEs (advance to next round)</h3>";
+            foreach ($byeTeams as $bt) {
+                $br = getTeamRow($conn, $bt);
+                echo "<div class='match-container'><div class='team-container'>
+                        <div class='teams left-side'>" 
+                        . (!empty($br['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$br['t_logo'].'"></div>' : '<div class="logo"></div>') .
+                        '<div class="tname">'.($br['t_name'] ?? $bt).'</div></div>
+                        <label class="vs">VS</label>
+                        <div class="teams right-side"><div class="logo"></div><div class="tname">BYE</div></div>
+                    </div></div>';
             }
+        }
 
-            if (count($teams) == 2) echo "<h3>🏆 Final</h3>";
-            elseif (count($teams) == 4) echo "<h3>⚔️ Semifinals</h3>";
-            else echo "<h3>Round $roundNo</h3>";
+        // ------------------------------------------------
+        // STEP 2: Round 1 (Qualifiers)
+        // ------------------------------------------------
+        $round = 1;
+        $matchCounter = 1;  // RESET EVERY ROUND
+        $currentRoundTeams = [];
 
+        if (!empty($qualifyingTeams)) {
+            echo "<h3>Round $round (Qualifiers)</h3>";
+            $qTeams = array_values($qualifyingTeams);
+
+            for ($i = 0; $i < count($qTeams); $i += 2) {
+
+                $t1 = $qTeams[$i];
+                $t2 = $qTeams[$i+1] ?? "BYE";
+
+                $t1_row = ($t1 !== "BYE") ? getTeamRow($conn, $t1) : null;
+                $t2_row = ($t2 !== "BYE") ? getTeamRow($conn, $t2) : null;
+
+                echo '
+                <div class="match-container">
+                    <h4 class="match-head">Match '.$matchCounter.'</h4>
+                    <div class="team-container">
+                        <div class="teams left-side">' 
+                            . (!empty($t1_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t1_row['t_logo'].'"></div>' : '<div class="logo"></div>')
+                            . '<div class="tname">'.($t1_row['t_name'] ?? $t1).'</div></div>
+                        <label class="vs">VS</label>
+                        <div class="teams right-side">'
+                            . (!empty($t2_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t2_row['t_logo'].'"></div>' : '<div class="logo"></div>')
+                            . '<div class="tname">'.($t2_row['t_name'] ?? $t2).'</div></div>
+                    </div>
+                </div>';
+
+                if ($t1 !== "BYE" && $t2 !== "BYE" && !preg_match('/^Winner of/i', $t1) && !preg_match('/^Winner of/i', $t2)) {
+                    $matches[] = [
+                        'round' => $round,
+                        'match_no' => "Match $matchCounter",
+                        'team1' => $t1,
+                        'team2' => $t2
+                    ];
+                }
+
+                if ($t1 === "BYE") $currentRoundTeams[] = $t2;
+                elseif ($t2 === "BYE") $currentRoundTeams[] = $t1;
+                else $currentRoundTeams[] = "Winner of Match $matchCounter";
+
+                $matchCounter++;
+            }
+        }
+
+        // Add BYE teams directly into next round
+        foreach ($byeTeams as $bt) $currentRoundTeams[] = $bt;
+
+        // ------------------------------------------------
+        // STEP 3: NEXT ROUNDS (Match numbers reset EVERY ROUND)
+        // ------------------------------------------------
+        $round++;
+
+        while (count($currentRoundTeams) > 1) {
+
+            $numTeams = count($currentRoundTeams);
+
+            $label = ($numTeams == 2) ? "Final" :
+                    (($numTeams == 4) ? "Semifinals" : "Round $round");
+
+            echo "<h3>" 
+                . (($label == "Final") ? "🏆 Final" : (($label == "Semifinals") ? "⚔️ Semifinals" : $label)) 
+                . "</h3>";
+
+            $matchCounter = 1;  // RESET FOR NEW ROUND
             $nextRoundTeams = [];
-            for ($i = 0; $i < count($teams); $i += 2) {
-                $team1 = $teams[$i];
-                $team2 = $teams[$i + 1] ?? "BYE";
 
-                $team1_row = ($team1 != "BYE") ? getTeamRow($conn, $team1) : null;
-                $team2_row = ($team2 != "BYE") ? getTeamRow($conn, $team2) : null;
+            for ($i = 0; $i < $numTeams; $i += 2) {
 
-                $matchTitle = (count($teams) == 4) ? "Semifinal " . ($semiCounter++) :
-                              ((count($teams) == 2) ? "Final" : "Match " . ($matchCounter++));
+                $t1 = $currentRoundTeams[$i];
+                $t2 = $currentRoundTeams[$i+1] ?? "BYE";
+
+                $t1_row = (!preg_match('/^Winner of/i', $t1) && $t1 !== "BYE") ? getTeamRow($conn, $t1) : null;
+                $t2_row = (!preg_match('/^Winner of/i', $t2) && $t2 !== "BYE") ? getTeamRow($conn, $t2) : null;
+
+                $disp1 = ($t1 === "BYE") ? "BYE" : ($t1_row['t_name'] ?? $t1);
+                $disp2 = ($t2 === "BYE") ? "BYE" : ($t2_row['t_name'] ?? $t2);
+
+                if ($label == "Final") {
+                    $matchTitle = "Final";
+                }
+                else if ($label == "Semifinals") {
+                    $matchTitle = "Semifinal " . $matchCounter;
+                }
+                else {
+                    $matchTitle = "Match " . $matchCounter;
+                }
 
                 echo '
                 <div class="match-container">
                     <h4 class="match-head">'.$matchTitle.'</h4>
                     <div class="team-container">
-                        <div class="teams left-side">' . (!empty($team1_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team1_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                            <div class="tname">'.($team1_row['t_name'] ?? $team1).'</div></div>
+                        <div class="teams left-side">' 
+                            . (!empty($t1_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t1_row['t_logo'].'"></div>' : '<div class="logo"></div>')
+                            . '<div class="tname">'.$disp1.'</div></div>
                         <label class="vs">VS</label>
-                        <div class="teams right-side">' . (!empty($team2_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$team2_row['t_logo'].'" alt=""></div>' : '<div class="logo"></div>') . '
-                            <div class="tname">'.($team2_row['t_name'] ?? $team2).'</div></div>
+                        <div class="teams right-side">'
+                            . (!empty($t2_row['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t2_row['t_logo'].'"></div>' : '<div class="logo"></div>')
+                            . '<div class="tname">'.$disp2.'</div></div>
                     </div>
                 </div>';
 
-                // Add match info to array (except semifinal)
-                if ($team1 != "BYE" && $team2 != "BYE" && 
-    stripos($team1, "Winner of") === false && 
-    stripos($team2, "Winner of") === false) {
 
-    $matches[] = [
-        'round' => $roundNo,
-        'match_no' => $matchTitle,
-        'team1' => $team1,
-        'team2' => $team2
-    ];
-}
-
-                // Determine who advances
-                if ($team1 == "BYE") $nextRoundTeams[] = $team2;
-                elseif ($team2 == "BYE") $nextRoundTeams[] = $team1;
+                if ($t1 === "BYE") $nextRoundTeams[] = $t2;
+                elseif ($t2 === "BYE") $nextRoundTeams[] = $t1;
                 else $nextRoundTeams[] = "Winner of $matchTitle";
+
+                $matchCounter++;
             }
 
-            $teams = $nextRoundTeams;
-            $roundNo++;
+            $currentRoundTeams = $nextRoundTeams;
+            $round++;
+        }
+
+        // ------------------------------------------------
+        // STEP 4: FINAL WINNER SLOT
+        // ------------------------------------------------
+        if (count($currentRoundTeams) === 1) {
+            echo '<div class="match-container"><div class="tname">Champion Slot: <strong>' . $currentRoundTeams[0] . '</strong></div></div>';
         }
     }
 }

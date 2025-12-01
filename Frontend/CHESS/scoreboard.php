@@ -76,6 +76,8 @@
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <title>Document</title>
+    <meta name="google-adsense-account" content="ca-pub-4540243680881407">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4540243680881407" crossorigin="anonymous"></script>
 </head>
 <style>
     *{

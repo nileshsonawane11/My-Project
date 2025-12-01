@@ -14,6 +14,9 @@ if (empty($match_id)) {
 }else{
     $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE match_id = '$match_id'"));
     $score_log = json_decode($row['score_log'] ?? '{}', true);
+    if(!$row){
+        echo "<script>window.history.back();</script>";
+    }
 }
 
     //detect current inning
@@ -160,6 +163,8 @@ if (!isset($_COOKIE[$cookie_name])) {
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="icon" type="image/png" href="../../assets/images/logo.png">
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <meta name="google-adsense-account" content="ca-pub-4540243680881407">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4540243680881407" crossorigin="anonymous"></script>
     <script>
         // Apply stored theme instantly before the page renders
         (function() {

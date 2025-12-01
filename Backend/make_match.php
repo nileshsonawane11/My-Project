@@ -18,7 +18,7 @@ $venue = $tournament['city'];
 foreach($matches as $match){
     $team1 = $match['team1'];
     $team2 = $match['team2'];
-    $match_name = $match['match_no'].' | '.$tournament['tournament_name'];
+    $match_name = $match['match_no'].' (1) | '.$tournament['tournament_name'];
 
     $input = uniqid(microtime(true) . bin2hex(random_bytes(5)). json_encode($match) . $date, true);
     $id = hash('sha256', $input);

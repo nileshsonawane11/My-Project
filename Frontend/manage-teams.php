@@ -474,7 +474,8 @@
             </div>
             <div>
                 <?php
-                if(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'add-tournament.php') !== false){
+                if((isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'add-tournament.php') !== false) ||
+                (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'tournament-info.php') !== false)){
                     echo "<div class='add-btn'>
                         <button onclick='save(event)' type='submit' id='save'>save</button>
                     </div>";
@@ -568,7 +569,7 @@
             let sport = urlParams.get('sport');
             document.querySelector('.game-container').style.display = 'none';
             loadgames(sport)
-       }else if(document.referrer.includes('add-tournament.php')){
+       }else if(document.referrer.includes('add-tournament.php') || document.referrer.includes('tournament-info.php')){
             let urlParams = new URLSearchParams(window.location.search);
             let sport = urlParams.get('sport');
             document.querySelector('.game-container').style.display = 'none';
@@ -712,7 +713,7 @@
                     // Redirect to modified URL
                     window.location.href = url.toString();
                 }
-            }else if (document.referrer.includes('add-tournament.php')) {
+            }else if (document.referrer.includes('add-tournament.php') || document.referrer.includes('tournament-info.php')) {
                 // Multi-selection logic for add-tournament
                 if (!selectedTeams.includes(teamID)) {
                     selectedTeams.push(teamID);

@@ -1,14 +1,14 @@
 <?php
     session_start();
-    if(!isset($_SESSION['user'])){
-        header('location: ./front-page.php');
-        exit();
-    }
+    // if(!isset($_SESSION['user'])){
+    //     header('location: ./front-page.php');
+    //     exit();
+    // }
 
-    if($_SESSION['role'] == "User"){
-        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
-        exit();
-    }
+    // if($_SESSION['role'] == "User"){
+    //     header('location: ../dashboard.php?update="live"&sport="CRICKET"');
+    //     exit();
+    // }
 
     include '../config.php';
 
@@ -40,6 +40,20 @@
         exit;
     }
 
+    $sportList = [
+        "CRICKET"         => 1,
+        "VOLLEYBALL"      => 2,
+        "KABADDI"         => 3,
+        "KHO-KHO"         => 4,
+        "FOOTBALL"        => 5,
+        "BADMINTON"       => 6,
+        "TABLE-TENNIS"    => 7,
+        "CHESS"           => 8,
+        "WEIGHT-LIFTING"  => 9,
+        "BASKETBALL"      => 10
+    ];
+    $sportList = array_flip($sportList);
+
     $format = $result['tournament_format'];
     $owner = $result['created_by'];
     $sport = $result['sport_id'];
@@ -53,6 +67,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tournament Details</title>
+    <meta name="google-adsense-account" content="ca-pub-4540243680881407">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4540243680881407" crossorigin="anonymous"></script>
     <style>
         * {
             margin: 0;
@@ -553,6 +569,10 @@
     flex-direction: column;
     gap: 20px;
     align-items: center;
+    margin: 15px 0;
+    padding: 15px;
+    border-radius: 15px;
+    background: #fff5eb;
 }
 
 .match-head {
@@ -566,6 +586,7 @@
     width: 100%;
     max-width: 500px;
     gap: 20px;
+    cursor:pointer;
 }
 
 .teams {
@@ -627,6 +648,10 @@
     transform: translate(0,0);
     transition: all 0.5s ease-in-out;
 }
+.m_heading{
+    text-align: center;
+    margin: 25px;
+}
 
 /* Responsive */
 @media (min-width:601px){
@@ -656,19 +681,20 @@
 <body>
     <div class="container">
         <div class="header">
+            <?php if(isset($_SESSION['user']) && $_SESSION['role'] != "User"){ ?>
             <div class="return">
                 <svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z"/>
                 </svg>
                 
-                    <?php 
+                    <?php
                         $sql = "SELECT * FROM matches WHERE tournament = '$tournament_id' ORDER BY match_name";
                         $query = mysqli_query($conn,$sql);
                         $count_matches = mysqli_num_rows($query);
                         if($count_matches == 0){
                     ?>
                         <div class="slots">
-                            <div class="make-slots">Make Slots</div>
+                            <a href="./manage-teams.php?sport=<?php echo $sportList[$sport];  ?>&tournament=<?php echo $tournament_id; ?>"><div class="make-slots">Make Slots</div></a>
                         </div>
                     <?php } ?>
                 
@@ -679,6 +705,7 @@
                     </svg>
                 </div>
             </div>
+            <?php } ?>
             <h2 style="text-align: center;">Tournament Details</h2>
             <p style="text-align: center; font-size: 1.2rem;">(<?php echo $result['tournament_name']; ?>)</p>
         </div>
@@ -686,178 +713,240 @@
         <!-- Teams Display -->
 <?php
 if ($format == 'knockout') {
-    echo "<h2>Knockout Matches</h2>";
 
-    // Fetch all teams
+    echo "<h2 class='m_heading'>Knockout Matches</h2>";
+
+    // FETCH TEAMS
     $teams = [];
-    $teamRes = mysqli_query($conn, "SELECT team_id FROM tournament_teams WHERE tournament_id='$tournament_id'");
-    while ($t = mysqli_fetch_assoc($teamRes)) $teams[] = $t['team_id'];
-
-    // Cache team details
-    $teamCache = [];
-    $teamDataRes = mysqli_query($conn, "SELECT * FROM teams");
-    while ($tr = mysqli_fetch_assoc($teamDataRes)) $teamCache[$tr['t_id']] = $tr;
-
-    // Fetch all existing matches
-    $matchesRes = mysqli_query($conn, "SELECT * FROM matches WHERE tournament='$tournament_id' ORDER BY round ASC, match_id ASC");
-    $allMatches = [];
-    while ($m = mysqli_fetch_assoc($matchesRes)) $allMatches[] = $m;
-
-    // Group by round
-    $matchesByRound = [];
-    foreach ($allMatches as $m) {
-        $matchesByRound[$m['round']][] = $m;
+    $teamQuery = mysqli_query($conn, "SELECT team_id FROM tournament_teams WHERE tournament_id='$tournament_id'");
+    while ($row = mysqli_fetch_assoc($teamQuery)) $teams[] = $row['team_id'];
+    $totalTeams = count($teams);
+    if ($totalTeams < 2) {
+        echo "<div class='match-container'><div class='tname'>Not enough teams to create bracket.</div></div>";
+        return;
     }
 
-    ksort($matchesByRound);
-    $roundNo = 1;
-    $totalRounds = ceil(log(count($teams), 2));
+    // TEAM CACHE
+    $teamCache = [];
+    $tq = mysqli_query($conn, "SELECT * FROM teams");
+    while ($tr = mysqli_fetch_assoc($tq)) $teamCache[$tr['t_id']] = $tr;
+    function getTeamName($team, $teamCache){ return $teamCache[$team]['t_name'] ?? ($team==="BYE"?"BYE":"TBD"); }
 
-    // ===== Main Tournament Loop =====
-    while (true) {
-        $roundMatches = $matchesByRound[$roundNo] ?? [];
-        $roundTeams = [];
+    // BRACKET CALC
+    $nextPow = 1; while ($nextPow < $totalTeams) $nextPow <<=1;
+    $totalRounds = (int)log($nextPow,2);
 
-        // Round title logic
-        $roundTitle = "Round $roundNo";
-        if ($roundNo == $totalRounds - 1) $matchTitle = $roundTitle = "Semifinal";
-        elseif ($roundNo == $totalRounds) $matchTitle = $roundTitle = "Final";
+    echo "<div class='match-container'><div class='tname'>Teams: $totalTeams | Bracket Slots: $nextPow | Rounds: $totalRounds</div></div>";
 
-        if (str_contains($roundTitle, 'Round')) {
-            $matchTitle = "Match";
-        }
+    // FETCH EXISTING MATCHES
+    $matchesByRound = [];
+    $res = mysqli_query($conn, "SELECT * FROM matches WHERE tournament='".mysqli_real_escape_string($conn,$tournament_id)."' ORDER BY round ASC, match_id ASC,match_name ASC");
+    while ($m = mysqli_fetch_assoc($res)) $matchesByRound[(int)$m['round']][] = $m;
 
-        // --- Display Matches ---
-        if (!empty($roundMatches)) {
-            echo "<br><br><h3>$roundTitle</h3>";
-            $matchCounter = 0;
+    // -------------------
+    // ROUND STRUCTURE
+    // -------------------
+    $rounds = [];
+    $rounds[1]['matches'] = $matchesByRound[1] ?? [];
 
-            foreach ($roundMatches as $m) {
-                $t1 = $m['team_1'];
-                $t2 = $m['team_2'];
-                $t1Data = $teamCache[$t1] ?? ['t_name' => 'TBD', 't_logo' => ''];
-                $t2Data = ($t2 && $t2 != "BYE" && $t2 != "TBD") ? ($teamCache[$t2] ?? ['t_name' => 'TBD', 't_logo' => '']) : ['t_name' => $t2, 't_logo' => ''];
+    // Detect teams that have a match in round 1
+    $playedTeams = [];
+    foreach ($rounds[1]['matches'] as $m) {
+        $playedTeams[] = $m['team_1'];
+        $playedTeams[] = $m['team_2'];
+    }
+    $playedTeams = array_filter(array_unique($playedTeams));
 
-                echo '
-                <div class="match-container">
-                    <h4 class="match-head">'.$matchTitle.' '.(++$matchCounter).'</h4>
-                    <div class="team-container">
-                        <div class="teams left-side">
-                            '.(!empty($t1Data['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t1Data['t_logo'].'" alt=""></div>' : '<div class="logo"></div>').'
-                            <div class="tname">'.$t1Data['t_name'].'</div>
-                        </div>
-                        <label class="vs">VS</label>
-                        <div class="teams right-side">
-                            '.(!empty($t2Data['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$t2Data['t_logo'].'" alt=""></div>' : '<div class="logo"></div>').'
-                            <div class="tname">'.($t2Data['t_name'] ?? 'TBD').'</div>
-                        </div>
-                    </div>
-                    <div class="team-no">
-                        <div class="t-num">('.($t1Data['t_name']!="TBD"?array_search($t1,$teams)+1:'TBD').')</div>
-                        <div class="t-num">('.(($t2Data['t_name']!="TBD" && $t2Data['t_name']!="BYE")?array_search($t2,$teams)+1:'TBD').')</div>
-                    </div>
-                </div>';
+    // Teams without a match are BYE teams
+    $byeTeams = array_diff($teams, $playedTeams);
 
-                // Determine winner or bye
-                $scoreLog = json_decode($m['score_log'], true);
-                if (!empty($scoreLog['winner'])) {
-                    $roundTeams[] = $scoreLog['winner'];
-                } elseif ($t2 == "BYE" || $t2 == "TBD" || empty($t2)) {
-                    $roundTeams[] = $t1;
-                }
+    // Add BYE entries dynamically (not DB)
+    foreach($byeTeams as $bt){
+        $rounds[1]['matches'][] = [
+            'match_id' => "bye_r1_$bt",
+            'team_1' => $bt,
+            'team_2' => "BYE",
+            'round' => 1,
+            'match_name' => "BYE",
+            'score_log' => json_encode(['match_completed'=>1,'winner'=>$bt])
+        ];
+    }
+
+    // -------------------
+    // ADVANCE WINNERS ROUND BY ROUND AND INSERT NEXT ROUND ONLY IF CURRENT ROUND COMPLETED
+    // -------------------
+    for($r=1;$r<=$totalRounds;$r++){
+        $matches = $rounds[$r]['matches'] ?? [];
+        $winners = [];
+        $allCompleted = true;
+
+        foreach($matches as $m){
+            $score = json_decode($m['score_log'], true);
+            if(!empty($score['match_completed']) && $score['match_completed']==1 && !empty($score['winner'])){
+                $winners[] = $score['winner'];
+            } else {
+                $allCompleted = false;
             }
         }
 
-        // --- Handle BYE teams in 1st round only ---
-        if ($roundNo == 1) {
-            $matchedTeams = [];
-            foreach ($roundMatches as $m) {
-                $matchedTeams[] = $m['team_1'];
-                $matchedTeams[] = $m['team_2'];
-            }
-            $byeTeams = array_diff($teams, $matchedTeams);
-            $matchCounter = count($roundMatches);
-            foreach ($byeTeams as $bt) {
-                $btData = $teamCache[$bt] ?? ['t_name' => 'TBD', 't_logo' => ''];
-                echo '
-                <div class="match-container">
-                    <h4 class="match-head">'.$matchTitle.' '.(++$matchCounter).'</h4>
-                    <div class="team-container">
-                        <div class="teams left-side">
-                            '.(!empty($btData['t_logo']) ? '<div class="logo"><img src="../assets/images/teams/'.$btData['t_logo'].'" alt=""></div>' : '<div class="logo"></div>').'
-                            <div class="tname">'.$btData['t_name'].'</div>
-                        </div>
-                        <label class="vs">VS</label>
-                        <div class="teams right-side"><div class="logo"></div><div class="tname">BYE</div></div>
-                    </div>
-                    <div class="team-no">
-                        <div class="t-num">('.(array_search($bt,$teams)+1).')</div>
-                        <div class="t-num">(TBD)</div>
-                    </div>
-                </div>';
-                $roundTeams[] = $bt;
-            }
-        }
+        $rounds[$r]['winners'] = $winners;
 
-        // --- Schedule Next Round (auto-fill missing matches) ---
-        if (!empty($roundTeams) && count($roundTeams) > 1) {
-            $nextRoundNo = $roundNo + 1;
-            $existingNextRound = mysqli_query($conn, "SELECT COUNT(*) AS c FROM matches WHERE tournament='$tournament_id' AND round='$nextRoundNo'");
-            $existCount = mysqli_fetch_assoc($existingNextRound)['c'];
+        // Only schedule next round if all matches of current round are completed
+        if($r<$totalRounds && $allCompleted){
+            $nextR = $r+1;
 
-            if ($existCount == 0) {
-                // Skip bye scheduling for semifinal if only 3 teams
-                if ($nextRoundNo == $totalRounds - 1 && count($roundTeams) == 3) {
-                    $roundTeams[] = "BYE";
+            if(!empty($matchesByRound[$nextR])){
+                // DB already has next round matches -> use them
+                $rounds[$nextR]['matches'] = $matchesByRound[$nextR];
+                continue;
+            }
+
+            // Build next round matches from winners
+            $nextMatches = [];
+            $round_name = null;
+            if(count($winners) > 4){
+                $round_name = "Match";
+            } else if(count($winners) > 2){
+                $round_name = "Semifinal";
+            } else if(count($winners) > 1){
+                $round_name = "Final";
+            }
+            shuffle($winners);
+            for($i=0;$i<count($winners);$i+=2){
+                $a = $winners[$i];
+                $b = $winners[$i+1] ?? "BYE";
+
+                if($a==="BYE" && $b==="BYE") continue;
+
+                $uid = hash('sha256', microtime(true).rand().$a.$b);
+                $extra = "";
+                if (str_contains($round_name, "Match")) {
+                    $extra = " " . ($r + 1);   // you probably meant next round index
                 }
 
-                $matchCounter = 1;
-                for ($i = 0; $i < count($roundTeams); $i += 2) {
-                    $t1 = $roundTeams[$i];
-                    $t2 = $roundTeams[$i+1] ?? 'BYE';
+                // Build match name
+                $matchName = ($b === "BYE")
+                    ? "BYE"
+                    : $round_name . " " 
+                        . ( $round_name !== "Final" ? ($i/2 + 1) : "" )
+                        . " ($extra)"
+                        . " | $tournament_name";
 
-                    if ($roundTitle == "Semifinal" && $t2 == "BYE") continue;
-
-                    $nextTitle = ($nextRoundNo == $totalRounds - 1) ? "Semifinal" :
-                                 (($nextRoundNo == $totalRounds) ? "Final" : "Round $nextRoundNo");
-                    $matchName = "$nextTitle ".$matchCounter++." | ".$tournament_name;
-
-                    $id = hash('sha256', uniqid(microtime(true), true));
-
-                    mysqli_query($conn, "INSERT INTO matches (match_id, sport_id, status, tournament, team_1, team_2, round, match_name, created_by)
-                        VALUES ('$id','$sport','Upcoming','$tournament_id','$t1','$t2','$nextRoundNo','$matchName','$owner')");
-
-                    $matchesByRound[$nextRoundNo][] = [
-                        'team_1'=>$t1,
-                        'team_2'=>$t2,
-                        'round'=>$nextRoundNo,
-                        'match_name'=>$matchName,
-                        'score_log'=>json_encode([])
-                    ];
+                // Insert into DB only if both teams are real
+                if($b !== "BYE"){
+                    $ins = "INSERT INTO matches 
+                        (match_id, sport_id, match_name, status, venue, tournament, team_1, team_2, round, created_by)
+                        VALUES (
+                            '".mysqli_real_escape_string($conn,$uid)."',
+                            '".mysqli_real_escape_string($conn,$sport)."',
+                            '".mysqli_real_escape_string($conn,$matchName)."',
+                            'Upcoming',
+                            '".mysqli_real_escape_string($conn,$venue)."',
+                            '".mysqli_real_escape_string($conn,$tournament_id)."',
+                            '".mysqli_real_escape_string($conn,$a)."',
+                            '".mysqli_real_escape_string($conn,$b)."',
+                            '".intval($nextR)."',
+                            '".mysqli_real_escape_string($conn,$owner)."'
+                        )";
+                    mysqli_query($conn, $ins);
                 }
+
+                $scoreLog = ($b==="BYE") ? json_encode(['match_completed'=>1,'winner'=>$a]) : json_encode([]);
+
+                $nextMatches[] = [
+                    'match_id'=>$uid,
+                    'team_1'=>$a,
+                    'team_2'=>$b,
+                    'round'=>$nextR,
+                    'match_name'=>$matchName,
+                    'score_log'=>$scoreLog
+                ];
             }
+
+            $rounds[$nextR]['matches'] = $nextMatches;
+            $matchesByRound[$nextR] = $nextMatches;
+        }
+    }
+
+    // -------------------
+    // DISPLAY ROUNDS INCLUDING BYE
+    // -------------------
+     function slotLabel($round,$index,$totalRounds){
+        if($round==$totalRounds) return "Final";
+        if($round==$totalRounds-1) return "Semifinal $index";
+        return "Match $index";
+    }
+
+    for($r = 1; $r <= $totalRounds; $r++){
+    echo "<h3>".($r == $totalRounds ? "🏆 Final" : ($r == $totalRounds-1 ? "⚔️ Semifinals" : "Round $r"))."</h3>";
+    $mc = 1;
+
+    // Ensure matches exist for this round (DB or generated)
+    $matches = $rounds[$r]['matches'] ?? [];
+
+    // Sort matches by match_name if available
+    usort($matches, function($a, $b){
+        // BYE matches at the end
+        if (($a['team_2'] ?? '') === "BYE" && ($b['team_2'] ?? '') !== "BYE") return 1;
+        if (($b['team_2'] ?? '') === "BYE" && ($a['team_2'] ?? '') !== "BYE") return -1;
+        return strcmp($a['match_name'] ?? '', $b['match_name'] ?? '');
+    });
+
+    // total slots for this round based on bracket
+    $slots = (int)pow(2, $totalRounds - $r);
+    if ($slots < 1) $slots = 1;
+
+    for($i = 0; $i < $slots; $i++){
+        $m = $matches[$i] ?? null;
+
+        if($m){
+            $t1 = getTeamName($m['team_1'], $teamCache);
+            $t2 = getTeamName($m['team_2'], $teamCache);
+            $score = json_decode($m['score_log'], true);
+            $link = "./{$sportList[$sport]}/scoreboard.php?match_id={$m['match_id']}";
+        } else {
+            $t1 = "TBD (waiting...)";
+            $t2 = "TBD (waiting...)";
+            $link = "";
         }
 
-        // --- End condition ---
-        if (count($roundTeams) == 1 && $roundTitle == "Final") {
-            $finalWinner = $roundTeams[0];
-            $winnerData = $teamCache[$finalWinner] ?? ['t_name'=>'Unknown'];
-            echo "<br><br><h3>🏆 Tournament Winner: ".$winnerData['t_name']."</h3>";
-            mysqli_query($conn, "UPDATE tournaments SET winner='$finalWinner' WHERE tournament_id='$tournament_id'");
-            break;
-        }
+        // USE window.location properly
+        $onclick = $link ? "onclick=\"window.location='$link'\"" : "";
 
-        if (empty($roundTeams) || count($roundTeams) <= 1) break;
-        $roundNo++;
+        $label = slotLabel($r, $mc, $totalRounds);
+
+        echo "<div class='match-container'>
+            <h4 class='match-head'>".htmlspecialchars($label)."</h4>
+            <div class='team-container' $onclick>
+                <div class='teams left-side'><div class='logo'></div><div class='tname'>$t1</div></div>
+                <label class='vs'>VS</label>
+                <div class='teams right-side'><div class='logo'></div><div class='tname'>$t2</div></div>
+            </div>
+        </div>";
+
+        $mc++;
     }
 }
 
+    // -------------------
+    // DISPLAY FINAL WINNER IF ANY
+    // -------------------
+    $finalMatches = $rounds[$totalRounds]['matches'] ?? [];
+    foreach($finalMatches as $fm){
+        $score = json_decode($fm['score_log'],true);
+        if(!empty($score['match_completed']) && $score['match_completed']==1 && !empty($score['winner'])){
+            $winnerName = getTeamName($score['winner'],$teamCache);
+            echo "<div class='match-container'><div class='tname'>🏆 Tournament Winner: <strong>$winnerName</strong></div></div>";
+            break;
+        }
+    }
+}
 
 $matchNo = 1;
 $matchSlots = []; // 🟢 Store all slots here
 
 if ($format == 'league') {
-    echo "<h2>League Matches</h2>";
+    echo "<h2 class='m_heading'>League Matches</h2>";
 
     // ✅ Step 1: Get all teams for this tournament
     $team_query = mysqli_query($conn, "SELECT team_id FROM tournament_teams WHERE tournament_id = '$tournament_id'");
@@ -956,11 +1045,13 @@ if ($format == 'league') {
                 'match_id'   => $matchId
             ];
 
+            $link = "./{$sportList[$sport]}/scoreboard.php?match_id={$m['match_id']}";
+            $onclick = $link ? "onclick=\"window.location='$link'\"" : "";
             // 🟢 Display match
             echo '
             <div class="match-container">
                 <h4 class="match-head">' . $matchName . ($exists ? '' : ' (Not Scheduled)') . '</h4>
-                <div class="team-container">
+                <div class="team-container" '.$onclick.'>
                     <div class="teams left-side">
                         ' . (!empty($team1_row['t_logo'])
                             ? '<div class="logo"><img src="../assets/images/teams/' . $team1_row['t_logo'] . '" alt=""></div>'
@@ -990,7 +1081,7 @@ if ($format == 'league') {
 // print_r($matchSlots);
 // echo "</pre>";
 ?>
-
+    <?php if(isset($_SESSION['user']) && $_SESSION['role'] != "User"){ ?>
         <!-- Match Details Form -->
         <div class="form-section">
             <div class="form-row">
@@ -1018,11 +1109,12 @@ if ($format == 'league') {
             <div class="fixed-info">
         </div>
         <div class="error" id="error-datetime"></div>
-        <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column; align-items: center;">
-        <button class="save-btn">SAVE CHANGES</button>        
-        <button class="logout-btn">DELETE TOURNAMENT</button>
-            </div>
-    </div>
+            <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column; align-items: center;">
+            <button class="save-btn">SAVE CHANGES</button>        
+            <button class="logout-btn">DELETE TOURNAMENT</button>
+                </div>
+        </div>
+    <?php } ?>
     <form method="post" class="popup-overlay" id="popupOverlay">
         <div class="popup-box" id="popupBox">
             <input type="hidden" name="match_id" value=""> <!-- ✅ This is required -->

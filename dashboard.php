@@ -60,13 +60,8 @@
 <meta name="apple-mobile-web-app-title" content="LiveStrike">
 <link rel="apple-touch-icon" href="./assets/images/logo-192.png">
 <meta name="mobile-web-app-capable" content="yes">
-
-
-
-    
-
-
-
+<meta name="google-adsense-account" content="ca-pub-4540243680881407">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4540243680881407" crossorigin="anonymous"></script>
 <style>
     * {
         margin: 0px;

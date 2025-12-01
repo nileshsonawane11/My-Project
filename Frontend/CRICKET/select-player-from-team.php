@@ -12,7 +12,7 @@
     }
 
     $current_inning = null;
-    $current_inning = null;
+    $is_super_over = false;
     $for = $_GET['for'] ?? '';
     $team = $_GET['team'] ?? '';
     $match = $_GET['match'] ?? '';
@@ -21,6 +21,9 @@
     $score_log = json_decode($row['score_log'],true) ?? '';
 
     if (!empty($score_log['innings'])) {
+        if (!empty($score_log['innings']['2nd']['completed'])) {
+            $is_super_over = true;
+        }
         if (!empty($score_log['innings']['2nd']['balls'])) {
             $current_inning = '2nd';
         } elseif (!empty($score_log['innings']['1st']['balls'])) {
@@ -30,9 +33,9 @@
         }
     }
 
+$out_batsmen = [];
     // Check if current innings data exists
-if (isset($score_log['innings'][$current_inning])) {
-    $out_batsmen = [];
+if (isset($score_log['innings'][$current_inning]) && $for !== 'Bowler' && !$is_super_over) {
 
     foreach ($score_log['innings'][$current_inning]['batmans'] as $batsman) {
         if (
