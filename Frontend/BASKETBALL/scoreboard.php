@@ -1841,11 +1841,12 @@ if (!isset($_COOKIE[$cookie_name])) {
         </div>
     </nav>     
 
-    <div class="ad">
+    <div class="ad ad-slot" data-slot="ad">
         <div class="hide-ad">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"><path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="black" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
         </div>
-        Advertisement (412px x 150px)
+        <div class="placeholder">Advertisement (412px x 150px)</div>
+        <div class="slides"></div>
     </div>
 
     <?php
@@ -1975,7 +1976,9 @@ if (!isset($_COOKIE[$cookie_name])) {
         </div>
     </div>
 
-    <div class="ad2">Advertisement (412px x 80px)
+    <div class="ad2 ad-slot" data-slot="ad2">
+        <div class="placeholder">Advertisement (412px x 80px)</div>
+        <div class="slides"></div>
     </div>
 
     <div class="swiper">
@@ -2113,6 +2116,12 @@ if (!isset($_COOKIE[$cookie_name])) {
                         </tr>
                     </tbody>
                 </table>
+
+                <div class="ad3 ad-slot" data-slot="ad3_A">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
+
                 <?php
                     $apiKey = "76604801ccb3576d81ddd1bca09b978a";
                     $location = $row['venue'];
@@ -2311,6 +2320,11 @@ if (!isset($_COOKIE[$cookie_name])) {
                     </div>
                 </div>
                 
+                <div class="ad3 ad-slot" data-slot="ad3_B">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
+
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -2396,6 +2410,11 @@ if (!isset($_COOKIE[$cookie_name])) {
 
                 </section>
                 
+                <div class="ad3 ad-slot" data-slot="ad3_C">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
+
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -2507,6 +2526,12 @@ if (!isset($_COOKIE[$cookie_name])) {
 
                 
             </div>
+
+            <div class="ad3 ad-slot" data-slot="ad3_D">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
+                
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -3088,6 +3113,134 @@ function update_scoreboard(data){
         }
     }, 50);
 };
+
+function trackEvent(ad, slotName, pageName, cityName, type) {
+    fetch("../../log_event.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            ad_id: ad.id,
+            slot: slotName,
+            page: pageName,
+            city: cityName,
+            event: type
+        })
+    })
+    .then(res=>res.text())
+    .then(data=>console.log(data))
+    .catch(err=>console.log(err));
+    console.log('log done');
+}
+
+function loadAds(pageName, cityName="") {
+    document.querySelectorAll(".ad-slot").forEach(slot => {
+
+        let slotName = slot.dataset.slot;
+
+        fetch("../../get_ads.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                slot: slotName,
+                page: pageName,
+                city: cityName
+            })
+        })
+        .then(r => r.json())
+        .then(ads => {
+            const placeholder = slot.querySelector(".placeholder");
+            const slideBox = slot.querySelector(".slides");
+
+            if (ads.length === 0) {
+                placeholder.style.display = "block";
+                slideBox.innerHTML = "";
+                return;
+            }
+
+            placeholder.style.display = "none";
+            slideBox.innerHTML = "";
+
+            ads.forEach((ad, i) => {
+                let img = document.createElement("img");
+                img.src = `../../assets/ads/${ad.image}`;
+                img.dataset.adId = ad.id;
+
+                img.onclick = (e) => {
+                    try {
+                        trackEvent(ad, slotName, pageName, cityName, "click");
+                        console.warn("Tracking happens", e);
+                    } catch (e) {
+                        console.warn("Tracking error", e);
+                    }
+                    window.open(ad.url, "_blank");
+                };
+
+                slideBox.appendChild(img);
+            });
+
+            let slides = slideBox.querySelectorAll("img");
+            let index = 0;
+
+            let impressionSent = {}; // ✅ Fix: Track impressions only once
+
+            function showSlide(i) {
+                index = i;
+
+                slides.forEach((s, idx) => 
+                    s.style.display = idx === i ? "block" : "none"
+                );
+
+                // ✅ IMPRESSION only once
+                if (!impressionSent[ads[i].id]) {
+                    trackEvent(ads[i], slotName, pageName, cityName, "impression");
+                    impressionSent[ads[i].id] = true;
+                }
+            }
+
+            showSlide(0);
+
+            let auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            slot.onmouseenter = () => clearInterval(auto);
+            slot.onmouseleave = () => auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            let startX = 0;
+            slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+            slideBox.addEventListener("touchend", e => {
+                let endX = e.changedTouches[0].clientX;
+                if (endX < startX - 50) index = (index + 1) % slides.length;
+                if (endX > startX + 50) index = (index - 1 + slides.length) % slides.length;
+                showSlide(index);
+            });
+
+        });
+    });
+}
+
+async function detectCity() {
+    try {
+        let res = await fetch("https://ipapi.co/json/");
+        let data = await res.json();
+        return data.city || "";
+    } catch (e) {
+        return "";
+    }
+}
+
+async function initAds(pageName) {
+    let city = await detectCity();
+    loadAds(pageName, city);
+}
+
+initAds("BASKETBALL_scoreboard");
     </script>
 </body>
 </html>

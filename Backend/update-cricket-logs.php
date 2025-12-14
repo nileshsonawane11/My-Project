@@ -10,6 +10,8 @@ define('MAX_SUPER_OVER_WICKETS', 2);
 define('MAX_UNDO_HISTORY',10);
 // Read JSON input
 $data = json_decode(file_get_contents('php://input'), true);
+$team_players_count = null;
+$is_regular_innings = true;
 
 if(empty($data)){
     echo json_encode(['status'=>400,'message'=>'Empty request']);
@@ -240,7 +242,7 @@ if($Ball_Type != null){
 
 function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $match_id) {
     global $conn;
-    
+
     // Extract all data fields with defaults
     $Run = (int)($data['Run'] ?? 0);
     $Shot_type = $data['Shot Type'] ?? null;
@@ -264,6 +266,9 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
 
     // Add current ball to log
     $score_log[$Inning_type][$Inning]['total_runs'] += ($Run + $Extra);
+    $battingTeamId = $score_log[$Inning_type][$Inning]['batting_team'];
+
+    $team_players_count = $conn->query("SELECT COUNT(*) AS count FROM players WHERE team_id='$battingTeamId'")->fetch_assoc()['count'];
 
     // Update batsman stats
     $current_striker = &$score_log[$Inning_type][$Inning]['openers']['current_striker'];
@@ -306,7 +311,7 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     ) {
         if(($Run % 2) != 0 && str_contains($Wicket_Type, 'Returning')) {
             swap_batsmans($score_log, $Inning_type, $Inning);
-        }elseif(($Run % 2) == 0){
+        }elseif(($Run % 2) == 0 && !str_contains($Wicket_Type, 'Returning')){
             swap_batsmans($score_log, $Inning_type, $Inning);
         }
     } elseif (!in_array($Ball_Type, ['Wide', 'No Ball'], true)) {
@@ -346,9 +351,16 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
         }
     }
 
+    
     $is_regular_innings = ($Inning_type === 'innings');
     $is_super_over = ($Inning_type === 'super_over_innings');
-    $wicket_limit = $is_regular_innings ? MAX_REGULAR_WICKETS : MAX_SUPER_OVER_WICKETS;
+    $wicket_limit = null;
+    if($team_players_count > 10){
+        $wicket_limit = $is_regular_innings ? MAX_REGULAR_WICKETS : MAX_SUPER_OVER_WICKETS;
+    }else{
+        $wicket_limit = $team_players_count - 1;
+    }
+    
 
     if (($Ball_Type === 'Wicket' || $Ball_Type === 'No Ball-Wicket' || 
         ($Ball_Type === 'Free Hit' && $process_wicket)) && $Wicket_Type) {
@@ -395,7 +407,6 @@ function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $matc
     }
 
      // Update team-specific scores and wickets
-    $battingTeamId = $score_log[$Inning_type][$Inning]['batting_team'];
     if ($battingTeamId == $score_log['team1']) {
         $score_log['team1_score'] = $score_log[$Inning_type][$Inning]['total_runs'];
         $score_log['team1_Wickets'] = $score_log[$Inning_type][$Inning]['wickets'];
@@ -635,6 +646,12 @@ function handleMatchProgress(&$score_log) {
     global $conn;
     global $match_id;
     global $Inning;
+    global $Inning_type;
+
+    $is_regular_innings = ($Inning_type === 'innings');
+    $battingTeamId = $score_log[$Inning_type][$Inning]['batting_team'];
+
+    $team_players_count = $conn->query("SELECT COUNT(*) AS count FROM players WHERE team_id='$battingTeamId'")->fetch_assoc()['count'];
     // First check regular innings progress
     if (isset($score_log['innings']['1st']['completed']) && $score_log['innings']['1st']['completed']) {
         $team1Runs = (int)($score_log['innings']['1st']['total_runs'] ?? 0);
@@ -664,8 +681,14 @@ function handleMatchProgress(&$score_log) {
                 exit();
             }
             
+            $wicket_limit = null;
+            if($team_players_count > 10){
+                $wicket_limit = $is_regular_innings ? MAX_REGULAR_WICKETS : MAX_SUPER_OVER_WICKETS;
+            }else{
+                $wicket_limit = $team_players_count - 1;
+            }
             // Check if team2 is all out before reaching target
-            if (($score_log['innings']['2nd']['wickets'] ?? 0) >= MAX_REGULAR_WICKETS) {
+            if (($score_log['innings']['2nd']['wickets'] ?? 0) >= $wicket_limit) {
                 // Update database
                 $score_log['winner'] = $score_log['innings']['1st']['batting_team'];
                 saveHistorySnapshot($conn, $match_id, $score_log);
@@ -676,6 +699,7 @@ function handleMatchProgress(&$score_log) {
                     'message' => 'Team 1 Won the match as Team 2 is all out',
                     'is_complete' => true,
                     'action_required' => 'confirm_match_end',
+                    'Wicket limit ' => $wicket_limit,
                     'team1_runs' => $team1Runs,
                     'team2_runs' => $team2Runs,
                     'Data' => $update,

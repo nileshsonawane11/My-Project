@@ -318,7 +318,8 @@ if (!isset($_COOKIE[$cookie_name])) {
     }
     
     .ad{
-        height: 150px;
+        min-height: max-content;
+        max-height:150px;
         width: 100%;
         position: relative;
         background: rgba(20, 20, 20, 0.12);
@@ -327,11 +328,11 @@ if (!isset($_COOKIE[$cookie_name])) {
         justify-content: center;
         color: var(--text-light);
         font-size: 14px;
-        border-bottom: 1px solid var(--primary-transparent);
     }
     
     .ad2{
-        height: 80px;
+        min-height: max-content;
+        max-height: 80px;
         width: 100%;
         background: rgba(20, 20, 20, 0.12);
         display: flex;
@@ -339,7 +340,6 @@ if (!isset($_COOKIE[$cookie_name])) {
         justify-content: center;
         color: var(--text-light);
         font-size: 14px;
-        border-bottom: 1px solid var(--primary-transparent);
     }
     
     .ad3{
@@ -351,7 +351,6 @@ if (!isset($_COOKIE[$cookie_name])) {
         justify-content: center;
         color: var(--text-light);
         font-size: 14px;
-        border-bottom: 1px solid var(--primary-transparent);
     }
     
     .hide-ad{
@@ -1705,7 +1704,55 @@ if (!isset($_COOKIE[$cookie_name])) {
         border-radius: 8px;
         background: linear-gradient(90deg, var(--primary-transparent), rgba(209, 34, 31, 0.1));
     }
+    .ad-slot {
+    position: relative;
+    overflow: hidden;
+    background: #f2f2f2;
+    object-fit:cover;
+}
 
+.ad-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* ✅ Fills entire slot */
+    object-position: center;
+    display: none;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+.slides{
+    object-fit:cover;
+}
+/* keep your remaining CSS same */
+
+.ad-slot .dots {
+    text-align: center;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-slot .dots span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #ddd;
+    border-radius: 50%;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.ad-slot .dots .active {
+    background: #000;
+}
+
+.placeholder {
+    padding: 10px;
+    text-align: center;
+}
+.slide{
+    margin-left: 19px;
+}
     @media(max-width: 600px) {
         .nav-content{
             display: flex;
@@ -1769,6 +1816,9 @@ if (!isset($_COOKIE[$cookie_name])) {
         .ad3{
             height: 150px;
             width: 300px;
+        }
+        .ad-slot .dots {
+            display:none;
         }
     }
 
@@ -1904,6 +1954,15 @@ if (!isset($_COOKIE[$cookie_name])) {
                         </svg></div>
                     </div>
                     <?php
+                    
+                        if($row['status'] == "Completed"){
+                            echo '<div class="menu-item"><div onclick="window.location.href=`./Backend/download_match_pdf.php?match_id='.$match_id.'`"><p>Generate Report</p><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M9 2.221V7H4.221a2 2 0 0 1 .365-.5L8.5 2.586A2 2 0 0 1 9 2.22ZM11 2v5a2 2 0 0 1-2 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2 2 2 0 0 0 2 2h12a2 2 0 0 0 2-2 2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2V4a2 2 0 0 0-2-2h-7Zm-6 9a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-1h.5a2.5 2.5 0 0 0 0-5H5Zm1.5 3H6v-1h.5a.5.5 0 0 1 0 1Zm4.5-3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h1.376A2.626 2.626 0 0 0 15 15.375v-1.75A2.626 2.626 0 0 0 12.375 11H11Zm1 5v-3h.375a.626.626 0 0 1 .625.626v1.748a.625.625 0 0 1-.626.626H12Zm5-5a1 1 0 0 0-1 1v5a1 1 0 1 0 2 0v-1h1a1 1 0 1 0 0-2h-1v-1h1a1 1 0 1 0 0-2h-2Z" clip-rule="evenodd"/>
+                                </svg>
+                                </div>
+                            </div>';
+                        }
+
                         if(!isset($_SESSION['user'])){
                     ?>
                     <div class="menu-item">
@@ -1951,11 +2010,12 @@ if (!isset($_COOKIE[$cookie_name])) {
         </div>
     </nav>    
 
-    <div class="ad">
+    <div class="ad ad-slot" data-slot="ad">
         <div class="hide-ad">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"><path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="black" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
         </div>
-        Advertisement (412px x 150px)
+        <div class="placeholder">Advertisement (412px x 150px)</div>
+        <div class="slides"></div>
     </div>
 
     <?php
@@ -2087,9 +2147,11 @@ if (!isset($_COOKIE[$cookie_name])) {
         </div>
     </div>
 
-    <div class="ad2">
-        Advertisement (412px x 80px)
+    <div class="ad2 ad-slot" data-slot="ad2">
+        <div class="placeholder">Advertisement (412px x 80px)</div>
+        <div class="slides"></div>
     </div>
+
 
     <div class="swiper">
         <div class="swiper-wrapper">
@@ -2360,8 +2422,9 @@ if (!isset($_COOKIE[$cookie_name])) {
                     </div>
                 </div>
                 
-                <div class="ad3">
-                    Advertisement (600px x 300px)
+                <div class="ad3 ad-slot" data-slot="ad3_A">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
                 </div>
 
                 <?php
@@ -2576,9 +2639,11 @@ if (!isset($_COOKIE[$cookie_name])) {
                         <button id="toggle-button" style="margin-top: 10px;">Show More</button>
                 </div><?php } ?>
 
-                <div class="ad3">
-                    Advertisement (600px x 300px)
+                <div class="ad3 ad-slot" data-slot="ad3_B">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
                 </div>
+
                 
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
@@ -3039,10 +3104,11 @@ if (!isset($_COOKIE[$cookie_name])) {
                 </section>
                 <?php } }?>
 
-                <div class="ad3">
-                    Advertisement (600px x 300px)
+               <div class="ad3 ad-slot" data-slot="ad3_C">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
                 </div>
-                
+            
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -3157,8 +3223,9 @@ if (!isset($_COOKIE[$cookie_name])) {
                     </div>
                 </div>
 
-                <div class="ad3">
-                    Advertisement (600px x 300px)
+                <div class="ad3 ad-slot" data-slot="ad3_D">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
                 </div>
 
                 <div class="feedback-cta-container">
@@ -4247,7 +4314,134 @@ function initShowMoreButton() {
         }
     }, 50);
 };
-    
+
+function trackEvent(ad, slotName, pageName, cityName, type) {
+    fetch("../../log_event.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            ad_id: ad.id,
+            slot: slotName,
+            page: pageName,
+            city: cityName,
+            event: type
+        })
+    })
+    .then(res=>res.text())
+    .then(data=>console.log(data))
+    .catch(err=>console.log(err));
+    console.log('log done');
+}
+
+function loadAds(pageName, cityName="") {
+    document.querySelectorAll(".ad-slot").forEach(slot => {
+
+        let slotName = slot.dataset.slot;
+
+        fetch("../../get_ads.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                slot: slotName,
+                page: pageName,
+                city: cityName
+            })
+        })
+        .then(r => r.json())
+        .then(ads => {
+            const placeholder = slot.querySelector(".placeholder");
+            const slideBox = slot.querySelector(".slides");
+
+            if (ads.length === 0) {
+                placeholder.style.display = "block";
+                slideBox.innerHTML = "";
+                return;
+            }
+
+            placeholder.style.display = "none";
+            slideBox.innerHTML = "";
+
+            ads.forEach((ad, i) => {
+                let img = document.createElement("img");
+                img.src = `../../assets/ads/${ad.image}`;
+                img.dataset.adId = ad.id;
+
+                img.onclick = (e) => {
+                    try {
+                        trackEvent(ad, slotName, pageName, cityName, "click");
+                        console.warn("Tracking happens", e);
+                    } catch (e) {
+                        console.warn("Tracking error", e);
+                    }
+                    window.open(ad.url, "_blank");
+                };
+
+                slideBox.appendChild(img);
+            });
+
+            let slides = slideBox.querySelectorAll("img");
+            let index = 0;
+
+            let impressionSent = {}; // ✅ Fix: Track impressions only once
+
+            function showSlide(i) {
+                index = i;
+
+                slides.forEach((s, idx) => 
+                    s.style.display = idx === i ? "block" : "none"
+                );
+
+                // ✅ IMPRESSION only once
+                if (!impressionSent[ads[i].id]) {
+                    trackEvent(ads[i], slotName, pageName, cityName, "impression");
+                    impressionSent[ads[i].id] = true;
+                }
+            }
+
+            showSlide(0);
+
+            let auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            slot.onmouseenter = () => clearInterval(auto);
+            slot.onmouseleave = () => auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            let startX = 0;
+            slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+            slideBox.addEventListener("touchend", e => {
+                let endX = e.changedTouches[0].clientX;
+                if (endX < startX - 50) index = (index + 1) % slides.length;
+                if (endX > startX + 50) index = (index - 1 + slides.length) % slides.length;
+                showSlide(index);
+            });
+
+        });
+    });
+}
+
+async function detectCity() {
+    try {
+        let res = await fetch("https://ipapi.co/json/");
+        let data = await res.json();
+        return data.city || "";
+    } catch (e) {
+        return "";
+    }
+}
+
+async function initAds(pageName) {
+    let city = await detectCity();
+    loadAds(pageName, city);
+}
+
+initAds("CRICKET_scoreboard");
 
         
 </script>

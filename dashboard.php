@@ -1025,6 +1025,55 @@
         .back-button:hover {
             text-decoration: underline;
         }
+         .ad-slot {
+    position: relative;
+    overflow: hidden;
+    background: #f2f2f2;
+    object-fit:cover;
+}
+
+.ad-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* ✅ Fills entire slot */
+    object-position: center;
+    display: none;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+.slides{
+    object-fit:cover;
+}
+/* keep your remaining CSS same */
+
+.ad-slot .dots {
+    text-align: center;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-slot .dots span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #ddd;
+    border-radius: 50%;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.ad-slot .dots .active {
+    background: #000;
+}
+
+.placeholder {
+    padding: 10px;
+    text-align: center;
+}
+.slide{
+    margin-left: 19px;
+}
     
     @media(max-width: 1000px) {
         .game-list {
@@ -1229,6 +1278,15 @@
                     echo    '</svg></div>';
                     echo '</div>';
                     }
+                    $admin = ['sonawanenileshk6@gmail.com','nileshsonawane5303@gmail.com','patilkaustubh2811@gmail.com','livestrike.in@gmail.com','admin@livestrike.in'];
+                    if(in_array($_SESSION['email'],$admin,false)){
+                        echo '<div class="menu-items"><div onclick="window.location.href=`./admin/login.php`"><p>LiveStrike ads</p>';
+                            echo    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <text x="7" y="15" font-size="8" font-family="Arial, sans-serif" font-weight="bold" fill="currentColor">AD</text>
+                            </svg></div>';
+                        echo '</div>';
+                    }
                     ?>
 
                     <div class="menu-items"><div onclick="shareContent()"><p>Share</p><svg width="24" height="19" viewBox="0 0 24 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1428,7 +1486,11 @@
                 <div class="update-container completed">Completed</div>
             </div>
             
-            <div class="ad2">Advertisement (412px x 80px)</div>
+            <div class="ad2 ad-slot" data-slot="ad2">
+                    <div class="placeholder">Advertisement (412px x 80px)</div>
+                    <div class="slides"></div>
+                </div>
+
             <div class="info-container">
 
             </div>
@@ -1864,7 +1926,135 @@ window.addEventListener("appinstalled", () => {
   installBtn.style.display = "none";
 });
 
+function trackEvent(ad, slotName, pageName, cityName, type) {
+    fetch("./log_event.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            ad_id: ad.id,
+            slot: slotName,
+            page: pageName,
+            city: cityName,
+            event: type
+        })
+    })
+    .then(res=>res.text())
+    .then(data=>console.log(data))
+    .catch(err=>console.log(err));
+    console.log('log done');
+}
 
+function loadAds(pageName, cityName="") {
+    document.querySelectorAll(".ad-slot").forEach(slot => {
+
+        let slotName = slot.dataset.slot;
+        console.log(slotName,pageName,cityName)
+
+        fetch("../../get_ads.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                slot: slotName,
+                page: pageName,
+                city: cityName
+            })
+        })
+        .then(r => r.json())
+        .then(ads => {
+            console.log(ads)
+            const placeholder = slot.querySelector(".placeholder");
+            const slideBox = slot.querySelector(".slides");
+
+            if (ads.length === 0) {
+                placeholder.style.display = "block";
+                slideBox.innerHTML = "";
+                return;
+            }
+
+            placeholder.style.display = "none";
+            slideBox.innerHTML = "";
+
+            ads.forEach((ad, i) => {
+                let img = document.createElement("img");
+                img.src = `./assets/ads/${ad.image}`;
+                img.dataset.adId = ad.id;
+
+                img.onclick = (e) => {
+                    try {
+                        trackEvent(ad, slotName, pageName, cityName, "click");
+                        console.warn("Tracking happens", e);
+                    } catch (e) {
+                        console.warn("Tracking error", e);
+                    }
+                    window.open(ad.url, "_blank");
+                };
+
+                slideBox.appendChild(img);
+            });
+
+            let slides = slideBox.querySelectorAll("img");
+            let index = 0;
+
+            let impressionSent = {}; // ✅ Fix: Track impressions only once
+
+            function showSlide(i) {
+                index = i;
+
+                slides.forEach((s, idx) => 
+                    s.style.display = idx === i ? "block" : "none"
+                );
+
+                // ✅ IMPRESSION only once
+                if (!impressionSent[ads[i].id]) {
+                    trackEvent(ads[i], slotName, pageName, cityName, "impression");
+                    impressionSent[ads[i].id] = true;
+                }
+            }
+
+            showSlide(0);
+
+            let auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            slot.onmouseenter = () => clearInterval(auto);
+            slot.onmouseleave = () => auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            let startX = 0;
+            slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+            slideBox.addEventListener("touchend", e => {
+                let endX = e.changedTouches[0].clientX;
+                if (endX < startX - 50) index = (index + 1) % slides.length;
+                if (endX > startX + 50) index = (index - 1 + slides.length) % slides.length;
+                showSlide(index);
+            });
+
+        });
+    });
+}
+
+async function detectCity() {
+    try {
+        let res = await fetch("https://ipapi.co/json/");
+        let data = await res.json();
+        return data.city || "";
+    } catch (e) {
+        return "";
+    }
+}
+
+async function initAds(pageName) {
+    let city = await detectCity();
+    loadAds(pageName, city);
+}
+
+initAds("Dashboard");
 </script>
 
 </body>
