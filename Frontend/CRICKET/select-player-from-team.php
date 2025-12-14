@@ -624,69 +624,62 @@ if (isset($score_log['innings'][$current_inning]) && $for !== 'Bowler' && !$is_s
                     <div class="player-container">
 
                     <?php
-                        while($row2 = mysqli_fetch_assoc($result)) {
-                        $user_id = $row2['user_id'];
-                        if(in_array($user_id,$playing_squad)){
-                        
-                            // Try to get from users table first
-                            $user_query = mysqli_query($conn, "SELECT * FROM `users` WHERE `user_id` = '$user_id'");
-                            $user_data = mysqli_fetch_assoc($user_query);
-                            
-                            // If not found in users table, try players table
-                            if(!$user_data) {
-                                $player_query = mysqli_query($conn, "SELECT * FROM `players` WHERE `user_id` = '$user_id'");
-                                $player_data = mysqli_fetch_assoc($player_query);
-                                
-                                if($player_data) {
-                                    // Map player data to expected format
-                                    $row = [
-                                        'fname' => $player_data['player_name'] ? explode(' ', $player_data['player_name'])[0] : 'Player',
-                                        'lname' => $player_data['player_name'] ? (explode(' ', $player_data['player_name'])[1] ?? '') : '',
-                                        'user_photo' => $player_data['photo']
-                                    ];
-                                } else {
-                                    // Player not found in either table - use defaults
-                                    $row = [
-                                        'fname' => 'Unknown',
-                                        'lname' => 'Player',
-                                        'user_photo' => null
-                                    ];
-                                }
-                            } else {
-                                // User found in users table
+                    $count = 0;
+
+                    foreach ($playing_squad as $user_id) {
+
+                        // Try to get from users table first
+                        $user_query = mysqli_query($conn, "SELECT * FROM `users` WHERE `user_id` = '$user_id'");
+                        $user_data = mysqli_fetch_assoc($user_query);
+
+                        if(!$user_data) {
+                            // If not found, get from players table
+                            $player_query = mysqli_query($conn, "SELECT * FROM `players` WHERE `user_id` = '$user_id'");
+                            $player_data = mysqli_fetch_assoc($player_query);
+
+                            if($player_data) {
                                 $row = [
-                                    'fname' => $user_data['fname'],
-                                    'lname' => $user_data['lname'],
-                                    'user_photo' => $user_data['user_photo']
+                                    'fname'      => $player_data['player_name'] ? $player_data['player_name'] : 'Player',
+                                    'lname'      => '',
+                                    'user_photo' => $player_data['photo']
+                                ];
+                            } else {
+                                $row = [
+                                    'fname'      => 'Unknown',
+                                    'lname'      => 'Player',
+                                    'user_photo' => null
                                 ];
                             }
-                            
-                            // Handle photo source
-                            if(!empty($row['user_photo'])) {
-                                $src = "../../assets/images/users/".$row['user_photo'];
-                            } else {
-                                $src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
-                            }
-                            
-                            $count++;
-                            $player = "
-                                <div class='mem' data-value='$user_id' src='$src'>
-                                    <div class='player-detail'>
-                                        $count
-                                        <div class='mem-img'><img src='$src' alt='' class='mem-img'></div>
-                                        <div class='mem-name'>{$row['fname']} {$row['lname']}</div>
-                                    </div>
-                                    <div>
-                                        <p class='reason'></p>
-                                    </div>
-                                    <div class='done-dtn'>
-                                        <button class='done'>Done</button>
-                                    </div>
-                                </div>
-                            ";
-                            
-                            echo $player;
+                        } else {
+                            $row = [
+                                'fname'      => $user_data['fname'],
+                                'lname'      => $user_data['lname'],
+                                'user_photo' => $user_data['user_photo']
+                            ];
                         }
+
+                        // Photo
+                        if(!empty($row['user_photo'])) {
+                            $src = "../../assets/images/users/".$row['user_photo'];
+                        } else {
+                            $src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+                        }
+
+                        $count++;
+
+                        echo "
+                            <div class='mem' data-value='$user_id' src='$src'>
+                                <div class='player-detail'>
+                                    $count
+                                    <div class='mem-img'><img src='$src' alt='' class='mem-img'></div>
+                                    <div class='mem-name'>{$row['fname']} {$row['lname']}</div>
+                                </div>
+                                <div><p class='reason'></p></div>
+                                <div class='done-dtn'>
+                                    <button class='done'>Done</button>
+                                </div>
+                            </div>
+                        ";
                     }
                     ?>
                         

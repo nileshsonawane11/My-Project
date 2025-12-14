@@ -566,6 +566,8 @@
             $sql3 = "SELECT * FROM `teams` WHERE t_id = '{$result['team_2']}'";
             $query3 = mysqli_query($conn, $sql3) or die("Error: ");
             $team2 = mysqli_fetch_assoc($query3);
+
+            $teams_arr = array($result['team_1'] => $team1['t_name'],$result['team_2'] => $team2['t_name']);
         ?>
         <div class="teams-section">
             <div class="team">
@@ -622,6 +624,25 @@
                 <div class="form-group">
                     <label class="form-label">Time</label>
                     <input type="time" class="form-input" value="<?php echo $result['start_time']; ?>" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Winner</label>
+                    <?php $score_log = json_decode($result['score_log'],true);
+                            $winner = $score_log['winner'] ?? '';
+                    ?>
+                    <select id="winner" class="form-input" disabled>
+                        <option value="" <?php if($winner == '') echo 'selected'; ?>>None</option>
+
+                        <option value="<?php echo $result['team_1']; ?>"
+                            <?php if($winner == $result['team_1']) echo 'selected'; ?>>
+                            <?php echo $teams_arr[$result['team_1']]; ?>
+                        </option>
+
+                        <option value="<?php echo $result['team_2']; ?>"
+                            <?php if($winner == $result['team_2']) echo 'selected'; ?>>
+                            <?php echo $teams_arr[$result['team_2']]; ?>
+                        </option>
+                    </select>
                 </div>
             </div>
 
@@ -768,8 +789,12 @@
         </div>
         <div class="error" id="error-datetime"></div>
         <div style="text-align: center;margin-top: 30px;display: flex;flex-direction: column; align-items: center;">
-        <button class="save-btn">SAVE CHANGES</button>        
+        <button class="save-btn">SAVE CHANGES</button>
+        <?php
+            if($result['status'] != 'Live'){
+        ?>        
         <button class="logout-btn">DELETE MATCH</button>
+        <?php } ?>
             </div>
     </div>
     <form method="post" class="popup-overlay" id="popupOverlay">
@@ -789,7 +814,7 @@
         const toggle = document.getElementById("editToggle");
         const matchID = <?php echo json_encode($match_id); ?>;
         let edit = false;
-        const inputs = document.querySelectorAll("input:not(.file-input)");
+        const inputs = document.querySelectorAll("input:not(.file-input),select");
         const logoEdits = document.querySelectorAll(".team-logo-edit");
         const pencil = document.querySelectorAll(".pencil");
         const pass = document.querySelector(".pass");
@@ -926,20 +951,22 @@
             "logout": "Are you sure you want to Delete the Match?"
             };
 
-            const logoutBtn = document.querySelector(".logout-btn");
+        const logoutBtn = document.querySelector(".logout-btn");
 
+        if(logoutBtn){
             logoutBtn.addEventListener("click", () => {
-            const className = "logout";  // We know this is logout
+                const className = "logout";  // We know this is logout
 
-            popupMessage.innerHTML = messages[className] || "Are you sure?";
-            popupOverlay.style.display = "flex";
+                popupMessage.innerHTML = messages[className] || "Are you sure?";
+                popupOverlay.style.display = "flex";
 
 
-            cancelBtn.onclick = () => {
-                popupOverlay.style.display = "none";
-            };
-        });
-
+                cancelBtn.onclick = () => {
+                    popupOverlay.style.display = "none";
+                };
+            });
+        }
+        
         const toggleBtn = document.getElementById("editToggle1");
 
         toggleBtn.addEventListener("click", () => {
@@ -963,6 +990,7 @@
             const matchDate = document.querySelectorAll(".form-input")[2].value;
             const matchTime = document.querySelectorAll(".form-input")[3].value;
             const matchPass = document.querySelector(".pass").value;
+            const matchwinner = document.querySelector("#winner").value;
 
             const formdata = new FormData();
             formdata.append("match_id", matchID);
@@ -976,6 +1004,7 @@
             formdata.append("match_visibility",  match_visibility.checked);
             formdata.append("matchTime", matchTime);
             formdata.append("matchPass", matchPass);
+            formdata.append("matchwinner", matchwinner);
             formdata.append('Umpires[]', Umpires);
             formdata.append('Scorers[]', Scorers);
             formdata.append('Commentators[]', Commentators);

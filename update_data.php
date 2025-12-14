@@ -107,7 +107,7 @@ if($for == "dashboard"){
                         echo "<div class='score'>{$row['score_team_2']}</div>";
                     echo "</div>";
 
-                    if(empty($row['toss_winner'])){
+                    if(empty($row['toss_winner']) && $row['status'] != 'Completed'){
                         echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
                     }else if($row['status'] == 'Live' && $sport != 'BASKETBALL'){
                         

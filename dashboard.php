@@ -22,17 +22,19 @@
         $currentTime = date('H:i');
 
         // Set Live
-        mysqli_query($conn, "UPDATE matches 
+        mysqli_query($conn, "
+            UPDATE matches
             SET status = 'Live'
-            WHERE match_date = '$currentDate'
-            AND start_time <= '$currentTime'
-            AND status = 'Upcoming'");
-
+            WHERE status = 'Upcoming'
+            AND (
+                match_date < '$currentDate'
+                OR (match_date = '$currentDate' AND start_time <= '$currentTime')
+            )
+        ");
     }
 
     // Call this function whenever a match-related page loads
     updateMatchStatus($conn);
-
 
     $username = $_SESSION['name'];
     $update = $_GET['update'];

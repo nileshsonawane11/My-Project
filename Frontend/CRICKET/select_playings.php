@@ -633,8 +633,8 @@ if (isset($score_log['innings'][$current_inning]) && $for !== 'Bowler' && !$is_s
                             if($player_data) {
                                 // Map player data to expected format
                                 $row = [
-                                    'fname' => $player_data['player_name'] ? explode(' ', $player_data['player_name'])[0] : 'Player',
-                                    'lname' => $player_data['player_name'] ? (explode(' ', $player_data['player_name'])[1] ?? '') : '',
+                                    'fname' => $player_data['player_name'] ? $player_data['player_name'] : 'Player',
+                                    'lname' =>  '',
                                     'user_photo' => $player_data['photo']
                                 ];
                             } else {
@@ -675,12 +675,6 @@ if (isset($score_log['innings'][$current_inning]) && $for !== 'Bowler' && !$is_s
                             </div>
                         ";
                         
-                        echo $player;
-                        echo $player;
-                        echo $player;
-                        echo $player;
-
-                        echo $player;echo $player;
                         echo $player;
                     }
                     ?>

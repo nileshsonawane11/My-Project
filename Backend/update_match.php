@@ -19,6 +19,7 @@ $matchCity    = escape($conn, $_POST['matchCity'] ?? '');
 $matchDate    = escape($conn, $_POST['matchDate'] ?? '');
 $matchTime    = escape($conn, $_POST['matchTime'] ?? '');
 $matchPass    = escape($conn, $_POST['matchPass'] ?? '');
+$matchwinner    = escape($conn, $_POST['matchwinner'] ?? '');
 $match_id     = escape($conn, $_POST['match_id'] ?? '');
 $match_visibility = $_POST['match_visibility'] ?? 'false';
 $Umpires      = array_filter($_POST['Umpires'] ?? []);
@@ -30,7 +31,7 @@ $team2Logo    = $_FILES['team2Logo'] ?? null;
 $admin_id     = $_SESSION['user'] ?? '';
 
 // Fetch team IDs
-$match_sql = "SELECT team_1, team_2, sport_id FROM matches WHERE match_id = '$match_id'";
+$match_sql = "SELECT team_1, team_2, sport_id, score_log FROM matches WHERE match_id = '$match_id'";
 $match_result = mysqli_query($conn, $match_sql);
 if (!$match_result || mysqli_num_rows($match_result) === 0) {
     echo json_encode(['status' => 404, 'message' => 'Match not found']);
@@ -40,6 +41,7 @@ $match_row = mysqli_fetch_assoc($match_result);
 $team1_id = $match_row['team_1'];
 $team2_id = $match_row['team_2'];
 $sport_id = $match_row['sport_id'];
+$score_log = json_decode($match_row['score_log'],true);
 
 // Sports mapping
 $sportList = [
@@ -95,6 +97,19 @@ if (!empty($team2_id)) {
 
 // Update match
 $update_fields = [];
+
+$matchStatus = 'Upcoming';
+$score_log['winner'] = $matchwinner;
+
+    if($matchwinner == ''){
+        $matchStatus = "Upcoming";
+    }else{
+        $matchStatus = "Completed";
+    }
+
+$score_log_json =  json_encode($score_log);
+$update_fields[] = "score_log = '$score_log_json'";
+$update_fields[] = "status = '$matchStatus'";
 
 if (!empty($Umpires)) {
     // explode into array if only one element with commas
@@ -152,7 +167,8 @@ if (!empty($matchDate) && !empty($matchTime)) {
                 'field' => 'success',
                 'message' => 'Match Scheduled Successfully',
                 'pass' => $matchPass,
-                'game' => $sports_name
+                'game' => $sports_name,
+                '$matchwinner' => $matchwinner
             ]);
         } else {
             echo json_encode([

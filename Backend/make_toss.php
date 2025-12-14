@@ -14,6 +14,15 @@ $team2_players = $_POST['team2_players'];
 $match_id = $_POST['match_id'];
 $row = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `matches` WHERE `match_id` = '$match_id'"));
 
+$decision_t1_id = $selectedteam;
+$t2_id = ($row['team_1'] == $selectedteam) ? $row['team_2'] : $row['team_1'];;
+$q = mysqli_query($conn,"SELECT * FROM teams WHERE t_id IN ('$decision_t1_id', '$t2_id')");
+
+$teams = [];
+while($row3 = mysqli_fetch_assoc($q)) {
+    $teams[$row3['t_id']] = $row3['t_name'];  // Map by team ID
+}
+
 $bat  = '';
 $bowl = '';
 if ($selecteddecision == "BAT") {
@@ -34,6 +43,8 @@ $score_log = [
   "team2_score" => null,
   "team1_Wickets" => null,
   "team2_Wickets" => null,
+  "toss_decision" => $teams[$decision_t1_id]. " won the toss and elected to ". $selecteddecision,
+  "inline" => $teams[$decision_t1_id]. " won the toss and elected to ". $selecteddecision,
   "overs" => $overs,
   "freehit" => $isfreehit,
   "wide" => $iswide,
@@ -179,9 +190,30 @@ if (empty($overs) || $overs == 'Null') {
 }
 
 
-$query = mysqli_query($conn,"UPDATE `matches` SET `toss_winner` = '$selectedteam', `toss_decision` = '$selecteddecision',`score_log` = '$json',`history` = '$history_json' WHERE `match_id` = '$match_id'");
-if($query){
-    echo json_encode(['status'=>200,'message'=>$selectedteam.' elected to '.$selecteddecision,'field'=>'team']);
+$stmt = $conn->prepare("
+    UPDATE matches 
+    SET toss_winner = ?, toss_decision = ?, score_log = ?, history = ?
+    WHERE match_id = ?
+");
+
+$stmt->bind_param(
+    "sssss",
+    $selectedteam,
+    $selecteddecision,
+    $json,
+    $history_json,
+    $match_id
+);
+
+$stmt->execute();
+
+if ($stmt->affected_rows >= 0) {
+    echo json_encode([
+        'status' => 200,
+        'message' => $teams[$decision_t1_id] . ' elected to ' . $selecteddecision,
+        'field' => 'team'
+    ]);
     exit();
 }
+
 ?>

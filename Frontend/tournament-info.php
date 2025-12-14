@@ -652,6 +652,155 @@
     text-align: center;
     margin: 25px;
 }
+/* ✅ League Points Table Styling */
+.league-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+/* ✅ Main Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0e1624;
+    border-radius: 12px;
+    overflow: hidden;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+}
+
+/* ✅ Header Row */
+table th {
+    background: linear-gradient(45deg, #2196f3, #00c6ff);
+    color: #ffffff;
+    padding: 14px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ✅ Body Cells */
+table td {
+    padding: 12px;
+    text-align: center;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ✅ Alternate Rows */
+table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* ✅ Hover Effect */
+table tr:hover {
+    background: rgba(0, 198, 255, 0.2);
+    transition: 0.2s ease-in-out;
+}
+
+/* ✅ Rank Highlight */
+table td:first-child {
+    font-weight: bold;
+    color: #ffd54f;
+}
+
+/* ✅ Team Name Emphasis */
+table td:nth-child(2) {
+    font-weight: 600;
+    color: #90caf9;
+}
+
+/* ✅ NRR Color */
+table td:last-child {
+    color: #80cbc4;
+}
+
+/* ✅ Table Heading */
+h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #000000ff;
+    font-size: 24px;
+    letter-spacing: 1px;
+}
+.league-winner-box {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.league-winner-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #ff9800;
+}
+
+.winner-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.winner-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+.winner-logo img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #ff9800;
+}
+
+.winner-info {
+    text-align: center;
+}
+
+.winner-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.winner-points, .winner-nrr {
+    font-size: 16px;
+    color: #555;
+    margin: 3px 0;
+}
+
+.winner-points span, .winner-nrr span {
+    font-weight: bold;
+    color: #000;
+}
+
+/* ✅ Mobile Responsive */
+@media (max-width: 600px) {
+    table th, table td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+}
 
 /* Responsive */
 @media (min-width:601px){
@@ -696,6 +845,19 @@
                         <div class="slots">
                             <a href="./manage-teams.php?sport=<?php echo $sportList[$sport];  ?>&tournament=<?php echo $tournament_id; ?>"><div class="make-slots">Make Slots</div></a>
                         </div>
+                    <?php }else{ ?>
+                        <button onclick="printDiv('print-area')" style="
+                            padding: 10px 25px;
+                            font-size: 16px;
+                            background: var(--gradient);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
+                            cursor: pointer;
+                        ">
+                        🖨️ Print Slots
+                        </button>
                     <?php } ?>
                 
                 <div class="edit-toggle" id="editToggle">
@@ -710,7 +872,7 @@
             <p style="text-align: center; font-size: 1.2rem;">(<?php echo $result['tournament_name']; ?>)</p>
         </div>
         
-        <!-- Teams Display -->
+        <!-- Teams Display --><div id="print-area">
 <?php
 if ($format == 'knockout') {
 
@@ -1080,7 +1242,220 @@ if ($format == 'league') {
 // echo "<pre>";
 // print_r($matchSlots);
 // echo "</pre>";
-?>
+
+//INITIALIZE POINTS TABLE (FROM your tournament teams)
+$pointsTable = [];
+
+$team_query = mysqli_query($conn, "SELECT team_id FROM tournament_teams WHERE tournament_id = '$tournament_id'");
+while ($row = mysqli_fetch_assoc($team_query)) {
+    $teamId = $row['team_id'];
+
+    $pointsTable[$teamId] = [
+        'team_id' => $teamId,
+        'played' => 0,
+        'won' => 0,
+        'lost' => 0,
+        'points' => 0,
+        'runs_scored' => 0,
+        'overs_played' => 0,
+        'runs_conceded' => 0,
+        'overs_bowled' => 0,
+        'nrr' => 0
+    ];
+}
+
+//PROCESS ALL COMPLETED MATCHES
+$match_query = mysqli_query($conn, "
+    SELECT * FROM matches 
+    WHERE tournament = '$tournament_id' 
+    AND status = 'completed'
+");
+
+while ($m = mysqli_fetch_assoc($match_query)) {
+
+    $t1 = $m['team_1'];
+    $t2 = $m['team_2'];
+    $score_log = json_decode($m['score_log'],true);
+
+    $pointsTable[$t1]['played']++;
+    $pointsTable[$t2]['played']++;
+
+    $team1_inning_no = $t1 == $score_log['innings']['1st']['batting_team'] ? '1st' : '2nd';
+    $team2_inning_no = $t2 == $score_log['innings']['1st']['batting_team'] ? '1st' : '2nd';
+
+    // ✅ Runs & Overs
+    $pointsTable[$t1]['runs_scored'] += $score_log['team1_score'];
+    $pointsTable[$t1]['overs_played'] += $score_log['innings'][$team1_inning_no]['overs_completed'];
+    $pointsTable[$t1]['runs_conceded'] += $score_log['team2_score'];
+    $pointsTable[$t1]['overs_bowled'] += $score_log['innings'][$team2_inning_no]['overs_completed'];
+
+    $pointsTable[$t2]['runs_scored'] += $score_log['team2_score'];
+    $pointsTable[$t2]['overs_played'] += $score_log['innings'][$team2_inning_no]['overs_completed'];
+    $pointsTable[$t2]['runs_conceded'] += $score_log['team1_score'];
+    $pointsTable[$t2]['overs_bowled'] += $score_log['innings'][$team1_inning_no]['overs_completed'];
+
+    // ✅ Win / Loss / Points
+    if ($score_log['winner'] == $t1) {
+        $pointsTable[$t1]['won']++;
+        $pointsTable[$t1]['points'] += 2;
+        $pointsTable[$t2]['lost']++;
+    } else if ($score_log['winner'] == $t2) {
+        $pointsTable[$t2]['won']++;
+        $pointsTable[$t2]['points'] += 2;
+        $pointsTable[$t1]['lost']++;
+    }
+}
+
+// CALCULATE NET RUN RATE (NRR)
+foreach ($pointsTable as &$t) {
+    if ($t['overs_played'] > 0 && $t['overs_bowled'] > 0) {
+        $t['nrr'] = 
+            ($t['runs_scored'] / $t['overs_played']) -
+            ($t['runs_conceded'] / $t['overs_bowled']);
+    }
+}
+
+// SORT TEAMS BY OFFICIAL LEAGUE RULE (Points,NRR,Wins)
+usort($pointsTable, function ($a, $b) use ($conn, $tournament_id) {
+
+    // 1️⃣ POINTS
+    if ($b['points'] != $a['points'])
+        return $b['points'] <=> $a['points'];
+
+    // 2️⃣ NRR
+    if ($b['nrr'] != $a['nrr'])
+        return $b['nrr'] <=> $a['nrr'];
+
+    // 3️⃣ WINS
+    if ($b['won'] != $a['won'])
+        return $b['won'] <=> $a['won'];
+
+    // 4️⃣ HEAD-TO-HEAD
+    $teamA = $a['team_id'];
+    $teamB = $b['team_id'];
+
+    $hh = mysqli_fetch_assoc(mysqli_query($conn, "
+        SELECT score_log FROM matches 
+        WHERE tournament = '$tournament_id'
+        AND (
+            (team_1 = '$teamA' AND team_2 = '$teamB') OR
+            (team_1 = '$teamB' AND team_2 = '$teamA')
+        )
+        AND score_log IS NOT NULL
+        LIMIT 1
+    "));
+
+    if (!empty($hh)) {
+        $score_log = json_decode($hh['score_log'],true); 
+        if ($score_log['winner'] == $teamA) return -1;
+        if ($score_log['winner'] == $teamB) return 1;
+    }
+
+    // 5️⃣ FAIR PLAY (LOWER = BETTER)
+    if (isset($a['fair_play'], $b['fair_play']) && $a['fair_play'] != $b['fair_play'])
+        return $a['fair_play'] <=> $b['fair_play'];
+
+    // 6️⃣ TOSS (FINAL FALLBACK)
+    return rand(-1, 1);
+});
+
+//check all comleted ?
+$checkMatches = mysqli_fetch_assoc(mysqli_query($conn, "
+    SELECT 
+        COUNT(*) AS total_matches,
+        SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS completed_matches,
+        SUM(CASE WHEN status != 'Completed' THEN 1 ELSE 0 END) AS pending_matches
+    FROM matches
+    WHERE tournament = '$tournament_id'
+"));
+
+$allCompleted = ($checkMatches['total_matches'] == $checkMatches['completed_matches']);
+//Display league winner
+if ($allCompleted && !empty($pointsTable)) {
+
+    $winnerTeamId = $pointsTable[0]['team_id'];
+
+    $winnerData = mysqli_fetch_assoc(
+        mysqli_query($conn, "SELECT t_name, t_logo FROM teams WHERE t_id='$winnerTeamId'")
+    );
+
+    if(!empty($winnerData['t_logo'])){
+        $src = "../assets/images/teams/{$winnerData['t_logo']}";
+    }else{
+        $src = "https://cdn-icons-png.flaticon.com/512/8140/8140303.png";
+    }
+
+    echo "
+    <div class='league-winner-box'>
+        <h2 class='league-winner-title'>🏆 League Champion</h2>
+        <div class='winner-card'>
+            <div class='winner-logo'>
+                <img src='{$src}' alt='Winner'>
+            </div>
+            <div class='winner-info'>
+                <h3 class='winner-name'>{$winnerData['t_name']}</h3>
+                <p class='winner-points'>Points: <span>{$pointsTable[0]['points']}</span></p>
+                <p class='winner-nrr'>NRR: <span>".number_format($pointsTable[0]['nrr'], 3)."</span></p>
+                <p class='winner-nrr'>Wins: <span>".$pointsTable[0]['won']."</span></p>
+            </div>
+        </div>
+    </div>
+    ";
+}
+
+// ✅ DISPLAY FINAL LEAGUE POINTS TABLE
+echo "<div class='league-table-wrapper'>
+        <h2>League Points Table</h2>";
+
+echo "<table class='league-table'>
+<tr>
+    <th>Rank</th>
+    <th>Team</th>
+    <th>P</th>
+    <th>W</th>
+    <th>L</th>
+    <th>Pts</th>
+    <th>NRR</th>
+    <th>Fair Play</th>
+    <th>Status</th>
+</tr>";
+
+$rank = 1;
+$qualified_limit = 4; // ✅ Top 4 qualify (change if needed)
+
+foreach ($pointsTable as $team) {
+
+    // ✅ Fetch team name
+    $teamData = mysqli_fetch_assoc(
+        mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id='{$team['team_id']}'")
+    );
+
+    // ✅ Qualification status
+    $status = ($rank <= $qualified_limit) 
+                ? "<span class='qualified'>🟢</span>" 
+                : "<span class='eliminated'>🔴</span>";
+
+    // ✅ Fair Play (safe display)
+    $fairPlay = isset($team['fair_play']) ? $team['fair_play'] : '-';
+
+    echo "<tr>
+        <td>$rank</td>
+        <td>{$teamData['t_name']}</td>
+        <td>{$team['played']}</td>
+        <td>{$team['won']}</td>
+        <td>{$team['lost']}</td>
+        <td>{$team['points']}</td>
+        <td>".number_format($team['nrr'], 3)."</td>
+        <td>$fairPlay</td>
+        <td>$status</td>
+    </tr>";
+
+    $rank++;
+}
+
+echo "</table></div>";
+
+?></div>
     <?php if(isset($_SESSION['user']) && $_SESSION['role'] != "User"){ ?>
         <!-- Match Details Form -->
         <div class="form-section">
@@ -1192,6 +1567,51 @@ if ($format == 'league') {
             };
         });
 
+    //print slots
+    function printDiv(divId) {
+        var content = document.getElementById(divId).outerHTML;
+
+        var printWindow = window.open("", "", "width=1200,height=700");
+
+        // ✅ COPY ALL CSS FILES FROM MAIN PAGE
+        var cssLinks = "";
+        document.querySelectorAll("link[rel='stylesheet']").forEach(link => {
+            cssLinks += `<link rel="stylesheet" href="${link.href}">`;
+        });
+
+        // ✅ COPY ALL INLINE STYLES
+        var inlineStyles = "";
+        document.querySelectorAll("style").forEach(style => {
+            inlineStyles += style.outerHTML;
+        });
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Print</title>
+                ${cssLinks}
+                ${inlineStyles}
+                <style>
+                    @media print {
+                        button, .no-print { display: none !important; }
+                    }
+                </style>
+            </head>
+            <body>
+                ${content}
+            </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+        printWindow.focus();
+
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 800);
+    }
 
         save_btn.addEventListener("click", function() {
             

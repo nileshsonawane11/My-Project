@@ -103,7 +103,8 @@ if($issuper_over == true && $Ball_Type == null){
     exit();
 }
 
-function saveHistorySnapshot($conn, $match_id, $score_log) {
+function saveHistorySnapshot($conn, $match_id, &$score_log) {
+    global $Inning;
     // Calculate legal deliveries for accurate over count
     $legalBalls = array_filter($score_log['innings']['1st']['balls'] ?? [], function($ball) {
         return strpos($ball['Ball Type'], 'No Ball') === false && 
@@ -111,6 +112,11 @@ function saveHistorySnapshot($conn, $match_id, $score_log) {
     });
     $legalBallCount = count($legalBalls);
     $overs = floor($legalBallCount / 6) . '.' . ($legalBallCount % 6);
+    if($Inning == '2nd'){
+        target_function($score_log);
+    }else if($Inning == '1st'){
+        toss_decision($score_log);
+    }
     
     // Fetch and update history
     $result = $conn->query("SELECT history FROM matches WHERE match_id = '$match_id'");
@@ -136,7 +142,8 @@ function saveHistorySnapshot($conn, $match_id, $score_log) {
 
 if (($Ball_Type == null && $undo == true)) {
     global $match_id;
-    
+    global $Inning;
+    global $Inning_type;
     // Start transaction
     $conn->begin_transaction();
     
@@ -186,6 +193,12 @@ if (($Ball_Type == null && $undo == true)) {
         $battingTeamId = $score_log[$Inning_type][$Inning]['batting_team'];
         $score_field = ($battingTeamId == $score_log['team1']) ? 'score_team_1' : 'score_team_2';
         
+        if($Inning == '2nd'){
+            target_function($previousState);
+        }else if($Inning == '1st'){
+            toss_decision($previousState);
+        }
+
         // Update database
         $newHistory = array_slice($history, 0, -1);
         $stmt = $conn->prepare("UPDATE matches SET history = ?,$score_field = ?, score_log = ? WHERE match_id = ?");
@@ -232,13 +245,72 @@ function calculateRR($runs, $overs_string) {
     return round($runs / $decimal_overs, 2);
 }
 
+function target_function(&$score_log){
+    global $Inning_type;
+
+    // 1) Target
+    $target = ($score_log[$Inning_type]['1st']['total_runs'] ?? 0) + 1;
+
+    // 2) Current score
+    $current_runs = $score_log[$Inning_type]['2nd']['total_runs'] ?? 0;
+
+    // 3) Required Runs
+    $required_runs = max(0, $target - $current_runs);
+
+    // 4) Total balls
+    $match_overs = (int)($score_log['overs'] ?? 0);
+    $total_balls = $match_overs * 6;
+
+    // 5) Balls bowled
+    $overs_str = $score_log[$Inning_type]['2nd']['overs_completed'] ?? "0.0";
+
+    if (!str_contains($overs_str, '.')) {
+        $overs_str .= ".0";
+    }
+
+    list($o, $b) = explode('.', $overs_str);
+
+    $o = (int)$o;
+    $b = (int)$b;
+
+    $balls_bowled = ($o * 6) + $b;
+
+    // 6) Balls remaining
+    $balls_remaining = max(0, $total_balls - $balls_bowled);
+
+    // 7) Required Run Rate
+    $rrr = ($balls_remaining > 0)
+        ? round(($required_runs * 6) / $balls_remaining, 2)
+        : 0;
+
+    // Inline text
+    $score_log['inline'] = "Need $required_runs off $balls_remaining balls | RRR $rrr";
+}
+
+
+function toss_decision(&$score_log){
+    global $match_id, $conn;
+
+    // Single JOIN query instead of 2 separate queries
+    $sql = "
+        SELECT m.toss_decision, t.t_name 
+        FROM matches m
+        JOIN teams t ON m.toss_winner = t.t_id
+        WHERE m.match_id = '$match_id'
+    ";
+
+    $data = mysqli_fetch_assoc(mysqli_query($conn, $sql));
+
+    // Prepare short inline text
+    $score_log['inline'] = "{$data['t_name']} won the toss and elected to {$data['toss_decision']}";
+}
+
 
 handleMatchProgress($score_log);
 
 if($Ball_Type != null){
     updateBall($score_log, $Inning_type, $Inning, $Ball_Type, $data, $match_id);
 }
-
 
 function updateBall(&$score_log, $Inning_type, $Inning, $Ball_Type, $data, $match_id) {
     global $conn;

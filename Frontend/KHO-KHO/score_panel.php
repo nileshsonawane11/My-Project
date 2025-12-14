@@ -1351,7 +1351,7 @@
                                         echo '1';
                                     }
                                     ?></label>
-                                <label class="to_team-name">to <?php echo $team_names[$team1_id]; ?></label>
+                                <label class="to_team-name">to <?php echo $team_names[$team1_id] ?? ''; ?></label>
                             </div>
                             <div class="last-update"><?php echo $tags['last score']; ?></div>
                         </div>
@@ -1536,6 +1536,11 @@
     let match = <?php echo json_encode($match_id); ?>;
     let current_inning = <?php echo json_encode($current_inning); ?>;
     is_complete = false;
+
+    let proceed_end_set = ()=>{
+        exit_inn = true;
+        get_score();
+    }
     
     let get_score = () => {
         let data = {
@@ -1971,7 +1976,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
    // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+//   document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

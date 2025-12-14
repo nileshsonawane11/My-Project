@@ -189,7 +189,7 @@ if (!isset($_COOKIE[$cookie_name])) {
     </script>
 
 
-    <title>Document</title>
+    <title>ScoreBoard Cricket</title>
 </head>
 <style>
     *{
@@ -2075,32 +2075,32 @@ if (!isset($_COOKIE[$cookie_name])) {
 
                 <?php 
                     if(empty($row['toss_winner'])){
-                        echo "<div class='info'><p>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
+                        echo "<div class='info'><p class='decision'>" . formatMatchTime($row['match_date'], $row['start_time']) . "</p></div>";
                     }else if($row['status'] == 'Live'){
                         
+                        echo "<div class='info update'><p class='decision'>" . $score_log['inline'] ."</p></div>";
+                        // $team = '';
+                        // if($row['toss_winner'] == $team1['t_id']){
+                        //     $team = $team1['t_name'];
+                        // }else{
+                        //     $team = $team2['t_name'];
+                        // }
 
-                        $team = '';
-                        if($row['toss_winner'] == $team1['t_id']){
-                            $team = $team1['t_name'];
-                        }else{
-                            $team = $team2['t_name'];
-                        }
-
-                        echo "<div class='info update'><p>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
+                        // echo "<div class='info update'><p class='decision'>" . $team . " Elected To ". $row['toss_decision'] ."</p></div>";
                     }else if($row['status'] == 'Completed'){
                         $winner = $score_log['winner'];
                         $winner_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `teams` WHERE t_id = '$winner'"))['t_name'];
                         // If match is not completed and no winner is declared
                         if (!empty($score_log['super_over_innings']) && is_array($score_log['super_over_innings'])){
-                            echo "<div class='info update'><p>Match Tied (".$winner_name." Won The Match)</p></div>";
+                            echo "<div class='info update'><p class='decision'>Match Tied (".$winner_name." Won The Match)</p></div>";
                         }else{
-                            echo "<div class='info update'><p>".$winner_name." Won The Match</p></div>";
+                            echo "<div class='info update'><p class='decision'>".$winner_name." Won The Match</p></div>";
                         }
                         
                     }
                 ?>
                 <div class="info">
-                    <p id='run_rate'>CRR : 0.0</p>
+                    <p id='run_rate'>CRR : <?php echo $lastBall['RR'] ?? 0.0; ?></p>
                     <p>Views : <?php echo $row['view_count'] ?? 0; ?></p>
                 </div>
                 <!-- OR if toss declared -->
@@ -3177,16 +3177,14 @@ if (!isset($_COOKIE[$cookie_name])) {
                                         // First check users table
                                         $user_query = mysqli_query($conn, "SELECT * FROM `users` WHERE `user_id` = '$user_id'");
                                         $user_data = mysqli_fetch_assoc($user_query);
-
                                         if (!$user_data) {
                                             // Fallback to players table
                                             $player_query = mysqli_query($conn, "SELECT * FROM `players` WHERE `user_id` = '$user_id'");
                                             $player_data = mysqli_fetch_assoc($player_query);
-
                                             if ($player_data) {
                                                 $row = [
-                                                    'fname' => $player_data['player_name'] ? explode(' ', $player_data['player_name'])[0] : 'Player',
-                                                    'lname' => $player_data['player_name'] ? (explode(' ', $player_data['player_name'])[1] ?? '') : '',
+                                                    'fname' => $player_data['player_name'] ? $player_data['player_name'] : 'Player',
+                                                    'lname' => '',
                                                     'user_photo' => $player_data['photo']
                                                 ];
                                             } else {
@@ -3259,6 +3257,7 @@ if (!isset($_COOKIE[$cookie_name])) {
     const feedback_page = document.querySelector('.cmc-report-issue-button');
     const close_ad = document.querySelector('.hide-ad');
     const ad_container = document.querySelector('.ad');
+    let inlinestatus = document.querySelector('.decision');
     const matchID = <?php echo json_encode($match_id); ?>;
     let current_innings = <?php echo json_encode($current_innings); ?>;
     //websocket programing
@@ -3446,6 +3445,64 @@ function fetchScoreboard(data) {
             : 'innings';
 
             const balls = data?.[innings]?.[current_innings]?.['balls'];
+
+            function targetFunction(score_log) {
+                const Inning_type = score_log.inning_type || "innings";
+
+                // 1) Target = runs of 1st innings + 1
+                const target = (score_log[Inning_type]?.["1st"]?.total_runs || 0) + 1;
+
+                // 2) Runs in 2nd innings
+                const current_runs = score_log[Inning_type]?.["2nd"]?.total_runs || 0;
+
+                // 3) Required runs
+                let required_runs = target - current_runs;
+                if (required_runs < 0) required_runs = 0;
+
+                // 4) Total balls
+                const match_overs = parseInt(score_log.overs || 0);
+                const total_balls = match_overs * 6;
+
+                // 5) Balls bowled in 2nd innings
+                let overs_str = score_log[Inning_type]?.["2nd"]?.overs_completed || "0.0";
+
+                // Ensure “0” becomes “0.0”
+                if (!overs_str.includes(".")) {
+                    overs_str = overs_str + ".0";
+                }
+
+                let [o, b] = overs_str.split(".");
+                o = parseInt(o) || 0;
+                b = parseInt(b) || 0;
+
+                const balls_bowled = (o * 6) + b;
+
+                // 6) Balls remaining
+                let balls_remaining = total_balls - balls_bowled;
+                if (balls_remaining < 0) balls_remaining = 0;
+
+                // 7) Required run rate
+                let rrr = 0;
+                if (balls_remaining > 0) {
+                    rrr = ((required_runs * 6) / balls_remaining);
+                    rrr = Math.round(rrr * 100) / 100;  // round to 2 decimals
+                }
+
+                // INLINE COMMENTARY TEXT
+                inlinestatus.innerText = `Need ${required_runs} off ${balls_remaining} balls | RRR ${rrr}`;
+                console.log('Status updated for 2nd inning');
+            }
+
+            function tossDecision(score_log) {
+                inlinestatus.innerText = score_log?.toss_decision;
+                console.log('Status updated for 1st inning');
+            }
+
+            if(data.current_innings == '1st'){
+                tossDecision(data);
+            }else if(data.current_innings == '2nd'){
+                targetFunction(data);
+            }
 
             // if (!balls || balls.length === 0) {
             //     window.location.reload();

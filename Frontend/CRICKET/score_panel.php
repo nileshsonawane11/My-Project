@@ -131,7 +131,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../../assets/images/logo.png">
-    <title>Team Info</title>
+    <title>Score_Panel Cricket</title>
     <style>
                 * {
             margin: 0;
@@ -810,6 +810,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         }
 
         #selectshot,
+        #selectteam,
         #undo,
         #match_completed,
         #run_type {
@@ -834,6 +835,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         }
 
         #selectshot::backdrop,
+        #selectteam::backdrop,
         #undo::backdrop,
         #super_over::backdrop,
         #run_type::backdrop {
@@ -945,6 +947,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             font-size: 15px;
             cursor: pointer;
             transition: var(--transition);
+            text-align: center;
         }
         
 
@@ -1101,6 +1104,28 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             </div>
         </dialog>
 
+        <dialog id="selectteam">
+            <div class="text">    
+                <h4>Select Team</h4>
+                <p></p>
+            </div>
+            <div class="data">
+                <?php
+                    $t1_id = $score_log['team1'];
+                    $t2_id = $score_log['team2'];
+                    $q = mysqli_query($conn,"SELECT * FROM teams WHERE t_id IN ('$t1_id', '$t2_id')");
+
+                    $teams = [];
+                    while($row3 = mysqli_fetch_assoc($q)) {
+                        $teams[$row3['t_id']] = $row3['t_name'];  // Map by team ID
+                    }
+                ?>
+                <div class="style-container" data-value="<?php echo $t1_id; ?>"><?php echo $teams[$t1_id]; ?></div>
+                <div class="style-container" data-value="<?php echo $t2_id; ?>"><?php echo $teams[$t2_id]; ?></div>
+            </div>
+            <div class="undo-seyup"><p class="undo-cancel">Cancel</p></div>
+        </dialog>
+
         <dialog id="undo">
             <div class="undo-container">
                 <div class="undo-seyup">
@@ -1189,7 +1214,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                         </div>
                     </div>
                     <div class="menu-columns">
-                        <div class="menu">
+                        <div class="menu ch_squad">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M5 19.5C3.80653 19.5 2.66193 19.0259 1.81802 18.182C0.974106 17.3381 0.5 16.1935 0.5 15C0.5 13.8065 0.974106 12.6619 1.81802 11.818C2.66193 10.9741 3.80653 10.5 5 10.5C6.19347 10.5 7.33807 10.9741 8.18198 11.818C9.02589 12.6619 9.5 13.8065 9.5 15C9.5 16.1935 9.02589 17.3381 8.18198 18.182C7.33807 19.0259 6.19347 19.5 5 19.5ZM15 9.5C14.4091 9.5 13.8239 9.3836 13.2779 9.15746C12.732 8.93131 12.2359 8.59984 11.818 8.18198C11.4002 7.76412 11.0687 7.26804 10.8425 6.72208C10.6164 6.17611 10.5 5.59095 10.5 5C10.5 4.40905 10.6164 3.82389 10.8425 3.27792C11.0687 2.73196 11.4002 2.23588 11.818 1.81802C12.2359 1.40016 12.732 1.06869 13.2779 0.842542C13.8239 0.616396 14.4091 0.5 15 0.5C16.1935 0.5 17.3381 0.974106 18.182 1.81802C19.0259 2.66193 19.5 3.80653 19.5 5C19.5 6.19347 19.0259 7.33807 18.182 8.18198C17.3381 9.02589 16.1935 9.5 15 9.5ZM5 17.5C5.66304 17.5 6.29893 17.2366 6.76777 16.7678C7.23661 16.2989 7.5 15.663 7.5 15C7.5 14.337 7.23661 13.7011 6.76777 13.2322C6.29893 12.7634 5.66304 12.5 5 12.5C4.33696 12.5 3.70107 12.7634 3.23223 13.2322C2.76339 13.7011 2.5 14.337 2.5 15C2.5 15.663 2.76339 16.2989 3.23223 16.7678C3.70107 17.2366 4.33696 17.5 5 17.5ZM15 7.5C15.663 7.5 16.2989 7.23661 16.7678 6.76777C17.2366 6.29893 17.5 5.66304 17.5 5C17.5 4.33696 17.2366 3.70107 16.7678 3.23223C16.2989 2.76339 15.663 2.5 15 2.5C14.337 2.5 13.7011 2.76339 13.2322 3.23223C12.7634 3.70107 12.5 4.33696 12.5 5C12.5 5.66304 12.7634 6.29893 13.2322 6.76777C13.7011 7.23661 14.337 7.5 15 7.5ZM1 6C1 4.67392 1.52678 3.40215 2.46447 2.46447C3.40215 1.52678 4.67392 1 6 1H9V3H6C5.20435 3 4.44129 3.31607 3.87868 3.87868C3.31607 4.44129 3 5.20435 3 6V9H1V6ZM19 11H17V14C17 14.7956 16.6839 15.5587 16.1213 16.1213C15.5587 16.6839 14.7956 17 14 17H11V19H14C15.3261 19 16.5979 18.4732 17.5355 17.5355C18.4732 16.5979 19 15.3261 19 14V11Z" fill="black"/>
                             </svg>
@@ -1276,12 +1301,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     </div>
                     <div class="decision">
                         <?php 
-                            $toss_winner_id = $row['toss_winner'];
-                            $toss_winner_name = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM teams WHERE t_id = '$toss_winner_id'"));
-                            echo $toss_winner_name['t_name'];      
-                        ?> won the toss and elected to 
-                        <?php 
-                            echo $row['toss_decision']; 
+                            echo $score_log['inline'];      
                         ?>
                     </div>
                 </div>
@@ -1305,7 +1325,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                                 $player_data = mysqli_fetch_assoc($striker_query);
                                                 
                                                 if($player_data) {
-                                                    $name = ['fname' => $player_data['player_name']];
+                                                    $name = ['fname' => $player_data['player_name'],'lname'=>''];
                                                 }
                                             }
                                     ?>
@@ -1315,7 +1335,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                     </svg>
                                     <span class="striker-text">
                                         <?php
-                                            echo $name['fname'] ?? '';
+                                            echo ($name['fname'] ?? '') . ' ' . ($name['lname'] ?? '');
                                         ?>
                                     </span>
                                 </div>
@@ -1342,7 +1362,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                                 $player_data = mysqli_fetch_assoc($non_striker_query);
                                                 
                                                 if($player_data) {
-                                                    $name = ['fname' => $player_data['player_name']];
+                                                    $name = ['fname' => $player_data['player_name'],'lname'=>''];
                                                 }
                                             }
                                     ?>
@@ -1352,7 +1372,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                     </svg>
                                     <span class="non-striker-text">
                                         <?php
-                                            echo $name['fname'] ?? '';
+                                            echo ($name['fname'] ?? '') . ' ' . ($name['lname'] ?? '');
                                         ?>
                                     </span>
                                 </div>
@@ -1382,7 +1402,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                             $player_data = mysqli_fetch_assoc($bowler_query);
                                             
                                             if($player_data) {
-                                                $name = ['fname' => $player_data['player_name']];
+                                                $name = ['fname' => $player_data['player_name'],'lname'=>''];
                                             }
                                         }
 
@@ -1394,7 +1414,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                                         </svg>
                                         <span class="bowler-text">
                                             <?php
-                                                echo $name['fname'] ?? '';
+                                                echo ($name['fname'] ?? '') . ' ' . ($name['lname'] ?? '');
                                             ?>
                                         </span>
                                     </div>
@@ -1496,6 +1516,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         let dropdown = document.querySelector('.dropdown');
         let shotdialog = document.querySelector('#shotdialog');
         let shot = document.querySelector('#selectshot');
+        let team_dialogue = document.querySelector('#selectteam');
         let run_type_container = document.querySelector('#run_type');
         let data_container = document.querySelector('.data');
         let undo = document.querySelector('.undo');
@@ -2305,6 +2326,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
             document.querySelectorAll('.undo-cancel, .complete-cancel').forEach(button => {
                 button.addEventListener('click', () => {
                     undo_container.close();
+                    team_dialogue.close();
                     undo_container.classList.remove('shake');
 
                     if(button.classList.contains('undo-cancel') && match_complete == true){
@@ -2628,7 +2650,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                 })
                 .then(res => res.json())
                 .then((data)=>{
-                    console.log(data);
+                    console.log('Data : '+ data);
                      document.querySelectorAll('.score-numpad .num').forEach(button => {
                             if (!button.classList.contains('undo')) {
                                 button.disabled = match_complete;
@@ -2729,6 +2751,14 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
                     console.log(error);
                 });
             }
+
+            document.querySelector('.ch_squad').addEventListener('click',(e)=>{
+                team_dialogue.showModal();
+                dropdown.classList.toggle('active');
+                setTimeout(() => {
+                    opacity.style.display = 'none';
+                }, 100);
+            });
 
             // Disable right-click
 //   document.addEventListener('contextmenu', event => event.preventDefault());
@@ -2840,12 +2870,72 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         let non_striker_name = document.querySelector('.non-striker-text');
         let bowlername = document.querySelector('.bowler-text');
         let bowls = document.querySelector('.bowls');
+        let inlinestatus = document.querySelector('.decision');
         let batting_team_name = document.querySelector('.team_name');
+        function targetFunction(score_log) {
+            const Inning_type = score_log.inning_type || "innings";
+
+            // 1) Target = runs of 1st innings + 1
+            const target = (score_log[Inning_type]?.["1st"]?.total_runs || 0) + 1;
+
+            // 2) Runs in 2nd innings
+            const current_runs = score_log[Inning_type]?.["2nd"]?.total_runs || 0;
+
+            // 3) Required runs
+            let required_runs = target - current_runs;
+            if (required_runs < 0) required_runs = 0;
+
+            // 4) Total balls
+            const match_overs = parseInt(score_log.overs || 0);
+            const total_balls = match_overs * 6;
+
+            // 5) Balls bowled in 2nd innings
+            let overs_str = score_log[Inning_type]?.["2nd"]?.overs_completed || "0.0";
+
+            // Ensure “0” becomes “0.0”
+            if (!overs_str.includes(".")) {
+                overs_str = overs_str + ".0";
+            }
+
+            let [o, b] = overs_str.split(".");
+            o = parseInt(o) || 0;
+            b = parseInt(b) || 0;
+
+            const balls_bowled = (o * 6) + b;
+
+            // 6) Balls remaining
+            let balls_remaining = total_balls - balls_bowled;
+            if (balls_remaining < 0) balls_remaining = 0;
+
+            // 7) Required run rate
+            let rrr = 0;
+            if (balls_remaining > 0) {
+                rrr = ((required_runs * 6) / balls_remaining);
+                rrr = Math.round(rrr * 100) / 100;  // round to 2 decimals
+            }
+
+            // INLINE COMMENTARY TEXT
+            inlinestatus.innerText = `Need ${required_runs} off ${balls_remaining} balls | RRR ${rrr}`;
+            console.log('Status updated for 2nd inning');
+        }
+
+        function tossDecision(score_log) {
+            inlinestatus.innerText = score_log?.toss_decision;
+            console.log('Status updated for 1st inning');
+        }
+
+        if(current_inning == '1st'){
+            tossDecision(log);
+        }else if(current_inning == '2nd'){
+            targetFunction(log);
+        }
 
         score.innerHTML = `${log[inning_type][current_inning].total_runs}/${log[inning_type][current_inning].wickets}<p class="overs">(${log[inning_type][current_inning].overs_completed}/
                             ${log.overs})</p>`;
 
         batting_team_name.innerText = `${log.bat_team}`;
+
+
 
         let striker_id = log[inning_type][current_inning].openers.current_striker.id;
         let non_striker_id = log[inning_type][current_inning].openers.current_non_striker.id;
@@ -2859,7 +2949,7 @@ if ($current_innings === null && (!isset($score_log['match_completed']) || $scor
         non_striker_name.innerText = log.Players_map[non_striker_id] || '';
 
         bowlername.innerText = log.Players_map[bowler_id] || '';
-        bowls.innerText = `${bowler.overs_bowled}-${bowler.wickets}-${bowler.runs_conceded}-${bowler.maidens}`;
+        bowls.innerText = `${bowler.overs_bowled??0}-${bowler.wickets??0}-${bowler.runs_conceded??0}-${bowler.maidens??0}`;
 
         let openers = log[inning_type][current_inning].openers;
         let current_bowler = log[inning_type][current_inning].current_bowler;
