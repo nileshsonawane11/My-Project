@@ -649,7 +649,7 @@
             <div class="rule">
                 <h6>Private Visibility</h6>
                 <div class="form-check form-switch">
-                    <input class="form-check-input isfreehit" type="checkbox" id="flexSwitchCheckChecked" disabled <?php echo $button = $result['visibility'] == 'false' ? '' : 'checked'; ?>>
+                    <input class="form-check-input isfreehit" type="checkbox" id="flexSwitchCheckChecked" disabled <?php echo $button = $result['visibility'] == 'False' ? '' : 'checked'; ?>>
                 </div>
             </div>
             

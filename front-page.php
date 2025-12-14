@@ -10,7 +10,6 @@
         $_SESSION['role']=$row['role'];
         $_SESSION['name']=$row['fname'].' '.$row['lname'];
     }
-
     if(isset($_SESSION['user'])){
         header('location: ./dashboard.php?update="live"&sport="CRICKET"');
         exit();

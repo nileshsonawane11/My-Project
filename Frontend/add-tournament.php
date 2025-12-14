@@ -541,8 +541,8 @@
                     <div class="input-fields"><input type="text" name="" id="tname" class="data" required><label for="tname">Tournament name <sup class="ast">*</sup></label></div>
                     <div class="input-fields"><input type="text" name="" id="city" class="data" required><label for="city">City <sup class="ast">*</sup></label></div>
                     <div class="input-fields"><input type="text" name="" id="ground" class="data" required><label for="ground">Ground <sup class="ast">*</sup></label></div>
-                    <div class="input-fields"><input type="text" name="" id="organizer-name" class="data" required><label for="oranizer-name">Organizer Name <sup class="ast">*</sup></label></div>
-                    <div class="input-fields"><input type="number" pattern="[0-9]{10}" maxlength="10" name="" id="organizer-no" class="data" required><label for="oranizer-no">Organizer Number <sup class="ast">*</sup></label></div>
+                    <div class="input-fields"><input type="text" name="" id="organizer-name" class="data" required><label for="organizer-name">Organizer Name <sup class="ast">*</sup></label></div>
+                    <div class="input-fields"><input type="number" pattern="[0-9]{10}" maxlength="10" name="" id="organizer-no" class="data" required><label for="organizer-no">Organizer Number <sup class="ast">*</sup></label></div>
                     <div class="input-fields"><input type="email" name="" id="email" class="data" required><label for="email">Organizer Email <sup class="ast">*</sup></label></div>
                     <div class="schedule">
                         <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Date <sup class="ast">*</sup></label></div>

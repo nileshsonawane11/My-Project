@@ -735,7 +735,7 @@
                             ];
                         ?>
                     <div class="info">
-                        <h4>Sports Type</h4>
+                        <h4>Sport Type (auto-selected) </h4>
                         <select name="" id="s-type" disabled>
                             <?php
                                 echo "<option value='{$sportsTypes[$game]}' disabled selected>{$sportsTypes[$game]}</option>";

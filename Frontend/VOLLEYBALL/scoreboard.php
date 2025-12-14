@@ -207,7 +207,7 @@ if (!isset($_COOKIE[$cookie_name])) {
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding: 10px 20px 10px 0px;
+        padding: 10px 20px 10px 10px;
     }
     
     .items,.list{
@@ -254,7 +254,7 @@ if (!isset($_COOKIE[$cookie_name])) {
     }
     
     .ad2{
-        height: 60px;
+        height: 80px;
         width: 100%;
         background: rgba(20, 20, 20, 0.12);
         display: flex;
@@ -2023,7 +2023,7 @@ if (!isset($_COOKIE[$cookie_name])) {
     </div>
 
     <div class="ad2 ad-slot" data-slot="ad2">
-        <div class="placeholder">Advertisement (412px x 60px)</div>
+        <div class="placeholder">Advertisement (412px x 80px)</div>
         <div class="slides"></div>
     </div>
 

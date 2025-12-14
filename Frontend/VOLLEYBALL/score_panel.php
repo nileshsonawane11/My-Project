@@ -396,6 +396,7 @@
             align-items: center;
             width: 100%;
             height: 60%;
+            margin-top: 5%;
         }
 
         .team-button {
@@ -1237,6 +1238,10 @@
                             <label class="team1_name">
                                 <?php
                                     echo $t_name1['t_name'];
+                                    if( $current_serve_team == $t_id1)
+                                    {
+                                        echo " 🏐";
+                                    }
                                 ?>
                             </label>
                             <label class="set">Sets : <?php echo $score_log['sets_won']['team1']; ?></label>
@@ -1261,6 +1266,10 @@
                             <label class="team2_name">
                                 <?php
                                     echo $t_name2['t_name'];
+                                    if( $current_serve_team == $t_id2)
+                                    {
+                                        echo " 🏐";
+                                    }
                                 ?>
                             </label>
                             <label class="set">Sets : <?php echo $score_log['sets_won']['team2']; ?></label>
@@ -1278,7 +1287,7 @@
         
 
         <div class="buttons">
-            <div class="point-buttons">
+            <!-- <div class="point-buttons">
                 <div class="team-btn">
                     <label class="team-name"><?php echo $t_name1['t_name']; ?></label>
                     <button class="team-button" data-team="<?php echo $score_log['team1']; ?>">Point</button>
@@ -1287,11 +1296,11 @@
                     <label class="team-name"><?php echo $t_name2['t_name']; ?></label>
                     <button class="team-button" data-team="<?php echo $score_log['team2']; ?>">Point</button>
                 </div>
-            </div>
+            </div> -->
 
             <div class="serve-button">
                 <div class="team-btn">
-                    <label class="team-name">For detail Scoring</label>
+                    <!-- <label class="team-name">For detail Scoring</label> -->
                     <button class="serve">Serve</button>
                     <div >
                         <button class="undo" id='undo-button'>Undo</button>
@@ -1354,7 +1363,7 @@
         <div class="slide-container">
             <div class="container3">
                     <div class="current-server">
-                        <label class="curr-ser">Current Raider</label>
+                        <label class="curr-ser">Serving Player</label>
                         <label class="tap">Tap to choose the raiding player</label>
                     </div>
                     <?php
@@ -1406,7 +1415,12 @@
                         </div>
                         <div class="text">Ace</div>
                         <div class="extra2">+1 to <?php
-                                    echo $t_name1['t_name'];
+                                    if( $current_serve_team == $t_id1)
+                                    {
+                                        echo $t_name1['t_name'];
+                                    }else{
+                                        echo $t_name2['t_name'];
+                                    }
                                 ?></div>
                     </div>
                     <div class="error" data-team="<?php echo $score_log['team2']; ?>">
@@ -1415,7 +1429,13 @@
                         </div>
                         <div class="text">Error</div>
                         <div class="extra3">+1 to <?php
-                                    echo $t_name2['t_name'];
+                                    if( $current_serve_team == $t_id1)
+                                    {
+                                        echo $t_name2['t_name'];
+                                    }else{
+                                        echo $t_name1['t_name'];
+                                    }
+                                    
                                 ?></div>
                     </div>
                 </div>
@@ -1633,54 +1653,77 @@
     });
     
     // Drag to dismiss
-    let startY = 0;
-    const threshold = 60;
+        let startY = 0;
+        const threshold = 60;
 
-    slideWrapper.addEventListener('touchstart', (e) => {
-        startY = e.touches[0].clientY;
-        slideWrapper.style.transition = 'none';
-    });
+        slideWrapper.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+            slideWrapper.style.transition = 'none';
+        });
 
-    slideWrapper.addEventListener('touchmove', (e) => {
-        const diffY = e.touches[0].clientY - startY;
-        if (diffY > 0) {
-            slideWrapper.style.transform = `translateY(${diffY}px)`;
-        }
-    });
+        slideWrapper.addEventListener('touchmove', (e) => {
+            const diffY = e.touches[0].clientY - startY;
+            if (diffY > 0) {
+                slideWrapper.style.transform = `translateY(${diffY}px)`;
+            }
+        });
 
-    slideWrapper.addEventListener('touchend', (e) => {
-        const diffY = e.changedTouches[0].clientY - startY;
-        slideWrapper.style.transition = 'transform 0.5s ease';
-        
-        if (diffY > threshold) {
+        slideWrapper.addEventListener('touchend', (e) => {
+            const diffY = e.changedTouches[0].clientY - startY;
+            slideWrapper.style.transition = 'transform 0.5s ease';
+            
+            if (diffY > threshold) {
+                dismissSlide();
+            } else {
+                slideWrapper.style.transform = 'translateY(0)';
+            }
+        });
+
+        // Click outside to dismiss (for desktop PWA)
+        document.addEventListener('click', (e) => {
+            // Check if click is outside the slideWrapper and slideWrapper is currently visible
+            if (!slideWrapper.contains(e.target) && 
+                slideWrapper.style.transform !== 'translateY(600px)' &&
+                slideWrapper.style.transform !== '' &&
+                slideWrapper.getBoundingClientRect().top < window.innerHeight) {
+                dismissSlide();
+            }
+        });
+
+        // Common dismiss function
+        function dismissSlide() {
+            slideWrapper.style.transition = 'transform 0.5s ease';
             slideWrapper.style.transform = 'translateY(600px)';
-        } else {
-            slideWrapper.style.transform = 'translateY(0)';
+            
+            setTimeout(() => {
+                if (slideContainer) {
+                    slideContainer.style.transform = 'translateX(0)';
+                }
+            }, 300);
         }
-    });
 
-    const clickableSelectors = ['.ace', '.error', '.team1-info', '.team2-info'];
+        const clickableSelectors = ['.ace', '.error', '.team1-info', '.team2-info'];
 
-    clickableSelectors.forEach(selector => {
-        document.querySelectorAll(selector).forEach(element => {
-            element.addEventListener('click', () => {
-                if (slideWrapper) {
+        clickableSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(element => {
+                element.addEventListener('click', () => {
                     slideWrapper.style.transition = 'transform 0.5s ease';
                     slideWrapper.style.transform = 'translateY(600px)';
                     if (element.matches('.ace, .error')) {
                         getaction(element);
-                        console.log('Action immediately:', element.innerText); // use element here
+                        console.log('Action immediately:', element.innerText);
                     }
                     // Use directly here
                     serveresult(element);
 
                     setTimeout(() => {
-                        slideContainer.style.transform = 'translateX(0)';
+                        if (slideContainer) {
+                            slideContainer.style.transform = 'translateX(0)';
+                        }
                     }, 300);
-                }
+                });
             });
         });
-    });
 
 
     document.querySelectorAll(".team-button").forEach(team => {
@@ -1725,7 +1768,7 @@
     }
 
     // Disable right-click
-  document.addEventListener('contextmenu', event => event.preventDefault());
+  //document.addEventListener('contextmenu', event => event.preventDefault());
 
   // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
   document.onkeydown = function(e) {

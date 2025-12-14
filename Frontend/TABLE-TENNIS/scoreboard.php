@@ -220,7 +220,7 @@ if (!isset($_COOKIE[$cookie_name])) {
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding: 10px 20px 10px 0px;
+        padding: 10px 20px 10px 10px;
     }
     
     .items,.list{
@@ -267,7 +267,7 @@ if (!isset($_COOKIE[$cookie_name])) {
     }
     
     .ad2{
-        height: 60px;
+        height: 80px;
         width: 100%;
         background: rgba(20, 20, 20, 0.12);
         display: flex;
@@ -1842,18 +1842,22 @@ if (!isset($_COOKIE[$cookie_name])) {
             </a>
             <div class="items">
                 <div id='commentaryIcon'>
-                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/></svg>
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.0625 4.24502C14.0625 3.15283 12.7016 2.65439 11.9961 3.4872L8.80391 7.26064C8.65721 7.43375 8.47457 7.57283 8.26869 7.66822C8.06281 7.7636 7.83862 7.81301 7.61172 7.81299H4.6875C3.8587 7.81299 3.06384 8.14223 2.47779 8.72828C1.89174 9.31433 1.5625 10.1092 1.5625 10.938V14.063C1.5625 14.8918 1.89174 15.6866 2.47779 16.2727C3.06384 16.8587 3.8587 17.188 4.6875 17.188H7.61172C7.83868 17.1881 8.06291 17.2376 8.26879 17.3331C8.47468 17.4286 8.65729 17.5679 8.80391 17.7411L11.9961 21.5138C12.7008 22.3466 14.0625 21.8481 14.0625 20.756V4.24502ZM16.7445 7.16924C16.8291 7.11108 16.9243 7.07016 17.0247 7.04881C17.1251 7.02747 17.2287 7.02612 17.3297 7.04484C17.4306 7.06355 17.5268 7.10198 17.6129 7.15791C17.699 7.21384 17.7732 7.28618 17.8312 7.3708C18.9758 9.03486 19.5797 10.7489 19.5797 12.5005C19.5797 14.252 18.9758 15.9661 17.8312 17.631C17.7736 17.7166 17.6996 17.79 17.6134 17.8469C17.5272 17.9038 17.4306 17.943 17.3292 17.9623C17.2277 17.9816 17.1235 17.9807 17.0224 17.9594C16.9214 17.9382 16.8255 17.8971 16.7404 17.8387C16.6553 17.7802 16.5827 17.7054 16.5267 17.6186C16.4707 17.5319 16.4324 17.4349 16.4141 17.3332C16.3958 17.2316 16.3979 17.1274 16.4201 17.0265C16.4424 16.9257 16.4844 16.8303 16.5437 16.7458C17.5477 15.2849 18.018 13.8739 18.018 12.5005C18.018 11.127 17.5477 9.71611 16.5437 8.25595C16.4265 8.0852 16.3819 7.87489 16.4197 7.67126C16.4575 7.46763 16.5746 7.28734 16.7453 7.17002M20.0711 4.12314C19.9968 4.05235 19.9093 3.99688 19.8136 3.95991C19.7179 3.92293 19.6158 3.90517 19.5132 3.90764C19.4107 3.9101 19.3096 3.93275 19.2157 3.97428C19.1219 4.01582 19.0372 4.07543 18.9664 4.1497C18.8956 4.22398 18.8401 4.31148 18.8032 4.40719C18.7662 4.50291 18.7484 4.60497 18.7509 4.70755C18.7534 4.81013 18.776 4.91122 18.8175 5.00505C18.8591 5.09887 18.9187 5.1836 18.993 5.25439C20.8578 7.03017 21.8273 9.73799 21.8273 12.5013C21.8273 15.2645 20.8578 17.9724 18.993 19.7481C18.9187 19.8189 18.8591 19.9037 18.8175 19.9975C18.776 20.0913 18.7534 20.1924 18.7509 20.295C18.7484 20.3976 18.7662 20.4996 18.8032 20.5953C18.8401 20.6911 18.8956 20.7785 18.9664 20.8528C19.0372 20.9271 19.1219 20.9867 19.2157 21.0282C19.3096 21.0698 19.4107 21.0924 19.5132 21.0949C19.6158 21.0974 19.7179 21.0796 19.8136 21.0426C19.9093 21.0056 19.9968 20.9502 20.0711 20.8794C22.3078 18.7489 23.3891 15.5974 23.3891 12.5013C23.3891 9.40517 22.3078 6.25283 20.0703 4.12236" fill="black"/>
+                    </svg>
+
                 </div>
                 <a href="" class="menu-bar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAGZJREFUSEvtlrENACAMw8pnnMZpfAYTC1W3CDOEA2JhUpUW0GkQNwx+Zt6qj+ohdp7yKtVLDE6c78DiC+c4t/o46WLX8877rlzYOGGqxU/scYryB4KVCwNja9GtlhvwWpQrrQIx1Rt3TwofeC3yFwAAAABJRU5ErkJggg=="/></a>
             </div>
         </div>
     </nav>     
 
-    <div class="ad">
+    <div class="ad ad-slot" data-slot="ad">
         <div class="hide-ad">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"><path d="M11.7816 4.03157C12.0062 3.80702 12.0062 3.44295 11.7816 3.2184C11.5571 2.99385 11.193 2.99385 10.9685 3.2184L7.50005 6.68682L4.03164 3.2184C3.80708 2.99385 3.44301 2.99385 3.21846 3.2184C2.99391 3.44295 2.99391 3.80702 3.21846 4.03157L6.68688 7.49999L3.21846 10.9684C2.99391 11.193 2.99391 11.557 3.21846 11.7816C3.44301 12.0061 3.80708 12.0061 4.03164 11.7816L7.50005 8.31316L10.9685 11.7816C11.193 12.0061 11.5571 12.0061 11.7816 11.7816C12.0062 11.557 12.0062 11.193 11.7816 10.9684L8.31322 7.49999L11.7816 4.03157Z" fill="black" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
         </div>
-        Advertisement (412px x 150px)
+        <div class="placeholder">Advertisement (412px x 150px)</div>
+        <div class="slides"></div>
     </div>
 
     <?php
@@ -1983,7 +1987,9 @@ if (!isset($_COOKIE[$cookie_name])) {
         </div>
     </div>
 
-    <div class="ad2">Advertisement (412px x 60px)
+    <div class="ad2 ad-slot" data-slot="ad2">
+        <div class="placeholder">Advertisement (412px x 80px)</div>
+        <div class="slides"></div>
     </div>
 
     <div class="swiper">
@@ -2188,6 +2194,10 @@ if (!isset($_COOKIE[$cookie_name])) {
 
                 ?>
 
+                <div class="ad3 ad-slot" data-slot="ad3_A">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
             </div>
 
             <div class="swiper-slide">
@@ -2319,6 +2329,11 @@ if (!isset($_COOKIE[$cookie_name])) {
                     </div>
                 </div>
                 
+                <div class="ad3 ad-slot" data-slot="ad3_B">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
+
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -2404,6 +2419,11 @@ if (!isset($_COOKIE[$cookie_name])) {
 
                 </section>
                 
+                <div class="ad3 ad-slot" data-slot="ad3_C">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
+
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -2515,6 +2535,12 @@ if (!isset($_COOKIE[$cookie_name])) {
 
                 
             </div>
+
+            <div class="ad3 ad-slot" data-slot="ad3_D">
+                    <div class="placeholder">Advertisement (600px x 300px)</div>
+                    <div class="slides"></div>
+                </div>
+                
                 <div class="feedback-cta-container">
                     <div class="feedback-cta-holder">
                         <button class="feedback-cta-button" data-feedback-page="cmc-feedback"           data-feedback-sheet="" data-feedback-section="Playing-XI"       data-feedback-tab="">Any feedback on our Squad section?
@@ -3096,6 +3122,134 @@ function update_scoreboard(data){
     if(e.ctrlKey && e.shiftKey && (e.keyCode == 'J'.charCodeAt(0))) return false;
     if(e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0))) return false;
   }
+
+  function trackEvent(ad, slotName, pageName, cityName, type) {
+    fetch("../../log_event.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            ad_id: ad.id,
+            slot: slotName,
+            page: pageName,
+            city: cityName,
+            event: type
+        })
+    })
+    .then(res=>res.text())
+    .then(data=>console.log(data))
+    .catch(err=>console.log(err));
+    console.log('log done');
+}
+
+function loadAds(pageName, cityName="") {
+    document.querySelectorAll(".ad-slot").forEach(slot => {
+
+        let slotName = slot.dataset.slot;
+
+        fetch("../../get_ads.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                slot: slotName,
+                page: pageName,
+                city: cityName
+            })
+        })
+        .then(r => r.json())
+        .then(ads => {
+            const placeholder = slot.querySelector(".placeholder");
+            const slideBox = slot.querySelector(".slides");
+
+            if (ads.length === 0) {
+                placeholder.style.display = "block";
+                slideBox.innerHTML = "";
+                return;
+            }
+
+            placeholder.style.display = "none";
+            slideBox.innerHTML = "";
+
+            ads.forEach((ad, i) => {
+                let img = document.createElement("img");
+                img.src = `../../assets/ads/${ad.image}`;
+                img.dataset.adId = ad.id;
+
+                img.onclick = (e) => {
+                    try {
+                        trackEvent(ad, slotName, pageName, cityName, "click");
+                        console.warn("Tracking happens", e);
+                    } catch (e) {
+                        console.warn("Tracking error", e);
+                    }
+                    window.open(ad.url, "_blank");
+                };
+
+                slideBox.appendChild(img);
+            });
+
+            let slides = slideBox.querySelectorAll("img");
+            let index = 0;
+
+            let impressionSent = {}; // ✅ Fix: Track impressions only once
+
+            function showSlide(i) {
+                index = i;
+
+                slides.forEach((s, idx) => 
+                    s.style.display = idx === i ? "block" : "none"
+                );
+
+                // ✅ IMPRESSION only once
+                if (!impressionSent[ads[i].id]) {
+                    trackEvent(ads[i], slotName, pageName, cityName, "impression");
+                    impressionSent[ads[i].id] = true;
+                }
+            }
+
+            showSlide(0);
+
+            let auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            slot.onmouseenter = () => clearInterval(auto);
+            slot.onmouseleave = () => auto = setInterval(() => {
+                index = (index + 1) % slides.length;
+                showSlide(index);
+            }, 10000);
+
+            let startX = 0;
+            slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+            slideBox.addEventListener("touchend", e => {
+                let endX = e.changedTouches[0].clientX;
+                if (endX < startX - 50) index = (index + 1) % slides.length;
+                if (endX > startX + 50) index = (index - 1 + slides.length) % slides.length;
+                showSlide(index);
+            });
+
+        });
+    });
+}
+
+async function detectCity() {
+    try {
+        let res = await fetch("https://ipapi.co/json/");
+        let data = await res.json();
+        return data.city || "";
+    } catch (e) {
+        return "";
+    }
+}
+
+async function initAds(pageName) {
+    let city = await detectCity();
+    loadAds(pageName, city);
+}
+
+initAds("TABLE-TENNIS_scoreboard");
     </script>
 </body>
 </html>
