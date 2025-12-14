@@ -61,6 +61,28 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="LiveStrike">
 <link rel="apple-touch-icon" href="./assets/images/logo-192.png">
+<script>
+        // Apply stored theme instantly before the page renders
+        (function() {
+            const theme = localStorage.getItem('theme') ||
+                            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply theme attributes early to avoid white flash
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body?.setAttribute('data-theme', theme);
+
+            // Wait for the logo to exist, then update it
+            const checkLogo = setInterval(() => {
+                const logo = document.querySelector('.logo-img img');
+                if (logo) {
+                    logo.src = theme === 'dark'
+                        ? "./assets/images/toggle-logo.png"
+                        : "./assets/images/logo.png";
+                    clearInterval(checkLogo);
+                }
+            }, 50);
+        })();
+    </script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="google-adsense-account" content="ca-pub-4540243680881407">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4540243680881407" crossorigin="anonymous"></script>
@@ -86,8 +108,9 @@
         --border-color: #333333; /* Dark borders */
         --accent-color: #1c0003ff;
         --svg-fill : white;
-        --nav-fill: #2d2d2d;
+        --nav-fill: #222222;
         --invert: invert(1);
+        --shadow: rgb(0 0 0 / 73%);
        }
 
     [data-theme="light"] {
@@ -99,6 +122,7 @@
         --svg-fill : black;
         --nav-fill: #ffffffff;
         --invert: invert(0);
+        --shadow: rgba(0, 0, 0, 0.2);
     }
     body {
         background-color: var(--card-bg); /* Dark background */
@@ -124,7 +148,7 @@
         top: 0;
         width: 100%;
         background: var(--nav-fill); /* Dark nav background */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 10px var(--shadow);
         z-index: 999;
         height: 61px;
         border-bottom: 1px solid var(--border-color);
@@ -138,7 +162,7 @@
         border-radius: 10px;
         font-size: 13px;
         cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 8px var(--shadow);
         transition: all 0.3s ease;
     }
 
@@ -411,7 +435,7 @@
         justify-content: center;
         align-items: center;
         position: relative;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 15px var(--shadow);
         z-index: 1;
         border-bottom: 1px solid var(--border-color);
     }
@@ -468,7 +492,7 @@
         max-width: 450px;
         background: var(--nav-fill);
         border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 5px 15px var(--shadow);
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
@@ -524,7 +548,7 @@
         align-content: center;
         justify-content: center;
         align-items: center;
-        gap: 30px;
+        gap: 15px;
         justify-items: center;
     }
     
@@ -908,7 +932,6 @@
     .logo-img img {
         height: 100%;
         width: 100%;
-        filter: brightness(0.9);
     }
 
     

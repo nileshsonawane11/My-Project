@@ -174,7 +174,7 @@ if (!isset($_COOKIE[$cookie_name])) {
         --shadow-lg: 0 10px 15px rgba(0,0,0,0.3);
         --light-bg: #1e1e1e;
         --invert: invert(1);
-        --nav-fill: #2d2d2d;
+        --nav-fill: #222222;
 
     }
     
