@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const config = require('./config');
 
 // Create WebSocket server
-const wss = new WebSocket.Server({ port: config.port, host: config.host });
+const wss = new WebSocket.Server({ port: config.port});
 
 // Store overall match log
 let scoreLog = [];
