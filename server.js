@@ -41,4 +41,4 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log(`🚀 LiveStrike WebSocket Server running on ws://${config.host}:${config.port}`);
+console.log(`🚀 LiveStrike WebSocket Server running on ws://${config.port}`);
