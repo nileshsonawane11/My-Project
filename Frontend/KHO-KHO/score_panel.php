@@ -1454,7 +1454,18 @@
                         <label class="tap">Select Next Batch of Runners</label>
                     </div>
                     <?php
-                        $query = "SELECT * FROM `players` WHERE `team_id` = '$defending_team'";
+                        $out_players = $score_log['innings'][$current_inning]['out_runners'];
+
+                        if (!empty($out_players)) {
+                            $out_ids = implode("','", $out_players);
+                            $query = "SELECT * FROM players 
+                                    WHERE team_id = '$defending_team'
+                                    AND user_id NOT IN ('$out_ids')";
+                        } else {
+                            $query = "SELECT * FROM players 
+                                    WHERE team_id = '$defending_team'";
+                        }
+
                         $result = mysqli_query($conn, $query);
                         $count = mysqli_num_rows($result);
                     ?>

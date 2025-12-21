@@ -1,14 +1,15 @@
 <?php
     session_start();
-    if(!isset($_SESSION['user'])){
-        header('location: ./front-page.php');
-        exit();
+    include '../config.php';
+    $event_id = $_GET['t'] ?? '';
+
+    $sql = "SELECT * FROM events WHERE id = '$event_id'";
+    $result = mysqli_query($conn,$sql);
+    $row = mysqli_fetch_assoc($result);
+    if($row['e_photo']){
+         $src = "../assets/images/events/".$row['e_photo'];
     }else{
-        $user_id = $_SESSION['user'];
-    }
-    if($_SESSION['role'] == "User"){
-        header('location: ../dashboard.php?update="live"&sport="CRICKET"');
-        exit();
+        $src = "../assets/images/new_event_img.png";
     }
 ?>
 <!DOCTYPE html>
@@ -16,7 +17,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="icon" type="image/png" href="<?php echo $src; ?>">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script>
         // Apply stored theme instantly before the page renders
@@ -40,7 +41,7 @@
             }, 50);
         })();
     </script>
-    <title>Manage Tournaments</title>
+    <title><?php echo $row['e_name']; ?></title>
 <style>
     * {
         margin: 0;
@@ -295,7 +296,7 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
-        width: calc(100% - 85px);
+        width: 100%;
     }
     
     .team-info h4 {
@@ -323,7 +324,7 @@
     label.data .dt {
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        flex: 1;
         max-width: 180px;
     }
     
@@ -388,7 +389,6 @@
         cursor: pointer;
         height: 45px;
         width: 150px;
-        display: none;
         transition: all 0.2s ease;
         box-shadow: 0 4px 10px rgba(209, 34, 31, 0.2);
     }
@@ -401,6 +401,39 @@
     
     .add-btn button:active {
         transform: translateY(0);
+    }
+    .team_score{
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+    }
+    .selected-team {
+        border: 2px solid var(--primary-color);
+        background: var(--selected-bg);
+    }
+    
+    .event-container{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 25px 0;
+    }
+    .event{
+        width: 100%;
+        max-width: 300px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 15px;
+        color: var(--text-dark);
+        padding: 15px;
+        background: var(--nav-fill);
+        cursor: pointer;
+        transition: all 0.2s ease;
     }
 
     @media (max-width: 600px) {
@@ -469,36 +502,58 @@
 <body>
     <div class="container">
         <div class="return" >
+            <?php if(isset($_SESSION['user'])){ ?>
             <div><svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z" fill="black"/>
                 </svg>
-            </div>
+            </div><?php } ?>
             <div>
                 <?php
-                if(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'add-tournament.php') !== false){
-                    echo "<div class='add-btn'>
-                        <button onclick='save(event)' type='submit' id='save'>save</button>
-                    </div>";
-                }
+                    if(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'add-tournament.php') !== false){
+                        echo "<div class='add-btn'>
+                            <button onclick='save(event)' type='submit' id='save'>save</button>
+                        </div>";
+                    }
+                    if(!isset($_SESSION['user'])){
+                        echo "<div class='add-btn'>
+                            <button onclick='signup()' type='submit' id='save'>Sign Up</button>
+                        </div>";
+                    }
                 ?>
             </div>
         </div>
         <div class="container2">
             <div class="txt">
                 <div>
-                    <label for="">My Tournaments</label>
-                    <h4>Manage Tournaments</h4>
+                    <!-- <label for="">My Tournaments</label> -->
+                    <!-- <h4><?php echo $row['e_name']; ?></h4> -->
                 </div>
                 <div>
-                <?php
-                    if((isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'event-info.php') !== false)){
-                        echo "<div class='add-btn'>
-                            <button onclick='save(event)' type='submit' id='save'>save</button>
-                        </div>";
-                    }
-                ?>
+                
                 </div>
-            </div>
+            </div><div class="event-container">
+            <?php if(!empty($row)){
+            
+                            $data = <<<TEXT
+                                        <div class="event">
+                                            <div class="logo"><img src='$src' alt=''></div>
+                                            <div class="team-info">
+                                                <h4>{$row['e_name']}</h4>
+                                                <div class="other-info">
+                                                    <label for="place" class="data"><svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5.49984 0.416504C2.75859 0.416504 0.541504 2.63359 0.541504 5.37484C0.541504 9.09359 5.49984 14.5832 5.49984 14.5832C5.49984 14.5832 10.4582 9.09359 10.4582 5.37484C10.4582 2.63359 8.24109 0.416504 5.49984 0.416504ZM5.49984 7.14567C5.03018 7.14567 4.57976 6.9591 4.24767 6.62701C3.91557 6.29491 3.729 5.84449 3.729 5.37484C3.729 4.90518 3.91557 4.45476 4.24767 4.12267C4.57976 3.79057 5.03018 3.604 5.49984 3.604C5.96949 3.604 6.41991 3.79057 6.75201 4.12267C7.0841 4.45476 7.27067 4.90518 7.27067 5.37484C7.27067 5.84449 7.0841 6.29491 6.75201 6.62701C6.41991 6.9591 5.96949 7.14567 5.49984 7.14567Z" fill="black"/>
+                                                    </svg><span class="dt">
+                                                    {$row['location']}</span></label>
+                                                    <label for="coordinator" class="data"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M3.72933 4.52067V2.93734C3.72933 2.57347 3.801 2.21316 3.94025 1.87699C4.07949 1.54081 4.28359 1.23536 4.54089 0.978062C4.79818 0.720766 5.10364 0.516669 5.43981 0.377421C5.77598 0.238174 6.13629 0.166504 6.50016 0.166504C6.86403 0.166504 7.22434 0.238174 7.56051 0.377421C7.89669 0.516669 8.20214 0.720766 8.45944 0.978062C8.71673 1.23536 8.92083 1.54081 9.06008 1.87699C9.19933 2.21316 9.271 2.57347 9.271 2.93734V4.52067C9.271 5.46275 8.80154 6.294 8.0835 6.79513V7.54721C8.0836 7.70541 8.13109 7.85994 8.21984 7.99089C8.3086 8.12184 8.43455 8.22319 8.58145 8.28188L9.83704 8.78459C10.488 9.04491 11.0459 9.49435 11.439 10.0749C11.832 10.6554 12.0419 11.3404 12.0418 12.0415H0.958496C0.958378 11.3404 1.16837 10.6554 1.56138 10.0749C1.95438 9.49435 2.51235 9.04491 3.16329 8.78459L4.41887 8.28188C4.56577 8.22319 4.69173 8.12184 4.78048 7.99089C4.86924 7.85994 4.91673 7.70541 4.91683 7.54721V6.79513C4.55019 6.53983 4.25072 6.19967 4.04395 5.80363C3.83718 5.4076 3.72924 4.96744 3.72933 4.52067Z" fill="black"/>
+                                                    </svg><span class="dt">
+                                                    {$row['organizer']}</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    TEXT;
+                            echo $data;
+            } ?></div>
             <div class="game-container">
                 <div class="game-list">
 
@@ -559,7 +614,7 @@
             </div>
         </div>
         <?php
-            if($_SESSION['role']=="Admin"){
+            if (isset($_SESSION['role']) && $_SESSION['role'] === "Admin" && ($_SESSION['user']) == $row['owner']) {
                 echo '<div class="pls">';
                     echo '<div class="plus">';
                         echo '<div class="plus-icon"><i class="bx bx-plus bx-rotate-180"></i></div>';
@@ -575,7 +630,7 @@
             let sport = urlParams.get('sport');
             document.querySelector('.game-container').style.display = 'none';
             loadgames(sport)
-       }else if(document.referrer.includes('event-info.php')){
+       }else if(document.referrer.includes('add-tournament.php')){
             let urlParams = new URLSearchParams(window.location.search);
             let sport = urlParams.get('sport');
             document.querySelector('.game-container').style.display = 'none';
@@ -588,8 +643,9 @@
             loadgames(SportName)
        }
 
-
-
+        function signup(){
+            window.location.href = "../front-page.php";
+        }
 
        // Theme management for this page
         function initializeTheme() {
@@ -670,11 +726,13 @@
             params.set('sport', sport);
             let newUrl = window.location.pathname + '?' + params.toString();
             window.history.replaceState({}, '', newUrl);
+            const event = urlParams.get('t');
 
             let data = {
                 update : '',
                 sport: sport,
-                for : 'manage_tournaments'
+                for : 'manage_event_tournaments',
+                event_id : event
             }
 
             displayContent(data);
@@ -705,7 +763,7 @@
         let selectedTeams = [];
 
         let get_team_info = (el)=>{
-            console.log("Hello babu");
+            console.log("Hello...");
             const tournamentID = el.getAttribute('data-team_id');
             if (document.referrer.includes('select-teams.php')) {
                 let urlParams = new URLSearchParams(window.location.search);
@@ -720,7 +778,7 @@
                     // Redirect to modified URL
                     window.location.href = url.toString();
                 }
-            }else if (document.referrer.includes('event-info.php')) {
+            }else if (document.referrer.includes('add-tournament.php')) {
                 // Multi-selection logic for add-tournament
                 if (!selectedTeams.includes(tournamentID)) {
                     selectedTeams.push(tournamentID);
@@ -730,12 +788,6 @@
                     el.classList.remove('selected-team');
                 }
 
-                if(selectedTeams.length > 0){
-                    document.querySelector('.add-btn button').style.display = 'block';
-                }else{
-                    document.querySelector('.add-btn button').style.display = 'none';
-                }
-
                 console.log(selectedTeams);
 
             }else{
@@ -743,12 +795,42 @@
             }
         }
 
+        function delete_tournament(event, tournament_id, event_id){
+    event.stopPropagation();
+
+    if(!confirm("Are you sure you want to delete this tournament?")) return;
+
+    fetch('../Backend/delete_tournament.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: 'tournament_id=' + encodeURIComponent(tournament_id)
+            + '&event_id=' + encodeURIComponent(event_id)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            const teamDiv = event.target.closest('.team');
+            if(teamDiv){
+                teamDiv.remove();
+            }
+        } else {
+            alert("Failed: " + data.message);
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+
         document.querySelector('.plus').addEventListener('click',()=>{
-            window.location.href = "./create-team.php?for=tournament";
+            let Sport = urlParams.get('sport');
+            let Event_id = urlParams.get('t');
+            console.log(Sport)
+            window.location.href = "./manage-tournaments.php?sport="+Sport+"&t="+Event_id;
         })
 
         let save = () =>{
             window.location.href = `../Backend/add_event_tournaments.php?e=${tournament}&tournaments=${selectedTeams}`;
+
         }
 
         // Disable right-click

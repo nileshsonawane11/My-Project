@@ -11,7 +11,7 @@
         exit();
     }
 
-    $match_id = '';
+    $match_id = $_GET['match_id'] ?? '';
     $set_team1 = '';
     $set_team2 = '';
     $back_decision = false;

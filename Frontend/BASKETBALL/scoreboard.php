@@ -1588,6 +1588,34 @@ if (!isset($_COOKIE[$cookie_name])) {
         color: var(--text-dark);
         transition: color 0.3s ease;
     }
+    .score {
+        position: relative;
+        /* font-size: 24px; */
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .tooltip-text {
+        visibility: hidden;
+        width: max-content;
+        background-color: var(--text-dark);
+        color: var(--background);
+        text-align: center;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 14px;
+
+        position: absolute;
+        bottom: 130%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        z-index: 10;
+    }
+
+    .score:hover .tooltip-text {
+        visibility: visible;
+    }
 
     @media(max-width: 600px) {
         .nav-content{
@@ -1881,7 +1909,12 @@ if (!isset($_COOKIE[$cookie_name])) {
                             echo $team1['t_name'].' '.$astr;
                         ?>
                     </div>
-                    <div class="score"><?php echo $row['score_team_1'] ?></div>
+                    <div class="score tooltip">
+                        <?php echo $row['score_team_1'] ?>
+                        <span class="tooltip-text">
+                            Current set point → 0 (0) ← Sets won
+                        </span>
+                    </div>
                 </div>
 
                 <div class="info team-score">
@@ -1898,7 +1931,12 @@ if (!isset($_COOKIE[$cookie_name])) {
                             echo $team2['t_name'].' '.$astr;
                         ?>
                     </div>
-                    <div class="score"><?php echo $row['score_team_2'] ?></div>
+                    <div class="score tooltip">
+                        <?php echo $row['score_team_2'] ?>
+                        <span class="tooltip-text">
+                            Current set point → 0 (0) ← Sets won
+                        </span>
+                    </div>
                 </div>
 
                 <?php 
@@ -2905,8 +2943,8 @@ function update_scoreboard(data){
     if (matchInfoContainer) {
         const currentSet = data.sets[data.current_set];
         const curr_serve = data.current_serve;
-        matchInfoContainer.querySelectorAll('.score')[0].innerHTML = `${currentSet.team1_points} ( ${data.sets_won.team1} )`;
-        matchInfoContainer.querySelectorAll('.score')[1].innerHTML = `${currentSet.team2_points} ( ${data.sets_won.team2} )`;
+        matchInfoContainer.querySelectorAll('.score')[0].innerHTML = `${currentSet.team1_points} ( ${data.sets_won.team1} )<span class="tooltip-text">Current set point → 0 (0) ← Sets won</span>`;
+        matchInfoContainer.querySelectorAll('.score')[1].innerHTML = `${currentSet.team2_points} ( ${data.sets_won.team2} )<span class="tooltip-text">Current set point → 0 (0) ← Sets won</span>`;
 
         let team_key = curr_serve == data.team1 ? 0 : 1;
         let other_team_key = team_key === 0 ? 1 : 0;
@@ -3206,13 +3244,13 @@ function loadAds(pageName, cityName="") {
             let auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             slot.onmouseenter = () => clearInterval(auto);
             slot.onmouseleave = () => auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             let startX = 0;
             slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);

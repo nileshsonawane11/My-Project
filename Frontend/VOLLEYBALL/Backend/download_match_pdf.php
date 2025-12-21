@@ -198,7 +198,7 @@ $html .= "<table>
 
 // Sets Summary
 $html .= "<h3>Set Summary</h3>";
-$html .= "<table><tr><th>Set</th><th>$team1_name</th><th>$team2_name</th><th>Winner</th></tr>";
+$html .= "<table><tr><th>Set</th><th>$team1_name</th><th>$team2_name</th></tr>";
 
 foreach ($score_log['sets'] as $set_no => $set) {
     $set_winner = ($set['winner_team'] == $team1_id) ? $team1_name : $team2_name;
@@ -207,7 +207,6 @@ foreach ($score_log['sets'] as $set_no => $set) {
         <td>Set $set_no</td>
         <td>{$set['team1_points']}</td>
         <td>{$set['team2_points']}</td>
-        <td class='green'>$set_winner</td>
     </tr>";
 }
 $html .= "</table>";

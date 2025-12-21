@@ -1587,8 +1587,55 @@ if (!isset($_COOKIE[$cookie_name])) {
         color: var(--text-dark);
         transition: color 0.3s ease;
     }
+        .ad-slot {
+    position: relative;
+    overflow: hidden;
+    background: #f2f2f2;
+    object-fit:cover;
+}
 
-    
+.ad-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;      /* ✅ Fills entire slot */
+    object-position: center;
+    display: none;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+.slides{
+    object-fit:cover;
+}
+/* keep your remaining CSS same */
+
+.ad-slot .dots {
+    text-align: center;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ad-slot .dots span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #ddd;
+    border-radius: 50%;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.ad-slot .dots .active {
+    background: #000;
+}
+
+.placeholder {
+    padding: 10px;
+    text-align: center;
+}
+.slide{
+    margin-left: 19px;
+}
 
     @media(max-width: 600px) {
         .nav-content{
@@ -3264,13 +3311,13 @@ function loadAds(pageName, cityName="") {
             let auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             slot.onmouseenter = () => clearInterval(auto);
             slot.onmouseleave = () => auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             let startX = 0;
             slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);

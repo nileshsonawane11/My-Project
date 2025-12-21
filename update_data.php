@@ -28,7 +28,7 @@ function formatMatchTime($matchDate, $startTime) {
         } else {
             return date('d-m-Y', strtotime($matchDate)) . ", " . date('h:i A', strtotime($startTime));
         }
-    }
+}
 
 if($for == "dashboard"){
 
@@ -355,6 +355,117 @@ if($for == "manage_tournaments"){
                                         </div>
                                     TEXT;
                             echo $data;
+                        }
+                        echo '</div>';
+                    }else{
+                        echo '<h2 class="no-data">No Tournament Found</h2>';
+                    }
+}
+
+if($for == "manage_events"){
+    $user_id = $_SESSION['user'];
+    $sql = "SELECT * FROM events WHERE owner = '$user_id'";
+                    $query = mysqli_query($conn, $sql);
+                    if(mysqli_num_rows($query) > 0){
+                        echo '<div class="team-list">';
+
+                        while($row = mysqli_fetch_assoc($query)){
+                            if($row['e_photo']){
+                                $src = "../assets/images/events/".$row['e_photo'];
+                            }else{
+                                $src = "../assets/images/new_event_img.png";
+                            }
+                            $data = <<<TEXT
+                                        <div class="team" data-event_id="{$row['id']}" onclick="get_event_info(this)">
+                                            <div class="logo"><img src='$src' alt=''></div>
+                                            <div class="team-info">
+                                                <h4>{$row['e_name']}</h4>
+                                                <div class="other-info">
+                                                    <label for="place" class="data"><svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5.49984 0.416504C2.75859 0.416504 0.541504 2.63359 0.541504 5.37484C0.541504 9.09359 5.49984 14.5832 5.49984 14.5832C5.49984 14.5832 10.4582 9.09359 10.4582 5.37484C10.4582 2.63359 8.24109 0.416504 5.49984 0.416504ZM5.49984 7.14567C5.03018 7.14567 4.57976 6.9591 4.24767 6.62701C3.91557 6.29491 3.729 5.84449 3.729 5.37484C3.729 4.90518 3.91557 4.45476 4.24767 4.12267C4.57976 3.79057 5.03018 3.604 5.49984 3.604C5.96949 3.604 6.41991 3.79057 6.75201 4.12267C7.0841 4.45476 7.27067 4.90518 7.27067 5.37484C7.27067 5.84449 7.0841 6.29491 6.75201 6.62701C6.41991 6.9591 5.96949 7.14567 5.49984 7.14567Z" fill="black"/>
+                                                    </svg><span class="dt">
+                                                    {$row['location']}</span></label>
+                                                    <label for="coordinator" class="data"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M3.72933 4.52067V2.93734C3.72933 2.57347 3.801 2.21316 3.94025 1.87699C4.07949 1.54081 4.28359 1.23536 4.54089 0.978062C4.79818 0.720766 5.10364 0.516669 5.43981 0.377421C5.77598 0.238174 6.13629 0.166504 6.50016 0.166504C6.86403 0.166504 7.22434 0.238174 7.56051 0.377421C7.89669 0.516669 8.20214 0.720766 8.45944 0.978062C8.71673 1.23536 8.92083 1.54081 9.06008 1.87699C9.19933 2.21316 9.271 2.57347 9.271 2.93734V4.52067C9.271 5.46275 8.80154 6.294 8.0835 6.79513V7.54721C8.0836 7.70541 8.13109 7.85994 8.21984 7.99089C8.3086 8.12184 8.43455 8.22319 8.58145 8.28188L9.83704 8.78459C10.488 9.04491 11.0459 9.49435 11.439 10.0749C11.832 10.6554 12.0419 11.3404 12.0418 12.0415H0.958496C0.958378 11.3404 1.16837 10.6554 1.56138 10.0749C1.95438 9.49435 2.51235 9.04491 3.16329 8.78459L4.41887 8.28188C4.56577 8.22319 4.69173 8.12184 4.78048 7.99089C4.86924 7.85994 4.91673 7.70541 4.91683 7.54721V6.79513C4.55019 6.53983 4.25072 6.19967 4.04395 5.80363C3.83718 5.4076 3.72924 4.96744 3.72933 4.52067Z" fill="black"/>
+                                                    </svg><span class="dt">
+                                                    {$row['organizer']}</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    TEXT;
+                            echo $data;
+                        }
+                        echo '</div>';
+                    }else{
+                        echo '<h2 class="no-data">No Event Found</h2>';
+                    }
+}
+
+if($for == "manage_event_tournaments"){
+    $user_id = $_SESSION['user'] ?? '';
+    $event_id = $data['event_id'];
+    $sql = "
+        SELECT 
+            t.tournament_id,
+            t.tournament_name,
+            t.city,
+            t.organizer_name,
+            t.logo,
+            t.created_by,
+            s.sport_name,
+            e.event_id
+        FROM tournaments t
+        JOIN sports s 
+            ON s.sport_id = t.sport_id
+        JOIN event_tournaments e 
+            ON t.tournament_id = e.tournament_id
+        WHERE s.sport_name = '$sport'
+        ";
+                    $query = mysqli_query($conn, $sql);
+                    if(mysqli_num_rows($query) > 0){
+                        echo '<div class="team-list">';
+
+                        while($row = mysqli_fetch_assoc($query)){
+                            $canDelete = ($row['created_by'] == $user_id);
+
+                            if($row['logo']){
+                                $src = "../assets/images/tournaments/".$row['logo'];
+                            }else{
+                                $src = "https://cdn-icons-png.flaticon.com/512/8140/8140303.png";
+                            }
+                            $data = <<<TEXT
+                                        <div class="team">
+                                            <div class="team_score" data-team_id="{$row['tournament_id']}" onclick="get_team_info(this)">
+                                                <div class="logo"><img src="$src" alt=""></div>
+                                                    <div class="team-info">
+                                                        <h4>{$row['tournament_name']}</h4>
+                                                        <div class="other-info">
+                                                        <label for="place" class="data"><svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M5.49984 0.416504C2.75859 0.416504 0.541504 2.63359 0.541504 5.37484C0.541504 9.09359 5.49984 14.5832 5.49984 14.5832C5.49984 14.5832 10.4582 9.09359 10.4582 5.37484C10.4582 2.63359 8.24109 0.416504 5.49984 0.416504ZM5.49984 7.14567C5.03018 7.14567 4.57976 6.9591 4.24767 6.62701C3.91557 6.29491 3.729 5.84449 3.729 5.37484C3.729 4.90518 3.91557 4.45476 4.24767 4.12267C4.57976 3.79057 5.03018 3.604 5.49984 3.604C5.96949 3.604 6.41991 3.79057 6.75201 4.12267C7.0841 4.45476 7.27067 4.90518 7.27067 5.37484C7.27067 5.84449 7.0841 6.29491 6.75201 6.62701C6.41991 6.9591 5.96949 7.14567 5.49984 7.14567Z" fill="black"/>
+                                                        </svg><span class="dt">
+                                                        {$row['city']}</span></label>
+                                                        <label for="coordinator" class="data"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M3.72933 4.52067V2.93734C3.72933 2.57347 3.801 2.21316 3.94025 1.87699C4.07949 1.54081 4.28359 1.23536 4.54089 0.978062C4.79818 0.720766 5.10364 0.516669 5.43981 0.377421C5.77598 0.238174 6.13629 0.166504 6.50016 0.166504C6.86403 0.166504 7.22434 0.238174 7.56051 0.377421C7.89669 0.516669 8.20214 0.720766 8.45944 0.978062C8.71673 1.23536 8.92083 1.54081 9.06008 1.87699C9.19933 2.21316 9.271 2.57347 9.271 2.93734V4.52067C9.271 5.46275 8.80154 6.294 8.0835 6.79513V7.54721C8.0836 7.70541 8.13109 7.85994 8.21984 7.99089C8.3086 8.12184 8.43455 8.22319 8.58145 8.28188L9.83704 8.78459C10.488 9.04491 11.0459 9.49435 11.439 10.0749C11.832 10.6554 12.0419 11.3404 12.0418 12.0415H0.958496C0.958378 11.3404 1.16837 10.6554 1.56138 10.0749C1.95438 9.49435 2.51235 9.04491 3.16329 8.78459L4.41887 8.28188C4.56577 8.22319 4.69173 8.12184 4.78048 7.99089C4.86924 7.85994 4.91673 7.70541 4.91683 7.54721V6.79513C4.55019 6.53983 4.25072 6.19967 4.04395 5.80363C3.83718 5.4076 3.72924 4.96744 3.72933 4.52067Z" fill="black"/>
+                                                        </svg><span class="dt">
+                                                        {$row['organizer_name']}</span></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    TEXT;
+
+                                    if ($canDelete) {
+                                        $data .= <<<BTN
+                                            <div class="delete-btn" onclick="delete_tournament(event, '{$row['tournament_id']}', '{$row['event_id']}')">
+                                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                                    <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill="black"/>
+                                                </svg>
+                                            </div>
+                                    BTN;
+                                    }
+
+                                    $data .= "</div>";
+
+                                    echo $data;
                         }
                         echo '</div>';
                     }else{

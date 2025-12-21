@@ -2170,62 +2170,70 @@ if (!isset($_COOKIE[$cookie_name])) {
                     $players_points=[]; $players_details=[];
 
                     // Loop innings
-                    foreach($data['innings'] as $inning){
-                        // Batting points
-                        foreach($inning['batmans'] as $b){
-                            $id=$b['id'];
-                            $pts = $b['runs'] + $b['fours']*5 + $b['sixes']*8;
-                            if($b['out_status']=='not out' && $b['runs']>20) $pts+=10;
-                            addPoints($players_points,$id,$pts);
-                            saveDetails($players_details,$id,$id,[
-                                'runs'=>$b['runs'],'balls'=>$b['balls_faced'],
-                                'fours'=>$b['fours'],'sixes'=>$b['sixes'],'out_status'=>$b['out_status']
-                            ]);
-                        }
+                    if(isset($data['innings'])){
+                        foreach($data['innings'] as $inning){
+                            // Batting points
+                            foreach($inning['batmans'] as $b){
+                                $id=$b['id'];
+                                $pts = $b['runs'] + $b['fours']*5 + $b['sixes']*8;
+                                if($b['out_status']=='not out' && $b['runs']>20) $pts+=10;
+                                addPoints($players_points,$id,$pts);
+                                saveDetails($players_details,$id,$id,[
+                                    'runs'=>$b['runs'],'balls'=>$b['balls_faced'],
+                                    'fours'=>$b['fours'],'sixes'=>$b['sixes'],'out_status'=>$b['out_status']
+                                ]);
+                            }
 
-                        // Bowling points (include current bowler)
-                        $bowler_totals=[];
-                        foreach($inning['bowlers']??[] as $b){
-                            $bowler_totals[$b['id']] = [
-                                'balls'=>oversToBalls($b['overs_bowled']),
-                                'runs'=>$b['runs_conceded'],'wkts'=>$b['wickets'],'maidens'=>$b['maidens']
-                            ];
-                        }
+                            // Bowling points (include current bowler)
+                            $bowler_totals=[];
+                            foreach($inning['bowlers']??[] as $b){
+                                $bowler_totals[$b['id']] = [
+                                    'balls'=>oversToBalls($b['overs_bowled']),
+                                    'runs'=>$b['runs_conceded'],'wkts'=>$b['wickets'],'maidens'=>$b['maidens']
+                                ];
+                            }
 
-                        if(isset($inning['current_bowler']['id'])){
-                            $cb=$inning['current_bowler']; $id=$cb['id'];
-                            $balls=oversToBalls($cb['overs_bowled']);
-                            if(isset($bowler_totals[$id])){
-                                $bowler_totals[$id]['balls']+=$balls;
-                                $bowler_totals[$id]['runs']+=$cb['runs_conceded'];
-                                $bowler_totals[$id]['wkts']+=$cb['wickets'];
-                                $bowler_totals[$id]['maidens']+=$cb['maidens'];
-                            }else{
-                                $bowler_totals[$id]=['balls'=>$balls,'runs'=>$cb['runs_conceded'],'wkts'=>$cb['wickets'],'maidens'=>$cb['maidens']];
+                            if(isset($inning['current_bowler']['id'])){
+                                $cb=$inning['current_bowler']; $id=$cb['id'];
+                                $balls=oversToBalls($cb['overs_bowled']);
+                                if(isset($bowler_totals[$id])){
+                                    $bowler_totals[$id]['balls']+=$balls;
+                                    $bowler_totals[$id]['runs']+=$cb['runs_conceded'];
+                                    $bowler_totals[$id]['wkts']+=$cb['wickets'];
+                                    $bowler_totals[$id]['maidens']+=$cb['maidens'];
+                                }else{
+                                    $bowler_totals[$id]=['balls'=>$balls,'runs'=>$cb['runs_conceded'],'wkts'=>$cb['wickets'],'maidens'=>$cb['maidens']];
+                                }
+                            }
+
+                            foreach($bowler_totals as $id=>$b){
+                                $pts = ($b['wkts']*25) - $b['runs'] + ($b['maidens']*10);
+                                addPoints($players_points,$id,$pts);
+                                saveDetails($players_details,$id,$id,[],[
+                                    'overs'=>ballsToOvers($b['balls']),
+                                    'runs_conceded'=>$b['runs'],'wickets'=>$b['wkts'],'maidens'=>$b['maidens']
+                                ]);
                             }
                         }
-
-                        foreach($bowler_totals as $id=>$b){
-                            $pts = ($b['wkts']*25) - $b['runs'] + ($b['maidens']*10);
-                            addPoints($players_points,$id,$pts);
-                            saveDetails($players_details,$id,$id,[],[
-                                'overs'=>ballsToOvers($b['balls']),
-                                'runs_conceded'=>$b['runs'],'wickets'=>$b['wkts'],'maidens'=>$b['maidens']
-                            ]);
-                        }
                     }
+
+                    $p_name = '';
+                    $p_team = '';
+                    $p_photo = '';
 
                     // Top player
                     arsort($players_points);
                     $top_id = array_key_first($players_points);
-                    $top = $players_details[$top_id];
-
-                    // Fetch player info
+                    if(isset($top_id)){
+                        $top = $players_details[$top_id];
+                        // Fetch player info
                     $p = $conn->query("SELECT * FROM players WHERE user_id='$top_id'")->fetch_assoc();
                     $p_name = $p['player_name'];
                     $p_team = $conn->query("SELECT t_name FROM teams WHERE t_id='".$p['team_id']."'")->fetch_assoc()['t_name'] ?? 'Unknown';
                     $p_photo = !empty($p['photo']) ? "../../assets/images/users/".$p['photo'] : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSORFOJqVPeomYYBCyhvMENTHiHex_yB9dEHA&s";
+                    }
 
+                    if(!empty($p_name) && !empty($p_team)){
                     // Display
                     echo <<<HTML
                     <div class="p_txt">Player Of The Match</div>
@@ -2237,6 +2245,7 @@ if (!isset($_COOKIE[$cookie_name])) {
                         </div>
                     </div>
                     HTML;
+                    }
                 }
                 ?>
                 <table>
@@ -2258,32 +2267,34 @@ if (!isset($_COOKIE[$cookie_name])) {
                             $umpires = [];
                             $scorers = [];
                             $commentators = [];
+                            $umpire_users = [];
+                            $scorer_users = [];
+                            $commentator_users = [];
 
-                            // Helper: safely decode either JSON or CSV
-                            function decodeEmails($value) {
-                                if (empty($value)) return [];
-
-                                $decoded = json_decode($value, true);
-
+                            if (!empty($row['umpires'])) {
+                                $decoded = json_decode($row['umpires'], true);
                                 if (is_array($decoded)) {
-                                    return $decoded; // proper JSON array
+                                    $umpires = $decoded;
                                 }
-
-                                // fallback: comma separated
-                                return array_map('trim', explode(',', $value));
                             }
 
-                            // Decode roles
-                            $umpires = decodeEmails($row['umpires']);
-                            $scorers = decodeEmails($row['scorers']);
-                            $commentators = decodeEmails($row['commentators']);
+                            if (!empty($row['scorers'])) {
+                                $decoded = json_decode($row['scorers'], true);
+                                if (is_array($decoded)) {
+                                    $scorers = $decoded;
+                                }
+                            }
+
+                            if (!empty($row['commentators'])) {
+                                $decoded = json_decode($row['commentators'], true);
+                                if (is_array($decoded)) {
+                                    $commentators = $decoded;
+                                }
+                            }
 
                             // Combine all for querying
                             $all_emails = array_merge($umpires, $scorers, $commentators);
 
-                            $umpire_users = [];
-                            $scorer_users = [];
-                            $commentator_users = [];
                             // Prepare and execute query if emails are present
                             if (!empty($all_emails)) {
                                 $placeholders = implode(',', array_fill(0, count($all_emails), '?'));
@@ -2302,18 +2313,21 @@ if (!isset($_COOKIE[$cookie_name])) {
                                 }
 
                                 // Group by role
+                                
                                 foreach ($umpires as $email) {
                                     if (isset($user_map[$email])) {
                                         $umpire_users[] = $user_map[$email];
                                     }
                                 }
 
+                               
                                 foreach ($scorers as $email) {
                                     if (isset($user_map[$email])) {
                                         $scorer_users[] = $user_map[$email];
                                     }
                                 }
 
+                               
                                 foreach ($commentators as $email) {
                                     if (isset($user_map[$email])) {
                                         $commentator_users[] = $user_map[$email];
@@ -2369,6 +2383,11 @@ if (!isset($_COOKIE[$cookie_name])) {
                         </tr>
                     </tbody>
                 </table>
+
+                <div class="ad ad-slot">
+                    <div class="slides"></div>
+                </div>
+
                 <div class="innings">
                     <div class="stat">VENUE STATS</div>
                     <div class="inning-data">
@@ -2425,6 +2444,10 @@ if (!isset($_COOKIE[$cookie_name])) {
                         }
                         ?>
                     </div>
+                </div>
+
+                <div class="ad ad-slot">
+                    <div class="slides"></div>
                 </div>
                 
                 <div class="ad3 ad-slot" data-slot="ad3_A">
@@ -2643,6 +2666,10 @@ if (!isset($_COOKIE[$cookie_name])) {
                         </div>
                         <button id="toggle-button" style="margin-top: 10px;">Show More</button>
                 </div><?php } ?>
+
+                <div class="ad ad-slot">
+                    <div class="slides"></div>
+                </div>
 
                 <div class="ad3 ad-slot" data-slot="ad3_B">
                     <div class="placeholder">Advertisement (600px x 300px)</div>
@@ -3109,6 +3136,10 @@ if (!isset($_COOKIE[$cookie_name])) {
                 </section>
                 <?php } }?>
 
+                <div class="ad ad-slot">
+                    <div class="slides"></div>
+                </div>
+
                <div class="ad3 ad-slot" data-slot="ad3_C">
                     <div class="placeholder">Advertisement (600px x 300px)</div>
                     <div class="slides"></div>
@@ -3226,6 +3257,10 @@ if (!isset($_COOKIE[$cookie_name])) {
                     </div>
                 </div>
 
+                <div class="ad ad-slot">
+                    <div class="slides"></div>
+                </div>
+
                 <div class="ad3 ad-slot" data-slot="ad3_D">
                     <div class="placeholder">Advertisement (600px x 300px)</div>
                     <div class="slides"></div>
@@ -3248,8 +3283,8 @@ if (!isset($_COOKIE[$cookie_name])) {
 
     <script type="module">
     import { host, port } from "../../config.js";
-    window.socket = new WebSocket(`ws://${host}:${port}`);
-    // window.socket = new WebSocket(`wss://my-project-pk19.onrender.com`);
+    //window.socket = new WebSocket(`ws://${host}:${port}`);
+    window.socket = new WebSocket(`wss://my-project-pk19.onrender.com`);
     const menuItems = document.querySelectorAll('.menu-items');
     const indicator = document.querySelector('.menu-line-indicator');
     const close_fed_container = document.querySelector('.exit');
@@ -4467,13 +4502,13 @@ function loadAds(pageName, cityName="") {
             let auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             slot.onmouseenter = () => clearInterval(auto);
             slot.onmouseleave = () => auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             let startX = 0;
             slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);

@@ -247,6 +247,7 @@ function calculateRR($runs, $overs_string) {
 
 function target_function(&$score_log){
     global $Inning_type;
+    global $conn;
 
     // 1) Target
     $target = ($score_log[$Inning_type]['1st']['total_runs'] ?? 0) + 1;
@@ -263,6 +264,8 @@ function target_function(&$score_log){
 
     // 5) Balls bowled
     $overs_str = $score_log[$Inning_type]['2nd']['overs_completed'] ?? "0.0";
+    $batt_team = $score_log[$Inning_type]['2nd']['batting_team'] ?? "";
+    $batt_team_name = mysqli_fetch_assoc(mysqli_query($conn, "SELECT t_name FROM teams WHERE t_id = '$batt_team'"))['t_name'];
 
     if (!str_contains($overs_str, '.')) {
         $overs_str .= ".0";
@@ -284,7 +287,7 @@ function target_function(&$score_log){
         : 0;
 
     // Inline text
-    $score_log['inline'] = "Need $required_runs off $balls_remaining balls | RRR $rrr";
+    $score_log['inline'] = "$batt_team_name Needs $required_runs off $balls_remaining balls | RRR $rrr";
 }
 
 
@@ -302,7 +305,7 @@ function toss_decision(&$score_log){
     $data = mysqli_fetch_assoc(mysqli_query($conn, $sql));
 
     // Prepare short inline text
-    $score_log['inline'] = "{$data['t_name']} won the toss and elected to {$data['toss_decision']}";
+    $score_log['inline'] = "{$data['t_name']} Elected To {$data['toss_decision']}";
 }
 
 

@@ -234,7 +234,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
         }
 
 
@@ -345,8 +344,13 @@
                 </svg>
             </div>
             <div class="error-existe"></div>
+            <div class='add-btn'>
+            <button onclick="printDiv('print-area')" style="width: 150px;">
+                        🖨️ Print Slots
+            </button></div>
             <div>
                 <div class='add-btn'>
+                    
                     <button onclick='save(event)' type='submit' id='save'>save</button>
                 </div>
             </div>
@@ -355,7 +359,7 @@
             <div class="txt">
                 <label for="">Add a Tournament</label>
                 <h4>Match Matching</h4>
-            </div>
+            </div><div id="print-area" style="width: 100%;">
             <div class="match-list">
                 <div class="matches">
 
@@ -541,6 +545,9 @@
         $matchCounter = 1;  // RESET EVERY ROUND
         $currentRoundTeams = [];
 
+         // Add BYE teams directly into next round
+        foreach ($byeTeams as $bt) $currentRoundTeams[] = $bt;
+
         if (!empty($qualifyingTeams)) {
             echo "<h3>Round $round (Qualifiers)</h3>";
             $qTeams = array_values($qualifyingTeams);
@@ -583,9 +590,6 @@
                 $matchCounter++;
             }
         }
-
-        // Add BYE teams directly into next round
-        foreach ($byeTeams as $bt) $currentRoundTeams[] = $bt;
 
         // ------------------------------------------------
         // STEP 3: NEXT ROUNDS (Match numbers reset EVERY ROUND)
@@ -665,15 +669,15 @@
                 ?>
 
 
-                </div>
-                <div class="pls">
+                </div></div>
+                <!-- <div class="pls">
                     <div class="plus" onclick="shuffle()">
                         <div class="plus-icon"><svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M27.9997 12.6418C27.5921 9.70879 26.2315 6.9912 24.1274 4.90759C22.0234 2.82398 19.2926 1.48996 16.3558 1.11102C13.419 0.732074 10.439 1.32923 7.87501 2.81051C5.31098 4.29178 3.30509 6.57499 2.16634 9.30843M1.33301 2.64176V9.30843H7.99967M1.33301 15.9751C1.74061 18.9081 3.10123 21.6257 5.20528 23.7093C7.30933 25.7929 10.0401 27.1269 12.9769 27.5058C15.9137 27.8848 18.8936 27.2876 21.4577 25.8064C24.0217 24.3251 26.0276 22.0419 27.1663 19.3084M27.9997 25.9751V19.3084H21.333" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
 
         </div>
@@ -688,6 +692,53 @@
         let goBack = ()=>{
             window.history.back();
         }
+
+        //print slots
+    function printDiv(divId) {
+        var content = document.getElementById(divId).outerHTML;
+
+        var printWindow = window.open("", "", "width=1200,height=700");
+
+        // ✅ COPY ALL CSS FILES FROM MAIN PAGE
+        var cssLinks = "";
+        document.querySelectorAll("link[rel='stylesheet']").forEach(link => {
+            cssLinks += `<link rel="stylesheet" href="${link.href}">`;
+        });
+
+        // ✅ COPY ALL INLINE STYLES
+        var inlineStyles = "";
+        document.querySelectorAll("style").forEach(style => {
+            inlineStyles += style.outerHTML;
+        });
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Print</title>
+                ${cssLinks}
+                ${inlineStyles}
+                <style>
+                    @media print {
+                        button, .no-print { display: none !important; }
+                    }
+                </style>
+            </head>
+            <body>
+                ${content}
+            </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+        printWindow.focus();
+
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 800);
+    }
+
 
         //make animation-transition
         window.onload = () => {

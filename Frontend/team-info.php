@@ -50,8 +50,8 @@
         }
 
         // Prepare and execute delete query
-        $stmt = $conn->prepare("DELETE FROM `$table` WHERE `$column` = ?");
-        $stmt->bind_param("i", $id);
+        $stmt = $conn->prepare("DELETE FROM `$table` WHERE `$column` = ? AND team_id = ?");
+        $stmt->bind_param("ss", $id, $team_id);
 
         if ($stmt->execute()) {
             echo 'success';

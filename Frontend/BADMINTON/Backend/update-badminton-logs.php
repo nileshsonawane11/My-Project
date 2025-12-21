@@ -64,7 +64,7 @@ $undo = $data['undo'] ?? false;  // Will be null if not sent
 $is_complete = $data['is_complete'] ?? false;
 
 // Check if match is already completed
-if(isset($score_log['completed']) && $score_log['completed'] === true) {
+if(isset($score_log['match_completed']) && $score_log['match_completed'] === true) {
     echo json_encode(['status'=>400,'message'=>'Match is already completed']);
     exit();
 }
@@ -143,7 +143,7 @@ if (($winner_team == null && $undo == true)) {
 }
 
 if(isset($is_complete) && $is_complete){
-    $score_log['completed'] = true;
+    $score_log['match_completed'] = true;
     $score_log['sets'][$current_set]['set_completed'] = true;
     if($score_log['team1_score'] > $score_log['team2_score']){
         $score_log['winner'] = $score_log['team1'];

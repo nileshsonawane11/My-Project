@@ -67,6 +67,27 @@
             return date('d-m-Y', strtotime($matchDate)) . ", " . date('h:i A', strtotime($startTime));
         }
     }
+
+
+        //increment cviews count
+$page = 'Chess'; // change per page
+$today = date('Y-m-d');
+
+// Calculate seconds until midnight
+$midnight = strtotime('tomorrow') - time();
+
+// Unique cookie name for each page & match per day
+$cookie_name = "viewed_{$page}_{$match_id}_{$today}";
+
+// Check if cookie not set (first view today)
+if (!isset($_COOKIE[$cookie_name])) {
+
+    // Set cookie to expire automatically at midnight
+    setcookie($cookie_name, '1', time() + $midnight, "/");
+
+    mysqli_query($conn, "UPDATE matches SET view_count = view_count + 1 WHERE match_id='$match_id'");
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1531,6 +1552,55 @@
         color: var(--text-dark);
         transition: color 0.3s ease;
     }
+    .ad-slot {
+        position: relative;
+        overflow: hidden;
+        background: #f2f2f2;
+        object-fit:cover;
+    }
+
+    .ad-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;      /* ✅ Fills entire slot */
+        object-position: center;
+        display: none;
+        pointer-events: auto !important;
+        cursor: pointer !important;
+    }
+    .slides{
+        object-fit:cover;
+    }
+    /* keep your remaining CSS same */
+
+    .ad-slot .dots {
+        text-align: center;
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ad-slot .dots span {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        background: #ddd;
+        border-radius: 50%;
+        margin: 2px;
+        cursor: pointer;
+    }
+
+    .ad-slot .dots .active {
+        background: #000;
+    }
+
+    .placeholder {
+        padding: 10px;
+        text-align: center;
+    }
+    .slide{
+        margin-left: 19px;
+    }
 
     @media(max-width: 600px) {
         .nav-content{
@@ -1935,6 +2005,10 @@
                         
                     }
                 ?>
+                <div class="info">
+                    <p id='run_rate'></p>
+                    <p>Views : <?php echo $row['view_count'] ?? 0; ?></p>
+                </div>
                 
                 <!-- OR if toss declared -->
                 <!--
@@ -2584,7 +2658,6 @@
                     <button id="cmc-report-issue-button" class="cmc-report-issue-button">Report an Issue</button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -3148,13 +3221,13 @@ function loadAds(pageName, cityName="") {
             let auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             slot.onmouseenter = () => clearInterval(auto);
             slot.onmouseleave = () => auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             let startX = 0;
             slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);

@@ -30,6 +30,25 @@
         }
     }
 
+    function formatMatchTime($matchDate, $startTime) {
+        if (empty($matchDate) || empty($startTime)) {
+            return "Not Scheduled";
+        }
+
+        $currentDate = date('Y-m-d');
+        $yesterday   = date('Y-m-d', strtotime('-1 day'));
+        $tomorrow    = date('Y-m-d', strtotime('+1 day'));
+
+        if ($matchDate === $currentDate) {
+            return "Today, " . date('h:i A', strtotime($startTime));
+        } elseif ($matchDate === $yesterday) {
+            return "Yesterday, " . date('h:i A', strtotime($startTime));
+        } elseif ($matchDate === $tomorrow) {
+            return "Tomorrow, " . date('h:i A', strtotime($startTime));
+        } else {
+            return date('d-m-Y', strtotime($matchDate)) . ", " . date('h:i A', strtotime($startTime));
+        }
+    }
 
     // Example: assume $conn is your database connection
     $query = mysqli_query($conn, "SELECT * FROM tournaments WHERE tournament_id = '$tournament_id'");
@@ -96,6 +115,7 @@
             --svg-fill: #333333;
             --border-color: #ddd;
             --invert: invert(0);
+            --slot-bg : #fff5eb;
         }
 
         /* Dark theme variables */
@@ -110,6 +130,7 @@
             --primary-light-transparent: rgba(209, 34, 31, 0.2);
             --primary-dark-transparent: rgba(160, 25, 23, 0.2);
             --invert: invert(1);
+            --slot-bg : #4d4d4d;;
         }
 
         :root {
@@ -378,9 +399,11 @@
             flex-direction: column;
             gap: 40px;
         }
+        .save-btn{
+            display: none;
+        }
         .logout-btn,
         .save-btn {
-            display: inline-flex;
             justify-content: center;
             align-items: center;
             padding: 12px 30px;
@@ -549,11 +572,14 @@
         .slots {
             height: 37px;
             width: 100px;
-            background-color: #000000;
+            background-color: #ffffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 11px;
+        }
+        a{
+            text-decoration:none;
         }
         .matches {
     width: 100%;
@@ -572,7 +598,7 @@
     margin: 15px 0;
     padding: 15px;
     border-radius: 15px;
-    background: #fff5eb;
+    background: var(--slot-bg);
 }
 
 .match-head {
@@ -722,9 +748,12 @@ table td:last-child {
 h2 {
     text-align: center;
     margin-bottom: 15px;
-    color: #000000ff;
+    color: var(--text-color);
     font-size: 24px;
     letter-spacing: 1px;
+}
+h3{
+    padding-left: 20px;
 }
 .league-winner-box {
     max-width: 500px;
@@ -789,6 +818,83 @@ h2 {
     font-weight: bold;
     color: #000;
 }
+.winner{
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #16a34a;
+}
+
+.team-container{
+    cursor: pointer;
+}
+.team-container:not([onclick]){
+    cursor: default;
+    opacity: 1;
+}
+.match-status{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:12px;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.badge-green{     
+    background: #cc2e2e;
+    color: #fff; 
+}
+.badge-blue{ background:#3498db; color:#fff; }
+.badge-gold{ display:none; background:#f1c40f; color:#000; }
+
+.team-container[title]{
+    cursor:not-allowed;
+    opacity:0.75;
+}
+.match-status-badge{
+    display:inline-block;
+    padding:4px 10px;
+    font-size:12px;
+    font-weight:600;
+    border-radius:12px;
+    margin-bottom:6px;
+}
+
+/* Upcoming */
+.badge-upcoming{
+    background:#1e88e5;
+    color:#fff;
+}
+
+/* Completed */
+.badge-completed{
+    background:#f9a825;
+    color:#000;
+}
+
+/* LIVE (animated like cricket apps) */
+.badge-live{
+    background:#cc2e2e;
+    color:#fff;
+    animation: livePulse 1.2s infinite;
+}
+.time{
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+@keyframes livePulse{
+    0%   { box-shadow:0 0 0 0 rgba(204,46,46,0.6); }
+    70%  { box-shadow:0 0 0 10px rgba(204,46,46,0); }
+    100% { box-shadow:0 0 0 0 rgba(204,46,46,0); }
+}
+
+/* Disabled click cursor */
+.team-container[title]{
+    cursor:not-allowed;
+    opacity:0.75;
+}
 
 /* ✅ Mobile Responsive */
 @media (max-width: 600px) {
@@ -806,6 +912,19 @@ h2 {
 @media (min-width:601px){
     .matches { width: 70%; }
     .team-container, .team-no { max-width: 600px; }
+    .add-btn button{
+                background: var(--gradient);
+                color: #fff;
+                font-size: 12px;
+                border: 1px solid transparent;
+                border-radius: 48px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                height: 40px;
+                width: 96px;
+            }
 }
 
 @media (max-width:600px){
@@ -824,51 +943,71 @@ h2 {
     .team-no{
         padding: 0 40px;
     }
+    .add-btn button{
+                background: var(--gradient);
+                color: #fff;
+                font-size: 12px;
+                border: 1px solid transparent;
+                border-radius: 48px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                cursor: pointer;
+                height: 40px;
+                width: 96px;
+            }
 }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <?php if(isset($_SESSION['user']) && $_SESSION['role'] != "User"){ ?>
-            <div class="return">
-                <svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z"/>
-                </svg>
-                
-                    <?php
-                        $sql = "SELECT * FROM matches WHERE tournament = '$tournament_id' ORDER BY match_name";
-                        $query = mysqli_query($conn,$sql);
-                        $count_matches = mysqli_num_rows($query);
-                        if($count_matches == 0){
-                    ?>
-                        <div class="slots">
-                            <a href="./manage-teams.php?sport=<?php echo $sportList[$sport];  ?>&tournament=<?php echo $tournament_id; ?>"><div class="make-slots">Make Slots</div></a>
-                        </div>
-                    <?php }else{ ?>
-                        <button onclick="printDiv('print-area')" style="
-                            padding: 10px 25px;
-                            font-size: 16px;
-                            background: var(--gradient);
-                            color: white;
-                            border: none;
-                            border-radius: 6px;
-                            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
-                            cursor: pointer;
-                        ">
-                        🖨️ Print Slots
-                        </button>
-                    <?php } ?>
-                
-                <div class="edit-toggle" id="editToggle">
-                    <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10.2085 10.209H8.75016C7.97661 10.209 7.23475 10.5163 6.68777 11.0633C6.14079 11.6102 5.8335 12.3521 5.8335 13.1257V26.2507C5.8335 27.0242 6.14079 27.7661 6.68777 28.313C7.23475 28.86 7.97661 29.1673 8.75016 29.1673H21.8752C22.6487 29.1673 23.3906 28.86 23.9376 28.313C24.4845 27.7661 24.7918 27.0242 24.7918 26.2507V24.7923" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M23.3333 7.29182L27.7083 11.6668M29.7281 9.60328C30.3025 9.02892 30.6252 8.24992 30.6252 7.43766C30.6252 6.62539 30.3025 5.84639 29.7281 5.27203C29.1538 4.69767 28.3748 4.375 27.5625 4.375C26.7502 4.375 25.9712 4.69767 25.3969 5.27203L13.125 17.5002V21.8752H17.5L29.7281 9.60328Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <?php if(isset($_SESSION['user']) && $_SESSION['role'] != "User" && $owner == $_SESSION['user']){ ?>
+                <div class="return">
+                    <svg onclick="goBack()" width="26" height="24" viewBox="0 0 26 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M25.25 12.75H3.81247L13 21.9375L11.845 23.25L0.469971 11.875L11.845 0.5L13 1.8125L3.81247 11H25.25V12.75Z"/>
                     </svg>
+                    
+                        <?php
+                            $sql = "SELECT * FROM matches WHERE tournament = '$tournament_id' ORDER BY match_name";
+                            $query = mysqli_query($conn,$sql);
+                            $count_matches = mysqli_num_rows($query);
+                            if($count_matches == 0){
+                        ?>
+                            <div class="slots">
+                                <a href="./manage-teams.php?sport=<?php echo $sportList[$sport];  ?>&tournament=<?php echo $tournament_id; ?>"><div class="make-slots">Make Slots</div></a>
+                            </div>
+                        <?php }else{ ?>
+                            <button onclick="printDiv('print-area')" style="
+                                padding: 10px 25px;
+                                font-size: 16px;
+                                background: var(--gradient);
+                                color: white;
+                                border: none;
+                                border-radius: 6px;
+                                box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
+                                cursor: pointer;
+                            ">
+                            🖨️ Print Slots
+                            </button>
+                        <?php } ?>
+                    
+                    <div class="edit-toggle" id="editToggle">
+                        <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.2085 10.209H8.75016C7.97661 10.209 7.23475 10.5163 6.68777 11.0633C6.14079 11.6102 5.8335 12.3521 5.8335 13.1257V26.2507C5.8335 27.0242 6.14079 27.7661 6.68777 28.313C7.23475 28.86 7.97661 29.1673 8.75016 29.1673H21.8752C22.6487 29.1673 23.3906 28.86 23.9376 28.313C24.4845 27.7661 24.7918 27.0242 24.7918 26.2507V24.7923" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M23.3333 7.29182L27.7083 11.6668M29.7281 9.60328C30.3025 9.02892 30.6252 8.24992 30.6252 7.43766C30.6252 6.62539 30.3025 5.84639 29.7281 5.27203C29.1538 4.69767 28.3748 4.375 27.5625 4.375C26.7502 4.375 25.9712 4.69767 25.3969 5.27203L13.125 17.5002V21.8752H17.5L29.7281 9.60328Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                 </div>
-            </div>
+            <?php }else{ ?>
+                <div class="return">
+                    <div></div>
+                    <div class='add-btn'>
+                        <button onclick='signup()' type='submit' id='save'>Sign Up</button>
+                    </div>
+                </div>
             <?php } ?>
-            <h2 style="text-align: center;">Tournament Details</h2>
+            <h2 style="text-align: center; color:#ffff;">Tournament Details</h2>
             <p style="text-align: center; font-size: 1.2rem;">(<?php echo $result['tournament_name']; ?>)</p>
         </div>
         
@@ -885,14 +1024,22 @@ if ($format == 'knockout') {
     $totalTeams = count($teams);
     if ($totalTeams < 2) {
         echo "<div class='match-container'><div class='tname'>Not enough teams to create bracket.</div></div>";
-        return;
-    }
+        
+    }else{
 
     // TEAM CACHE
     $teamCache = [];
     $tq = mysqli_query($conn, "SELECT * FROM teams");
     while ($tr = mysqli_fetch_assoc($tq)) $teamCache[$tr['t_id']] = $tr;
     function getTeamName($team, $teamCache){ return $teamCache[$team]['t_name'] ?? ($team==="BYE"?"BYE":"TBD"); }
+    function getTeamLogo($team, $teamCache){
+        if (isset($teamCache[$team]['t_logo']) && !empty($teamCache[$team]['t_logo'])) {
+            $logo = $teamCache[$team]['t_logo'];
+            return "<div class='logo'><img src='../assets/images/teams/$logo' alt=''></div>";
+        }
+
+        return "<div class='logo'></div>";
+    }
 
     // BRACKET CALC
     $nextPow = 1; while ($nextPow < $totalTeams) $nextPow <<=1;
@@ -924,14 +1071,14 @@ if ($format == 'knockout') {
 
     // Add BYE entries dynamically (not DB)
     foreach($byeTeams as $bt){
-        $rounds[1]['matches'][] = [
-            'match_id' => "bye_r1_$bt",
-            'team_1' => $bt,
-            'team_2' => "BYE",
-            'round' => 1,
-            'match_name' => "BYE",
+        array_unshift($rounds[1]['matches'], [
+            'match_id'   => "",
+            'team_1'    => $bt,
+            'team_2'    => "BYE",
+            'round'     => 1,
+            'match_name'=> "BYE",
             'score_log' => json_encode(['match_completed'=>1,'winner'=>$bt])
-        ];
+        ]);
     }
 
     // -------------------
@@ -942,6 +1089,9 @@ if ($format == 'knockout') {
         $winners = [];
         $allCompleted = true;
 
+        // echo "<pre>";
+        // print_r($matches);
+        // echo "</pre>";
         foreach($matches as $m){
             $score = json_decode($m['score_log'], true);
             if(!empty($score['match_completed']) && $score['match_completed']==1 && !empty($score['winner'])){
@@ -973,7 +1123,7 @@ if ($format == 'knockout') {
             } else if(count($winners) > 1){
                 $round_name = "Final";
             }
-            shuffle($winners);
+            // shuffle($winners);
             for($i=0;$i<count($winners);$i+=2){
                 $a = $winners[$i];
                 $b = $winners[$i+1] ?? "BYE";
@@ -1062,28 +1212,77 @@ if ($format == 'knockout') {
         $m = $matches[$i] ?? null;
 
         if($m){
+
             $t1 = getTeamName($m['team_1'], $teamCache);
             $t2 = getTeamName($m['team_2'], $teamCache);
+            $t1_logo = getTeamLogo($m['team_1'], $teamCache);
+            $t2_logo = getTeamLogo($m['team_2'], $teamCache);
+
             $score = json_decode($m['score_log'], true);
+            $status = $m['status'] ?? 'Upcoming';
+
+            $badgeColor = match($status){
+                'Live' => 'green',
+                'Completed' => 'gold',
+                default => 'blue'
+            };
+
+            $badgeClass = '';
+            $badgeText  = $status;
+
+            if ($status === 'Live') {
+                $badgeClass = 'badge-live';
+            } elseif ($status === 'Completed') {
+                $badgeClass = 'badge-completed';
+            } else {
+                $badgeClass = 'badge-upcoming';
+            }
+
+            $winnerId = (!empty($score['match_completed']) && $score['match_completed'] == 1)
+                ? ($score['winner'] ?? null)
+                : null;
             $link = "./{$sportList[$sport]}/scoreboard.php?match_id={$m['match_id']}";
         } else {
             $t1 = "TBD (waiting...)";
             $t2 = "TBD (waiting...)";
+            $t1_logo = "<div class='logo'></div>";
+            $t2_logo = "<div class='logo'></div>";
             $link = "";
         }
 
+        // Winner display
+        $winnerText = '';
+        if (!empty($score['winner'])) {
+            $winnerName = getTeamName($score['winner'], $teamCache);
+            $winnerText = "<div class='winner'>🏆 Winner: <strong>$winnerName</strong></div>";
+        }
+
         // USE window.location properly
-        $onclick = $link ? "onclick=\"window.location='$link'\"" : "";
+        if($status === 'Upcoming'){
+            $onclick = "";
+            $tooltip = "title='Match not started yet'";
+        } else {
+            $onclick = "";
+            $tooltip = "";
+        }
+
+        if(!empty($m['match_id'])){
+            $onclick = "onclick=\"window.location='$link'\"";
+        }
 
         $label = slotLabel($r, $mc, $totalRounds);
 
         echo "<div class='match-container'>
             <h4 class='match-head'>".htmlspecialchars($label)."</h4>
-            <div class='team-container' $onclick>
-                <div class='teams left-side'><div class='logo'></div><div class='tname'>$t1</div></div>
-                <label class='vs'>VS</label>
-                <div class='teams right-side'><div class='logo'></div><div class='tname'>$t2</div></div>
+            <div class='match-status-badge $badgeClass'>
+                $badgeText
             </div>
+            <div class='team-container' $onclick >
+                <div class='teams left-side'>$t1_logo<div class='tname'>$t1".(($winnerId && $m && $winnerId == $m['team_1']) ? ' 🏆' : '')."</div></div>
+                <label class='vs'>VS</label>
+                <div class='teams right-side'>$t2_logo<div class='tname'>$t2".(($winnerId && $m && $winnerId == $m['team_2']) ? ' 🏆' : '')."</div></div>
+            </div>
+            <div class='time'>".formatMatchTime($m['match_date'] ?? '', $m['start_time'] ?? '')."</div>
         </div>";
 
         $mc++;
@@ -1102,7 +1301,7 @@ if ($format == 'knockout') {
             break;
         }
     }
-}
+}}
 
 $matchNo = 1;
 $matchSlots = []; // 🟢 Store all slots here
@@ -1135,110 +1334,116 @@ if ($format == 'league') {
 
     // ✅ Step 4: Loop through all possible match combinations
     for ($i = 0; $i < $numTeams - 1; $i++) {
-        for ($j = $i + 1; $j < $numTeams; $j++) {
-            $team1 = $teams[$i];
-            $team2 = $teams[$j];
-            $matchName = "Match " . $matchNo;
+    for ($j = $i + 1; $j < $numTeams; $j++) {
+        $team1 = $teams[$i];
+        $team2 = $teams[$j];
+        $matchName = "Match " . $matchNo;
 
-            // 🟠 Case 1: Handle BYE display only
-            if ($team1 == 'BYE' || $team2 == 'BYE') {
-                $byeTeam = ($team1 == 'BYE') ? $team2 : $team1;
-                $bye_query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$byeTeam'");
-                $bye_row = mysqli_fetch_assoc($bye_query);
+        /* =========================
+           🟠 BYE MATCH
+        ========================= */
+        if ($team1 == 'BYE' || $team2 == 'BYE') {
+            $byeTeam = ($team1 == 'BYE') ? $team2 : $team1;
+            $bye_query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$byeTeam'");
+            $bye_row = mysqli_fetch_assoc($bye_query);
 
-                $matchSlots[] = [
-                    'match_name' => $matchName . ' (Bye)',
-                    'team1_name' => $bye_row['t_name'],
-                    'team2_name' => 'BYE',
-                    'match_id'   => null
-                ];
-
-                echo '
-                <div class="match-container">
-                    <h4 class="match-head">' . $matchName . ' (Bye)</h4>
-                    <div class="team-container">
-                        <div class="teams left-side">
-                            ' . (!empty($bye_row['t_logo'])
-                                ? '<div class="logo"><img src="../assets/images/teams/' . $bye_row['t_logo'] . '" alt=""></div>'
-                                : '<div class="logo"></div>') . '
-                            <div class="tname">' . $bye_row['t_name'] . '</div>
-                        </div>
-                        <label for="" class="vs">VS</label>
-                        <div class="teams right-side">
-                            <div class="logo"></div>
-                            <div class="tname">BYE</div>
-                        </div>
-                    </div>
-                    <div class="team-no">
-                        <div class="t-num">(Team ' . (($team1 == 'BYE') ? $j + 1 : $i + 1) . ')</div>
-                        <div class="t-num">(Bye)</div>
-                    </div>
-                </div>';
-                $matchNo++;
-                continue;
-            }
-
-            // 🟢 Case 2: Normal matches
-            $team1_query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$team1'");
-            $team1_row = mysqli_fetch_assoc($team1_query);
-
-            $team2_query = mysqli_query($conn, "SELECT * FROM teams WHERE t_id = '$team2'");
-            $team2_row = mysqli_fetch_assoc($team2_query);
-
-            // Check if this match exists in DB
-            $matchId = null;
-            $exists = false;
-            foreach ($scheduledMatches as $m) {
-                if (
-                    ($m['team_1'] == $team1 && $m['team_2'] == $team2) ||
-                    ($m['team_1'] == $team2 && $m['team_2'] == $team1)
-                ) {
-                    $exists = true;
-                    $matchId = $m['match_id'];
-                    break;
-                }
-            }
-
-            // 🟢 Store this match slot in array
-            $matchSlots[] = [
-                'match_name' => $matchName,
-                'team1_name' => $team1_row['t_name'],
-                'team2_name' => $team2_row['t_name'],
-                'match_id'   => $matchId
-            ];
-
-            $link = "./{$sportList[$sport]}/scoreboard.php?match_id={$m['match_id']}";
-            $onclick = $link ? "onclick=\"window.location='$link'\"" : "";
-            // 🟢 Display match
             echo '
             <div class="match-container">
-                <h4 class="match-head">' . $matchName . ($exists ? '' : ' (Not Scheduled)') . '</h4>
-                <div class="team-container" '.$onclick.'>
+                <h4 class="match-head">' . $matchName . ' (Bye)</h4>
+
+                <div class="match-status-badge badge-completed">Completed</div>
+
+                <div class="team-container disabled" title="Bye Match">
                     <div class="teams left-side">
-                        ' . (!empty($team1_row['t_logo'])
-                            ? '<div class="logo"><img src="../assets/images/teams/' . $team1_row['t_logo'] . '" alt=""></div>'
-                            : '<div class="logo"></div>') . '
-                        <div class="tname">' . $team1_row['t_name'] . '</div>
+                        <div class="logo"></div>
+                        <div class="tname">' . $bye_row['t_name'] . ' 🏆</div>
                     </div>
-                    <label for="" class="vs">VS</label>
+                    <label class="vs">VS</label>
                     <div class="teams right-side">
-                        ' . (!empty($team2_row['t_logo'])
-                            ? '<div class="logo"><img src="../assets/images/teams/' . $team2_row['t_logo'] . '" alt=""></div>'
-                            : '<div class="logo"></div>') . '
-                        <div class="tname">' . $team2_row['t_name'] . '</div>
+                        <div class="logo"></div>
+                        <div class="tname">BYE</div>
                     </div>
                 </div>
-                <div class="team-no">
-                    <div class="t-num">(Team ' . ($i + 1) . ')</div>
-                    <div class="t-num">(Team ' . ($j + 1) . ')</div>
-                </div>
+                <div class="time">Bye Slot</div>
             </div>';
             $matchNo++;
+            continue;
         }
+
+        /* =========================
+           🟢 NORMAL MATCH
+        ========================= */
+        $team1_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM teams WHERE t_id='$team1'"));
+        $team2_row = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM teams WHERE t_id='$team2'"));
+
+        $match = null;
+        foreach ($scheduledMatches as $m) {
+            if (
+                ($m['team_1'] == $team1 && $m['team_2'] == $team2) ||
+                ($m['team_1'] == $team2 && $m['team_2'] == $team1)
+            ) {
+                $match = $m;
+                break;
+            }
+        }
+
+        $status = $match['status'] ?? 'Upcoming';
+        $score = json_decode($match['score_log'] ?? '', true);
+        $winner = ($status == 'Completed') ? ($score['winner'] ?? null) : null;
+
+        /* Status badge */
+        if ($status == 'Live') {
+            $badge = "<div class='match-status-badge badge-live'>Live</div>";
+        } elseif ($status == 'Completed') {
+            $badge = "<div class='match-status-badge badge-completed'>Completed</div>";
+        } else {
+            $badge = "<div class='match-status-badge badge-upcoming'>Upcoming</div>";
+        }
+
+        /* Click logic */
+        if ($status == 'Upcoming') {
+            $onclick = "onclick=\"window.location='./{$sportList[$sport]}/scoreboard.php?match_id={$match['match_id']}'\"";
+            $disabled = "";
+            $tooltip = "title='Match not started yet'";
+        } else {
+            $onclick = "onclick=\"window.location='./{$sportList[$sport]}/scoreboard.php?match_id={$match['match_id']}'\"";
+            $disabled = "";
+            $tooltip = "";
+        }
+
+        echo '
+        <div class="match-container">
+            <h4 class="match-head">' . $matchName . '</h4>
+            ' . $badge . '
+
+            <div class="team-container ' . $disabled . '" ' . $onclick . ' ' . $tooltip . '>
+                <div class="teams left-side">
+                    <div class="logo"></div>
+                    <div class="tname">'
+                        . $team1_row['t_name']
+                        . ($winner == $team1 ? ' 🏆' : '') .
+                    '</div>
+                </div>
+
+                <label class="vs">VS</label>
+
+                <div class="teams right-side">
+                    <div class="logo"></div>
+                    <div class="tname">'
+                        . $team2_row['t_name']
+                        . ($winner == $team2 ? ' 🏆' : '') .
+                    '</div>
+                </div>
+            </div>
+            <div class="time">'.formatMatchTime($match["match_date"] ?? "", $match["start_time"] ?? "").'</div>
+        </div>';
+
+        $matchNo++;
     }
 }
 
-// 🧾 Debug print to verify array (optional)
+
+    // 🧾 Debug print to verify array (optional)
 // echo "<pre>";
 // print_r($matchSlots);
 // echo "</pre>";
@@ -1455,8 +1660,9 @@ foreach ($pointsTable as $team) {
 
 echo "</table></div>";
 
+}
 ?></div>
-    <?php if(isset($_SESSION['user']) && $_SESSION['role'] != "User"){ ?>
+    <?php if(isset($_SESSION['user']) && $_SESSION['role'] != "User" && $owner == $_SESSION['user']){ ?>
         <!-- Match Details Form -->
         <div class="form-section">
             <div class="form-row">
@@ -1542,6 +1748,10 @@ echo "</table></div>";
         function goBack() {
             // Implement your back navigation logic here
             window.history.back();
+        }
+
+        function signup(){
+            window.location.href = "../front-page.php";
         }
 
         const popupOverlay = document.getElementById("popupOverlay");

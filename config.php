@@ -16,7 +16,7 @@
     $user = "root";
     $pass = "";
     $db = "livestrike";
-    $port = "3306";
+    $port = "3307";
 
     $conn = mysqli_connect($host, $user, $pass, $db, $port);
 

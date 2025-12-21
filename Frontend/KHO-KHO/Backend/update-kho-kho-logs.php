@@ -104,7 +104,7 @@ if (($undo == true)) {
 }
 
 if(isset($is_complete) && $is_complete){
-    $score_log['completed'] = true;
+    $score_log['match_completed'] = true;
     if($score_log['team1_score'] > $score_log['team2_score']){
         $score_log['winner'] = $score_log['team1'];
     }else if($score_log['team1_score'] < $score_log['team2_score']){

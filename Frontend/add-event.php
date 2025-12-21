@@ -292,6 +292,19 @@
             align-items: center;
             margin-top: 20px;
         }
+        sup{
+            color: red;
+        }
+        .warn{
+            color: red;
+        }
+        .error{
+            display: none;
+            color: var(--primary-color); 
+            width:100%;
+            font-size:14px;
+            margin: 5px;
+        }
 
         @media (min-width:601px) {
              .container{
@@ -405,6 +418,7 @@
             <div class="txt">
                 <!-- <label for="">Team Name</label> -->
                 <h4>Add Event</h4>
+                <p class="warn">All * marked fields are required</p>
             </div>
             <div class="get-info">
                 <div class="info">
@@ -423,22 +437,22 @@
                         </div>
                     </div>
                 </div>
-                    <div class="input-fields"><input type="text" name="" id="name" required><label for="opponent">Event Name</label></div>
+                    <div class="input-fields"><input type="text" name="" id="name" required><label for="opponent">Event Name <sup>*</sup></label></div>
                     <div class="schedule">
-                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Start Date</label></div>
-                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">End Date</label></div>
+                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">Start Date <sup>*</sup></label></div>
+                        <div class="input-fields"><input type="date" id="dateInput" placeholder="Select Date" required><label for="dateInput" id="date">End Date <sup>*</sup></label></div>
                     </div>
-                    <div class="input-fields"><input type="text" name="" id="location" required><label for="location">Location</label></div>
+                    <div class="input-fields"><input type="text" name="" id="location" required><label for="location">Location <sup>*</sup></label></div>
                     <!-- Organizer / Department -->
                     <div class="input-fields">
                         <input type="text" id="organizer" name="organizer" required>
-                        <label for="organizer">Organizer / Department</label>
+                        <label for="organizer">Organizer / Department <sup>*</sup></label>
                     </div>
 
                     <!-- Coordinator Name -->
                     <div class="input-fields">
                         <input type="text" id="coordinator" name="coordinator" required>
-                        <label for="coordinator">Coordinator Name</label>
+                        <label for="coordinator">Coordinator Name <sup>*</sup></label>
                     </div>
 
                     <!-- Contact Number -->
@@ -450,18 +464,18 @@
                     <!-- Email -->
                     <div class="input-fields">
                         <input type="email" id="email" name="email" required>
-                        <label for="email">Email</label>
+                        <label for="email">Email <sup>*</sup></label>
                     </div>
 
                     <!-- Event Type -->
                     <div class="input-fields">
                         <select id="event_type" name="event_type" required>
-                            <option value="" disabled selected hidden>Select Event Type</option>
-                            <option value="intra">Intra-College</option>
-                            <option value="inter">Inter-College</option>
-                            <option value="zonal">Zonal</option>
-                            <option value="national">National</option>
-                            <option value="other">Other</option>
+                            <option value="" disabled selected hidden>Select Event Type <sup>*</sup></option>
+                            <option value="Intra-College">Intra-College</option>
+                            <option value="Inter-College">Inter-College</option>
+                            <option value="Zonal">Zonal</option>
+                            <option value="National">National</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
 
@@ -487,9 +501,9 @@
                     </div> -->
 
                     
-
+                    <div id="error-err" class="error">111</div>
                     <div class="add-btn">
-                        <button onclick="add_tournament(event)" type="submit" id="add-event">Next (Add TOURNAMENTS)</button>
+                        <button onclick="add_event(event,this)" type="submit" id="add-event">Add Event</button>
                     </div>
                 </div>
             </div>
@@ -542,6 +556,57 @@
                 console.log('Checkbox is unchecked');
                 timeInput.classList.remove('active');
             }
+        }
+
+        let add_event = (e,btn) => {
+            e.preventDefault(); // stop form reload (important)
+            btn.innerText = 'Proccessing...';
+            let formData = new FormData();
+
+            let fileInput = document.querySelector('#fileInput');
+            if (fileInput.files.length > 0) {
+                formData.append('e_photo', fileInput.files[0]);
+            }
+
+            formData.append('e_name', document.querySelector('#name').value);
+            formData.append('s_date', document.querySelectorAll('#dateInput')[0].value);
+            formData.append('e_date', document.querySelectorAll('#dateInput')[1].value);
+            formData.append('location', document.querySelector('#location').value);
+            formData.append('organizer', document.querySelector('#organizer').value);
+            formData.append('coordinator_name', document.querySelectorAll('#coordinator')[0].value);
+            formData.append('coordinator_no', document.querySelectorAll('#coordinator')[1].value);
+            formData.append('email', document.querySelector('#email').value);
+            formData.append('event_type', document.querySelector('#event_type').value);
+            formData.append('sponsor', document.querySelector('#sponsor').value);
+            formData.append('description', document.querySelector('#notes').value);
+
+            // Example AJAX (fetch)
+            fetch('../Backend/add_event.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then((data) => {
+                console.log(data)
+                document.querySelectorAll('[id^="error-"]').forEach((el) => {
+                    el.innerHTML = '';
+                    el.style.display = 'none';
+                });
+
+                if(data.status != 200){
+                    let el = document.getElementById(`error-${data.field}`);
+                    el.innerHTML = data.message;
+                    el.style.display = 'block';
+                    btn.innerText = 'Add Event';
+                }else{
+                    window.location.href = `./manage-event.php`;
+                    btn.innerText = 'Add Event';
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                 btn.innerText = 'Add Event';
+            });
         }
 
         // document.querySelector('.save-btn').addEventListener('click',()=>{

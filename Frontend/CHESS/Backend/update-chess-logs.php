@@ -47,6 +47,7 @@ if(is_array($team)){
 }
 
 $score_log['completed'] = true;
+$score_log['match_completed'] = true;
 $updated_json = json_encode($score_log);
 
 try {

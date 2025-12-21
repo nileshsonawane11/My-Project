@@ -41,7 +41,7 @@ $match_row = mysqli_fetch_assoc($match_result);
 $team1_id = $match_row['team_1'];
 $team2_id = $match_row['team_2'];
 $sport_id = $match_row['sport_id'];
-$score_log = json_decode($match_row['score_log'],true);
+$score_log = json_decode($match_row['score_log'] ?? '{}', true) ?? [];
 
 // Sports mapping
 $sportList = [
@@ -59,18 +59,41 @@ $sportList = [
 $sportIdToName = array_flip($sportList);
 $sports_name = $sportIdToName[$sport_id] ?? 'Unknown Sport';
 
+$teamCache = [];
+$teamQuery = mysqli_query($conn, "SELECT t_id, t_logo, t_name FROM teams");
+
+while ($row = mysqli_fetch_assoc($teamQuery)) {
+    $teamCache[$row['t_id']] = $row;
+}
+
 // Handle logos
 $uploadDir = "../assets/images/teams/";
 $logo1Name = '';
 $logo2Name = '';
 
 if (!empty($team1Logo['name'])) {
+
+    //delete old logo
+    $oldLogo = $teamCache[$team1_id]['t_logo'] ?? '';
+
+    if ($oldLogo && file_exists($uploadDir . $oldLogo)) {
+        unlink($uploadDir . $oldLogo);
+    }
+
     $ext = pathinfo($team1Logo['name'], PATHINFO_EXTENSION);
     $logo1Name = $team1_id . '.' . $ext;
     move_uploaded_file($team1Logo['tmp_name'], $uploadDir . $logo1Name);
 }
 
 if (!empty($team2Logo['name'])) {
+
+    //delete old logo
+    $oldLogo = $teamCache[$team2_id]['t_logo'] ?? '';
+
+    if ($oldLogo && file_exists($uploadDir . $oldLogo)) {
+        unlink($uploadDir . $oldLogo);
+    }
+
     $ext = pathinfo($team2Logo['name'], PATHINFO_EXTENSION);
     $logo2Name = $team2_id . '.' . $ext;
     move_uploaded_file($team2Logo['tmp_name'], $uploadDir . $logo2Name);
@@ -99,15 +122,13 @@ if (!empty($team2_id)) {
 $update_fields = [];
 
 $matchStatus = 'Upcoming';
+// Merge updates into existing score_log
 $score_log['winner'] = $matchwinner;
+$score_log['match_completed'] = !empty($matchwinner);
 
-    if($matchwinner == ''){
-        $matchStatus = "Upcoming";
-    }else{
-        $matchStatus = "Completed";
-    }
+// Convert back to JSON (escaped)
+$score_log_json = mysqli_real_escape_string($conn, json_encode($score_log, JSON_UNESCAPED_UNICODE));
 
-$score_log_json =  json_encode($score_log);
 $update_fields[] = "score_log = '$score_log_json'";
 $update_fields[] = "status = '$matchStatus'";
 

@@ -3154,13 +3154,13 @@ function loadAds(pageName, cityName="") {
             let auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             slot.onmouseenter = () => clearInterval(auto);
             slot.onmouseleave = () => auto = setInterval(() => {
                 index = (index + 1) % slides.length;
                 showSlide(index);
-            }, 10000);
+            }, 6000);
 
             let startX = 0;
             slideBox.addEventListener("touchstart", e => startX = e.touches[0].clientX);
